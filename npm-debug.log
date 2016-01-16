@@ -1,0 +1,96 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'publish' ]
+2 info using npm@2.14.7
+3 info using node@v4.2.2
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: 'C:\\Users\\franz\\Documents\\GitHub\\iobroker.tr-064',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory C:\Users\franz\AppData\Roaming\npm-cache\iobroker.tr-064\0.0.2\package.tgz not in flight; packing
+9 verbose tar pack [ 'C:\\Users\\franz\\AppData\\Roaming\\npm-cache\\iobroker.tr-064\\0.0.2\\package.tgz',
+9 verbose tar pack   'C:\\Users\\franz\\Documents\\GitHub\\iobroker.tr-064' ]
+10 verbose tarball C:\Users\franz\AppData\Roaming\npm-cache\iobroker.tr-064\0.0.2\package.tgz
+11 verbose folder C:\Users\franz\Documents\GitHub\iobroker.tr-064
+12 info prepublish iobroker.tr-064@0.0.2
+13 verbose addLocalTarball adding from inside cache C:\Users\franz\AppData\Roaming\npm-cache\iobroker.tr-064\0.0.2\package.tgz
+14 silly cache afterAdd iobroker.tr-064@0.0.2
+15 verbose afterAdd C:\Users\franz\AppData\Roaming\npm-cache\iobroker.tr-064\0.0.2\package\package.json not in flight; writing
+16 verbose afterAdd C:\Users\franz\AppData\Roaming\npm-cache\iobroker.tr-064\0.0.2\package\package.json written
+17 silly publish { name: 'iobroker.tr-064',
+17 silly publish   version: '0.0.2',
+17 silly publish   description: 'ioBroker tr-064 Adapter',
+17 silly publish   author: { name: 'soef', email: 'soef@gmx.net' },
+17 silly publish   contributors: [ { name: 'soef', email: 'soef@gmx.net' } ],
+17 silly publish   homepage: 'https://github.com/soef/iobroker.tr-064',
+17 silly publish   license: 'MIT',
+17 silly publish   keywords: [ 'ioBroker', 'tr-064', 'Smart Home', 'avm' ],
+17 silly publish   repository:
+17 silly publish    { type: 'git',
+17 silly publish      url: 'git+https://github.com/soef/iobroker.yamaha.git' },
+17 silly publish   devDependencies: { 'tr-064': '^0.2.0', eyes: '^0.1.8' },
+17 silly publish   bugs: { url: 'https://github.com/soef/iobroker.tr-064/issues' },
+17 silly publish   readmeFilename: 'README.md',
+17 silly publish   readme: 'tr-064 Adapter for ioBroker\r\n\r\nstill in development, not ready to use!',
+17 silly publish   gitHead: '1e5561234bef055b20532ce3579793124924b1b3',
+17 silly publish   _id: 'iobroker.tr-064@0.0.2',
+17 silly publish   scripts: {},
+17 silly publish   _shasum: 'e55f4a1d77f73ce223ac7cda45d5191097ceedc1',
+17 silly publish   _from: '.' }
+18 verbose getPublishConfig undefined
+19 silly mapToRegistry name iobroker.tr-064
+20 silly mapToRegistry using default registry
+21 silly mapToRegistry registry https://registry.npmjs.org/
+22 silly mapToRegistry uri https://registry.npmjs.org/iobroker.tr-064
+23 verbose publish registryBase https://registry.npmjs.org/
+24 silly publish uploading C:\Users\franz\AppData\Roaming\npm-cache\iobroker.tr-064\0.0.2\package.tgz
+25 verbose request uri https://registry.npmjs.org/iobroker.tr-064
+26 verbose request sending authorization for write operation
+27 info attempt registry request try #1 at 20:35:31
+28 verbose request using bearer token for auth
+29 verbose request id 4a3ac6331ba6ba90
+30 http request PUT https://registry.npmjs.org/iobroker.tr-064
+31 http 403 https://registry.npmjs.org/iobroker.tr-064
+32 verbose headers { 'content-type': 'application/json',
+32 verbose headers   'cache-control': 'max-age=300',
+32 verbose headers   'content-length': '95',
+32 verbose headers   'accept-ranges': 'bytes',
+32 verbose headers   date: 'Sat, 16 Jan 2016 19:35:30 GMT',
+32 verbose headers   via: '1.1 varnish',
+32 verbose headers   connection: 'keep-alive',
+32 verbose headers   'x-served-by': 'cache-fra1231-FRA',
+32 verbose headers   'x-cache': 'MISS',
+32 verbose headers   'x-cache-hits': '0',
+32 verbose headers   'x-timer': 'S1452972929.278973,VS0,VE1045' }
+33 verbose request invalidating C:\Users\franz\AppData\Roaming\npm-cache\registry.npmjs.org\iobroker.tr-064 on PUT
+34 error publish Failed PUT 403
+35 verbose stack Error: "You cannot publish over the previously published version 0.0.2." : iobroker.tr-064
+35 verbose stack     at makeError (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:264:12)
+35 verbose stack     at CachingRegistryClient.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:252:14)
+35 verbose stack     at Request._callback (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:172:14)
+35 verbose stack     at Request.self.callback (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:198:22)
+35 verbose stack     at emitTwo (events.js:87:13)
+35 verbose stack     at Request.emit (events.js:172:7)
+35 verbose stack     at Request.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1063:14)
+35 verbose stack     at emitOne (events.js:82:20)
+35 verbose stack     at Request.emit (events.js:169:7)
+35 verbose stack     at IncomingMessage.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1009:12)
+36 verbose statusCode 403
+37 verbose pkgid iobroker.tr-064
+38 verbose cwd C:\Users\franz\Documents\GitHub\iobroker.tr-064
+39 error Windows_NT 10.0.10240
+40 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "publish"
+41 error node v4.2.2
+42 error npm  v2.14.7
+43 error code E403
+44 error "You cannot publish over the previously published version 0.0.2." : iobroker.tr-064
+45 error If you need help, you may report this error at:
+45 error     <https://github.com/npm/npm/issues>
+46 verbose exit [ 1, true ]
