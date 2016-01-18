@@ -9,21 +9,30 @@ var tr064 = new tr.TR064();
 var trclient;
 var commandDesc = 'eg. { "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
 
-const states = {
+var states = {
     states:            { name: "states", type: 'channel' },
     wps:               { name: "wps", val: false, func: 'setWPSMode' },
-    wlan:              { name: "wlan", val: false, func: 'setWLAN'},
+    wlan:              { name: "wlan", val: true, func: 'setWLAN'},
+    wlan24:            { name: 'wlan24', val: true, func: 'setWLAN24' },
+    wlan50:            { name: 'wlan50', val: true, func: 'setWLAN50' },
+    wlanGuest:         { name: 'wlanGuest', val: true, func: 'setWLANGuest' },
     dialNumber:        { name: 'dialNumber', val: "" },
-    stopDialog:        { name: 'stopDialing', val: "" },
+    stopDialing:       { name: 'stopDialing', val: "" },
     reconnectInternet: { name: 'reconnectInternet', val: false },
     command:           { name: 'command', val: "", func: 'command', desc: commandDesc },
-    commandResult:     { name: 'commandResult', val: "", write: false},
+    commandResult:     { name: 'commandResult', val: "", write: false },
+    externalIP:        { name: 'externalP', val: '', write: false},
     
     statistics:        { name: 'statistics', type: 'channel' },
     bytesTransfered:   { name: 'bytesTransfered', val: 0 },
 
     devices:           { name: "devices", type: "device"}
 }
+
+function setState(id, val) {
+    adapter.setState(id['fn'], val, true);
+}
+
 
 function createObj(state, prefix) {
     prefix = prefix || "";
@@ -38,11 +47,13 @@ function createObj(state, prefix) {
         }
     }
     obj.common.role = state.hasOwnProperty('val') ? "state" : "";
+
     if (state.hasOwnProperty('desc')) obj.desc = state.desc;
     if (typeof state.val === 'boolean') obj.values = [false, true];
     adapter.setObjectNotExists(prefix + state.name, obj, "", function (err, obj) {
         if (state.hasOwnProperty('val') && state.val !== undefined) adapter.setState(prefix + state.name, state.val, true);
     });
+    state.fn = prefix + state.name;
 }
 
 function createObjects(objects) {
@@ -133,10 +144,6 @@ var ctr064 = function (user, password, iporhost, port) {
     this.port = 49000 || port;
     this.user = user;
     this.password = password;
-    this.sslDev = null;
-    this.hosts = null;
-    this.getSpecificHostEntry = null;
-    this.getWPSMode = null;
 }
 
 ctr064.prototype.init = function (callback) {
@@ -146,19 +153,41 @@ ctr064.prototype.init = function (callback) {
         device.startEncryptedCommunication(function (err, sslDev) {
             if (err) return callback(err);
             sslDev.login(self.user, self.password);
+
             self.sslDev = sslDev;
-            
             self.hosts = sslDev.services["urn:dslforum-org:service:Hosts:1"];
-            if (!self.hosts) return callback("no hosts");
+            self.getWLANConfiguration = sslDev.services["urn:dslforum-org:service:WLANConfiguration:1"];
+            self.getWLANConfiguration2 = sslDev.services["urn:dslforum-org:service:WLANConfiguration:2"];
+            self.WANIPConnection = sslDev.services["urn:dslforum-org:service:WANIPConnection:1"];
 
             self.getSpecificHostEntry = self.hosts.actions.GetSpecificHostEntry;
             self.getGenericHostEntry = self.hosts.actions.GetGenericHostEntry;
-            self.getWLANConfiguration = sslDev.services["urn:dslforum-org:service:WLANConfiguration:1"];
             
             callback(0);
         });
     });
 };
+
+
+ctr064.prototype.getAllHostEntries = function (callback) {
+    var self = this;
+    
+    this.hosts.actions.GetHostNumberOfEntries(function (err, obj) {
+        var all = 0 | obj.NewHostNumberOfEntries,
+            i = 0
+            objs = [];
+        
+        function add() {
+            if (i >= all) return callback(0, objs);
+            self.getGenericHostEntry({ NewIndex: i++ }, function (err, obj) {
+                if (!err && obj) objs.push(obj);
+                setTimeout(add, 0);
+            });
+        }
+        
+        add();
+    });
+}
 
 
 ctr064.prototype.forEachHostEntry = function (callback) {
@@ -187,41 +216,70 @@ ctr064.prototype.command = function (command, callback) {
 
  
 ctr064.prototype.reconnectInternet = function (callback) {
-    this.sslDev.services["urn:dslforum-org:service:WANIPConnection:1"].actions.ForceTermination(callback);
+    this.WANIPConnection.actions.ForceTermination(callback);
 } 
 
 ctr064.prototype.externalIP = function (callback) {
-    this.sslDev.services["urn:dslforum-org:service:WANIPConnection:1"].actions.GetExternalIPAddress(function (err, res) {
-        callback(err);
+    this.WANIPConnection.actions.GetExternalIPAddress(callback);
+}
+
+ctr064.prototype.setWLAN24 = function (val, callback) {
+    this.getWLANConfiguration.actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, callback);
+}
+
+ctr064.prototype.setWLAN50 = function (val, callback) {
+    var self = this;
+    this.getWLANConfiguration2.actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, function (err, result) {
+        //if (!val) setTimeout(function (err, res) {
+        //    self.setWLAN(true, function (err, res) {
+        //    });
+        //}, 20000);
     });
+}
+
+ctr064.prototype.setWLANGuest = function (val, callback) {
+    this.sslDev.services["urn:dslforum-org:service:WLANConfiguration:3"].actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, callback);
 }
 
 ctr064.prototype.setWLAN = function (val, callback) {
-    this.sslDev.services["urn:dslforum-org:service:WLANConfiguration:1"].actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, function (err, result) {
+    var self = this;
+    this.setWLAN24(val, function (err, result) {
+        if (err || !result) return callback(-1);
+        self.setWLANGuest(val, function (err, result) {
+            self.setWLAN50(val, callback);
+        });
     });
-}
-
-ctr064.prototype.getWLAN = function (callback) {
-    this.sslDev.services["urn:dslforum-org:service:WLANConfiguration:1"].actions.GetInfo(callback);
-}
-
-ctr064.prototype.dialNumber = function (number, callback) {
-    this.sslDev.services["urn:dslforum-org:service:X_VoIP:1"].actions["X_AVM-DE_DialNumber"]({ "NewX_AVM-DE_PhoneNumber": number }, callback);
 }
 
 ctr064.prototype.setWPSMode = function (modeOrOnOff, callback) {
     var mode = modeOrOnOff;
     if (typeof modeOrOnOff == 'boolean') mode = modeOrOnOff ? "pbc" : "stop";
     var self = this;
-    self.sslDev.services["urn:dslforum-org:service:WLANConfiguration:1"].actions["X_AVM-DE_SetWPSConfig"]({ "NewX_AVM-DE_WPSMode": mode, "NewX_AVM-DE_WPSClientPIN": "" }, function (err, obj) {
-        self.sslDev.services["urn:dslforum-org:service:WLANConfiguration:1"].actions["X_AVM-DE_GetWPSInfo"](function (err, obj) {
+    self.getWLANConfiguration.actions["X_AVM-DE_SetWPSConfig"]({ "NewX_AVM-DE_WPSMode": mode, "NewX_AVM-DE_WPSClientPIN": "" }, function (err, obj) {
+        self.getWLANConfiguration.actions["X_AVM-DE_GetWPSInfo"](function (err, obj) {
         });
     });
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ctr064.prototype.getWLAN = function (callback) {
+    this.getWLANConfiguration.actions.GetInfo(callback);
+}
 
+ctr064.prototype.getWLAN5 = function (callback) {
+    this.getWLANConfiguration2.actions.GetInfo(callback);
+}
+
+ctr064.prototype.getWLANGuest = function (callback) {
+    this.sslDev.services["urn:dslforum-org:service:WLANConfiguration:3"].actions.GetInfo(callback);
+}
+
+ctr064.prototype.dialNumber = function (number, callback) {
+    this.sslDev.services["urn:dslforum-org:service:X_VoIP:1"].actions["X_AVM-DE_DialNumber"]({ "NewX_AVM-DE_PhoneNumber": number }, callback);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function deleteUnavilableDevices(callback) {
     
@@ -260,17 +318,15 @@ function readAvailableDevices(callback) {
             
             adapter.setState(id, false | device.NewActive, true);
         });
-            
     });
 }
 
-
-function setActiveState(id, val) {
-    inMemStates[cnt].active = val;
-    adapter.log.info("Active changed " + id);
-    adapter.setState(id + '.active', val);
-    adapter.setState(id, val, true);
-}
+//function setActiveState(id, val) {
+//    inMemStates[cnt].active = val;
+//    adapter.log.info("Active changed " + id);
+//    adapter.setState(id + '.active', val);
+//    adapter.setState(id, val, true);
+//}
 
 function updateDevices(callback) {
     
@@ -304,9 +360,21 @@ function updateDevices(callback) {
 }
 
 
+const useDevices = false;
+
 function updateAll() {
 
-    updateDevices();
+    if (useDevices) updateDevices();
+    
+    trclient.getWLAN(function (err, res) {
+        setState(states.wlan24, false | res.NewEnable);
+    });
+    trclient.getWLAN5(function (err, res) {
+        setState(states.wlan50, false | res.NewEnable);
+    });
+    trclient.getWLANGuest(function (err, res) {
+        setState(states.wlanGuest, false | res.NewEnable);
+    });
 
     if (adapter.config.intervall !== undefined && adapter.config.intervall !== 0) {
         setTimeout(updateAll, adapter.config.intervall * 1000);
@@ -317,30 +385,17 @@ function updateAll() {
 function main() {
     
     createObjects(states);
-    adapter.subscribeStates('*');
+    //adapter.subscribeStates('*');
 
     trclient = new ctr064(adapter.config.user, adapter.config.password, adapter.config.ip);
     
     trclient.init(function (err) {
         
-        return;
-        //trclient.getWLAN(function (err, res) {
-        //    adapter.setState(states.wlan, false | res.NewEnable, true);
-        //});        
-        
-        //trclient.reconnectInternet(function (err, obj) {
-        //});
-        //trclient.externalIP(function (err, obj) {
-        //});
-
-        readAvailableDevices(function (err) {
-            //updateAll();
+        if (useDevices) readAvailableDevices(function (err) {
         });
         setTimeout(updateAll, 15000);
     });
     
-    //adapter.subscribeStates('*');
+    adapter.subscribeStates('*');
 }
-
-
 
