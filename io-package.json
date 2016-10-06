@@ -1,16 +1,22 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "title": "TR 064",
     "desc": "TR 064",
     "platform": "Javascript/Node.js",
+    "keywords": [
+      "ioBroker",
+      "tr-064",
+      "Smart Home",
+      "avm"
+    ],
     "mode": "daemon",
     "icon": "tr-064.png",
     "extIcon": "https://raw.githubusercontent.com/soef/iobroker.tr-064/master/admin/tr-064.png",
     "loglevel": "info",
     "nondeletable": true,
-    "type": "common adapters",
+    "type": "hardware",
     "messagebox": true
   },
   "native": {

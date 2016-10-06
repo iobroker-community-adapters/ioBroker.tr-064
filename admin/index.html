@@ -94,7 +94,7 @@
 
 
     var devices = [];
-    var active = true;
+    var active = false;
     var g_onChange;
 
     // the function loadSettings has to exist ...
@@ -107,7 +107,7 @@
         });
 
         socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
-            //active = common.enabled || (state && state.val);
+            active = common.enabled || (state && state.val);
         });
 
         if (!settings) return;
