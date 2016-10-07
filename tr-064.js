@@ -1,11 +1,11 @@
 "use strict";
 
-var utils     = require(__dirname + '/lib/utils'),
-    soef      = require(__dirname + '/lib/soef'),
-    phonebook = require(__dirname + '/lib/phonebook'),
-    util      = require("util"),
-    tr064Lib  = require("tr-O64");
-
+var utils       = require(__dirname + '/lib/utils'),
+    soef        = require('soef'),
+    phonebook   = require(__dirname + '/lib/phonebook'),
+    callMonitor = require(__dirname + '/lib/callmonitor'),
+    util        = require("util"),
+    tr064Lib    = require("tr-O64");
 
 var tr064Client;
 var commandDesc = 'eg. { "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
@@ -39,8 +39,8 @@ var adapter = utils.adapter({
 });
 
 
-const STATES_NAME = 'states';
-const CALLMONITOR_NAME = 'callmonitor';
+const CHANNEL_STATES = 'states',
+      CHANNEL_DEVICES = 'devices';
 
 var devStates;
 var allDevices = [];
@@ -116,7 +116,7 @@ function onMessage (obj) {
 
 function onStateChange (id, state) {
     var as = id.split('.');
-    if ((as[0] + '.' + as[1] != adapter.namespace) || (as[2] !== STATES_NAME)) return;
+    if ((as[0] + '.' + as[1] != adapter.namespace) || (as[2] !== CHANNEL_STATES)) return;
     adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
 
     //var dev = devices.get (id.substr(adapter.namespace.length+1));
@@ -327,13 +327,34 @@ TR064.prototype.dialNumber = function (number, callback) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function deleteUnavilableDevices(callback) {
+function isKnownMac(mac) {
+    return !!adapter.config.devices.find(function(v) { return v.mac === mac} );
+}
 
-    var ch = adapter.namespace + '.' + states.devices;
-    //var count = 0;
-
+function deleteUnusedDevices(callback) {
+    var ch = adapter.namespace + '.' + CHANNEL_DEVICES;
     adapter.objects.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
-        //if (err) return;
+        if (err || !res) return;
+        var toDelete = [];
+        res.rows.forEach(function(o){
+            if ((!o.value.native || !o.value.native.mac) && o.id.substr(ch.length+1).indexOf('.') < 0) { // old device, without native.mac
+                toDelete.push(o.id);
+            }
+            if (o.value.native && o.value.native.mac && !isKnownMac(o.value.native.mac)) {
+                toDelete.push(o.id);
+            }
+        });
+        toDelete.forEach(function (id) {
+            adapter.log.debug('deleting ' + id);
+            res.rows.forEach(function(o) {
+                if (o.id.indexOf(id) == 0) {
+                    devices.remove(o.id.substr(adapter.namespace.length+1));
+                    adapter.states.delState(o.id, function(err, obj) {
+                         adapter.objects.delObject(o.id);
+                    });
+                }
+            });
+        });
     });
 }
 
@@ -347,9 +368,10 @@ function setActive(dev, val) {
 
 function createConfiguredDevices(callback) {
     adapter.log.debug('createConfiguredDevices');
-    var dev = new devices.CDevice('devices', '');
+    var dev = new devices.CDevice(CHANNEL_DEVICES, '');
     tr064Client.forEachConfiguredDevice(function(device, isLast) {
-        dev.setChannel(device.NewHostName, device.NewHostName + ' (' + device.NewIPAddress + ')');
+        //dev.setChannel(device.NewHostName, device.NewHostName + ' (' + device.NewIPAddress + ')');
+        dev.setChannel(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
         setActive(dev, device.NewActive);
         //dev.set('mac', device.NewMACAddress);
         //dev.set('ip', device.NewIPAddress);
@@ -362,7 +384,7 @@ function createConfiguredDevices(callback) {
 
 function updateDevices(callback) {
     adapter.log.debug('updateDevices');
-    var dev = new devices.CDevice('devices', '');
+    var dev = new devices.CDevice(CHANNEL_DEVICES, '');
 
     tr064Client.forEachConfiguredDevice(function(device, isLast) {
         dev.setChannel(device.NewHostName);
@@ -419,107 +441,14 @@ function normalizeConfigVars() {
 }
 
 
-function callMonitor() {
-    if (!adapter.config.useCallMonitor) return;
-    adapter.log.debug('starting callmonitor');
-
-    var net = require('net');
-    var connections = {};
-    var timeout;
-
-    var client = new net.Socket();
-    client.on('connect', function () {
-         adapter.log.debug('callmonitor connected')  ;
-    });
-
-    client.on('close', function (hadError) {
-        if (hadError) {
-        } else {
-        }
-        if (timeout) clearTimeout(timeout);
-        timeout = setTimeout(client.connect, 5000, { host: adapter.config.ip, port: 1012 });
-    });
-
-    client.on('data', function (data) {
-        var raw = data.toString();
-        var array = raw.split(";");
-        var type = array[1];
-        var id = array[2];
-        var timestamp = array[0];
-        var message;
-        //var dev = new devices.CDevice(0, '');
-        //dev.setDevice(CALLMONITOR_NAME, {common: {name: CALLMONITOR_NAME, role: 'channel'}, native: {} });
-        var dev = new devices.CDevice(CALLMONITOR_NAME, '');
-        var timer = null;
-
-        function set(name) {
-            if (timer) cancelTimeout(timer);
-            dev.setChannel(name, name);
-            for (var i in message) {
-                if (i[0] != '_') dev.set(i, message[i]);
-            }
-            dev.set('timestamp', timestamp);
-            message._type = name;
-            if (adapter.config.usePhonebook) {
-                if (message.callerName == undefined && message.caller) {
-                    message.callerName = phonebook.findNumber(message.caller);
-                }
-                dev.set('callerName', message.callerName);
-            }
-            adapter.log.debug('callMonitor: caller=' + message.caller + ' callee=' + message.callee + (message.callerName ? ' callerName=' + message.callerName : ''));
-            timer = setTimeout(function() {
-                devices.update();
-            }, 500);
-        }
-
-        switch (type) {
-            case "CALL":
-                message = { caller: array[4], callee: array[5], extension: array[3] };
-                connections[id] = message;
-                set('outbound');
-                break;
-            case "RING":
-                message = { caller: array[3], callee: array[4] };
-                connections[id] = message;
-                set('inbound');
-                break;
-            case "CONNECT":
-                message = connections[id];
-                if (!message) break;
-                message.extension = array[3];
-                set('connect');
-                break;
-            case "DISCONNECT":
-                message = connections[id];
-                if (!message) break;
-                switch (message._type) {
-                    case "inbound":
-                        message.type = "missed";
-                        break;
-                    case "connect":
-                        message.type = "disconnect";
-                        break;
-                    case "outbound":
-                        message.type = "unreached";
-                        break;
-                }
-                message.duration = array[3] >> 0;
-                //set('disconnect');
-                set('lastCall');
-                delete connections[id];
-                break;
-        }
-    });
-    client.connect({host: adapter.config.ip, port: 1012});
-}
-
 function main() {
 
     devStates = new devices.CDevice(0, '');
-    devStates.setDevice(STATES_NAME, {common: {name: STATES_NAME, role: 'channel'}, native: {} });
+    devStates.setDevice(CHANNEL_STATES, {common: {name: CHANNEL_STATES, role: 'channel'}, native: {} });
 
     normalizeConfigVars();
-    createObjects();
+    deleteUnusedDevices();
+    setTimeout(createObjects, 2000);
 
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
     tr064Client.init(function (err) {
@@ -527,7 +456,7 @@ function main() {
         createConfiguredDevices(function(err) {
             phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook }, function() {
                 updateAll();
-                callMonitor();
+                callMonitor(adapter, devices);
             });
         });
     });

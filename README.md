@@ -4,7 +4,8 @@
 ioBroker Adapter for tr-064 devices
 
 #### Info
-This is a beta version
+
+https://avm.de/service/schnittstellen/
 
 #### Installation
 Execute the following command in the iobroker root directory (e.g. in /opt/iobroker)
