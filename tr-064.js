@@ -90,6 +90,8 @@ function onMessage (obj) {
     switch (obj.command) {
         case 'discovery':
             if (!obj.callback) return false;
+            //reply( { error: { message: "fehler..." }});
+            //return;
             if (allDevices.length > 0) {
                 reply(allDevices);
                 return true;
@@ -308,9 +310,36 @@ TR064.prototype.setWPSMode = function (modeOrOnOff, callback) {
     });
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var errorCounts = {};
+
+function _checkError(err, res) {
+    if (err) {
+        var code = err.code ? err.code : 'unknown error code';
+        if (!errorCounts [code]) {
+            var msg = err.message ? err.message : 'unknown error text';
+            switch (code >> 0) {
+                case 401:
+                    msg = 'Authentication error. Check username and password in configuration';
+                    break;
+            }
+            adapter.log.error('code=' + code + ' ' + msg);
+            errorCounts [code] = 1;
+        }
+    }
+    this (err, res);
+}
+
+function checkError(cb) {
+    return _checkError.bind(cb);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TR064.prototype.getWLAN = function (callback) {
-    this.getWLANConfiguration.actions.GetInfo(callback);
+    //this.getWLANConfiguration.actions.GetInfo(callback);
+    this.getWLANConfiguration.actions.GetInfo(checkError(callback));
 };
 
 TR064.prototype.getWLAN5 = function (callback) {

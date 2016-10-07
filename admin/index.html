@@ -72,7 +72,7 @@
             "en": "Please wait..."
         },
         "Enable adapter first": {
-            "de": "Adapter nicht aktiv. Adapter aktivieren",
+            "de": "Adapter TR-064 ist nicht gestartet, bitte starten bzw. aktivieren!",
             "en": "Enable adapter first"
         },
         "Select a device": {
@@ -107,7 +107,7 @@
         });
 
         socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
-            active = common.enabled || (state && state.val);
+            active = /*common.enabled ||*/ (state && state.val);
         });
 
         if (!settings) return;
@@ -182,6 +182,11 @@
             sendTo('tr-064.' + instance, 'discovery', 5000, function (result) {
                 try {
                     var arr = JSON.parse(result);
+                    if (arr.error) {
+                        showMessage(arr.error.message, 'Error', 'info');
+                        $("#dialog-search").dialog('close');
+                        return;
+                    }
                     if (!arr.length) {
                         var popup = '<table class="msgTable"><tr><td>' + translateWord('Cannot find any device') + '</span></td></tr></table>';
                     } else {
@@ -277,17 +282,30 @@
     <!--<h1 class="translate">Interval</h1>-->
     <div id="settings">
         <table>
-            <tr><td class="translate">IP</td><td><input type="text" id="ip" class="value"></td></tr>
-            <tr><td class="translate">User</td><td><input type="text" id="user" class="value"></td></tr>
-            <tr><td class="translate">Password</td><td><input type="password" id="password" value="true" class="value"></td></tr>
-            <tr><td class="translate">Polling interval (sec)</td><td><input type="text" id="pollingInterval" class="value"></td></tr>
-            <tr><td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td></tr>
-            <tr><td class="translate">Watch devices</td><td><input id="useDevices" class="value" type="checkbox"></td></tr>
-            <tr><td class="translate">Use phonebook</td><td><input id="usePhonebook" class="value" type="checkbox"></td></tr>
+            <tr>
+                <td class="translate">IP</td><td width=5></td><td><input type="text" id="ip" class="value"></td>
+                <td width=60></td>
+                <td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td>
+            </tr>
+            <tr>
+                <td class="translate">User</td><td width=5><td><input type="text" id="user" class="value"></td>
+                <td width=60></td>
+                <td class="translate">Watch devices</td><td><input id="useDevices" class="value" type="checkbox"></td>
+            </tr>
+            <tr>
+                <td class="translate">Password</td><td width=5><td><input type="password" id="password" value="true" class="value"></td>
+                <td width=60></td>
+                <td class="translate">Use phonebook</td><td><input id="usePhonebook" class="value" type="checkbox"></td>
+            </tr>
+            <tr>
+                <td class="translate">Polling interval (sec)</td><td width=5><td><input type="text" id="pollingInterval" class="value"></td>
+            </tr>
 
+            <!--tr><td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td></tr>
+            <tr><td class="translate">Watch devices</td><td><input id="useDevices" class="value" type="checkbox"></td></tr>
+            <tr><td class="translate">Use phonebook</td><td><input id="usePhonebook" class="value" type="checkbox"></td></tr-->
             <tr><td><button id="find"><span class="translate">Find a device</span></button></td><tr>
         </table>
-
     </div>
     <!--table>
         <td><button id="find"><span class="translate">Find a device</span></button></td>
