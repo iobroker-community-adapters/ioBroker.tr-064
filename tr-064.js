@@ -456,7 +456,7 @@ function main() {
         createConfiguredDevices(function(err) {
             phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook }, function() {
                 updateAll();
-                callMonitor(adapter, devices);
+                callMonitor(adapter, devices, phonebook);
             });
         });
     });
