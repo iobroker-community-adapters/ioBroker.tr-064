@@ -1,9 +1,9 @@
 "use strict";
 
-var utils       = require(__dirname + '/lib/utils'),
-    soef        = require('soef'),
+var //utils       = require(__dirname + '/lib/utils'),
     phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
+    soef        = require('soef'),
     util        = require("util"),
     tr064Lib    = require("tr-O64");
 
@@ -11,32 +11,41 @@ var tr064Client;
 var commandDesc = 'eg. { "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
 var debug = false;
 
-var adapter = utils.adapter({
-    name: 'tr-064',
+var adapter = soef.Adapter(
+    onStateChange,
+    main,
+    onMessage,
+    {
+        name: 'tr-064'
+    }
+);
 
-    unload: function (callback) {
-        try {
-            callback();
-        } catch (e) {
-            callback();
-        }
-    },
-    //discover: function (callback) {
-    //},
-    //install: function (callback) {
-    //},
-    //uninstall: function (callback) {
-    //},
-    objectChange: function (id, obj) {
-    },
-    stateChange: function (id, state) {
-        if (state && !state.ack) {
-            onStateChange(id, state);
-        }
-    },
-    message: onMessage,
-    ready: function () { soef.main (adapter, main) }
-});
+//var adapter = utils.adapter({
+//    name: 'tr-064',
+//
+//    unload: function (callback) {
+//        try {
+//            callback();
+//        } catch (e) {
+//            callback();
+//        }
+//    },
+//    //discover: function (callback) {
+//    //},
+//    //install: function (callback) {
+//    //},
+//    //uninstall: function (callback) {
+//    //},
+//    objectChange: function (id, obj) {
+//    },
+//    stateChange: function (id, state) {
+//        if (state && !state.ack) {
+//            onStateChange(id, state);
+//        }
+//    },
+//    message: onMessage,
+//    ready: function () { soef.main (adapter, main) }
+//});
 
 
 const CHANNEL_STATES = 'states',
@@ -399,12 +408,8 @@ function createConfiguredDevices(callback) {
     adapter.log.debug('createConfiguredDevices');
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
     tr064Client.forEachConfiguredDevice(function(device, isLast) {
-        //dev.setChannel(device.NewHostName, device.NewHostName + ' (' + device.NewIPAddress + ')');
         dev.setChannel(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
         setActive(dev, device.NewActive);
-        //dev.set('mac', device.NewMACAddress);
-        //dev.set('ip', device.NewIPAddress);
-        //dev.set('type', device.NewInterfaceType);
         if (isLast) {
             devices.update(callback);
         }
@@ -425,7 +430,7 @@ function updateDevices(callback) {
 }
 
 function updateAll(cb) {
-    adapter.log.debug('in updateAll');
+    //adapter.log.debug('in updateAll');
     const names = [
         { func: 'getExternalIPAddress', state: states.externalIP.name, result: 'NewExternalIPAddress', format: function(val) { return val }},
         { func: 'getWLAN', state: states.wlan24.name, result: 'NewEnable', format: function(val) { return !!(val >> 0)}},
