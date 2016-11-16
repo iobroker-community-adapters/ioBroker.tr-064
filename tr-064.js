@@ -398,11 +398,21 @@ function deleteUnusedDevices(callback) {
 
 function setActive(dev, val) {
     val = !!(val >> 0);
+
     if (!dev.set('active', val)) return; // state not changed;
-    var ts = adapter.formatDate(new Date(), "DD.MM.YYYY - hh:mm:ss");
-    val ? dev.set('lastActive', ts) : dev.set('lastInactive', ts);
+    var dts = new Date();
+    var sts =  dts.toLocaleString();
+    var ts = (dts.getTime() / 1000) >> 0;
+    if (val) {
+        dev.set('lastActive', sts);
+        dev.set('lastActive-ts', ts);
+    } else {
+        dev.set('lastInactive', sts);
+        dev.set('lastInactive-ts', ts);
+    }
     dev.set('', val);
 }
+
 
 function createConfiguredDevices(callback) {
     adapter.log.debug('createConfiguredDevices');
