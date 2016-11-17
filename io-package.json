@@ -13,6 +13,7 @@
     "mode": "daemon",
     "icon": "tr-064.png",
     "extIcon": "https://raw.githubusercontent.com/soef/iobroker.tr-064/master/admin/tr-064.png",
+    "readme":  "https://github.com/soef/iobroker.tr-064/blob/master/README.md",
     "loglevel": "info",
     "type": "hardware",
     "enabled": true,
