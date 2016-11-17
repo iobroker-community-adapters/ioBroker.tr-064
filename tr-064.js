@@ -400,6 +400,7 @@ function setActive(dev, val) {
     val = !!(val >> 0);
 
     if (!dev.set('active', val)) return; // state not changed;
+    //var ts = adapter.formatDate(new Date(), "DD.MM.YYYY - hh:mm:ss");
     var dts = new Date();
     var sts =  dts.toLocaleString();
     var ts = (dts.getTime() / 1000) >> 0;
@@ -413,12 +414,11 @@ function setActive(dev, val) {
     dev.set('', val);
 }
 
-
 function createConfiguredDevices(callback) {
     adapter.log.debug('createConfiguredDevices');
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
     tr064Client.forEachConfiguredDevice(function(device, isLast) {
-        dev.setChannel(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
+        dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
         setActive(dev, device.NewActive);
         if (isLast) {
             devices.update(callback);
@@ -431,7 +431,7 @@ function updateDevices(callback) {
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
 
     tr064Client.forEachConfiguredDevice(function(device, isLast) {
-        dev.setChannel(device.NewHostName);
+        dev.setChannelEx(device.NewHostName);
         setActive(dev, device.NewActive);
         if (isLast) {
             devices.update(callback);
