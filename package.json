@@ -28,7 +28,14 @@
     "tr-O64": "^0.2.1",
     "xml2js": "^0.4.17"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "^2.3.4",
+    "chai": "^3.4.1"
+  },
+  "main": "tr-064.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha"
+  },
   "bugs": {
     "url": "https://github.com/soef/iobroker.tr-064/issues"
   },
