@@ -52,8 +52,8 @@ var adapter = soef.Adapter(
 //});
 
 
-var CHANNEL_STATES = 'states',
-    CHANNEL_DEVICES = 'devices';
+const CHANNEL_STATES = 'states',
+      CHANNEL_DEVICES = 'devices';
 
 var devStates;
 var allDevices = [];
@@ -462,7 +462,7 @@ function updateDevices(callback) {
 
 function updateAll(cb) {
     adapter.log.debug('in updateAll');
-    var names = [
+    const names = [
         { func: 'getExternalIPAddress', state: states.externalIP.name, result: 'NewExternalIPAddress', format: function(val) { return val; }},
         { func: 'getWLAN', state: states.wlan24.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},
         { func: 'getWLAN5', state: states.wlan50.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},
