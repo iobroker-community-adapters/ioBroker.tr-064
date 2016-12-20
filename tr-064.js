@@ -1,4 +1,4 @@
-/* jshint -W097 */// jshint strict:false
+/*jshint esversion: 6 */
 /*jslint node: true */
 'use strict';
 
@@ -207,10 +207,10 @@ TR064.prototype.init = function (callback) {
             self.stateVariables.changeCounter = self.hosts.stateVariables['X_AVM-DE_ChangeCounter'];
 
             self.initIGDDevice(self.ip, self.port, function (err, device) {
-                if (err) adapter.log.error('initIGDDevice:' + (err?err.message:""));
+                if (err) adapter.log.error('initIGDDevice:' + err + ' - ' + JSON.stringify(err));
                 if (!err && device) {
                     getSSLDevice(device, function(err, sslDevice) {
-                        if (err) adapter.log.error('getSSLDevice:' + (err?err.message:""));
+                        if (err) adapter.log.error('getSSLDevice:' + err + ' - ' + JSON.stringify(err));
                         self.getExternalIPAddress = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.GetExternalIPAddress;
                         self.reconnectInternet = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.ForceTermination;
                     });
@@ -228,7 +228,7 @@ TR064.prototype.forEachHostEntry = function (callback) {
 
     adapter.log.debug('forEachHostEntry');
     self.hosts.actions.GetHostNumberOfEntries(function (err, obj) {
-        if (err) adapter.log.error('GetHostNumberOfEntries:' + (err?err.message:""));
+        if (err) adapter.log.error('GetHostNumberOfEntries:' + err + ' - ' + JSON.stringify(err));
         if (err || !obj) return;
         var all = obj.NewHostNumberOfEntries >> 0;
         adapter.log.debug('forEachHostEntry: all=' + all);
@@ -239,7 +239,7 @@ TR064.prototype.forEachHostEntry = function (callback) {
                 return;
             }
             self.getGenericHostEntry({NewIndex: cnt}, function (err, obj) {
-                if (err) adapter.log.error('forEachHostEntry: in getGenericHostEntry ' + (cnt) + ':' + (err?err.message:""));
+                if (err) adapter.log.error('forEachHostEntry: in getGenericHostEntry ' + (cnt) + ':' + err + ' - ' + JSON.stringify(err));
                 if (err || !obj) return;
                 adapter.log.debug('forEachHostEntry cnt=' + cnt + ' ' + obj.NewHostName);
                 callback(err, obj, cnt++, all);
@@ -265,7 +265,7 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
         if (dev.mac && dev.mac !== "") {
             self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
             //self.GetSpecificHostEntryExt({NewMACAddress: dev.mac}, function (err, device) {
-                if (err) adapter.log.error('forEachConfiguredDevice: in GetSpecificHostEntryExt ' + (i-1) + '(' + dev.name + '/' + dev.mac + '):' + JSON.stringify(err));
+                if (err) adapter.log.error('forEachConfiguredDevice: in GetSpecificHostEntryExt ' + (i-1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
                 if (!err && device) {
                     adapter.log.debug('forEachConfiguredDevice: i=' + (i-1) + ' ' + device.NewHostName + ' active=' + device.NewActive);
                     device.NewMACAddress = dev.mac;
@@ -297,7 +297,7 @@ TR064.prototype.setWLAN24 = function (val, callback) {
 TR064.prototype.setWLAN50 = function (val, callback) {
     var self = this;
     this.getWLANConfiguration2.actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, function (err, result) {
-        if (err) adapter.log.error('getWLANConfiguration2:' + (err?err.message:""));
+        if (err) adapter.log.error('getWLANConfiguration2:' + err + ' - ' + JSON.stringify(err));
         //if (!val) setTimeout(function (err, res) {
         //    self.setWLAN(true, function (err, res) {
         //    });
@@ -312,10 +312,10 @@ TR064.prototype.setWLANGuest = function (val, callback) {
 TR064.prototype.setWLAN = function (val, callback) {
     var self = this;
     this.setWLAN24(val, function (err, result) {
-        if (err) adapter.log.error('setWLAN24:' + (err?err.message:""));
+        if (err) adapter.log.error('setWLAN24:' + err + ' - ' + JSON.stringify(err));
         if (err || !result) return callback(-1);
         self.setWLANGuest(val, function (err, result) {
-            if (err) adapter.log.error('setWLANGuest:' + (err?err.message:""));
+            if (err) adapter.log.error('setWLANGuest:' + err + ' - ' + JSON.stringify(err));
             self.setWLAN50(val, callback);
         });
     });
@@ -519,8 +519,10 @@ function main() {
 
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
     tr064Client.init(function (err) {
-        if (err) adapter.log.error('main - init:' + (err?err.message:""));
-        if (err) return;
+        if (err) {
+            adapter.log.error('main - init:' + err + ' - ' + JSON.stringify(err));
+            return;
+        }
         createConfiguredDevices(function(err) {
             phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook }, function() {
                 if (pollingTimer) clearTimeout(pollingTimer);
