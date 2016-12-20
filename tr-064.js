@@ -2,6 +2,7 @@
 /*jslint node: true */
 'use strict';
 
+/* global devices */
 var //utils       = require(__dirname + '/lib/utils'),
     phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
@@ -51,8 +52,8 @@ var adapter = soef.Adapter(
 //});
 
 
-const CHANNEL_STATES = 'states',
-      CHANNEL_DEVICES = 'devices';
+var CHANNEL_STATES = 'states',
+    CHANNEL_DEVICES = 'devices';
 
 var devStates;
 var allDevices = [];
@@ -351,6 +352,7 @@ function _checkError(err, res) {
             errorCounts [code] = new Date().getTime();
         }
     }
+    /* jshint validthis: true */
     this (err, res);
 }
 
@@ -460,7 +462,7 @@ function updateDevices(callback) {
 
 function updateAll(cb) {
     adapter.log.debug('in updateAll');
-    const names = [
+    var names = [
         { func: 'getExternalIPAddress', state: states.externalIP.name, result: 'NewExternalIPAddress', format: function(val) { return val; }},
         { func: 'getWLAN', state: states.wlan24.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},
         { func: 'getWLAN5', state: states.wlan50.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},
