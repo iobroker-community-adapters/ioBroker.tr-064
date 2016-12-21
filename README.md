@@ -1,11 +1,11 @@
 ![Logo](admin/tr-064.png)
+### ioBroker.tr-064 
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 [![Tests](http://img.shields.io/travis/soef/ioBroker.tr-064/master.svg)](https://travis-ci.org/soef/ioBroker.tr-064)
+[![Build status](https://ci.appveyor.com/api/projects/status/9w4enhutav1e2leu?svg=true)](https://ci.appveyor.com/project/soef/iobroker-hid)
 
 
-#### ioBroker.tr-064 
-ioBroker Adapter for tr-064 devices
 
 ***This adapter requires at least Node 4.x***
 
