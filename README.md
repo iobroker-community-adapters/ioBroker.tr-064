@@ -3,8 +3,7 @@
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 [![Tests](http://img.shields.io/travis/soef/ioBroker.tr-064/master.svg)](https://travis-ci.org/soef/ioBroker.tr-064)
-[![Build status](https://ci.appveyor.com/api/projects/status/9w4enhutav1e2leu?svg=true)](https://ci.appveyor.com/project/soef/iobroker-hid)
-
+[![Build status](https://ci.appveyor.com/api/projects/status/485gflwiw7p54x7q?svg=true)](https://ci.appveyor.com/project/soef/iobroker-tr-064)
 
 
 ***This adapter requires at least Node 4.x***
