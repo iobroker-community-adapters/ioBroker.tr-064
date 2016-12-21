@@ -2,7 +2,6 @@
 /*jslint node: true */
 'use strict';
 
-/* global devices */
 var //utils       = require(__dirname + '/lib/utils'),
     phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
@@ -24,36 +23,8 @@ var adapter = soef.Adapter(
     }
 );
 
-//var adapter = utils.adapter({
-//    name: 'tr-064',
-//
-//    unload: function (callback) {
-//        try {
-//            callback();
-//        } catch (e) {
-//            callback();
-//        }
-//    },
-//    //discover: function (callback) {
-//    //},
-//    //install: function (callback) {
-//    //},
-//    //uninstall: function (callback) {
-//    //},
-//    objectChange: function (id, obj) {
-//    },
-//    stateChange: function (id, state) {
-//        if (state && !state.ack) {
-//            onStateChange(id, state);
-//        }
-//    },
-//    message: onMessage,
-//    ready: function () { soef.main (adapter, main) }
-//});
-
-
-const CHANNEL_STATES = 'states',
-      CHANNEL_DEVICES = 'devices';
+var CHANNEL_STATES = 'states',
+    CHANNEL_DEVICES = 'devices';
 
 var devStates;
 var allDevices = [];
@@ -258,7 +229,8 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
 
     function doIt() {
         if (i >= adapter.config.devices.length) {
-            callback (null, true); // make sure to call callback also when last device is not successfull
+            //callback (null, true); // make sure to call callback also when last device is not successfull
+            callback(null);
             return;
         }
         var dev = adapter.config.devices[i++];
@@ -269,8 +241,9 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
                 if (!err && device) {
                     adapter.log.debug('forEachConfiguredDevice: i=' + (i-1) + ' ' + device.NewHostName + ' active=' + device.NewActive);
                     device.NewMACAddress = dev.mac;
-                    callback (device, i >= adapter.config.devices.length);
-                    if (i >= adapter.config.devices.length) return;
+                    // callback (device, i >= adapter.config.devices.length);
+                    // if (i >= adapter.config.devices.length) return;
+                    callback (device);
                 }
                 setTimeout(doIt, 0);
             });
@@ -286,6 +259,7 @@ TR064.prototype.command = function (command, callback) {
     var o = JSON.parse(command);
     this.sslDevice.services[o.service].actions[o.action](o.params, function (err, res) {
         if (err || !res) return;
+        adapter.log.info(JSON.stringify(res));
         adapter.setState(states.states.name + '.' + states.commandResult.name, JSON.stringify(res), true);
     });
 };
@@ -433,14 +407,20 @@ function setActive(dev, val) {
 function createConfiguredDevices(callback) {
     adapter.log.debug('createConfiguredDevices');
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
-    tr064Client.forEachConfiguredDevice(function(device, isLast) {
-        if (device) {
-            dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
-            setActive(dev, device.NewActive);
-        }
-        if (isLast) {
+    tr064Client.forEachConfiguredDevice(function(device) {
+        // if (device) {
+        //     dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
+        //     setActive(dev, device.NewActive);
+        // }
+        // if (isLast) {
+        //     devices.update(callback);
+        // }
+        if (!device) {
             devices.update(callback);
+            return;
         }
+        dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
+        setActive(dev, device.NewActive);
     });
 }
 
@@ -448,21 +428,27 @@ function updateDevices(callback) {
     adapter.log.debug('updateDevices');
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
 
-    tr064Client.forEachConfiguredDevice(function(device, isLast) {
-        adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device) + ', last=' + isLast);
-        if (device) {
-            dev.setChannelEx(device.NewHostName);
-            setActive(dev, device.NewActive);
-        }
-        if (isLast) {
+    tr064Client.forEachConfiguredDevice(function(device/*, isLast*/) {
+        adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device)); // + ', last=' + isLast);
+        // if (device) {
+        //     dev.setChannelEx(device.NewHostName);
+        //     setActive(dev, device.NewActive);
+        // }
+        // if (isLast) {
+        //     devices.update(callback);
+        // }
+        if (!device) {
             devices.update(callback);
+            return;
         }
+        dev.setChannelEx(device.NewHostName);
+        setActive(dev, device.NewActive);
     });
 }
 
 function updateAll(cb) {
     adapter.log.debug('in updateAll');
-    const names = [
+    var names = [
         { func: 'getExternalIPAddress', state: states.externalIP.name, result: 'NewExternalIPAddress', format: function(val) { return val; }},
         { func: 'getWLAN', state: states.wlan24.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},
         { func: 'getWLAN5', state: states.wlan50.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},

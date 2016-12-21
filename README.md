@@ -1,9 +1,11 @@
 ![Logo](admin/tr-064.png)
 
-#### ioBroker.tr-064
-ioBroker Adapter for tr-064 devices
+[![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
+[![Tests](http://img.shields.io/travis/soef/ioBroker.tr-064/master.svg)](https://travis-ci.org/soef/ioBroker.tr-064)
 
-***This adapter requires at least Node 4.x***
+
+#### ioBroker.tr-064 
+ioBroker Adapter for tr-064 devices
 
 #### Info
 
@@ -12,7 +14,7 @@ https://avm.de/service/schnittstellen/
 #### Installation
 Execute the following command in the iobroker root directory (e.g. in /opt/iobroker)
 ```
-npm install iobroker.tr-064
+npm install iobroker.tr-064 
 ```
 ### License
 The MIT License (MIT)
