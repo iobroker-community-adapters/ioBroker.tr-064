@@ -7,6 +7,8 @@
 #### ioBroker.tr-064 
 ioBroker Adapter for tr-064 devices
 
+***This adapter requires at least Node 4.x***
+
 #### Info
 
 https://avm.de/service/schnittstellen/
