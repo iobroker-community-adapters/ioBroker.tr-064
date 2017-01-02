@@ -2,7 +2,6 @@
 
 ### ioBroker.tr-064 
 
-cc / linux/osx  Windows<br>   
 [![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 [![Tests](http://img.shields.io/travis/soef/ioBroker.tr-064/master.svg)](https://travis-ci.org/soef/ioBroker.tr-064)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/soef/iobroker.tr-064/blob/master/LICENSE)
