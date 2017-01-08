@@ -338,7 +338,7 @@ function checkError(cb) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function callGetInfo(path, callback) {
-    if (path['actions']) {
+    if (path['actions'] && path.actions['getInfo']) {
         return path.actions.getInfo(callback);
     }
     if (callback) callback(new Error('No actions object'));
