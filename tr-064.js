@@ -338,9 +338,12 @@ function checkError(cb) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function callGetInfo(path, callback) {
-    if (path['actions'] && path.actions['getInfo']) {
-        return path.actions.getInfo(callback);
+    if (path['actions'] && path.actions['GetInfo']) {
+        return path.actions.GetInfo(callback);
+    } else {
+        adapter.log.debug('GetInfo not avilale');
     }
+    
     if (callback) callback(new Error('No actions object'));
 }
 
