@@ -25,10 +25,10 @@ var adapter = soef.Adapter(
 
 var CHANNEL_STATES = 'states',
     CHANNEL_DEVICES = 'devices';
-var ipActive = {};
+
 var devStates;
 var allDevices = [];
-
+var ipActive = {};
 
 var states = {
     wps:               { name: "wps",               val: false, common: { min: false, max: true }, native: { func: 'setWPSMode' }},
@@ -407,6 +407,7 @@ function deleteUnusedDevices(callback) {
 function setActive(dev, val, ip) {
     val = !!(val >> 0);
     
+    if (ip !== undefined && ipActive[ip] !== val) ipActive[ip] = val;
     if (!dev.set('active', val)) return; // state not changed;
     //ipActive[ip] = val;
     //var ts = adapter.formatDate(new Date(), "DD.MM.YYYY - hh:mm:ss");
