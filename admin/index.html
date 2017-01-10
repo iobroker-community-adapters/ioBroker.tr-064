@@ -19,10 +19,6 @@
 
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
-        "WiFi Light": {
-            "de": "WiFi Light Einstellungen",
-            "ru": "Пример"
-        },
         "Settings": {
             "de": "Einstellungen",
             "ru": "Settings"
@@ -87,7 +83,10 @@
         "IP":                    {"en": "IP", "de": "IP", "ru": "Тест 1"},
         "User":                    {"en": "User", "de": "Benutzer", "ru": "Тест 2"},
         "Password": { "en": "Password", "de": "Passswort", "ru": "Тест 2" },
-        "Polling interval (sec)": { "en": "Polling interval (sec)", "de": "Polling interval (Sekunden)", "ru": "Тест 2"
+        "Polling interval (sec)": { "en": "Polling interval (sec)", "de": "Polling interval (Sekunden)", "ru": "Тест 2"},
+        "Use MDNS": {
+            "de": "Multicast-DNS verwenden",
+            "en": "Use Multicast-DNS"
         }
 
     };
@@ -110,6 +109,7 @@
             active = /*common.enabled ||*/ (state && state.val);
         });
 
+        if (settings.useMDNS === undefined) settings.useMDNS = true;
         if (!settings) return;
         changed = true;
         g_onChange = onChange;
@@ -299,6 +299,8 @@
             </tr>
             <tr>
                 <td class="translate">Polling interval (sec)</td><td width=5><td><input type="text" id="pollingInterval" class="value"></td>
+                <td width=60></td>
+                <td class="translate">Use MDNS</td><td><input id="useMDNS" class="value" type="checkbox"></td>
             </tr>
 
             <!--tr><td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td></tr>

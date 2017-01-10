@@ -28,7 +28,7 @@ var CHANNEL_STATES = 'states',
 
 var devStates;
 var allDevices = [];
-
+var ipActive = {};
 
 var states = {
     wps:               { name: "wps",               val: false, common: { min: false, max: true }, native: { func: 'setWPSMode' }},
@@ -338,9 +338,12 @@ function checkError(cb) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function callGetInfo(path, callback) {
-    if (path['actions']) {
-        return path.actions.getInfo(callback);
+    if (path['actions'] && path.actions['GetInfo']) {
+        return path.actions.GetInfo(callback);
+    } else {
+        adapter.log.debug('GetInfo not avilale');
     }
+    
     if (callback) callback(new Error('No actions object'));
 }
 
@@ -401,10 +404,12 @@ function deleteUnusedDevices(callback) {
     });
 }
 
-function setActive(dev, val) {
+function setActive(dev, val, ip) {
     val = !!(val >> 0);
-
+    
+    if (ip !== undefined && ipActive[ip] !== val) ipActive[ip] = val;
     if (!dev.set('active', val)) return; // state not changed;
+    //ipActive[ip] = val;
     //var ts = adapter.formatDate(new Date(), "DD.MM.YYYY - hh:mm:ss");
     var dts = new Date();
     var sts =  dts.toLocaleString();
@@ -435,7 +440,7 @@ function createConfiguredDevices(callback) {
             return;
         }
         dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
-        setActive(dev, device.NewActive);
+        setActive(dev, device.NewActive, device.NewIPAddress);
     });
 }
 
@@ -457,7 +462,7 @@ function updateDevices(callback) {
             return;
         }
         dev.setChannelEx(device.NewHostName);
-        setActive(dev, device.NewActive);
+        setActive(dev, device.NewActive, device.NewIPAddress);
     });
 }
 
@@ -500,12 +505,35 @@ function updateAll(cb) {
 }
 
 
+function runMDNS () {
+    if (!adapter.config.useMDNS) return;
+    var dev = new devices.CDevice(CHANNEL_DEVICES, '');
+    var mdns = require('mdns-discovery')();
+    
+    mdns.on ('message', function (message, rinfo) {
+        if (!message || !rinfo) return;
+        if (ipActive[rinfo.address] !== false) return;
+        ipActive[rinfo.address] = true;
+        var d =  adapter.config.devices.find(function(device) {
+            return device.ip === rinfo.address;
+        });
+        if (d) {
+            dev.setChannelEx(d.name);
+            setActive(dev, true);
+            devices.update();
+            console.log(rinfo.address);
+        }
+    }).run();
+}
+
+
 function normalizeConfigVars() {
     adapter.config.pollingInterval = adapter.config.pollingInterval >> 0;
     adapter.config.port = adapter.config.port >> 0;
     adapter.config.useCallMonitor = !!(adapter.config.useCallMonitor >> 0);
     adapter.config.useDevices = !!(adapter.config.useDevices >> 0);
     adapter.config.usePhonebook = !!(adapter.config.usePhonebook >> 0);
+    if (adapter.config.useMDNS === undefined) adapter.config.useMDNS = true;
 }
 
 
@@ -529,6 +557,7 @@ function main() {
                 if (pollingTimer) clearTimeout(pollingTimer);
                 pollingTimer = setTimeout(updateAll, 2000);
                 callMonitor(adapter, devices, phonebook);
+                runMDNS();
             });
         });
     });
