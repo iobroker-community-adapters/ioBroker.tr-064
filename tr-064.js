@@ -338,30 +338,27 @@ function checkError(cb) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function callGetInfo(path, callback) {
-    if (path['actions'] && path.actions['GetInfo']) {
-        return path.actions.GetInfo(callback);
+    var gi = soef.getProp(path, 'actions.GetInfo');
+    if (typeof gi === 'function') {
+        return gi (callback);
     } else {
         adapter.log.debug('GetInfo not avilale');
     }
-    
     if (callback) callback(new Error('No actions object'));
 }
 
 TR064.prototype.getWLAN = function (callback) {
     //this.getWLANConfiguration.actions.GetInfo(callback);
-    this.getWLANConfiguration.actions.GetInfo(checkError(callback));
     //this.getWLANConfiguration.actions.GetInfo(checkError(callback));
     callGetInfo(this.getWLANConfiguration, checkError(callback));
 };
 
 TR064.prototype.getWLAN5 = function (callback) {
-    this.getWLANConfiguration2.actions.GetInfo(callback);
     //this.getWLANConfiguration2.actions.GetInfo(callback);
     callGetInfo(this.getWLANConfiguration2, callback);
 };
 
 TR064.prototype.getWLANGuest = function (callback) {
-    this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"].actions.GetInfo(callback);
     //this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"].actions.GetInfo(callback);
     callGetInfo(this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"], callback);
 };
