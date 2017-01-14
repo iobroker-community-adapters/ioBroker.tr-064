@@ -116,6 +116,62 @@ function onStateChange (id, state) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function getLastValidProp (obj, propString) {
+    if (!obj) return undefined;
+    var ar = propString.split('.');
+    var len = ar.length;
+    for (var i = 0; i < len; i++) {
+        if (obj[ar[i]] === undefined) return obj;
+        obj = obj[ar[i]];
+    }
+    return obj;
+}
+
+function getLastValidPropEx (obj, propString) {
+    if (!obj) return undefined;
+    var ar = propString.split('.');
+    var len = ar.length;
+    for (var i = 0; i < len; i++) {
+        if (obj[ar[i]] === undefined) {
+            var ret = { obj: {}, invalifName: '', errPath: ''};
+            try { ret = {obj: obj, invalidName: ar[i], errPath: ar.slice(i).join('.')}; }
+            catch (e) {}
+            return ret;
+        }
+        obj = obj[ar[i]];
+    }
+    return { obj: {}, invalifName: '', errPath: ''};
+}
+
+
+function safeCall(root, path, params, callback) {
+    var fn = soef.getProp(root, path);
+    if (!fn) {
+        adapter.log.error('function: ' + path + ' not available');
+        return callback && callback(-1);
+    }
+    fn (params, callback);
+}
+
+function safeFunction(root, path, log) {
+    var fn = soef.getProp(root, path);
+    if (typeof fn === 'function') return fn;
+    if (log) {
+        var err = getLastValidPropEx(root, path);
+        if (typeof log !== 'function') log = adapter.log.debug;
+        log(err.errPath + ' is not a function (' + path +')');
+    }
+    return function (params, callback) {
+        if (!arguments.length) return;
+        var fn = arguments [arguments.length-1];
+        if (typeof fn === 'function') {
+            fn(new Error(path + ' is not a function'));
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 var TR064 = function (user, password, iporhost, port) {
     tr064Lib.TR064.call(this);
     this.ip = iporhost;
@@ -265,12 +321,12 @@ TR064.prototype.command = function (command, callback) {
 };
 
 TR064.prototype.setWLAN24 = function (val, callback) {
-    this.getWLANConfiguration.actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, callback);
+    safeFunction(this.getWLANConfiguration, "actions.SetEnable", true) ({ 'NewEnable': val ? 1 : 0 }, callback);
 };
 
 TR064.prototype.setWLAN50 = function (val, callback) {
     var self = this;
-    this.getWLANConfiguration2.actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, function (err, result) {
+    safeFunction (this.getWLANConfiguration2, "actions.SetEnable", true) ({ 'NewEnable': val ? 1 : 0 }, function (err, result) {
         if (err) adapter.log.error('getWLANConfiguration2:' + err + ' - ' + JSON.stringify(err));
         //if (!val) setTimeout(function (err, res) {
         //    self.setWLAN(true, function (err, res) {
@@ -280,8 +336,7 @@ TR064.prototype.setWLAN50 = function (val, callback) {
 };
 
 TR064.prototype.setWLANGuest = function (val, callback) {
-    if (!this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"].actions) return callback && callback(-1);
-	this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"].actions.SetEnable({ 'NewEnable': val ? 1 : 0 }, callback);
+    safeFunction(this.sslDevice.services, "urn:dslforum-org:service:WLANConfiguration:3.actions.SetEnable", true) ({ 'NewEnable': val ? 1 : 0 }, callback);
 };
 
 TR064.prototype.setWLAN = function (val, callback) {
@@ -337,39 +392,34 @@ function checkError(cb) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function callGetInfo(path, callback) {
-    if (path['actions'] && path.actions['GetInfo']) {
-        return path.actions.GetInfo(callback);
-    } else {
-        adapter.log.debug('GetInfo not avilale');
-    }
-    
-    if (callback) callback(new Error('No actions object'));
-}
+// function callGetInfo(path, callback) {
+//     var gi = soef.getProp(path, 'actions.GetInfo');
+//     if (typeof gi === 'function') {
+//         return gi (callback);
+//     } else {
+//         adapter.log.debug('GetInfo not avilale');
+//     }
+//     if (callback) callback(new Error('No actions object'));
+// }
 
 TR064.prototype.getWLAN = function (callback) {
-    //this.getWLANConfiguration.actions.GetInfo(callback);
-    this.getWLANConfiguration.actions.GetInfo(checkError(callback));
-    //this.getWLANConfiguration.actions.GetInfo(checkError(callback));
-    callGetInfo(this.getWLANConfiguration, checkError(callback));
+    //callGetInfo(this.getWLANConfiguration, checkError(callback));
+    safeFunction(this.getWLANConfiguration, 'actions.GetInfo', true) (checkError(callback));
 };
 
 TR064.prototype.getWLAN5 = function (callback) {
-    this.getWLANConfiguration2.actions.GetInfo(callback);
-    //this.getWLANConfiguration2.actions.GetInfo(callback);
-    callGetInfo(this.getWLANConfiguration2, callback);
+    //callGetInfo(this.getWLANConfiguration2, callback);
+    safeFunction(this.getWLANConfiguration2, 'actions.GetInfo', true) (callback);
 };
 
 TR064.prototype.getWLANGuest = function (callback) {
-    this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"].actions.GetInfo(callback);
-    //this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"].actions.GetInfo(callback);
-    callGetInfo(this.sslDevice.services["urn:dslforum-org:service:WLANConfiguration:3"], callback);
+    safeFunction(this.sslDevice.services, "urn:dslforum-org:service:WLANConfiguration:3.actions.GetInfo", true) (callback);
 };
-
 
 TR064.prototype.dialNumber = function (number, callback) {
     this.sslDevice.services["urn:dslforum-org:service:X_VoIP:1"].actions["X_AVM-DE_DialNumber"]({ "NewX_AVM-DE_PhoneNumber": number }, callback);
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
