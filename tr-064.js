@@ -311,7 +311,28 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
 };
 
 
+TR064.prototype.dumpServices = function (ar) {
+    var fs = require('fs');
+    var doLog = ar && ar.length >= 1 && ar[1] === 'log';
+    var services = {};
+    for (var service in this.sslDevice.services) {
+        services[service] = {actions: {}};
+        var oService = this.sslDevice.services[service];
+        if (oService.actions) for (var action in oService.actions) {
+            services[service].actions[action] = function () {};
+            if (doLog) adapter.log.debug(service + '.' + action);
+        }
+    }
+    var dump = JSON.stringify(services);
+    fs.writeFileSync(__dirname + '/../../log/tr-64-services.json', dump);
+};
+
 TR064.prototype.command = function (command, callback) {
+    if (command && command.toLowerCase().indexOf('dumpservices') === 0) {
+        this.dumpServices(command.toLowerCase().split('.'));
+        return;
+    }
+    
     var o = JSON.parse(command);
     this.sslDevice.services[o.service].actions[o.action](o.params, function (err, res) {
         if (err || !res) return;
