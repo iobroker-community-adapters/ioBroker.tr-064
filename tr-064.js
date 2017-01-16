@@ -1,9 +1,6 @@
-/*jshint esversion: 6 */
-/*jslint node: true */
 'use strict';
 
-var //utils       = require(__dirname + '/lib/utils'),
-    phonebook   = require(__dirname + '/lib/phonebook'),
+var phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
     soef        = require('soef'),
     util        = require("util"),
@@ -18,9 +15,7 @@ var adapter = soef.Adapter(
     onStateChange,
     main,
     onMessage,
-    {
-        name: 'tr-064'
-    }
+    { name: 'tr-064' }
 );
 
 var CHANNEL_STATES = 'states',
@@ -43,7 +38,6 @@ var states = {
     commandResult:     { name: 'commandResult',     val: "",    common: { write: false }},
     externalIP:        { name: 'externalP',         val: '',    common: { write: false}},
     reboot:            { name: 'reboot',            val: false, common: { min: false, max: true }, native: { func: 'reboot' }  }
-    //bytesTransfered:   { name: 'bytesTransfered', val: 0 },
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,8 +68,6 @@ function onMessage (obj) {
     switch (obj.command) {
         case 'discovery':
             if (!obj.callback) return false;
-            //reply( { error: { message: "fehler..." }});
-            //return;
             if (allDevices.length > 0) {
                 reply(allDevices);
                 return true;
@@ -104,8 +96,6 @@ function onStateChange (id, state) {
     var as = id.split('.');
     if ((as[0] + '.' + as[1] != adapter.namespace) || (as[2] !== CHANNEL_STATES)) return;
     adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
-
-    //var dev = devices.get (id.substr(adapter.namespace.length+1));
     var func = states [as[3]] && states [as[3]].native ? states [as[3]].native.func : null;
 
     if (func && tr064Client[func]) {
@@ -337,8 +327,9 @@ TR064.prototype.command = function (command, callback) {
         this.dumpServices(command.toLowerCase().split('.'));
         return;
     }
-    
-    var o = JSON.parse(command);
+    var o;
+    try { o = JSON.parse(command); }
+    catch(e) { return; };
     this.sslDevice.services[o.service].actions[o.action](o.params, function (err, res) {
         if (err || !res) return;
         adapter.log.info(JSON.stringify(res));
@@ -408,7 +399,6 @@ function _checkError(err, res) {
             errorCounts [code] = new Date().getTime();
         }
     }
-    /* jshint validthis: true */
     this (err, res);
 }
 
@@ -504,13 +494,6 @@ function createConfiguredDevices(callback) {
     adapter.log.debug('createConfiguredDevices');
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
     tr064Client.forEachConfiguredDevice(function(device) {
-        // if (device) {
-        //     dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
-        //     setActive(dev, device.NewActive);
-        // }
-        // if (isLast) {
-        //     devices.update(callback);
-        // }
         if (!device) {
             devices.update(callback);
             return;
@@ -526,13 +509,6 @@ function updateDevices(callback) {
 
     tr064Client.forEachConfiguredDevice(function(device/*, isLast*/) {
         adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device)); // + ', last=' + isLast);
-        // if (device) {
-        //     dev.setChannelEx(device.NewHostName);
-        //     setActive(dev, device.NewActive);
-        // }
-        // if (isLast) {
-        //     devices.update(callback);
-        // }
         if (!device) {
             devices.update(callback);
             return;
