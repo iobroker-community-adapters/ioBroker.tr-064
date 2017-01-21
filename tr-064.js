@@ -50,6 +50,7 @@ String.prototype.normalizeNumber = function () {
 
 function createObjects() {
     for (var i in states) {
+        if (i === 'wlan50' && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
         var st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
@@ -207,17 +208,30 @@ TR064.prototype.init = function (callback) {
             self.hosts = sslDevice.services["urn:dslforum-org:service:Hosts:1"];
             self.getWLANConfiguration = sslDevice.services["urn:dslforum-org:service:WLANConfiguration:1"];
             self.getWLANConfiguration2 = sslDevice.services["urn:dslforum-org:service:WLANConfiguration:2"];
+            self.getWLANConfiguration3 = soef.getProp(sslDevice.services, "urn:dslforum-org:service:WLANConfiguration:3");
             self.reboot = sslDevice.services["urn:dslforum-org:service:DeviceConfig:1"].actions.Reboot;
             self.getConfigFile = sslDevice.services["urn:dslforum-org:service:DeviceConfig:1"].actions['X_AVM-DE_GetConfigFile'];  //in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             //self.WANIPConnection = sslDevice.services["urn:dslforum-org:service:WANIPConnection:1"];
-
+    
+            self.wlan24 = { setEnable: soef.getProp(self.getWLANConfiguration, "actions.SetEnable") };
+            self.wlan50 = { setEnable: soef.getProp(self.getWLANConfiguration2, "actions.SetEnable") };
+            self.wlanGuest = { setEnable: soef.getProp(self.getWLANConfiguration3, "actions.SetEnable") };
+            self.wlan24.getInfo = soef.getProp(self.getWLANConfiguration, "actions.GetInfo");
+            self.wlan50.getInfo = soef.getProp(self.getWLANConfiguration2, "actions.GetInfo");
+            self.wlanGuest.getInfo = soef.getProp(self.getWLANConfiguration3, "actions.GetInfo");
+            if (!self.getWLANConfiguration3 || !self.wlanGuest.getInfo || !self.wlanGuest.setEnable) {
+                self.wlanGuest.setEnable = self.wlan50.setEnable;
+                self.wlanGuest.getInfo = self.wlan50.getInfo;
+                delete self.wlan50;
+            }
+            
+            //urn:dslforum-org:service:WLANConfiguration:3.actions.SetEnable"
             self.getSpecificHostEntry = self.hosts.actions.GetSpecificHostEntry;
             self.getGenericHostEntry = self.hosts.actions.GetGenericHostEntry;
             self.GetSpecificHostEntryExt = self.hosts.actions['X_AVM-DE_GetSpecificHostEntryExt'];
             self.GetChangeCounter = self.hosts.actions['X_AVM-DE_GetChangeCounter'];
             //self.hostsDoUpdate = self.hosts.actions ['X_AVM-DE_HostDoUpdate'];
             //self.hostsCheckUpdate = self.hosts.actions ['X_AVM-DE_HostCheckUpdate'];
-
 
             self.stateVariables = {};
             self.stateVariables.HostNumberOfEntries = self.hosts.stateVariables.HostNumberOfEntries;
@@ -269,26 +283,19 @@ TR064.prototype.forEachHostEntry = function (callback) {
 };
 
 TR064.prototype.forEachConfiguredDevice = function (callback) {
-    var i = 0;
-    var self = this;
+    var i = 0, self = this;
     adapter.log.debug('forEachConfiguredDevice');
 
     function doIt() {
-        if (i >= adapter.config.devices.length) {
-            //callback (null, true); // make sure to call callback also when last device is not successfull
-            callback(null);
-            return;
-        }
+        if (i >= adapter.config.devices.length) return callback && callback(null);
         var dev = adapter.config.devices[i++];
         if (dev.mac && dev.mac !== "") {
             self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
             //self.GetSpecificHostEntryExt({NewMACAddress: dev.mac}, function (err, device) {
-                if (err) adapter.log.error('forEachConfiguredDevice: in GetSpecificHostEntryExt ' + (i-1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
+                if (err) adapter.log.error('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i-1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
                 if (!err && device) {
                     adapter.log.debug('forEachConfiguredDevice: i=' + (i-1) + ' ' + device.NewHostName + ' active=' + device.NewActive);
                     device.NewMACAddress = dev.mac;
-                    // callback (device, i >= adapter.config.devices.length);
-                    // if (i >= adapter.config.devices.length) return;
                     callback (device);
                 }
                 setTimeout(doIt, 0);
@@ -322,6 +329,7 @@ TR064.prototype.dumpServices = function (ar) {
     if (fs) fs.writeFileSync(__dirname + '/../../log/tr-64-services.json', dump);
 };
 
+
 TR064.prototype.command = function (command, callback) {
     if (command && command.toLowerCase().indexOf('dumpservices') === 0) {
         this.dumpServices(command.toLowerCase().split('.'));
@@ -338,12 +346,13 @@ TR064.prototype.command = function (command, callback) {
 };
 
 TR064.prototype.setWLAN24 = function (val, callback) {
-    safeFunction(this.getWLANConfiguration, "actions.SetEnable", true) ({ 'NewEnable': val ? 1 : 0 }, callback);
+    safeFunction(this.wlan24, "setEnable", true) ({ 'NewEnable': val ? 1 : 0 }, callback);
 };
 
 TR064.prototype.setWLAN50 = function (val, callback) {
+    if (!this.wlan50 || !this.wlan50.setEnable) return;
     var self = this;
-    safeFunction (this.getWLANConfiguration2, "actions.SetEnable", true) ({ 'NewEnable': val ? 1 : 0 }, function (err, result) {
+    safeFunction (this.wlan50, "setEnable", true) ({ 'NewEnable': val ? 1 : 0 }, function (err, result) {
         if (err) adapter.log.error('getWLANConfiguration2:' + err + ' - ' + JSON.stringify(err));
         //if (!val) setTimeout(function (err, res) {
         //    self.setWLAN(true, function (err, res) {
@@ -353,7 +362,7 @@ TR064.prototype.setWLAN50 = function (val, callback) {
 };
 
 TR064.prototype.setWLANGuest = function (val, callback) {
-    safeFunction(this.sslDevice.services, "urn:dslforum-org:service:WLANConfiguration:3.actions.SetEnable", true) ({ 'NewEnable': val ? 1 : 0 }, callback);
+    safeFunction(this.wlanGuest, 'setEnable', true) ({ 'NewEnable': val ? 1 : 0 }, callback);
 };
 
 TR064.prototype.setWLAN = function (val, callback) {
@@ -420,16 +429,18 @@ function checkError(cb) {
 
 TR064.prototype.getWLAN = function (callback) {
     //callGetInfo(this.getWLANConfiguration, checkError(callback));
-    safeFunction(this.getWLANConfiguration, 'actions.GetInfo', true) (checkError(callback));
+    //safeFunction(this.getWLANConfiguration, 'actions.GetInfo', true) (checkError(callback));
+    safeFunction(this.wlan24, 'getInfo', true) (checkError(callback));
 };
 
 TR064.prototype.getWLAN5 = function (callback) {
     //callGetInfo(this.getWLANConfiguration2, callback);
-    safeFunction(this.getWLANConfiguration2, 'actions.GetInfo', true) (callback);
+    if (!this.wlan50 || !this.wlan50.getInfo) return;
+    safeFunction(this.wlan50, 'getInfo', true) (callback);
 };
 
 TR064.prototype.getWLANGuest = function (callback) {
-    safeFunction(this.sslDevice.services, "urn:dslforum-org:service:WLANConfiguration:3.actions.GetInfo", true) (callback);
+    safeFunction(this.wlanGuest, "getInfo", true) (callback);
 };
 
 TR064.prototype.dialNumber = function (number, callback) {
@@ -507,8 +518,8 @@ function updateDevices(callback) {
     adapter.log.debug('updateDevices');
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
 
-    tr064Client.forEachConfiguredDevice(function(device/*, isLast*/) {
-        adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device)); // + ', last=' + isLast);
+    tr064Client.forEachConfiguredDevice(function(device) {
+        adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device));
         if (!device) {
             devices.update(callback);
             return;
@@ -616,3 +627,5 @@ function main() {
 
     adapter.subscribeStates('*');
 }
+
+
