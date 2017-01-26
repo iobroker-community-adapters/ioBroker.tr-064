@@ -27,10 +27,13 @@ var ipActive = {};
 
 var states = {
     wps:               { name: "wps",               val: false, common: { min: false, max: true }, native: { func: 'setWPSMode' }},
-    wlan:              { name: "wlan",              val: false, common: { min: false, max: true }, native: { func: 'setWLAN' }},
-    wlan24:            { name: 'wlan24',            val: true,  common: { min: false, max: true }, native: { func: 'setWLAN24' }},
-    wlan50:            { name: 'wlan50',            val: true,  common: { min: false, max: true }, native: { func: 'setWLAN50' }},
-    wlanGuest:         { name: 'wlanGuest',         val: true,  common: { min: false, max: true }, native: { func: 'setWLANGuest' }},
+    wlan:              { name: "wlan",              val: false, common: { min: false, max: true, desc: 'All WLANs' }, native: { func: 'setWLAN' }},
+    wlan24:            { name: 'wlan24',            val: true,  common: { min: false, max: true, desc: '2.4 GHz WLAN' }, native: { func: 'setWLAN24' }},
+    wlan50:            { name: 'wlan50',            val: true,  common: { min: false, max: true, desc: '5.0 GHz WLAN' }, native: { func: 'setWLAN50' }},
+    wlanGuest:         { name: 'wlanGuest',         val: true,  common: { min: false, max: true, desc: 'Guest WLAN' }, native: { func: 'setWLANGuest' }},
+    wlan24Password:    { name: 'wlan24Password',    val: '',    common: { desc: 'Passphrase for 2.4 GHz WLAN' }, native: { func: 'setWLAN24Password' }},
+    wlan50Password:    { name: 'wlan50Password',    val: '',    common: { desc: 'Passphrase for 5.0 GHz WLAN' }, native: { func: 'setWLAN50Password' }},
+    wlanGuestPassword: { name: 'wlanGuestPassword', val: '',    common: { desc: 'Passphrase for Guest WLAN' }, native: { func: 'setWLANGuestPassword' }},
     //dialNumber:        { name: 'dialNumber',        val: "" },
     //stopDialing:       { name: 'stopDialing',       val: "" },
     reconnectInternet: { name: 'reconnectInternet', val: false, common: { min: false, max: true }, native: { func: 'reconnectInternet' }  },
@@ -50,7 +53,7 @@ String.prototype.normalizeNumber = function () {
 
 function createObjects() {
     for (var i in states) {
-        if (i === 'wlan50' && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
+        if (i.indexOf('wlan50') === 0 && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
         var st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
@@ -100,8 +103,10 @@ function onStateChange (id, state) {
     var func = states [as[3]] && states [as[3]].native ? states [as[3]].native.func : null;
 
     if (func && tr064Client[func]) {
-        tr064Client[func] (state.val, function (err, res) {
-        });
+        var ret = tr064Client[func] (state.val, function (err, res) {});
+        if (ret === true) {
+            devices.root.clear(id);
+        }
     }
 }
 
@@ -219,9 +224,17 @@ TR064.prototype.init = function (callback) {
             self.wlan24.getInfo = soef.getProp(self.getWLANConfiguration, "actions.GetInfo");
             self.wlan50.getInfo = soef.getProp(self.getWLANConfiguration2, "actions.GetInfo");
             self.wlanGuest.getInfo = soef.getProp(self.getWLANConfiguration3, "actions.GetInfo");
+            self.wlan24.getSecurityKeys = soef.getProp(self.getWLANConfiguration, "actions.GetSecurityKeys");
+            self.wlan24.setSecurityKeys = soef.getProp(self.getWLANConfiguration, "actions.SetSecurityKeys");
+            self.wlan50.getSecurityKeys = soef.getProp(self.getWLANConfiguration2, "actions.GetSecurityKeys");
+            self.wlan50.setSecurityKeys = soef.getProp(self.getWLANConfiguration2, "actions.SetSecurityKeys");
+            self.wlanGuest.getSecurityKeys = soef.getProp(self.getWLANConfiguration3, "actions.GetSecurityKeys");
+            self.wlanGuest.setSecurityKeys = soef.getProp(self.getWLANConfiguration3, "actions.SetSecurityKeys");
             if (!self.getWLANConfiguration3 || !self.wlanGuest.getInfo || !self.wlanGuest.setEnable) {
                 self.wlanGuest.setEnable = self.wlan50.setEnable;
                 self.wlanGuest.getInfo = self.wlan50.getInfo;
+                self.wlanGuest.getSecurityKeys = self.wlan50.getSecurityKeys;
+                self.wlanGuest.setSecurityKeys = self.wlan50.setSecurityKeys;
                 delete self.wlan50;
             }
             
@@ -376,6 +389,33 @@ TR064.prototype.setWLAN = function (val, callback) {
         });
     });
 };
+
+
+TR064.prototype.setWLANPassword = function(kind, pw, cb) {
+    var self = this;
+    if (!soef.hasProp(self, kind + '.getSecurityKeys')) return cb && cb(-1);
+    self[kind].getSecurityKeys (function(err, ret) {
+        if (err || !ret || ret.NewKeyPassphrase === pw) return cb && cb(err,ret);
+        ret.NewKeyPassphrase = pw;
+        self[kind].setSecurityKeys(ret, function(err,ret) {
+            cb && cb(err, ret);
+        });
+    });
+};
+
+TR064.prototype.setWLAN24Password = function(val) {
+      this.setWLANPassword('wlan24', val);
+      return true;
+};
+TR064.prototype.setWLAN50Password = function(val) {
+    this.setWLANPassword('wlan50', val);
+    return true;
+};
+TR064.prototype.setWLANGuestPassword = function(val) {
+    this.setWLANPassword('wlanGuest', val);
+    return true;
+};
+
 
 TR064.prototype.setWPSMode = function (modeOrOnOff, callback) {
     var mode = modeOrOnOff;
@@ -629,3 +669,4 @@ function main() {
 }
 
 
+//npm install https://github.com/soef/ioBroker.tr-064/tarball/master --production
