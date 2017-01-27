@@ -354,7 +354,7 @@ TR064.prototype.command = function (command, callback) {
     this.sslDevice.services[o.service].actions[o.action](o.params, function (err, res) {
         if (err || !res) return;
         adapter.log.info(JSON.stringify(res));
-        adapter.setState(states.states.name + '.' + states.commandResult.name, JSON.stringify(res), true);
+        adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(res), true);
     });
 };
 
