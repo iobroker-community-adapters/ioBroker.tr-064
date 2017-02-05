@@ -3,7 +3,7 @@
 var phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
     soef        = require('soef'),
-    util        = require("util"),
+    //util        = require("util"),
     tr064Lib    = require("tr-O64");
 
 var tr064Client;
@@ -34,6 +34,9 @@ var states = {
     wlan24Password:    { name: 'wlan24Password',    val: '',    common: { desc: 'Passphrase for 2.4 GHz WLAN' }, native: { func: 'setWLAN24Password' }},
     wlan50Password:    { name: 'wlan50Password',    val: '',    common: { desc: 'Passphrase for 5.0 GHz WLAN' }, native: { func: 'setWLAN50Password' }},
     wlanGuestPassword: { name: 'wlanGuestPassword', val: '',    common: { desc: 'Passphrase for Guest WLAN' }, native: { func: 'setWLANGuestPassword' }},
+    abIndex:           { name: 'abIndex',           val: 0,     common: { }, native: { func: 'setABIndex' }},
+    ab:                { name: 'ab',                val: false, common: { min: false, max: true, desc: 'parameter: index, state' }, native: { func: 'setAB' }},
+    ring:              { name: 'ring',              val: '',    common: { desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'}, native: { func: 'ring' } },
     //dialNumber:        { name: 'dialNumber',        val: "" },
     //stopDialing:       { name: 'stopDialing',       val: "" },
     reconnectInternet: { name: 'reconnectInternet', val: false, common: { min: false, max: true }, native: { func: 'reconnectInternet' }  },
@@ -174,8 +177,11 @@ var TR064 = function (user, password, iporhost, port) {
     this.port = 49000 || port;
     this.user = user;
     this.password = password;
+    this.abIndex = undefined;
 };
+//Object.assign(TR064, tr064Lib.TR064);
 TR064.prototype = Object.create(tr064Lib.TR064.prototype);
+//TR064.prototype.constructor = TR064;
 
 //TR064.prototype.startTransaction = function (callback) {
 //    callback (null, this.sslDevice);
@@ -187,9 +193,45 @@ TR064.prototype = Object.create(tr064Lib.TR064.prototype);
 //    //this.sslDevice.startTransaction(callback);
 //};
 
+TR064.prototype.setABIndex = function(val, cb) {
+    
+    if (val === undefined) val = this.abIndex;
+    if (val === undefined) {
+        val = devices.getval('states.abIdex', 0);
+    }
+    this.abIndex = val >> 0;
+    this.getABInfo({ NewIndex: this.abIndex }, function (err, data) {
+        if (err || !data) return;
+        devStates.setAndUpdate('ab', data.NewEnable);
+    });
+};
+
+TR064.prototype.setAB = function(val) {
+    var idx = this.abIndex;
+    if (typeof val === 'string') {
+        var ar = val.replace(/\s/g, '').split(',');
+        if (ar && ar.length > 1) {
+            val = ar[1];
+            idx = ar[0] >> 0;
+        }
+    }
+    this.setEnableAB({ NewIndex: idx, NewEnable: val ? 1 : 0}, function(err,data) {
+    });
+};
+
 function resetAuth(device) {
     device.logout();
     device._auth.auth = null;
+}
+
+function getFnProp(root, path) {
+    var fn = soef.getProp(root, path);
+    if (typeof fn === 'function') return fn;
+    return function(params) {
+        if (arguments.length === 0) return;
+        var cb = arguments[arguments.length-1];
+        if (typeof cb === 'function') cb(-1, null);
+    }
 }
 
 TR064.prototype.init = function (callback) {
@@ -218,6 +260,19 @@ TR064.prototype.init = function (callback) {
             self.getConfigFile = sslDevice.services["urn:dslforum-org:service:DeviceConfig:1"].actions['X_AVM-DE_GetConfigFile'];  //in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             //self.WANIPConnection = sslDevice.services["urn:dslforum-org:service:WANIPConnection:1"];
     
+            //var o = { "service": "urn:dslforum-org:service:X_AVM-DE_TAM:1", "action": "SetEnable", "params": { "NewIndex": 1, "NewEnable": 1 } };
+            self.getABInfo = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetInfo');
+            self.setEnableAB = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.SetEnable');
+            // self.getABInfo({ NewIndex: 0 }, function(err,data) {
+            //     var i = 1;
+            // });
+            // self.setAB({ NewIndex: 0, NewEnable: 1 }, function(err, data) {
+            //     var i = 1;
+            //     self.getABInfo({ NewIndex: 0 }, function(err,data) {
+            //         var i = 1;
+            //     });
+            // });                                 { "service": "urn:dslforum-org:service:X_AVM-DE_TAM:1", "action": "SetEnable", "params": { "NewIndex": 1, "NewEnable": 0 } }
+            
             self.wlan24 = { setEnable: soef.getProp(self.getWLANConfiguration, "actions.SetEnable") };
             self.wlan50 = { setEnable: soef.getProp(self.getWLANConfiguration2, "actions.SetEnable") };
             self.wlanGuest = { setEnable: soef.getProp(self.getWLANConfiguration3, "actions.SetEnable") };
@@ -237,6 +292,8 @@ TR064.prototype.init = function (callback) {
                 self.wlanGuest.setSecurityKeys = self.wlan50.setSecurityKeys;
                 delete self.wlan50;
             }
+            
+            self.voip = soef.getProp(self.sslDevice, 'services.urn:dslforum-org:service:X_VoIP:1.actions');
             
             //urn:dslforum-org:service:WLANConfiguration:3.actions.SetEnable"
             self.getSpecificHostEntry = self.hosts.actions.GetSpecificHostEntry;
@@ -266,6 +323,22 @@ TR064.prototype.init = function (callback) {
 };
 
 function nop(err,res) {}
+
+TR064.prototype.ring = function (val) {
+    var self = this;
+    var ar = val.split(',');
+    if (!ar || ar.length < 1 || !this.voip) return;
+    
+    safeFunction(this.voip, "X_AVM-DE_DialNumber", true) ({ 'NewX_AVM-DE_PhoneNumber': ar[0] }, function(err,data) {
+        if (ar.length >= 2) {
+            var duration = ar[1].trim() >> 0;
+            setTimeout(function() {
+                safeFunction(self.voip, "X_AVM-DE_DialHangup", true) ({}, function(err,data) {
+                });
+            }, duration * 1000);
+        }
+    });
+};
 
 TR064.prototype.forEachHostEntry = function (callback) {
     var self = this;
@@ -350,9 +423,13 @@ TR064.prototype.command = function (command, callback) {
     }
     var o;
     try { o = JSON.parse(command); }
-    catch(e) { return; };
-    this.sslDevice.services[o.service].actions[o.action](o.params, function (err, res) {
-        if (err || !res) return;
+    catch(e) { return; };   //xxx
+    safeFunction(this.sslDevice.services, o.service + '.actions.' + o.action) (o.params, function (err, res) {
+    //this.sslDevice.services[o.service].actions[o.action](o.params, function (err, res) {
+        if (err || !res) {
+            adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(err||{}), true);
+            return;
+        }
         adapter.log.info(JSON.stringify(res));
         adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(res), true);
     });
@@ -576,11 +653,13 @@ function updateAll(cb) {
         { func: 'getWLAN', state: states.wlan24.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},
         { func: 'getWLAN5', state: states.wlan50.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}},
         { func: 'getWLANGuest', state: states.wlanGuest.name, result: 'NewEnable', format: function(val) { return !!(val >> 0);}}
+        //{ func: 'setABIndex', state: states.abIndex.name, result: 'NewEnable' }
     ];
     var i = 0;
 
     function doIt() {
         if (i >= names.length) {
+            
             devStates.set('reboot', false);
             devices.update(function(err) {
                 if (err && err !== -1) adapter.log.error('updateAll:' + err);
@@ -603,6 +682,7 @@ function updateAll(cb) {
             setTimeout(doIt, 10);
         });
     }
+    tr064Client.setABIndex();
     if (adapter.config.useDevices) updateDevices(doIt);
     else doIt();
 }
@@ -668,5 +748,7 @@ function main() {
     adapter.subscribeStates('*');
 }
 
-
 //npm install https://github.com/soef/ioBroker.tr-064/tarball/master --production
+
+//{ "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
+//{ "service":"urn:dslforum-org:service:X_VoIP:1", "action": "X_AVM-DE_DialNumber", "params": { "NewX_AVM-DE_PhoneNumber": "**612#" }}
