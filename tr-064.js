@@ -2,8 +2,8 @@
 
 var phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
+    calllist    = require(__dirname + '/lib/calllist'),
     soef        = require('soef'),
-    //util        = require("util"),
     tr064Lib    = require("tr-O64");
 
 var tr064Client;
@@ -12,10 +12,19 @@ var debug = false;
 var pollingTimer = null;
 
 var adapter = soef.Adapter(
-    onStateChange,
+    //onStateChange,
     main,
     onMessage,
-    { name: 'tr-064' }
+    { name: 'tr-064',
+      stateChange: function(id, state) {
+          if (state) {
+              if (!state.ack) onStateChange(id, state);
+              else if (adapter.config.useCallList && id.indexOf('callmonitor.lastCall.timestamp') > 0) {
+                  tr064Client.refreshCalllist();
+              }
+          }
+      }
+    }
 );
 
 var CHANNEL_STATES = 'states',
@@ -26,24 +35,22 @@ var allDevices = [];
 var ipActive = {};
 
 var states = {
-    wps:               { name: "wps",               val: false, common: { min: false, max: true }, native: { func: 'setWPSMode' }},
-    wlan:              { name: "wlan",              val: false, common: { min: false, max: true, desc: 'All WLANs' }, native: { func: 'setWLAN' }},
-    wlan24:            { name: 'wlan24',            val: true,  common: { min: false, max: true, desc: '2.4 GHz WLAN' }, native: { func: 'setWLAN24' }},
-    wlan50:            { name: 'wlan50',            val: true,  common: { min: false, max: true, desc: '5.0 GHz WLAN' }, native: { func: 'setWLAN50' }},
-    wlanGuest:         { name: 'wlanGuest',         val: true,  common: { min: false, max: true, desc: 'Guest WLAN' }, native: { func: 'setWLANGuest' }},
-    wlan24Password:    { name: 'wlan24Password',    val: '',    common: { desc: 'Passphrase for 2.4 GHz WLAN' }, native: { func: 'setWLAN24Password' }},
-    wlan50Password:    { name: 'wlan50Password',    val: '',    common: { desc: 'Passphrase for 5.0 GHz WLAN' }, native: { func: 'setWLAN50Password' }},
-    wlanGuestPassword: { name: 'wlanGuestPassword', val: '',    common: { desc: 'Passphrase for Guest WLAN' }, native: { func: 'setWLANGuestPassword' }},
-    abIndex:           { name: 'abIndex',           val: 0,     common: { }, native: { func: 'setABIndex' }},
-    ab:                { name: 'ab',                val: false, common: { min: false, max: true, desc: 'parameter: index, state' }, native: { func: 'setAB' }},
-    ring:              { name: 'ring',              val: '',    common: { desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'}, native: { func: 'ring' } },
-    //dialNumber:        { name: 'dialNumber',        val: "" },
-    //stopDialing:       { name: 'stopDialing',       val: "" },
-    reconnectInternet: { name: 'reconnectInternet', val: false, common: { min: false, max: true }, native: { func: 'reconnectInternet' }  },
-    command:           { name: 'command',           val: "",    native: { func: 'command', desc: commandDesc }},
-    commandResult:     { name: 'commandResult',     val: "",    common: { write: false }},
-    externalIP:        { name: 'externalP',         val: '',    common: { write: false}},
-    reboot:            { name: 'reboot',            val: false, common: { min: false, max: true }, native: { func: 'reboot' }  }
+    wps:               { name: "wps",               val: false,   common: { min: false, max: true }, native: { func: 'setWPSMode' }},
+    wlan:              { name: "wlan",              val: false,   common: { min: false, max: true, desc: 'All WLANs' }, native: { func: 'setWLAN' }},
+    wlan24:            { name: 'wlan24',            val: true,    common: { min: false, max: true, desc: '2.4 GHz WLAN' }, native: { func: 'setWLAN24' }},
+    wlan50:            { name: 'wlan50',            val: true,    common: { min: false, max: true, desc: '5.0 GHz WLAN' }, native: { func: 'setWLAN50' }},
+    wlanGuest:         { name: 'wlanGuest',         val: true,    common: { min: false, max: true, desc: 'Guest WLAN' }, native: { func: 'setWLANGuest' }},
+    wlan24Password:    { name: 'wlan24Password',    val: '',      common: { desc: 'Passphrase for 2.4 GHz WLAN' }, native: { func: 'setWLAN24Password' }},
+    wlan50Password:    { name: 'wlan50Password',    val: '',      common: { desc: 'Passphrase for 5.0 GHz WLAN' }, native: { func: 'setWLAN50Password' }},
+    wlanGuestPassword: { name: 'wlanGuestPassword', val: '',      common: { desc: 'Passphrase for Guest WLAN' }, native: { func: 'setWLANGuestPassword' }},
+    abIndex:           { name: 'abIndex',           val: 0,       common: { }, native: { func: 'setABIndex' }},
+    ab:                { name: 'ab',                val: false,   common: { min: false, max: true, desc: 'parameter: index, state' }, native: { func: 'setAB' }},
+    ring:              { name: 'ring',              val: '**610', common: { desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'}, native: { func: 'ring' } },
+    reconnectInternet: { name: 'reconnectInternet', val: false,   common: { min: false, max: true }, native: { func: 'reconnectInternet' }  },
+    command:           { name: 'command',           val: "",      native: { func: 'command', desc: commandDesc }},
+    commandResult:     { name: 'commandResult',     val: "",      common: { write: false }},
+    externalIP:        { name: 'externalP',         val: '',      common: { write: false}},
+    reboot:            { name: 'reboot',            val: false,   common: { min: false, max: true }, native: { func: 'reboot' }  }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +67,7 @@ function createObjects() {
         var st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
+    devices.root.createNew(calllist.S_HTML_TEMPLATE, systemData.native.callLists.htmlTemplate);
     devices.update();
 }
 
@@ -100,8 +108,18 @@ function onMessage (obj) {
 
 
 function onStateChange (id, state) {
+    if (!soef.ns.is(id)) return;
     var as = id.split('.');
-    if ((as[0] + '.' + as[1] != adapter.namespace) || (as[2] !== CHANNEL_STATES)) return;
+    if (as[2] !== CHANNEL_STATES) {
+        if (as[2] === calllist.ROOT) {
+            if (as[3] === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val;
+            else if (as[4] == 'count') {
+                systemData.native.callLists[as[3]][as[4]] = ~~state.val;
+                systemData.save();
+            }
+        }
+        return;
+    }
     adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
     var func = states [as[3]] && states [as[3]].native ? states [as[3]].native.func : null;
 
@@ -142,23 +160,13 @@ function getLastValidPropEx (obj, propString) {
     return { obj: {}, invalifName: '', errPath: ''};
 }
 
-
-function safeCall(root, path, params, callback) {
-    var fn = soef.getProp(root, path);
-    if (!fn) {
-        adapter.log.error('function: ' + path + ' not available');
-        return callback && callback(-1);
-    }
-    fn (params, callback);
-}
-
 function safeFunction(root, path, log) {
     var fn = soef.getProp(root, path);
     if (typeof fn === 'function') return fn;
     if (log) {
         var err = getLastValidPropEx(root, path);
         if (typeof log !== 'function') log = adapter.log.debug;
-        log(err.errPath + ' is not a function (' + path +')');
+        if (err) log(err.errPath + ' is not a function (' + path +')');
     }
     return function (params, callback) {
         if (!arguments.length) return;
@@ -179,7 +187,7 @@ var TR064 = function (user, password, iporhost, port) {
     this.password = password;
     this.abIndex = undefined;
 };
-//Object.assign(TR064, tr064Lib.TR064);
+
 TR064.prototype = Object.create(tr064Lib.TR064.prototype);
 //TR064.prototype.constructor = TR064;
 
@@ -219,20 +227,50 @@ TR064.prototype.setAB = function(val) {
     });
 };
 
-function resetAuth(device) {
-    device.logout();
-    device._auth.auth = null;
-}
 
-function getFnProp(root, path) {
-    var fn = soef.getProp(root, path);
-    if (typeof fn === 'function') return fn;
-    return function(params) {
-        if (arguments.length === 0) return;
-        var cb = arguments[arguments.length-1];
-        if (typeof cb === 'function') cb(-1, null);
-    }
-}
+var systemData = {
+    type: 'meta',
+    common: { name: 'tr-064' },
+    native: {},
+    load: function () {
+        if (this.native.loaded) return;
+        var self = this;
+        adapter.getObject(adapter.namespace, function(err, obj) {
+            if (!err && obj && obj.native.loaded) {
+                delete obj.acl;
+                Object.assign(self, obj);
+            }
+            if (!self.native.callLists) self.native.callLists = new calllist.callLists();
+            else calllist.callLists.call(self.native.callLists);
+            //self.native.callLists.maxEntries = adapter.config.callListMaxEntries;
+            //self.native.callLists.setHtmlTemplate (devices.getval('calllist.htmlTemplate'));
+            self.native.callLists.htmlTemplate = devices.getval(calllist.S_HTML_TEMPLATE);
+            if (!self.native.loaded) {
+                self.native.loaded = true;
+                self.save();
+            }
+        })
+    },
+    save: function () {
+        adapter.setObject(adapter.namespace, this, function (err, obj) {
+        });
+    },
+    xsave: adapter.setObject.bind(adapter, adapter.namespace, this, function(err, obj) {
+    })
+};
+
+    
+TR064.prototype.refreshCalllist = function () {
+    this.GetCallList (function(err, data) {
+        calllist.refresh (err, data, function(v, n, html) {
+            var id = calllist.ROOT + '.' + n;
+            devices.root.set(id + ".json", JSON.stringify(v.array));
+            devices.root.set(id + ".count", v.count);
+            devices.root.set(id + ".html.html", html);
+        }, devices.root.update.bind(devices.root));
+    });
+};
+
 
 TR064.prototype.init = function (callback) {
     var self = this;
@@ -260,18 +298,11 @@ TR064.prototype.init = function (callback) {
             self.getConfigFile = sslDevice.services["urn:dslforum-org:service:DeviceConfig:1"].actions['X_AVM-DE_GetConfigFile'];  //in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             //self.WANIPConnection = sslDevice.services["urn:dslforum-org:service:WANIPConnection:1"];
     
-            //var o = { "service": "urn:dslforum-org:service:X_AVM-DE_TAM:1", "action": "SetEnable", "params": { "NewIndex": 1, "NewEnable": 1 } };
+            self.GetCallList = safeFunction(sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_OnTel:1.actions.GetCallList');
+            self.refreshCalllist();
+            
             self.getABInfo = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetInfo');
             self.setEnableAB = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.SetEnable');
-            // self.getABInfo({ NewIndex: 0 }, function(err,data) {
-            //     var i = 1;
-            // });
-            // self.setAB({ NewIndex: 0, NewEnable: 1 }, function(err, data) {
-            //     var i = 1;
-            //     self.getABInfo({ NewIndex: 0 }, function(err,data) {
-            //         var i = 1;
-            //     });
-            // });                                 { "service": "urn:dslforum-org:service:X_AVM-DE_TAM:1", "action": "SetEnable", "params": { "NewIndex": 1, "NewEnable": 0 } }
             
             self.wlan24 = { setEnable: soef.getProp(self.getWLANConfiguration, "actions.SetEnable") };
             self.wlan50 = { setEnable: soef.getProp(self.getWLANConfiguration2, "actions.SetEnable") };
@@ -292,13 +323,16 @@ TR064.prototype.init = function (callback) {
                 self.wlanGuest.setSecurityKeys = self.wlan50.setSecurityKeys;
                 delete self.wlan50;
             }
-            
+                                                               
             self.voip = soef.getProp(self.sslDevice, 'services.urn:dslforum-org:service:X_VoIP:1.actions');
             
-            //urn:dslforum-org:service:WLANConfiguration:3.actions.SetEnable"
-            self.getSpecificHostEntry = self.hosts.actions.GetSpecificHostEntry;
-            self.getGenericHostEntry = self.hosts.actions.GetGenericHostEntry;
-            self.GetSpecificHostEntryExt = self.hosts.actions['X_AVM-DE_GetSpecificHostEntryExt'];
+            // self.getSpecificHostEntry = self.hosts.actions.GetSpecificHostEntry;
+            // self.getGenericHostEntry = self.hosts.actions.GetGenericHostEntry;
+            // self.GetSpecificHostEntryExt = self.hosts.actions['X_AVM-DE_GetSpecificHostEntryExt'];
+    
+            self.getSpecificHostEntry = safeFunction(self, 'hosts.actions.GetSpecificHostEntry');
+            self.getGenericHostEntry = safeFunction(self, 'hosts.actions.GetGenericHostEntry');
+            self.GetSpecificHostEntryExt = safeFunction(self, 'hosts.actions.X_AVM-DE_GetSpecificHostEntryExt');
             self.GetChangeCounter = self.hosts.actions['X_AVM-DE_GetChangeCounter'];
             //self.hostsDoUpdate = self.hosts.actions ['X_AVM-DE_HostDoUpdate'];
             //self.hostsCheckUpdate = self.hosts.actions ['X_AVM-DE_HostCheckUpdate'];
@@ -425,7 +459,6 @@ TR064.prototype.command = function (command, callback) {
     try { o = JSON.parse(command); }
     catch(e) { return; };   //xxx
     safeFunction(this.sslDevice.services, o.service + '.actions.' + o.action) (o.params, function (err, res) {
-    //this.sslDevice.services[o.service].actions[o.action](o.params, function (err, res) {
         if (err || !res) {
             adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(err||{}), true);
             return;
@@ -532,26 +565,14 @@ function checkError(cb) {
     return _checkError.bind(cb);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// function callGetInfo(path, callback) {
-//     var gi = soef.getProp(path, 'actions.GetInfo');
-//     if (typeof gi === 'function') {
-//         return gi (callback);
-//     } else {
-//         adapter.log.debug('GetInfo not avilale');
-//     }
-//     if (callback) callback(new Error('No actions object'));
-// }
-
 TR064.prototype.getWLAN = function (callback) {
-    //callGetInfo(this.getWLANConfiguration, checkError(callback));
-    //safeFunction(this.getWLANConfiguration, 'actions.GetInfo', true) (checkError(callback));
     safeFunction(this.wlan24, 'getInfo', true) (checkError(callback));
 };
 
 TR064.prototype.getWLAN5 = function (callback) {
-    //callGetInfo(this.getWLANConfiguration2, callback);
     if (!this.wlan50 || !this.wlan50.getInfo) return;
     safeFunction(this.wlan50, 'getInfo', true) (callback);
 };
@@ -603,8 +624,6 @@ function setActive(dev, val, ip) {
     
     if (ip !== undefined && ipActive[ip] !== val) ipActive[ip] = val;
     if (!dev.set('active', val)) return; // state not changed;
-    //ipActive[ip] = val;
-    //var ts = adapter.formatDate(new Date(), "DD.MM.YYYY - hh:mm:ss");
     var dts = new Date();
     var sts =  dts.toLocaleString();
     var ts = (dts.getTime() / 1000) >> 0;
@@ -717,26 +736,33 @@ function normalizeConfigVars() {
     adapter.config.useDevices = !!(adapter.config.useDevices >> 0);
     adapter.config.usePhonebook = !!(adapter.config.usePhonebook >> 0);
     if (adapter.config.useMDNS === undefined) adapter.config.useMDNS = true;
+    if (adapter.config.callListMaxEntries === undefined) adapter.config.callListMaxEntries = 10;
+    adapter.config.callListMaxEntries = ~~adapter.config.callListMaxEntries;
 }
 
 
 function main() {
-
+    
+    module.exports.adapter = adapter;
     devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_STATES, {common: {name: CHANNEL_STATES, role: 'channel'}, native: {} });
 
     normalizeConfigVars();
+    systemData.load();
     deleteUnusedDevices();
-    setTimeout(createObjects, 2000);
-
+    //setTimeout(createObjects, 2000);
+    
+    calllist.init(adapter, systemData);
+    
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
     tr064Client.init(function (err) {
         if (err) {
             adapter.log.error('main - init:' + err + ' - ' + JSON.stringify(err));
             return;
         }
+        createObjects();
         createConfiguredDevices(function(err) {
-            phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook }, function() {
+            phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook, adapter: adapter }, function() {
                 if (pollingTimer) clearTimeout(pollingTimer);
                 pollingTimer = setTimeout(updateAll, 2000);
                 callMonitor(adapter, devices, phonebook);
@@ -748,7 +774,5 @@ function main() {
     adapter.subscribeStates('*');
 }
 
+//http://192.168.1.1:49000/tr64desc.xml
 //npm install https://github.com/soef/ioBroker.tr-064/tarball/master --production
-
-//{ "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
-//{ "service":"urn:dslforum-org:service:X_VoIP:1", "action": "X_AVM-DE_DialNumber", "params": { "NewX_AVM-DE_PhoneNumber": "**612#" }}
