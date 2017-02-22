@@ -19,6 +19,10 @@
 
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
+        "WiFi Light": {
+            "de": "WiFi Light Einstellungen",
+            "ru": "Пример"
+        },
         "Settings": {
             "de": "Einstellungen",
             "ru": "Settings"
@@ -79,16 +83,37 @@
             "de": "Suche Geräte",
             "en": "Looking for devices"
         },
-        "TR 064 adapter settings": {"de": "TR 064", "ru": "Пример"},
-        "IP":                    {"en": "IP", "de": "IP", "ru": "Тест 1"},
-        "User":                    {"en": "User", "de": "Benutzer", "ru": "Тест 2"},
-        "Password": { "en": "Password", "de": "Passswort", "ru": "Тест 2" },
-        "Polling interval (sec)": { "en": "Polling interval (sec)", "de": "Polling interval (Sekunden)", "ru": "Тест 2"},
-        "Use MDNS": {
-            "de": "Multicast-DNS verwenden",
-            "en": "Use Multicast-DNS"
+        "TR 064 adapter settings": {
+            "de": "TR 064 Einstellungen"
+        },
+        "IP": {
+            "en": "IP",
+            "de": "IP"
+        },
+        "User": {
+            "en": "User",
+            "de": "Benutzer"
+        },
+        "Password": {
+            "en": "Password",
+            "de": "Passswort"
+        },
+        "Polling interval (sec)": {
+            "en": "Polling interval (sec)",
+            "de": "Poll Intervall (Sek.)"
+        },
+        "Use CallList": {
+            "de": "Anrufliste aktivieren",
+            "en": "Use Calllist"
+        },
+        "Use CallMonitor": {
+            "de": "CallMonitor aktivieren",
+            "en": "Use CallMonitor"
+        },
+        "max Entries": {
+            "de": "max. Anzahl",
+            "en": "max Entries"
         }
-
     };
 
 
@@ -110,6 +135,7 @@
         });
 
         if (settings.useMDNS === undefined) settings.useMDNS = true;
+        if (settings.callListMaxEntries === undefined) settings.callListMaxEntries = 10;
         if (!settings) return;
         changed = true;
         g_onChange = onChange;
@@ -195,11 +221,11 @@
                         arr.forEach(function (element, index, array) {
                             var s = JSON.stringify(element).replace(/"/g, '\'');
                             popup = popup + '<tr href="#" onclick=' +
-                                    '"addToTable(\'devices\',' + s + ',null,false);' +
-                                    '$(\'#dialog-search\').dialog(\'close\');' +
-                                    'changed=true;' +
-                                    'g_onChange(true);' +
-                                    '"><td>' + element.name + '</td><td>' + element.ip + '</td><td>' + element.mac + '</td></tr>';
+                                '"addToTable(\'devices\',' + s + ',null,false);' +
+                                '$(\'#dialog-search\').dialog(\'close\');' +
+                                'changed=true;' +
+                                'g_onChange(true);' +
+                                '"><td>' + element.name + '</td><td>' + element.ip + '</td><td>' + element.mac + '</td></tr>';
 
                         });
                         popup += '</table>';
@@ -281,33 +307,41 @@
 
     <!--<h1 class="translate">Interval</h1>-->
     <div id="settings">
-        <table>
+        <table style="white-space:nowrap">
             <tr>
+
                 <td class="translate">IP</td><td width=5></td><td><input type="text" id="ip" class="value"></td>
-                <td width=60></td>
+                <td width=20></td>
                 <td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td>
+                <td width=20></td>
+                <td class="translate">Use CallList</td><td><input id="useCallList" class="value" type="checkbox"></td>
+
             </tr>
             <tr>
                 <td class="translate">User</td><td width=5><td><input type="text" id="user" class="value"></td>
-                <td width=60></td>
+                <td width=20></td>
                 <td class="translate">Watch devices</td><td><input id="useDevices" class="value" type="checkbox"></td>
+                <td width=20></td>
+                <td class="translate">max Entries</td><td><input id="callListMaxEntries" class="value" type="value" style="width: 50px;"></td>
             </tr>
             <tr>
                 <td class="translate">Password</td><td width=5><td><input type="password" id="password" value="true" class="value"></td>
-                <td width=60></td>
+                <td width=20></td>
                 <td class="translate">Use phonebook</td><td><input id="usePhonebook" class="value" type="checkbox"></td>
             </tr>
             <tr>
                 <td class="translate">Polling interval (sec)</td><td width=5><td><input type="text" id="pollingInterval" class="value"></td>
-                <td width=60></td>
+                <td width=20></td>
                 <td class="translate">Use MDNS</td><td><input id="useMDNS" class="value" type="checkbox"></td>
             </tr>
 
             <!--tr><td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td></tr>
             <tr><td class="translate">Watch devices</td><td><input id="useDevices" class="value" type="checkbox"></td></tr>
             <tr><td class="translate">Use phonebook</td><td><input id="usePhonebook" class="value" type="checkbox"></td></tr-->
-            <tr><td><button id="find"><span class="translate">Find a device</span></button></td><tr>
+
+            <!--tr><td><button id="find"><span class="translate">Find a device</span></button></td><tr-->
         </table>
+        <tr><td><button id="find"><span class="translate">Find a device</span></button></td><tr>
     </div>
     <!--table>
         <td><button id="find"><span class="translate">Find a device</span></button></td>
