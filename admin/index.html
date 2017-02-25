@@ -1,129 +1,76 @@
 <html>
-
+<head>
 
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
-<link rel="stylesheet" type="text/css" href="../../lib/css/jqGrid/ui.jqgrid-4.5.4.css"/>
 <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
 <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
-<script type="text/javascript" src="../../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
-<script type="text/javascript" src="../../lib/js/jqGrid/grid.locale-all.js"></script>
 
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
-
+<script type="text/javascript" src="words.js"></script>
 
 <!-- you have to define 2 functions in the global scope: -->
 <script type="text/javascript">
-
-    // Dictionary (systemDictionary is global variable from adapter-settings.js)
-    systemDictionary = {
-        "WiFi Light": {
-            "de": "WiFi Light Einstellungen",
-            "ru": "Пример"
-        },
-        "Settings": {
-            "de": "Einstellungen",
-            "ru": "Settings"
-        },
-        "on save adapter restarts with new config immediately": {
-            "de": "Beim Speichern der Einstellungen wird der Adapter automatisch neu gestartet.",
-            "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
-        },
-        "devices": {
-            "de": "Geräte-liste",
-            "en": "Dives list"
-        },
-        "AddDevice": {
-            "de": "Zum Hinzufügen +-Button betätigen",
-            "en": "Add #-Button to add device"
-        },
-        "name": {
-            "de": "Bezeichnung",
-            "en": "Name"
-        },
-        "ip": {
-            "de": "IP",
-            "en": "IP"
-        },
-        "type": {
-            "de": "Typ",
-            "en": "Type"
-        },
-        "port": {
-            "de": "Port",
-            "en": "Port"
-        },
-        "pollIntervall": {
-            "de": "Pollintervall",
-            "en": "Poll Intervall"
-        },
-        "Find a device": {
-            "de": "Gerät suchen",
-            "en": "Find a device"
-        },
-        "Cannot find any device": {
-            "de": "Kein neues Gerät gefunden",
-            "en": "Cannot find new devices"
-        },
-        "Please wait, looking for devices...": {
-            "de": "Bitte warten...",
-            "en": "Please wait..."
-        },
-        "Enable adapter first": {
-            "de": "Adapter TR-064 ist nicht gestartet, bitte starten bzw. aktivieren!",
-            "en": "Enable adapter first"
-        },
-        "Select a device": {
-            "de": "Geräte auswählen",
-            "en": "Select a device"
-        },
-        "looking for device": {
-            "de": "Suche Geräte",
-            "en": "Looking for devices"
-        },
-        "TR 064 adapter settings": {
-            "de": "TR 064 Einstellungen"
-        },
-        "IP": {
-            "en": "IP",
-            "de": "IP"
-        },
-        "User": {
-            "en": "User",
-            "de": "Benutzer"
-        },
-        "Password": {
-            "en": "Password",
-            "de": "Passswort"
-        },
-        "Polling interval (sec)": {
-            "en": "Polling interval (sec)",
-            "de": "Poll Intervall (Sek.)"
-        },
-        "Use CallList": {
-            "de": "Anrufliste aktivieren",
-            "en": "Use Calllist"
-        },
-        "Use CallMonitor": {
-            "de": "CallMonitor aktivieren",
-            "en": "Use CallMonitor"
-        },
-        "max Entries": {
-            "de": "max. Anzahl",
-            "en": "max Entries"
-        }
-    };
-
-
     var devices = [];
     var active = false;
-    var g_onChange;
+    var gOnChange;
 
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
-        $("#dialog-search").dialog({
+        $('#find').button().click(function () {
+            if (!active) {
+                showMessage(_('Enable adapter first'), _('Warning'), 'info');
+                return;
+            }
+            var $dialog = $('#dialog-search');
+            $dialog.html(_('Please wait, looking for devices...'));
+            $dialog.dialog('option', 'title', _('looking for device'));
+            $dialog.dialog('open');
+
+            sendTo('tr-064.' + instance, 'discovery', 5000, function (result) {
+                try {
+                    var arr = JSON.parse(result);
+                    if (arr.error) {
+                        showMessage(arr.error.message, 'Error', 'info');
+                        $dialog.dialog('close');
+                        return;
+                    }
+                    var popup;
+                    if (!arr.length) {
+                        popup = '<table class="msgTable"><tr><td>' + _('Cannot find any device') + '</span></td></tr></table>';
+                    } else {
+                        $dialog.dialog('option', 'title', _("Select a device"));
+                        popup = '<table class="hoverTable"><tr><th>' + _('Name') + '</th><th>' + _('IP') + '</th><th>' + _('MAC address') + '</th></tr>';
+                        arr.forEach(function (element /* , index, array */) {
+                            popup += '<tr class="add-device" ' +
+                                'data-mac="' + (element.mac || '') + '" ' +
+                                'data-ip="' + (element.ip || '').replace(/"/g, '\"') + '" ' +
+                                'data-name="' + (element.name || '').replace(/"/g, '\"') + '">' +
+                                '<td>' + element.name + '</td>' +
+                                '<td>' + element.ip + '</td>' +
+                                '<td>' + element.mac + '</td>' +
+                                '</tr>';
+                        });
+                        popup += '</table>';
+                    }
+                    $dialog.html(popup);
+                    $('.add-device').click(function () {
+                        var mac = $(this).data('mac');
+                        var ip = $(this).data('ip');
+                        var name = $(this).data('name');
+                        devices = table2values('values');
+                        devices.push({mac: mac, ip: ip, name: name});
+                        values2table('values', devices, gOnChange);
+                    });
+                } catch (e) {
+                    alert(_('error finding a device'));
+                }
+            });
+        });
+        
+        $('#dialog-search').dialog({
             autoOpen: false,
             modal: true,
             width: 600,
@@ -137,112 +84,48 @@
         if (settings.useMDNS === undefined) settings.useMDNS = true;
         if (settings.callListMaxEntries === undefined) settings.callListMaxEntries = 10;
         if (!settings) return;
-        changed = true;
-        g_onChange = onChange;
+        gOnChange = onChange;
 
         for (var key in settings) {
-            // example: select elements with id=key and class=value and insert value
-            if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                $('#' + key + '.value').prop('checked', settings[key]).change(function() {
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).change(function() {
                     if ($('#auth').prop('checked')) {
                         $('#secure').prop('checked', true);
                     }
                     onChange();
-                    showHideSettings();
                 });
             } else {
-                $('#' + key + '.value').val(settings[key]).change(function() {
+                $value.val(settings[key]).change(function() {
                     onChange();
                 }).keyup(function() {
                     onChange();
                 });
             }
         }
-        // Set default language
-        if (!settings.language) {
-            settings.language = systemLang || 'en';
-            $('#language').val(settings.language).trigger('change');
-        }
 
-        devices = settings.devices; // || [ {name: '', ip: "", mac: ""} ];
-        editTable({
-            tabId: 'devices',
-            cols:   [{name: 'name', width: '50'}, {name: 'ip', width: 50},  {name: 'mac', with: '50'}],
-            values: devices,
-            top:    400,
-            title:  'Devices'
-        });
-        changed = true;
+        devices = settings.devices;
+        values2table('values', devices, onChange);
         onChange(false);
     }
 
     function save(callback) {
         var obj = {};
-        changed = true;
+
         $('.value').each(function () {
             var $this = $(this);
-            if ($this.attr('type') == 'checkbox') {
+            if ($this.attr('type') === 'checkbox') {
                 obj[$this.attr('id')] = $this.prop('checked');
             } else {
                 obj[$this.attr('id')] = $this.val();
             }
         });
 
-        obj.devices = getTableResult('devices', ['name', 'ip', 'mac']);
-        changed = true;
+        obj.devices = table2values('values');
         callback(obj);
     }
 
-    $(document).ready(function () {
-
-        $('#find').button().click(function () {
-            if (!active) {
-                showMessage(_(translateWord('Enable adapter first')), 'Warning', 'info');
-                return;
-            }
-
-            $("#dialog-search").html(translateWord('Please wait, looking for devices...'));
-            $("#dialog-search").dialog('option', 'title', translateWord("looking for device"));
-            $("#dialog-search").dialog("open");
-
-            sendTo('tr-064.' + instance, 'discovery', 5000, function (result) {
-                try {
-                    var arr = JSON.parse(result);
-                    if (arr.error) {
-                        showMessage(arr.error.message, 'Error', 'info');
-                        $("#dialog-search").dialog('close');
-                        return;
-                    }
-                    if (!arr.length) {
-                        var popup = '<table class="msgTable"><tr><td>' + translateWord('Cannot find any device') + '</span></td></tr></table>';
-                    } else {
-                        $("#dialog-search").dialog('option', 'title', translateWord("Select a device"));
-                        var popup = '<table class="hoverTable"><tr><th>Name</th><th>IP</th><th>MAC address</th></tr>';
-                        arr.forEach(function (element, index, array) {
-                            var s = JSON.stringify(element).replace(/"/g, '\'');
-                            popup = popup + '<tr href="#" onclick=' +
-                                '"addToTable(\'devices\',' + s + ',null,false);' +
-                                '$(\'#dialog-search\').dialog(\'close\');' +
-                                'changed=true;' +
-                                'g_onChange(true);' +
-                                '"><td>' + element.name + '</td><td>' + element.ip + '</td><td>' + element.mac + '</td></tr>';
-
-                        });
-                        popup += '</table>';
-                    }
-                    $("#dialog-search").html(popup);
-                } catch (e) {
-                    alert("error finding a device");
-                }
-            });
-        });
-    });
-
-
-
 </script>
-
-
 <style>
     h1 {
         font-size: 11px;
@@ -296,62 +179,74 @@
     }
 
 </style>
-
-
+</head>
+<body>
 <div id="adapter-container" style="padding-left: 6px; padding-right: 0px; width: 97%;">
 
     <table>
-        <td><img src="tr-064.png" height="48" width="48" /></td>
-        <td style="padding-top: 20px;padding-left: 10px"><h3 class="translate">TR-064 adapter settings</h3></td>
+        <tr><td><img src="tr-064.png" height="48" width="48" /></td>
+        <td style="padding-top: 20px;padding-left: 10px"><h3 class="translate">TR-064 adapter settings</h3></td></tr>
     </table>
 
     <!--<h1 class="translate">Interval</h1>-->
     <div id="settings">
         <table style="white-space:nowrap">
             <tr>
-
-                <td class="translate">IP</td><td width=5></td><td><input type="text" id="ip" class="value"></td>
+                <td><label class="translate" for="ip">IP</label></td><td class="admin-icon"></td><td width=5></td><td><input type="text" id="ip" class="value"></td>
                 <td width=20></td>
-                <td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td>
+                <td><label class="translate" for="useCallMonitor">Use CallMonitor</label></td><td class="admin-icon"></td><td><input id="useCallMonitor" class="value" type="checkbox"></td>
                 <td width=20></td>
-                <td class="translate">Use CallList</td><td><input id="useCallList" class="value" type="checkbox"></td>
-
+                <td><label class="translate" for="useCallList">Use CallList</label></td><td class="admin-icon"></td><td><input id="useCallList" class="value" type="checkbox"></td>
             </tr>
             <tr>
-                <td class="translate">User</td><td width=5><td><input type="text" id="user" class="value"></td>
+                <td><label class="translate" for="user">User</label></td><td class="admin-icon"></td><td width=5><td><input type="text" id="user" class="value"></td>
                 <td width=20></td>
-                <td class="translate">Watch devices</td><td><input id="useDevices" class="value" type="checkbox"></td>
+                <td><label class="translate" for="useDevices">Watch devices</label></td><td class="admin-icon"></td><td><input id="useDevices" class="value" type="checkbox"></td>
                 <td width=20></td>
-                <td class="translate">max Entries</td><td><input id="callListMaxEntries" class="value" type="value" style="width: 50px;"></td>
+                <td><label class="translate" for="callListMaxEntries">max Entries</label></td><td class="admin-icon"></td><td><input id="callListMaxEntries" class="value" type="number" style="width: 50px;"></td>
             </tr>
             <tr>
-                <td class="translate">Password</td><td width=5><td><input type="password" id="password" value="true" class="value"></td>
+                <td><label class="translate" for="password">Password</label></td><td width=5><td class="admin-icon"></td><td><input type="password" id="password" value="true" class="value"></td>
                 <td width=20></td>
-                <td class="translate">Use phonebook</td><td><input id="usePhonebook" class="value" type="checkbox"></td>
+                <td><label class="translate" for="usePhonebook">Use phonebook</label></td><td class="admin-icon"></td><td><input id="usePhonebook" class="value" type="checkbox"></td>
             </tr>
             <tr>
-                <td class="translate">Polling interval (sec)</td><td width=5><td><input type="text" id="pollingInterval" class="value"></td>
+                <td><label class="translate" for="pollingInterval">Polling interval (sec)</label></td><td class="admin-icon"></td><td width=5><td><input type="number" id="pollingInterval" class="value"></td>
                 <td width=20></td>
-                <td class="translate">Use MDNS</td><td><input id="useMDNS" class="value" type="checkbox"></td>
+                <td><label class="translate" for="useMDNS">Use MDNS</label></td><td class="admin-icon"></td><td><input id="useMDNS" class="value" type="checkbox"></td>
             </tr>
 
-            <!--tr><td class="translate">Use CallMonitor</td><td><input id="useCallMonitor" class="value" type="checkbox"></td></tr>
-            <tr><td class="translate">Watch devices</td><td><input id="useDevices" class="value" type="checkbox"></td></tr>
-            <tr><td class="translate">Use phonebook</td><td><input id="usePhonebook" class="value" type="checkbox"></td></tr-->
+            <!--tr><td><label class="translate" for="useCallMonitor">Use CallMonitor</td><td class="admin-icon"></td><td><input id="useCallMonitor" class="value" type="checkbox"></td></tr>
+            <tr><td><label class="translate" for="useDevices">Watch devices</td><td class="admin-icon"></td><td><input id="useDevices" class="value" type="checkbox"></td></tr>
+            <tr><td><label class="translate" for="usePhonebook">Use phonebook</td><td class="admin-icon"></td><td><input id="usePhonebook" class="value" type="checkbox"></td></tr-->
 
-            <!--tr><td><button id="find"><span class="translate">Find a device</span></button></td><tr-->
+            <!--tr><td><button id="find"><span><label class="translate" for="ip">Find a device</span></button></td><tr-->
         </table>
-        <tr><td><button id="find"><span class="translate">Find a device</span></button></td><tr>
+        <button id="find"><span class="translate">Find a device</span></button>
     </div>
     <!--table>
         <td><button id="find"><span class="translate">Find a device</span></button></td>
     </table-->
     <!--div style="padding: 10px"></div-->
 
-    <h1 class="translate">AddDevice</h1>
-    <table id="devices"></table><div id="pager-devices"></div>
-    <div id="dialog-search" title="Select a device"></div>
+    <!--h1 class="translate">AddDevice</h1-->
+    <div id="values" style="width: 100%; height: calc(100% - 230px)">
+        <button class="table-button-add" style="margin-left: 10px; width: 1.5em; height: 1.5em"></button>
+        <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
+            <table class="table-values" style="width: 100%;">
+                <thead>
+                <tr>
+                    <th data-name="_index"   style="width: 40px" class="translate"></th>
+                    <th data-name="name"     style="width: 30%" class="translate">Name</th>
+                    <th data-name="ip"       class="translate">IP Address</th>
+                    <th data-name="mac"      class="translate">MAC Address</th>
+                    <th data-buttons="delete" style="width: 40px"></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
 </div>
 
-
+</body>
 </html>
