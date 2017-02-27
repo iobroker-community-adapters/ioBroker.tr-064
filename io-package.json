@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "title": "TR 064",
     "desc": "TR 064",
     "platform": "Javascript/Node.js",
