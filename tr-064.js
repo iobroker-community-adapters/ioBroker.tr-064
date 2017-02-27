@@ -67,7 +67,7 @@ function createObjects() {
         var st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
-    devices.root.createNew(calllist.S_HTML_TEMPLATE, systemData.native.callLists.htmlTemplate);
+    if (adapter.config.calllists.use) devices.root.createNew(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
     devices.update();
 }
 
