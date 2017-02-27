@@ -19,7 +19,7 @@ var adapter = soef.Adapter(
       stateChange: function (id, state) {
           if (state) {
               if (!state.ack) onStateChange(id, state);
-              else if (adapter.config.useCallList && id.indexOf('callmonitor.lastCall.timestamp') > 0) {
+              else if (adapter.config.calllists.use && id.indexOf('callmonitor.lastCall.timestamp') > 0) {
                   tr064Client.refreshCalllist();
               }
           }
@@ -67,7 +67,7 @@ function createObjects() {
         var st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
-    devices.root.createNew(calllist.S_HTML_TEMPLATE, systemData.native.callLists.htmlTemplate);
+    if (adapter.config.calllists.use) devices.root.createNew(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
     devices.update();
 }
 
@@ -240,11 +240,13 @@ var systemData = {
                 delete obj.acl;
                 Object.assign(self, obj);
             }
+            if (adapter.config.calllists.use) {
             if (!self.native.callLists) self.native.callLists = new calllist.callLists();
             else calllist.callLists.call(self.native.callLists);
             //self.native.callLists.maxEntries = adapter.config.callListMaxEntries;
             //self.native.callLists.setHtmlTemplate (devices.getval('calllist.htmlTemplate'));
             self.native.callLists.htmlTemplate = devices.getval(calllist.S_HTML_TEMPLATE);
+            }
             if (!self.native.loaded) {
                 self.native.loaded = true;
                 self.save();
@@ -261,12 +263,13 @@ var systemData = {
 
     
 TR064.prototype.refreshCalllist = function () {
+    if (!adapter.config.calllists.use) return;
     this.GetCallList (function (err, data) {
-        calllist.refresh (err, data, function (v, n, html) {
+        calllist.refresh (err, data, function(list, n, html) {
             var id = calllist.ROOT + '.' + n;
-            devices.root.set(id + '.json', JSON.stringify(v.array));
-            devices.root.set(id + '.count', v.count);
-            devices.root.set(id + '.html.html', html);
+            list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
+            devices.root.set(id + '.count', list.count);
+            list.cfg.generateHtml && devices.root.set(id + '.html.html', html);
         }, devices.root.update.bind(devices.root));
     });
 };
@@ -363,7 +366,12 @@ TR064.prototype.ring = function (val) {
     var ar = val.split(',');
     if (!ar || ar.length < 1 || !this.voip) return;
     
-    safeFunction(this.voip, 'X_AVM-DE_DialNumber', true) ({ 'NewX_AVM-DE_PhoneNumber': ar[0] }, function (err,data) {
+    // //safeFunction(this.voip, "X_AVM-DE_DialSetConfig", true) ({ 'NewX_AVM-DE_PhoneName': ar[0] }, function(err,data) {
+    // safeFunction(this.voip, "X_AVM-DE_DialGetConfig", true) ({  }, function(err,data) {
+    //     err = err;
+    // });
+    
+    safeFunction(this.voip, 'X_AVM-DE_DialNumber', true) ({'NewX_AVM-DE_PhoneNumber': ar[0]}, function(err,data) {
         if (ar.length >= 2) {
             var duration = ar[1].trim() >> 0;
             setTimeout(function () {
@@ -374,11 +382,29 @@ TR064.prototype.ring = function (val) {
     });
 };
 
+// TR064.prototype.ring = function (val) {
+//     var self = this;
+//     var ar = val.split(',');
+//     if (!ar || ar.length < 1 || !this.voip) return;
+//
+//     safeFunction(this.voip, "X_AVM-DE_DialNumber", true) ({ 'NewX_AVM-DE_PhoneNumber': ar[0] }, function(err,data) {
+//         if (ar.length >= 2) {
+//             var duration = ar[1].trim() >> 0;
+//             setTimeout(function() {
+//                 safeFunction(self.voip, "X_AVM-DE_DialHangup", true) ({}, function(err,data) {
+//                 });
+//             }, duration * 1000);
+//         }
+//     });
+// };
+
+
 TR064.prototype.forEachHostEntry = function (callback) {
     var self = this;
 
     adapter.log.debug('forEachHostEntry');
-    self.hosts.actions.GetHostNumberOfEntries(function (err, obj) {
+    //self.hosts.actions.GetHostNumberOfEntries(function (err, obj) {
+    safeFunction(self, 'hosts.actions.GetHostNumberOfEntries') (function (err, obj) {
         if (err) adapter.log.error('GetHostNumberOfEntries:' + err + ' - ' + JSON.stringify(err));
         if (err || !obj) return;
         var all = obj.NewHostNumberOfEntries >> 0;
@@ -389,7 +415,8 @@ TR064.prototype.forEachHostEntry = function (callback) {
             if (cnt >= all) {
                 return;
             }
-            self.getGenericHostEntry({NewIndex: cnt}, function (err, obj) {
+            //self.getGenericHostEntry({NewIndex: cnt}, function (err, obj) {
+            safeFunction(self, 'getGenericHostEntry') ({NewIndex: cnt}, function (err, obj) {
                 if (err) adapter.log.error('forEachHostEntry: in getGenericHostEntry ' + (cnt) + ':' + err + ' - ' + JSON.stringify(err));
                 if (err || !obj) return;
                 adapter.log.debug('forEachHostEntry cnt=' + cnt + ' ' + obj.NewHostName);
@@ -410,7 +437,8 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
         if (i >= adapter.config.devices.length) return callback && callback(null);
         var dev = adapter.config.devices[i++];
         if (dev.mac && dev.mac !== "") {
-            self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
+            safeFunction(self, 'getSpecificHostEntry') ({NewMACAddress: dev.mac}, function (err, device) {
+            //self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
             //self.GetSpecificHostEntryExt({NewMACAddress: dev.mac}, function (err, device) {
                 if (err) adapter.log.error('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i-1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
                 if (!err && device) {
@@ -656,6 +684,7 @@ function deleteUnusedDevices(callback) {
     });
 }
 
+
 function setActive(dev, val, ip) {
     val = !!(val >> 0);
     
@@ -692,11 +721,11 @@ function updateDevices(callback) {
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
 
     tr064Client.forEachConfiguredDevice(function (device) {
-        adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device));
         if (!device) {
             devices.update(callback);
             return;
         }
+        adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device));
         dev.setChannelEx(device.NewHostName);
         setActive(dev, device.NewActive, device.NewIPAddress);
     });
@@ -767,19 +796,18 @@ function runMDNS () {
 
 
 function normalizeConfigVars() {
+    if (!adapter.config.calllists) adapter.config.calllists = adapter.ioPack.native.calllists;
+    calllist.normalizeConfig (adapter.config.calllists);
+        
     adapter.config.pollingInterval = adapter.config.pollingInterval >> 0;
     adapter.config.port = adapter.config.port >> 0;
     adapter.config.useCallMonitor = !!(adapter.config.useCallMonitor >> 0);
     adapter.config.useDevices = !!(adapter.config.useDevices >> 0);
     adapter.config.usePhonebook = !!(adapter.config.usePhonebook >> 0);
     if (adapter.config.useMDNS === undefined) adapter.config.useMDNS = true;
-    if (adapter.config.callListMaxEntries === undefined) adapter.config.callListMaxEntries = 10;
-    adapter.config.callListMaxEntries = ~~adapter.config.callListMaxEntries;
 }
 
-
 function main() {
-    
     module.exports.adapter = adapter;
     devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_STATES, {common: {name: CHANNEL_STATES, role: 'channel'}, native: {} });
@@ -813,3 +841,4 @@ function main() {
 
 //http://192.168.1.1:49000/tr64desc.xml
 //npm install https://github.com/soef/ioBroker.tr-064/tarball/master --production
+

@@ -5,8 +5,8 @@
     "news": {
       "0.3.0": {
         "en": "use new table for configuration dialog",
-        "de": "Benutze neue Tabelle fГјr Konfigurationsdialog",
-        "ru": "РќРѕРІР°СЏ С‚Р°Р±Р»РёС†Р° РІ РґРёР°Р»РѕРіРµ РЅР°СЃС‚СЂРѕРµРє"
+        "de": "Benutze neue Tabelle fur Konfigurationsdialog",
+        "ru": "Новая таблица в диалоге настроек"
       }
     },
     "title": "TR 064",
@@ -35,9 +35,10 @@
     "useCallMonitor": true,
     "usePhonebook": true,
     "useDevices": true,
-    "useCallList": true,
-    "callListMaxEntries": 10,
-    "devices": []
+    "devices": [],
+    "calllists": {
+      "missed": { "generateJSON": true, "maxEntries": 10 }
+    }
   },
   "objects": [
 
