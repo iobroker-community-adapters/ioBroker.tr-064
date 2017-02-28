@@ -1,18 +1,164 @@
-<html>
+<html xmlns:color="http://www.w3.org/1999/xhtml">
 <head>
 
     <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/jqGrid/ui.jqgrid-4.5.4.css"/>
     <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
     <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+    <script type="text/javascript" src="../../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
+    <script type="text/javascript" src="../../lib/js/jqGrid/grid.locale-all.js"></script>
 
     <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
     <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
-    <script type="text/javascript" src="words.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="../../lib/css/fancytree/ui.fancytree.min.css"/>
+
+
+
+    <script type="text/javascript" src="../../lib/js/jquery.fancytree-all.min.js"></script>
+    <script type="text/javascript" src="../../js/selectID.js"></script>
+
+
 
     <!-- you have to define 2 functions in the global scope: -->
     <script type="text/javascript">
+
+        // Dictionary (systemDictionary is global variable from adapter-settings.js)
+        systemDictionary = {
+            "Settings": {
+                "de": "Einstellungen",
+                "ru": "Settings"
+            },
+            "on save adapter restarts with new config immediately": {
+                "de": "Beim Speichern der Einstellungen wird der Adapter automatisch neu gestartet.",
+                "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
+            },
+            "devices": {
+                "de": "Geräte-liste",
+                "en": "Dives list"
+            },
+            "AddDevice": {
+                "de": "Zum manuellen Hinzufügen +-Button unten betätigen",
+                "en": "To add a divice manually, press +-Button"
+            },
+            "name": {
+                "de": "Bezeichnung",
+                "en": "Name"
+            },
+            "ip": {
+                "de": "IP",
+                "en": "IP"
+            },
+            "pollIntervall": {
+                "de": "Pollintervall",
+                "en": "Poll Intervall"
+            },
+            "Find a device": {
+                "de": "Gerät suchen",
+                "en": "Find a device"
+            },
+            "Cannot find any device": {
+                "de": "Kein neues Gerät gefunden",
+                "en": "Cannot find new devices"
+            },
+            "Please wait, looking for devices...": {
+                "de": "Bitte warten...",
+                "en": "Please wait..."
+            },
+            "Enable adapter first": {
+                "de": "Adapter TR-064 ist nicht gestartet, bitte starten bzw. aktivieren!",
+                "en": "Enable adapter first"
+            },
+            "Select a device": {
+                "de": "Geräte auswählen",
+                "en": "Select a device"
+            },
+            "looking for device": {
+                "de": "Suche Geräte",
+                "en": "Looking for devices"
+            },
+            "TR 064 adapter settings": {
+                "de": "TR 064 Einstellungen"
+            },
+            "IP": {
+                "en": "IP",
+                "de": "IP"
+            },
+            "User": {
+                "en": "User",
+                "de": "Benutzer"
+            },
+            "Password": {
+                "en": "Password",
+                "de": "Passswort"
+            },
+            "Polling interval (sec)": {
+                "en": "Polling interval (sec)",
+                "de": "Poll Intervall (Sek.)"
+            },
+            "Use CallList": {
+                "de": "Anrufliste aktivieren",
+                "en": "Use Calllist"
+            },
+            "Use CallMonitor": {
+                "de": "Anrufmonitor aktivieren",
+                "en": "Use CallMonitor"
+            },
+            "max Entries": {
+                "de": "Maximale Anzahl",
+                "en": "max Entries"
+            },
+            "Calllists": {
+                "de": "Anruflisten",
+                "en": "Calllits"
+            },
+            "Devices": {
+                "de": "Geräte",
+                "en": "Devices"
+            },
+            "Generate JSON": {
+                "de": "JSON",
+                "en": "JSON"
+            },
+            "Generate HTML": {
+                "de": "HTML",
+                "en": "HTML"
+            },
+            "All calls": {
+                "de": "Liste für alle Anrufe",
+                "en": "List for all calls"
+            },
+            "Outbound": {
+                "de": "Liste für ausgehende Anrufe",
+                "en": "List for outbound calls"
+            },
+            "Inbound": {
+                "de": "Liste für eingehende Anrufe",
+                "en": "List for inbound calls"
+            },
+            "Missed calls": {
+                "de": "Liste für entgangene Anrufe",
+                "en": "List for missed calls"
+            },
+            "Use MDNS": {
+                "de": "Verwende MDNS zum triggern der Aktuallisierung",
+                "en": "Use MDNS to trigger device list refresh"
+            },
+            "Watch devices":  {
+                "de": "Prüfe angemeldete Geräte (Anwesenheit)",
+                "en": "Watch connected devices (Presence)"
+            },
+            "Use phonebook": {
+                "de": "Verwende Telefonbuch (Namensauflösung)",
+                "eng": "Use phonebook (name resolution)"
+            }
+
+        };
+
+
         var devices = [];
         var active = false;
         var g_onChange;
@@ -20,66 +166,14 @@
 
         // the function loadSettings has to exist ...
         function load(settings, onChange) {
-            g_onChange = onChange;
-            $('#find').button().click(function () {
-                if (!active) {
-                    showMessage(_('Enable adapter first'), _('Warning'), 'info');
-                    return;
-                }
-
-                var $dialog = $('#dialog-search');
-                $dialog.html(_('Please wait, looking for devices...'));
-                $dialog.dialog('option', 'title', _('looking for device'));
-                $dialog.dialog('open');
-
-                sendTo('tr-064.' + instance, 'discovery', 5000, function (result) {
-                    try {
-                        var arr = JSON.parse(result);
-                        if (arr.error) {
-                            showMessage(arr.error.message, 'Error', 'info');
-                            $dialog.dialog('close');
-                            return;
-                        }
-                        var popup;
-                        if (!arr.length) {
-                            popup = '<table class="msgTable"><tr><td>' + _('Cannot find any device') + '</span></td></tr></table>';
-                        } else {
-                            $dialog.dialog('option', 'title', _("Select a device"));
-                            popup = '<table class="hoverTable"><tr><th>' + _('Name') + '</th><th>' + _('IP') + '</th><th>' + _('MAC address') + '</th></tr>';
-                            arr.forEach(function (element /* , index, array */) {
-                                popup += '<tr class="add-device" ' +
-                                    'data-mac="' + (element.mac || '') + '" ' +
-                                    'data-ip="' + (element.ip || '').replace(/"/g, '\"') + '" ' +
-                                    'data-name="' + (element.name || '').replace(/"/g, '\"') + '">' +
-                                    '<td>' + element.name + '</td>' +
-                                    '<td>' + element.ip + '</td>' +
-                                    '<td>' + element.mac + '</td>' +
-                                    '</tr>';
-                            });
-                            popup += '</table>';
-                        }
-                        $dialog.html(popup);
-                        $('.add-device').click(function () {
-                            var mac = $(this).data('mac');
-                            var ip = $(this).data('ip');
-                            var name = $(this).data('name');
-                            devices = table2values('values');
-                            devices.push({mac: mac, ip: ip, name: name});
-                            values2table('values', devices, g_onChange);
-                            g_onChange(true);
-                        });
-                    } catch (e) {
-                        alert(_('error finding a device'));
-                    }
-                });
-            });
-
-            $('#dialog-search').dialog({
+            $("#dialog-search").dialog({
                 autoOpen: false,
                 modal: true,
                 width: 600,
                 height: 300
             });
+
+            //xyz();
 
             socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
                 active = /*common.enabled ||*/ (state && state.val);
@@ -87,8 +181,14 @@
 
             if (!settings) return;
             if (settings.useMDNS === undefined) settings.useMDNS = true;
+            //if (settings.callListMaxEntries === undefined) settings.callListMaxEntries = 10;
             if (!settings.calllists) settings.calllists = { };
-            if (!settings.calllists.missed) settings.calllists.missed = { generateJSON: true, maxEntries: 10};
+            if (!settings.calllists.missed) {
+                settings.calllists.missed = { generateJSON: true, maxEntries: 10};
+//            delete settings.useCallList;
+//            delete settings.useCallListMaxEntries;
+//            delete settings.callListMaxEntries;
+            }
             if (!settings.calllists.all) settings.calllists.all = { generateJSON: false, maxEntries: 10};
             if (!settings.calllists.inbound) settings.calllists.inbound = { generateJSON: false, maxEntries: 10};
             if (!settings.calllists.outbound) settings.calllists.outbound = { generateJSON: false, maxEntries: 10};
@@ -149,15 +249,25 @@
             }
 
             devices = settings.devices; // || [ {name: '', ip: "", mac: ""} ];
-            values2table('values', devices, onChange);
+            editTable({
+                tabId: 'devices',
+                cols:   [{name: 'name', width: '50'}, {name: 'ip', width: 50},  {name: 'mac', with: '50'}],
+                values: devices,
+                top:    400,
+                title:  'Devices'
+            });
+
+
 
             var $tabs = $('#tabs');
             $tabs.show().tabs({
                 activate:  function (event, ui) {
                     var activePage = '0';
                     if (ui.newPanel.attr('id') === 'tabs-2') {
+                        //updateDevices();
                         activePage = '1';
                     } else if (ui.newPanel.attr('id') === 'tabs-3') {
+                        //updateEnums();
                         activePage = '2';
                     }
                     if (typeof localStorage !== 'undefined') {
@@ -167,12 +277,19 @@
             });
             if (typeof localStorage !== 'undefined' && localStorage['tr-064-adapter'] !== undefined) {
                 $tabs.tabs({active: localStorage['tr-064-adapter']});
+                //if (localStorage['tr-064-adapter'] === '1') updateDevices();
+                //if (localStorage['tr-064-adapter'] === '2') updateEnums();
             }
-            //changed = true;
+
+
+
+            changed = true;
             onChange(false);
         }
 
         function setVal(obj, id, val) {
+            //var id = $this.attr('id');
+            //var ar = id.split('.');
             var ar = id.split(SEP);
             for (var i=0; i<ar.length-1; i++) {
                 if (obj[ar[i]] === undefined) obj[ar[i]] = {};
@@ -181,6 +298,26 @@
             obj[ar[ar.length-1]] = val;
         }
 
+        //    function save(callback) {
+        //        var obj = {};
+        //        changed = true;
+        //        $('.value').each(function () {
+        //            var $this = $(this);
+        //            if ($this.attr('type') == 'checkbox') {
+        //                //obj[$this.attr('id')] = $this.prop('checked');
+        //                setVal(obj, $this.attr('id'), $this.prop('checked'));
+        //            } else {
+        //                //obj[$this.attr('id')] = $this.val();
+        //                //var val = $this.val();
+        //                setVal(obj, $this.attr('id'), $this.val());
+        //            }
+        //        });
+        //
+        //        obj.devices = getTableResult('devices', ['name', 'ip', 'mac']);
+        //        changed = true;
+        //        //callback(obj);
+        //    }
+
         function save(callback) {
             var obj = {};
             changed = true;
@@ -188,6 +325,8 @@
                 var $this = $(this), val;
                 switch ($this.attr('type')) {
                     case 'checkbox':
+                        //obj[$this.attr('id')] = $this.prop('checked');
+                        //setVal(obj, $this.attr('id'), $this.prop('checked'));
                         val = $this.prop('checked');
                         break;
                     case 'number':
@@ -195,16 +334,69 @@
                         val = ~~$this.val();
                         break;
                     default:
+                        //obj[$this.attr('id')] = $this.val();
+                        //var val = $this.val();
+                        //setVal(obj, $this.attr('id'), $this.val());
                         val = $this.val();
                 }
                 setVal(obj, $this.attr('id'), val);
             });
 
-            obj.devices = table2values('values');
+            obj.devices = getTableResult('devices', ['name', 'ip', 'mac']);
+            changed = true;
             callback(obj);
         }
 
+        $(document).ready(function () {
+
+            $('#find').button().click(function () {
+                if (!active) {
+                    showMessage(_(translateWord('Enable adapter first')), 'Warning', 'info');
+                    return;
+                }
+
+                $("#dialog-search").html(translateWord('Please wait, looking for devices...'));
+                $("#dialog-search").dialog('option', 'title', translateWord("looking for device"));
+                $("#dialog-search").dialog("open");
+
+                sendTo('tr-064.' + instance, 'discovery', 5000, function (result) {
+                    try {
+                        var arr = JSON.parse(result);
+                        if (arr.error) {
+                            showMessage(arr.error.message, 'Error', 'info');
+                            $("#dialog-search").dialog('close');
+                            return;
+                        }
+                        if (!arr.length) {
+                            var popup = '<table class="msgTable"><tr><td>' + translateWord('Cannot find any device') + '</span></td></tr></table>';
+                        } else {
+                            $("#dialog-search").dialog('option', 'title', translateWord("Select a device"));
+                            var popup = '<table class="hoverTable"><tr><th>Name</th><th>IP</th><th>MAC address</th></tr>';
+                            arr.forEach(function (element, index, array) {
+                                var s = JSON.stringify(element).replace(/"/g, '\'');
+                                popup = popup + '<tr href="#" onclick=' +
+                                    '"addToTable(\'devices\',' + s + ',null,false);' +
+                                    '$(\'#dialog-search\').dialog(\'close\');' +
+                                    'changed=true;' +
+                                    'g_onChange(true);' +
+                                    '"><td>' + element.name + '</td><td>' + element.ip + '</td><td>' + element.mac + '</td></tr>';
+
+                            });
+                            popup += '</table>';
+                        }
+                        $("#dialog-search").html(popup);
+                    } catch (e) {
+                        alert("error finding a device");
+                    }
+                });
+            });
+        });
+
+
+
     </script>
+
+
     <style>
         h1 {
             font-size: 11px;
@@ -270,6 +462,40 @@
         .hoverTable tr:hover {
             background-color: #ffff99;
         }
+
+        /*
+            .smart-table tr:nth-child(even) {
+                background: #CCC
+            }
+            .smart-table tr:nth-child(odd) {
+                background: #FFF
+            }
+            .smart-name {
+                font-weight: bold;
+            }
+            .smart-table button {
+                float: right;
+                margin-right: 20px;
+            }
+            .smart-changed {
+                background: lightcoral;
+            }
+            @keyframes highlight {
+                0% {
+                    color: #00f900
+                }
+                80% {
+                    color: green
+                }
+                100% {
+                    color: black;
+                }
+            }
+
+            .highlight {
+                animation: highlight 2s;
+            }
+        */
 
         td {
             font-size: 13px;
@@ -342,32 +568,11 @@
 
             </table>
         </div>
-        <div id="tabs-2" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 3px">
-            <!--
+        <div id="tabs-2" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
             <p><button id="find"><span class="translate">Find a device</span></button></p>
             <h1 class="translate">AddDevice</h1>
             <table id="devices"></table><div id="pager-devices"></div>
             <div id="dialog-search" title="Select a device"></div>
-            -->
-            <p><div width=10px></div><button id="find"><span class="translate">Find a device</span></button></p>
-            <div id="values" style="width: 100%; height: calc(100% - 230px)">
-                <button class="table-button-add" style="margin-left: 10px; width: 1.5em; height: 1.5em"></button>
-                <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
-                    <table class="table-values" style="width: 100%;">
-                        <thead>
-                        <tr>
-                            <th data-name="_index"   style="width: 40px" class="translate"></th>
-                            <th data-name="name"     style="width: 30%" class="translate">Name</th>
-                            <th data-name="ip"       class="translate">IP Address</th>
-                            <th data-name="mac"      class="translate">MAC Address</th>
-                            <th data-buttons="delete" style="width: 40px"></th>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-
-
         </div>
         <!--div id="tabs-3" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0"-->
         <div id="tabs-3">
@@ -410,9 +615,7 @@
 
         </div>
     </div>
-    <div id="dialog-search" title="Select a device"></div>
 </div>
-
 </body>
 
 </html>

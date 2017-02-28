@@ -241,11 +241,11 @@ var systemData = {
                 Object.assign(self, obj);
             }
             if (adapter.config.calllists.use) {
-            if (!self.native.callLists) self.native.callLists = new calllist.callLists();
-            else calllist.callLists.call(self.native.callLists);
-            //self.native.callLists.maxEntries = adapter.config.callListMaxEntries;
-            //self.native.callLists.setHtmlTemplate (devices.getval('calllist.htmlTemplate'));
-            self.native.callLists.htmlTemplate = devices.getval(calllist.S_HTML_TEMPLATE);
+                if (!self.native.callLists) self.native.callLists = new calllist.callLists();
+                else calllist.callLists.call(self.native.callLists);
+                //self.native.callLists.maxEntries = adapter.config.callListMaxEntries;
+                //self.native.callLists.setHtmlTemplate (devices.getval('calllist.htmlTemplate'));
+                self.native.callLists.htmlTemplate = devices.getval(calllist.S_HTML_TEMPLATE);
             }
             if (!self.native.loaded) {
                 self.native.loaded = true;

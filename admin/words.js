@@ -9,6 +9,11 @@ systemDictionary = {
         "en": "Devices list",
         "ru": "Список устройств"
     },
+    "Devices": {
+        "de": "Geräte",
+        "en": "Devices",
+        "ru": "Список устройств"
+    },
     "name": {
         "de": "Bezeichnung",
         "en": "Name",
@@ -95,18 +100,16 @@ systemDictionary = {
         "ru": "Список звонков"
     },
     "Use CallMonitor": {
-        "de": "CallMonitor aktivieren",
+        "de": "Anrufmonitor aktivieren",
         "en": "Use CallMonitor",
         "ru": "Монитор звонков"
     },
     "max Entries": {
-        "de": "max. Anzahl",
+        "de": "Maximale Anzahl",
         "en": "max Entries",
         "ru": "макс. кол-во"
     },
     "TR-064 adapter settings":  {"en": "TR-064 adapter settings", "de": "TR-064 adapter settings",  "ru": "Настройки драйвера TR-064"},
-    "Watch devices":            {"en": "Watch devices",           "de": "Watch devices",            "ru": "Мониторить устройства"},
-    "Use phonebook":            {"en": "Use phone book",          "de": "Tel. Liste",               "ru": "Книга номеров"},
     "Use MDNS":                 {"en": "Use multicast DNS",       "de": "Multicast DNS",            "ru": "Multicast DNS"},
     "Name":                     {"en": "Name",                    "de": "Name",                     "ru": "Имя"},
     "IP Address":               {"en": "IP Address",              "de": "IP Adresse",               "ru": "IP адрес"},
@@ -126,5 +129,53 @@ systemDictionary = {
         "de": "mDNS ist nichts anderes als eine Beschreibung, wie Clients verfahren müssen, wenn sie DNS-Anfragen an Multicast-Adressen senden",
         "en": "multicast Domain Name System (mDNS) resolves host names to IP addresses within small networks that do not include a local name server",
         "ru": "позволяет устройству выбрать имя в зоне .local"
+    },
+
+    "Calllists": {
+        "de": "Anruflisten",
+        "en": "Calllits"
+    },
+    "Generate JSON": {
+        "de": "JSON",
+        "en": "JSON"
+    },
+    "Generate HTML": {
+        "de": "HTML",
+        "en": "HTML"
+    },
+    "All calls": {
+        "de": "Liste für alle Anrufe",
+        "en": "List for all calls"
+    },
+    "Outbound": {
+        "de": "Liste für ausgehende Anrufe",
+        "en": "List for outbound calls"
+    },
+    "Inbound": {
+        "de": "Liste für eingehende Anrufe",
+        "en": "List for inbound calls"
+    },
+    "Missed calls": {
+        "de": "Liste für entgangene Anrufe",
+        "en": "List for missed calls"
+    },
+    "Use MDNS": {
+        "de": "Verwende MDNS zum triggern der Aktuallisierung",
+        "en": "Use MDNS to trigger device list refresh"
+    },
+    "Watch devices":  {
+        "de": "Prüfe angemeldete Geräte (Anwesenheit)",
+        "en": "Watch connected devices (Presence)",
+        "ru": "Мониторить устройства"
+    },
+    "Use phonebook": {
+        "de": "Verwende Telefonbuch (Namensauflösung)",
+        "en": "Use phonebook (name resolution)",
+        "ru": "Книга номеров"
+    },
+    "AddDevice": {
+        "de": "Zum manuellen Hinzufügen +-Button unten betätigen",
+        "en": "To add a divice manually, press +-Button"
     }
+    
 };
