@@ -83,6 +83,14 @@ npm install iobroker.tr-064
 ```
 -->
 
+#### pre release versions
+Prerelease versions are available at npm with the tag dev.
+You cann install them from the ioBroker root directory with:
+```
+npm install iobroker.tr-064@dev
+iobroker upload tr-064
+```
+
 ## Changelog
 ### 0.3.1 (2017-02-28)
 * (soef) some bug fixes

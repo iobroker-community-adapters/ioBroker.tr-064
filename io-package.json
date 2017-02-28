@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "news": {
       "0.3.0": {
         "en": "use new table for configuration dialog",
