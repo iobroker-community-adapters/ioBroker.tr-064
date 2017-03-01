@@ -19,6 +19,7 @@ Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
 - reboot Fritz!Box,
 - start WPS process,
 - reconnect Internet
+- external ip address
 
 ### ring (dial a number)
 - When using an internel number (like **610) the ring state will let ring that internal phone.
@@ -34,15 +35,20 @@ You can configure a list of devices to listen to.
 Can be triggert by mDNS. When using MDNS, no polling ist needet and it is faster
 
 ### AB - Anrufbeantworter (answering machine)
-Can be switch on/off
-The state cbIndex can be set to address number of the answerig machine
+Can be switch on/off.
+The state cbIndex can be set, to address # of the answerig machine.
 
-### Callmonitor
+### Call monitor
 The callmonitor will create realtime states for every inbound and outbound call.
-If the phonebook is enabled (default), mumbers will be resolved to Names 
+If the phonebook is enabled (default), numbers will be resolved to Names 
 There ist also a state indicating a ringing phone.
 
-### Calllists
+### Phonebook
+- The phone book, if enabled, will be used to get the name of callers phone number.
+- Further there are three states to resolve a number or a name. If available you will also get the image URL of the contact. 
+e.g.: if you set the state phonebook.number all 3 states, name, number and image will be set to the found contact. Note, searches by name will first compare the complete name, if not found, part of is used.  
+
+### Call lists
 Output formats:
 - json
 - html
@@ -92,6 +98,8 @@ iobroker upload tr-064
 ```
 
 ## Changelog
+### 0.3.3 (2017-03-01)
+* (soef) phonebook functions/states added
 ### 0.3.1 (2017-02-28)
 * (soef) some bug fixes
 * (soef) releasing call lists

@@ -28,7 +28,11 @@ var adapter = soef.Adapter(
 );
 
 var CHANNEL_STATES = 'states',
-    CHANNEL_DEVICES = 'devices';
+    CHANNEL_DEVICES = 'devices',
+    CHANNEL_PHONEBOOK = 'phonebook',
+    CHANNEL_CALLLISTS = 'calllists',
+    CHANNEL_CALLMONITOR = 'callmonitor'
+    ;
 
 var devStates;
 var allDevices = [];
@@ -50,7 +54,13 @@ var states = {
     command:           { name: 'command',           val: "",      native: { func: 'command', desc: commandDesc }},
     commandResult:     { name: 'commandResult',     val: "",      common: { write: false }},
     externalIP:        { name: 'externalP',         val: '',      common: { write: false}},
-    reboot:            { name: 'reboot',            val: false,   common: { min: false, max: true }, native: { func: 'reboot' }  }
+    reboot:            { name: 'reboot',            val: false,   common: { min: false, max: true }, native: { func: 'reboot' }  },
+    
+    pbNumber:          { name: '.'+CHANNEL_PHONEBOOK + '.number', val: '', common: { name: 'Number'} },
+    pbName:            { name: '.'+CHANNEL_PHONEBOOK + '.name', val: '', common: { name: 'Name'} },
+    pbImageUrl:        { name: '.'+CHANNEL_PHONEBOOK + '.image', val: '', common: { name: 'Image URL'} },
+    ringing:           { name: '.'+CHANNEL_CALLMONITOR + '.ringing', val: false, common: { name: 'Ringing'} }
+    
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,14 +71,22 @@ String.prototype.normalizeNumber = function () {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function createObjects() {
+function createObjects(cb) {
+    
+    //devStates = new devices.CDevice(0, '');
+    devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_PHONEBOOK, {common: {name: 'Phone book', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
+    
     for (var i in states) {
         if (i.indexOf('wlan50') === 0 && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
         var st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
     if (adapter.config.calllists.use) devices.root.createNew(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
-    devices.update();
+    devices.update(cb);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,24 +128,59 @@ function onMessage(obj) {
 function onStateChange(id, state) {
     if (!soef.ns.is(id)) return;
     var as = id.split('.');
-    if (as[2] !== CHANNEL_STATES) {
-        if (as[2] === calllist.ROOT) {
-            if (as[3] === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val;
+    if (as.length < 3) return;
+    var cmd = as [3];
+    adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
+    switch(as[2]) {
+        case CHANNEL_STATES:
+            var func = states [cmd] && states [cmd].native ? states [cmd].native.func : null;
+            if (func && tr064Client[func]) {
+                var ret = tr064Client[func] (state.val, function (err, res) {});
+                if (ret === true) {
+                    devices.root.clear(id);
+                }
+            }
+            break;
+        case CHANNEL_CALLLISTS:
+        case calllist.ROOT:
+            if (cmd === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val;
             else if (as[4] === 'count') {
-                systemData.native.callLists[as[3]][as[4]] = ~~state.val;
+                systemData.native.callLists[cmd][as[4]] = ~~state.val;
                 systemData.save();
             }
-        }
-        return;
+            return;
+        case CHANNEL_PHONEBOOK:
+            onPhonebook(cmd, state.val);
+            return;
+        // case CHANNEL_DEVICES:
+        // case CHANNEL_CALLMONITOR:
+        //     return;
+        default:
+            return;
     }
-    adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
-    var func = states [as[3]] && states [as[3]].native ? states [as[3]].native.func : null;
+}
 
-    if (func && tr064Client[func]) {
-        var ret = tr064Client[func] (state.val, function (err, res) {});
-        if (ret === true) {
-            devices.root.clear(id);
-        }
+function setPhonebookStates(v) {
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.number', (v && v.number) ? v.number : '');
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.name', (v && v.name) ? v.name : '');
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.image', (v && v.imageurl) ? v.imageurl : '');
+    devices.update();
+}
+
+function onPhonebook(cmd, val) {
+    if (!adapter.config.usePhonebook) return;
+    var v;
+    switch (cmd) {
+        case 'number':
+            v = phonebook.byNumber(val);
+            setPhonebookStates (v);
+            break;
+        case 'name':
+            v = phonebook.byName(val);
+            setPhonebookState(v);
+            break;
+        case 'command':
+            break;
     }
 }
 
@@ -243,8 +296,6 @@ var systemData = {
             if (adapter.config.calllists.use) {
                 if (!self.native.callLists) self.native.callLists = new calllist.callLists();
                 else calllist.callLists.call(self.native.callLists);
-                //self.native.callLists.maxEntries = adapter.config.callListMaxEntries;
-                //self.native.callLists.setHtmlTemplate (devices.getval('calllist.htmlTemplate'));
                 self.native.callLists.htmlTemplate = devices.getval(calllist.S_HTML_TEMPLATE);
             }
             if (!self.native.loaded) {
@@ -366,11 +417,6 @@ TR064.prototype.ring = function (val) {
     var ar = val.split(',');
     if (!ar || ar.length < 1 || !this.voip) return;
     
-    // //safeFunction(this.voip, "X_AVM-DE_DialSetConfig", true) ({ 'NewX_AVM-DE_PhoneName': ar[0] }, function(err,data) {
-    // safeFunction(this.voip, "X_AVM-DE_DialGetConfig", true) ({  }, function(err,data) {
-    //     err = err;
-    // });
-    
     safeFunction(this.voip, 'X_AVM-DE_DialNumber', true) ({'NewX_AVM-DE_PhoneNumber': ar[0]}, function(err,data) {
         if (ar.length >= 2) {
             var duration = ar[1].trim() >> 0;
@@ -382,22 +428,11 @@ TR064.prototype.ring = function (val) {
     });
 };
 
-// TR064.prototype.ring = function (val) {
-//     var self = this;
-//     var ar = val.split(',');
-//     if (!ar || ar.length < 1 || !this.voip) return;
-//
-//     safeFunction(this.voip, "X_AVM-DE_DialNumber", true) ({ 'NewX_AVM-DE_PhoneNumber': ar[0] }, function(err,data) {
-//         if (ar.length >= 2) {
-//             var duration = ar[1].trim() >> 0;
-//             setTimeout(function() {
-//                 safeFunction(self.voip, "X_AVM-DE_DialHangup", true) ({}, function(err,data) {
-//                 });
-//             }, duration * 1000);
-//         }
-//     });
-// };
-
+TR064.prototype.dialNumber = function (number, callback) {
+    this.sslDevice.services['urn:dslforum-org:service:X_VoIP:1'].actions['X_AVM-DE_DialNumber']({
+        'NewX_AVM-DE_PhoneNumber': number
+    }, callback);
+};
 
 TR064.prototype.forEachHostEntry = function (callback) {
     var self = this;
@@ -644,11 +679,6 @@ TR064.prototype.getWLANGuest = function (callback) {
     safeFunction(this.wlanGuest, 'getInfo', true)(callback);
 };
 
-TR064.prototype.dialNumber = function (number, callback) {
-    this.sslDevice.services['urn:dslforum-org:service:X_VoIP:1'].actions['X_AVM-DE_DialNumber']({
-        'NewX_AVM-DE_PhoneNumber': number
-    }, callback);
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -810,13 +840,12 @@ function normalizeConfigVars() {
 function main() {
     module.exports.adapter = adapter;
     devStates = new devices.CDevice(0, '');
-    devStates.setDevice(CHANNEL_STATES, {common: {name: CHANNEL_STATES, role: 'channel'}, native: {} });
-
+    //devStates.setDevice(CHANNEL_STATES, {common: {name: CHANNEL_STATES, role: 'channel'}, native: {} });
+    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
+    
     normalizeConfigVars();
     systemData.load();
     deleteUnusedDevices();
-    //setTimeout(createObjects, 2000);
-    
     calllist.init(adapter, systemData);
     
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
