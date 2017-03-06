@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "news": {
+      "0.3.7": {
+        "de": "Imageurl für externe Telefonbücer erneut korrigiert",
+        "en": "Fixed imageurl for external phone book again. E.g. google"
+      },
       "0.3.6": {
         "de": "Imageurl für externe Telefonbücer korrigiert",
         "en": "Fixed imageurl for external phone book. E.g. google"

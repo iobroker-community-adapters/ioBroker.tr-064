@@ -98,6 +98,8 @@ iobroker upload tr-064
 ```
 
 ## Changelog
+### 0.3.7 (2017-03-06)
+* (soef) Fixed imageurl for external phone book again. E.g. google
 ### 0.3.6 (2017-03-06)
 * (soef) Fixed imageurl for external phone book. e.g. google
 ### 0.3.5" (2017-03-06)
