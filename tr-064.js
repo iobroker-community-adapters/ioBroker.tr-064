@@ -407,7 +407,8 @@ TR064.prototype.init = function (callback) {
             });
             callback (0);
         });
-    }.bind(this));
+    //}.bind(this));
+    });
 };
 
 function nop(err,res) {}
@@ -687,28 +688,49 @@ function isKnownMac(mac) {
     return !!adapter.config.devices.find(function (v) { return v.mac === mac;} );
 }
 
+// function deleteUnusedDevices(callback) {
+//     var ch = adapter.namespace + '.' + CHANNEL_DEVICES;
+//     adapter.objects.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
+//         if (err || !res) return;
+//         var toDelete = [];
+//         res.rows.forEach(function (o){
+//             if ((!o.value.native || !o.value.native.mac) && o.id.substr(ch.length+1).indexOf('.') < 0) { // old device, without native.mac
+//                 toDelete.push(o.id);
+//             }
+//             if (o.value.native && o.value.native.mac && !isKnownMac(o.value.native.mac)) {
+//                 toDelete.push(o.id);
+//             }
+//         });
+//         toDelete.forEach(function (id) {
+//             adapter.log.debug('deleting ' + id);
+//             res.rows.forEach(function (o) {
+//                 if (o.id.indexOf(id) === 0) {
+//                     devices.remove(o.id.substr(adapter.namespace.length+1));
+//                     adapter.states.delState(o.id, function (err, obj) {
+//                          adapter.objects.delObject(o.id);
+//                     });
+//                 }
+//             });
+//         });
+//     });
+// }
+
 function deleteUnusedDevices(callback) {
     var ch = adapter.namespace + '.' + CHANNEL_DEVICES;
     adapter.objects.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
         if (err || !res) return;
         var toDelete = [];
-        res.rows.forEach(function (o){
-            if ((!o.value.native || !o.value.native.mac) && o.id.substr(ch.length+1).indexOf('.') < 0) { // old device, without native.mac
-                toDelete.push(o.id);
-            }
-            if (o.value.native && o.value.native.mac && !isKnownMac(o.value.native.mac)) {
-                toDelete.push(o.id);
-            }
+        res.rows.forEach (function (o) {
+            var doDelete = ((!o.value.native || !o.value.native.mac) && o.id.substr (ch.length + 1).indexOf ('.') < 0); // old device, without native.mac
+            doDelete = doDelete || (o.value.native && o.value.native.mac && !isKnownMac (o.value.native.mac));
+            // doDelete = doDelete ||  (!adapter.config.devices.find(function(v) {
+            //     return v.mac === o.value.native.mac;
+            // }));
+            if (doDelete) toDelete.push(o.id);
         });
-        toDelete.forEach(function (id) {
-            adapter.log.debug('deleting ' + id);
-            res.rows.forEach(function (o) {
-                if (o.id.indexOf(id) === 0) {
-                    devices.remove(o.id.substr(adapter.namespace.length+1));
-                    adapter.states.delState(o.id, function (err, obj) {
-                         adapter.objects.delObject(o.id);
-                    });
-                }
+        forEachArrayCallback (toDelete, callback, function (id, next) {
+            dcs.del (id, function (err) {
+                next ();
             });
         });
     });
@@ -749,15 +771,25 @@ function createConfiguredDevices(callback) {
 function updateDevices(callback) {
     adapter.log.debug('updateDevices');
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
+    var arr = [];
 
+    
     tr064Client.forEachConfiguredDevice(function (device) {
         if (!device) {
+            if (adapter.config.jsonDeviceList) {
+                var json = JSON.stringify(arr);
+                dev.setChannelEx();
+                dev.set('jsonDeviceList', json);
+            }
             devices.update(callback);
             return;
         }
         adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device));
         dev.setChannelEx(device.NewHostName);
         setActive(dev, device.NewActive, device.NewIPAddress);
+        if (adapter.config.jsonDeviceList) {
+            arr.push( { active: !!device.NewActive, ip: device.NewIPAddress, name: device.NewHostName, mac: device.NewMACAddress } );
+        }
     });
 }
 
@@ -851,7 +883,11 @@ function main() {
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
     tr064Client.init(function (err) {
         if (err) {
-            adapter.log.error('main - init:' + err + ' - ' + JSON.stringify(err));
+            adapter.log.error(err + ' - ' + JSON.stringify(err));
+            adapter.log.error('~');
+            adapter.log.error('~~ Fatal error. Can not connect to your FritzBox.');
+            adapter.log.error('~~ If configuration, networt, IP address, etc. ok, try to restart your FritzBox');
+            adapter.log.error('~');
             return;
         }
         createObjects();
@@ -870,4 +906,7 @@ function main() {
 
 //http://192.168.1.1:49000/tr64desc.xml
 //npm install https://github.com/soef/ioBroker.tr-064/tarball/master --production
+
+
+
 
