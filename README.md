@@ -98,6 +98,10 @@ iobroker upload tr-064
 ```
 
 ## Changelog
+### 0.3.6 (2017-03-06)
+* (soef) Fixed imageurl for external phone book. e.g. google
+### 0.3.5" (2017-03-06)
+* (soef) Json device list added
 ### 0.3.3 (2017-03-01)
 * (soef) phonebook functions/states added
 ### 0.3.1 (2017-02-28)
