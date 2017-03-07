@@ -17,13 +17,41 @@
         var active = false;
         var g_onChange;
         var SEP = '_';
+        if (typeof _ !== 'function') _ = translateWord;
 
-        // the function loadSettings has to exist ...
+        function errorMessage(title, body, width, height, cb) {
+            if (typeof body === 'number') {
+                height = width;
+                width = body;
+                body = undefined;
+            }
+            if (!body) {
+                body = title;
+                title = 'Error';
+            }
+            //<div id="dialog-error" title="Error"></div> must be added to the body
+            var $dialog = $('#dialog-error');
+            $dialog.dialog({
+                autoOpen: false,
+                modal: true,
+                width: width || 500,
+                height: height || 200,
+                buttons: [
+                    { text: _ ('Ok'), click: function () { $ (this).dialog ('close'); cb && cb ()}}
+                ],
+                title: _(title || 'Error')
+            });
+
+            $dialog.html('<div style="font-size: 17px; line-height: 1.5;">' + body + '</div>');
+            $dialog.dialog('open');
+        }
+
         function load(settings, onChange) {
             g_onChange = onChange;
             $('#find').button().click(function () {
                 if (!active) {
-                    showMessage(_('Enable adapter first'), _('Warning'), 'info');
+                    //showMessage(_('Enable adapter first'), _('Warning'), 'info');
+                    errorMessage('You have to enable/start your ioBroker.' + adapter + ' adapter befor you can use this function!');
                     return;
                 }
 
@@ -80,6 +108,18 @@
                 width: 600,
                 height: 300
             });
+
+            if (typeof values2table !== 'function') {
+                errorMessage (
+                    'Error, missing function values2table',
+                    'Please update your iobroker.admin adapter to the newest version!',
+                    500, 200, function() {
+                        if (parent && parent.$iframeDialog) {
+                            parent.$iframeDialog.dialog('close');
+                        }
+                    }
+                );
+            }
 
             socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
                 active = /*common.enabled ||*/ (state && state.val);
@@ -415,6 +455,7 @@
         </div>
     </div>
     <div id="dialog-search" title="Select a device"></div>
+    <div id="dialog-error" title="Error"></div>
 </div>
 
 </body>

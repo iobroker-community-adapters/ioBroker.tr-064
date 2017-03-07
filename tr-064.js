@@ -15,6 +15,7 @@ var adapter = soef.Adapter(
     //onStateChange,
     main,
     onMessage,
+    onUpdate,
     { name: 'tr-064',
       stateChange: function (id, state) {
           if (state) {
@@ -26,6 +27,14 @@ var adapter = soef.Adapter(
       }
     }
 );
+
+function onUpdate(oldVersion, newVersion, callback) {
+    if(oldVersion < 3009) {
+        dcs.delOS(adapter.namespace + '.states.externalP');
+    }
+    callback();
+}
+
 
 var CHANNEL_STATES = 'states',
     CHANNEL_DEVICES = 'devices',
@@ -53,7 +62,7 @@ var states = {
     reconnectInternet: { name: 'reconnectInternet', val: false,   common: { min: false, max: true }, native: { func: 'reconnectInternet' }  },
     command:           { name: 'command',           val: "",      native: { func: 'command', desc: commandDesc }},
     commandResult:     { name: 'commandResult',     val: "",      common: { write: false }},
-    externalIP:        { name: 'externalP',         val: '',      common: { write: false}},
+    externalIP:        { name: 'externalIP',        val: '',      common: { write: false}},
     reboot:            { name: 'reboot',            val: false,   common: { min: false, max: true }, native: { func: 'reboot' }  },
     
     pbNumber:          { name: '.'+CHANNEL_PHONEBOOK + '.number', val: '', common: { name: 'Number'} },
