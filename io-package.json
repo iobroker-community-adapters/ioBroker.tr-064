@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.11",
+    "version": "0.3.12",
     "news": {
+      "0.3.12": {
+        "en": "phone book for repeater excluded",
+        "de": "Telefonnbuch für Repeater ausgeschlossen"
+      },
       "0.3.11":{
         "de": "external property der Anrufliste hinzugefügt",
         "en": "external property adde to call list"

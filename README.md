@@ -99,6 +99,9 @@ iobroker upload tr-064
 ```
 
 ## Changelog
+### 0.3.12 (2017-03-15)
+* (bluefox) phone book for repeater excluded
+* (bluefox) readme extended 
 ### 0.3.11 (2017-03-07)
 * (soef) external property adde to call list
 ### 0.3.10 (2017-03-07)
