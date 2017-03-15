@@ -1,5 +1,5 @@
 ![Logo](admin/tr-064.png) 
-##ioBroker.tr-064 
+# ioBroker.tr-064 
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 [![Tests](http://img.shields.io/travis/soef/ioBroker.tr-064/master.svg)](https://travis-ci.org/soef/ioBroker.tr-064)
@@ -25,8 +25,7 @@ Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
 - When using an internel number (like **610) the ring state will let ring that internal phone.
 e.g.: **610[,timeout]
 - When using an external number, the ring state will connect you to the external number. 
- The FritzBox will call the external number and your default 
-phone will ring, when the called phone is picked up. 
+ The FritzBox will call the external number and your default phone will ring, when the called phone is picked up. 
  The default phone can be configured in the FritsBox under:
  Telefonie/Anrufe/[Tab]Wahlhilfe/Wählhilfe verwenden
 
@@ -46,7 +45,7 @@ There ist also a state indicating a ringing phone.
 ### Phonebook
 - The phone book, if enabled, will be used to get the name of callers phone number.
 - Further there are three states to resolve a number or a name. If available you will also get the image URL of the contact. 
-e.g.: if you set the state phonebook.number all 3 states, name, number and image will be set to the found contact. Note, searches by name will first compare the complete name, if not found, part of is used.  
+  e.g.: if you set the state phonebook.number all 3 states, name, number and image will be set to the found contact. Note, searches by     name will first compare the complete name, if not found, part of is used.  
 
 ### Call lists
 Output formats:
@@ -63,7 +62,6 @@ Call count:
 The call count can be set to 0. The next call will incement 1. 
 
 The html output can be configured by a template
-
 
 ### command & commandResult state
 With the command state you can call every tr-064 command from this [documentation](https://avm.de/service/schnittstellen/).
@@ -88,6 +86,9 @@ Execute the following command in the iobroker root directory (e.g. in /opt/iobro
 npm install iobroker.tr-064 
 ```
 -->
+### Enable call monitor
+To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
+To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ### pre release versions
 Prerelease versions are available at npm with the tag dev.
