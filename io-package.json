@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.12",
+    "version": "0.3.14",
     "news": {
+      "0.3.14": {
+        "en": "callee name added",
+        "de": "Anrufername hinzugefügt"
+      },
       "0.3.12": {
         "en": "phone book for repeater excluded",
         "de": "Telefonnbuch für Repeater ausgeschlossen"

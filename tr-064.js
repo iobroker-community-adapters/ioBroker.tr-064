@@ -360,7 +360,7 @@ TR064.prototype.init = function (callback) {
             self.reboot = sslDevice.services['urn:dslforum-org:service:DeviceConfig:1'].actions.Reboot;
             self.getConfigFile = sslDevice.services['urn:dslforum-org:service:DeviceConfig:1'].actions['X_AVM-DE_GetConfigFile'];  //in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             //self.WANIPConnection = sslDevice.services["urn:dslforum-org:service:WANIPConnection:1"];
-    
+            
             self.GetCallList = safeFunction(sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_OnTel:1.actions.GetCallList');
             self.refreshCalllist();
             
@@ -539,7 +539,7 @@ TR064.prototype.dumpServices = function (ar) {
             logName = __dirname + '/../../log/tr-64-services.json';
         }
         try {
-            fs.writeFileSync(logName);
+            fs.writeFileSync(logName, dump);
         } catch (e) {
             adapter.log.error('Cannot write file: ' + logName, dump);
         }
@@ -662,7 +662,8 @@ function _checkError(err, res) {
                     msg = 'Authentication error. Check username and password in configuration';
                     break;
             }
-            adapter.log.error('code=' + code + ' ' + msg);
+            adapter.log.error('_checkError: code=' + code + ' msg=' + msg);
+            //code=unknown error code Device responded with fault Error: Credentials incorrec
             errorCounts[code] = new Date().getTime();
         }
     }
@@ -915,7 +916,3 @@ function main() {
 
 //http://192.168.1.1:49000/tr64desc.xml
 //npm install https://github.com/soef/ioBroker.tr-064/tarball/master --production
-
-
-
-
