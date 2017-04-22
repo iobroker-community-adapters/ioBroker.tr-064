@@ -29,6 +29,11 @@ e.g.: **610[,timeout]
  The default phone can be configured in the FritsBox under:
  Telefonie/Anrufe/[Tab]Wahlhilfe/Wählhilfe verwenden
 
+### toPauseState
+- Values: ring, connect, end
+- Can be used to pause a videoplayer on an incomming call (ring), or on pick up the phone (connect).
+- Resume can be done on the end value.
+
 ### Presence
 You can configure a list of devices to listen to.
 Can be triggert by mDNS. When using MDNS, no polling ist needet and it is faster
