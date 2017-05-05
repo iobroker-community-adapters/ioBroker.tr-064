@@ -60,7 +60,7 @@
                 $dialog.dialog('option', 'title', _('looking for device'));
                 $dialog.dialog('open');
 
-                sendTo('tr-064.' + instance, 'discovery', 5000, function (result) {
+                sendTo('tr-064.' + instance, 'discovery', { onlyActive: true, reread: false }, function (result) {
                     try {
                         var arr = JSON.parse(result);
                         if (arr.error) {
