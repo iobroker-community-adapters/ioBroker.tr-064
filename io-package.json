@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.16",
+    "version": "0.3.17",
     "news": {
+      "0.3.17": {
+        "en": "Only active will be shone in configuration",
+        "de": "Nur aktive Geräte werden in der Konfiguration angzeigt"
+      },
       "0.3.16": {
         "en": "Some extensions in onMessage discovery",
         "de": "Einige Erweiterungen in der function onMessage discovery"
