@@ -1,8 +1,16 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.15",
+    "version": "0.3.17",
     "news": {
+      "0.3.17": {
+        "en": "Only active will be shone in configuration",
+        "de": "Nur aktive Geräte werden in der Konfiguration angzeigt"
+      },
+      "0.3.16": {
+        "en": "Some extensions in onMessage discovery",
+        "de": "Einige Erweiterungen in der function onMessage discovery"
+      },
       "0.3.15": {
         "en": "toPauseState added. Values: ring, connect, end",
         "de": "toPauseState hinzugefügt. Werte: wing, connect, end"

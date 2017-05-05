@@ -109,17 +109,27 @@ function onMessage(obj) {
 
     switch (obj.command) {
         case 'discovery':
+            var onlyActive, reread;
+            if (typeof obj.message === 'object') {
+                onlyActive = obj.message.onlyActive;
+                reread = obj.message.reread;
+            }
             if (!obj.callback) return false;
-            if (allDevices.length > 0) {
+            if (!reread && allDevices.length > 0 && allDevices.onlyActive === onlyActive) {
                 reply(allDevices);
                 return true;
             }
+            allDevices.onlyActive = onlyActive;
             tr064Client.forEachHostEntry(function (err, device, cnt, all) {
-                allDevices.push({
-                    name: device.NewHostName,
-                    ip: device.NewIPAddress,
-                    mac: device.NewMACAddress
-                });
+                var active = !!(~~device.NewActive);
+                if (!onlyActive || active) {
+                    allDevices.push ({
+                        name: device.NewHostName,
+                        ip: device.NewIPAddress,
+                        mac: device.NewMACAddress,
+                        active: active
+                    });
+                }
                 if (cnt + 1 >= all) {
                     reply(allDevices);
                 }
@@ -443,6 +453,8 @@ TR064.prototype.dialNumber = function (number, callback) {
         'NewX_AVM-DE_PhoneNumber': number
     }, callback);
 };
+
+
 
 TR064.prototype.forEachHostEntry = function (callback) {
     var self = this;
