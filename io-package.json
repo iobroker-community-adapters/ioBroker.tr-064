@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.18",
+    "version": "0.3.19",
     "news": {
+      "0.3.19": {
+        "en": "error message removed",
+        "de": "Fehlermeldung entfernt"
+      },
       "0.3.18": {
         "en": "clear caller/callee before next call",
         "de": "Anrufer/Angerufener zurückgesetzt"
