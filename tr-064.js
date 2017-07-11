@@ -690,7 +690,8 @@ function checkError(cb) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TR064.prototype.getWLAN = function (callback) {
-    safeFunction(this.wlan24, 'getInfo', true)(checkError(callback));
+    //safeFunction(this.wlan24, 'getInfo', true)(checkError(callback));
+    safeFunction(this.wlan24, 'getInfo', true)(callback);
 };
 
 TR064.prototype.getWLAN5 = function (callback) {
@@ -866,6 +867,9 @@ function runMDNS () {
         if (!message || !rinfo) return;
         if (ipActive[rinfo.address] !== false) return;
         ipActive[rinfo.address] = true;
+        // if (rinfo.address === '192.168.1.41') {
+        //     var xyz = 1;
+        // }
         var d =  adapter.config.devices.find(function (device) {
             return device.ip === rinfo.address;
         });
