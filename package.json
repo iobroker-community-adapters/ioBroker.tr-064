@@ -1,6 +1,6 @@
 {
   "name": "iobroker.tr-064",
-  "version": "0.3.23",
+  "version": "0.3.24",
   "description": "ioBroker tr-064 Adapter",
   "author": {
     "name": "soef",
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "mdns-discovery": "^0.1.9",
-    "soef": "^0.4.6",
+    "soef": "^0.4.9",
     "tr-O64": "^0.2.4",
     "xml2js": "^0.4.17"
   },

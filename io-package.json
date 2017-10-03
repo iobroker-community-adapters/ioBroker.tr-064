@@ -1,7 +1,11 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.3.23",
+    "version": "0.3.24",
+    "0.3.24": {
+      "en": "States from the callmonitor are renewed, even if no change",
+      "de": "Werte vom Callmonitor werden erneuert, auch bei wiederholten Anrufen"
+    },
     "0.3.23": {
       "en": "node 0.12 removed from testing",
       "de": "node 0.12 auf testing entfernt"
