@@ -3,10 +3,11 @@
 var phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
     calllist    = require(__dirname + '/lib/calllist'),
+    Deflections = require(__dirname + '/lib/deflections'),
     soef        = require('soef'),
     tr064Lib    = require('tr-O64');
 
-var tr064Client;
+var tr064Client, deflections;
 var commandDesc = 'eg. { "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
 var debug = false;
 var pollingTimer = null;
@@ -64,12 +65,12 @@ var states = {
     commandResult:     { name: 'commandResult',     val: "",      common: { write: false }},
     externalIP:        { name: 'externalIP',        val: '',      common: { write: false}},
     reboot:            { name: 'reboot',            val: false,   common: { min: false, max: true }, native: { func: 'reboot' }  },
-    
+
     pbNumber:          { name: '.'+CHANNEL_PHONEBOOK + '.number', val: '', common: { name: 'Number'} },
     pbName:            { name: '.'+CHANNEL_PHONEBOOK + '.name', val: '', common: { name: 'Name'} },
     pbImageUrl:        { name: '.'+CHANNEL_PHONEBOOK + '.image', val: '', common: { name: 'Image URL'} },
     ringing:           { name: '.'+CHANNEL_CALLMONITOR + '.ringing', val: false, common: { name: 'Ringing'} }
-    
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,14 +82,14 @@ String.prototype.normalizeNumber = function () {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function createObjects(cb) {
-    
+
     //devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {} });
     devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {} });
     devStates.setDevice(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {} });
     devStates.setDevice(CHANNEL_PHONEBOOK, {common: {name: 'Phone book', role: 'device'}, native: {} });
     devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
-    
+
     for (var i in states) {
         if (i.indexOf('wlan50') === 0 && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
         var st = Object.assign({}, states[i]);
@@ -174,6 +175,9 @@ function onStateChange(id, state) {
         // case CHANNEL_DEVICES:
         // case CHANNEL_CALLMONITOR:
         //     return;
+        case Deflections.CHANNEL_DEFLECTIONS:
+            deflections.onStateChange(cmd, as[4], state.val);
+            break;
         default:
             return;
     }
@@ -274,7 +278,7 @@ TR064.prototype = Object.create(tr064Lib.TR064.prototype);
 //};
 
 TR064.prototype.setABIndex = function (val, cb) {
-    
+
     if (val === undefined) val = this.abIndex;
     if (val === undefined) {
         val = devices.getval('states.abIdex', 0);
@@ -331,7 +335,7 @@ var systemData = {
     })
 };
 
-    
+
 TR064.prototype.refreshCalllist = function () {
     if (!adapter.config.calllists.use) return;
     this.GetCallList (function (err, data) {
@@ -370,13 +374,13 @@ TR064.prototype.init = function (callback) {
             self.reboot = sslDevice.services['urn:dslforum-org:service:DeviceConfig:1'].actions.Reboot;
             self.getConfigFile = sslDevice.services['urn:dslforum-org:service:DeviceConfig:1'].actions['X_AVM-DE_GetConfigFile'];  //in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             //self.WANIPConnection = sslDevice.services["urn:dslforum-org:service:WANIPConnection:1"];
-            
+
             self.GetCallList = safeFunction(sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_OnTel:1.actions.GetCallList');
             self.refreshCalllist();
-            
+
             self.getABInfo = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetInfo');
             self.setEnableAB = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.SetEnable');
-            
+
             self.wlan24 = { setEnable: soef.getProp(self.getWLANConfiguration, "actions.SetEnable") };
             self.wlan50 = { setEnable: soef.getProp(self.getWLANConfiguration2, "actions.SetEnable") };
             self.wlanGuest = { setEnable: soef.getProp(self.getWLANConfiguration3, "actions.SetEnable") };
@@ -396,13 +400,13 @@ TR064.prototype.init = function (callback) {
                 self.wlanGuest.setSecurityKeys = self.wlan50.setSecurityKeys;
                 delete self.wlan50;
             }
-                                                               
+
             self.voip = soef.getProp(self.sslDevice, 'services.urn:dslforum-org:service:X_VoIP:1.actions');
-            
+
             // self.getSpecificHostEntry = self.hosts.actions.GetSpecificHostEntry;
             // self.getGenericHostEntry = self.hosts.actions.GetGenericHostEntry;
             // self.GetSpecificHostEntryExt = self.hosts.actions['X_AVM-DE_GetSpecificHostEntryExt'];
-    
+
             self.getSpecificHostEntry = safeFunction(self, 'hosts.actions.GetSpecificHostEntry');
             self.getGenericHostEntry = safeFunction(self, 'hosts.actions.GetGenericHostEntry');
             self.GetSpecificHostEntryExt = safeFunction(self, 'hosts.actions.X_AVM-DE_GetSpecificHostEntryExt');
@@ -436,7 +440,7 @@ TR064.prototype.ring = function (val) {
     var self = this;
     var ar = val.split(',');
     if (!ar || ar.length < 1 || !this.voip) return;
-    
+
     safeFunction(this.voip, 'X_AVM-DE_DialNumber', true) ({'NewX_AVM-DE_PhoneNumber': ar[0]}, function(err,data) {
         if (ar.length >= 2) {
             var duration = ar[1].trim() >> 0;
@@ -512,7 +516,7 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
     doIt();
 };
 
-                           
+
 TR064.prototype.dumpServices = function (ar) {
     var fs;
     var doLog;
@@ -762,7 +766,7 @@ function deleteUnusedDevices(callback) {
 
 function setActive(dev, val, ip) {
     val = !!(val >> 0);
-    
+
     if (ip !== undefined && ipActive[ip] !== val) ipActive[ip] = val;
     if (!dev.set('active', val)) return; // state not changed;
     var dts = new Date();
@@ -796,7 +800,7 @@ function updateDevices(callback) {
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
     var arr = [];
 
-    
+
     tr064Client.forEachConfiguredDevice(function (device) {
         if (!device) {
             if (adapter.config.jsonDeviceList) {
@@ -829,7 +833,7 @@ function updateAll(cb) {
 
     function doIt() {
         if (i >= names.length) {
-            
+
             devStates.set('reboot', false);
             devices.update(function (err) {
                 if (err && err !== -1) adapter.log.error('updateAll:' + err);
@@ -862,7 +866,7 @@ function runMDNS () {
     if (!adapter.config.useMDNS) return;
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
     var mdns = require('mdns-discovery')();
-    
+
     mdns.on ('message', function (message, rinfo) {
         if (!message || !rinfo) return;
         if (ipActive[rinfo.address] !== false) return;
@@ -886,7 +890,7 @@ function runMDNS () {
 function normalizeConfigVars() {
     if (!adapter.config.calllists) adapter.config.calllists = adapter.ioPack.native.calllists;
     calllist.normalizeConfig (adapter.config.calllists);
-        
+
     adapter.config.pollingInterval = adapter.config.pollingInterval >> 0;
     adapter.config.port = adapter.config.port >> 0;
     adapter.config.useCallMonitor = !!(adapter.config.useCallMonitor >> 0);
@@ -900,12 +904,12 @@ function main() {
     devStates = new devices.CDevice(0, '');
     //devStates.setDevice(CHANNEL_STATES, {common: {name: CHANNEL_STATES, role: 'channel'}, native: {} });
     devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
-    
+
     normalizeConfigVars();
     systemData.load();
     deleteUnusedDevices();
     calllist.init(adapter, systemData);
-    
+
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
     tr064Client.init(function (err) {
         if (err) {
@@ -925,6 +929,7 @@ function main() {
                 runMDNS();
             });
         });
+        deflections = new Deflections(tr064Client.sslDevice, adapter, devices);
     });
 
     adapter.subscribeStates('*');
