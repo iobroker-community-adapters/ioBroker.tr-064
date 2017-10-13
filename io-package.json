@@ -1,7 +1,11 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.1",
+    "version": "0.4.2",
+    "0.4.2": {
+      "en": "fixed exception in deflections",
+      "de": "SChutzverletzung in deflections behoben"
+    },
     "0.4.1": {
       "en": "fix changing forwarding state",
       "de": "Ändern des Wertes für Rufweiterleitungen gefixed"
