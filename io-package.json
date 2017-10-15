@@ -1,7 +1,11 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.2",
+    "version": "0.4.3",
+    "0.4.3": {
+      "en": "Call forwarding now configurable",
+      "de": "Rufweiterleitung jetzt konfigurierbar"
+    },
     "0.4.2": {
       "en": "fixed exception in deflections",
       "de": "SChutzverletzung in deflections behoben"

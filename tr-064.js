@@ -176,7 +176,7 @@ function onStateChange(id, state) {
         // case CHANNEL_CALLMONITOR:
         //     return;
         case Deflections.CHANNEL_DEFLECTIONS:
-            deflections.onStateChange(cmd, as[4], state.val);
+            deflections && deflections.onStateChange(cmd, as[4], state.val);
             break;
         default:
             return;
@@ -897,6 +897,7 @@ function normalizeConfigVars() {
     adapter.config.useDevices = !!(adapter.config.useDevices >> 0);
     adapter.config.usePhonebook = !!(adapter.config.usePhonebook >> 0);
     if (adapter.config.useMDNS === undefined) adapter.config.useMDNS = true;
+    if (adapter.config.useDeflectionOptions === undefined) adapter.config.useDeflectionOptions = true;
 }
 
 function main() {
@@ -929,7 +930,9 @@ function main() {
                 runMDNS();
             });
         });
-        deflections = new Deflections(tr064Client.sslDevice, adapter, devices);
+        if (adapter.config.useDeflectionOptions) {
+            deflections = new Deflections (tr064Client.sslDevice, adapter, devices);
+        }
     });
 
     adapter.subscribeStates('*');

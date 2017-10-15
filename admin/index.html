@@ -133,7 +133,7 @@
             if (!settings.calllists.all) settings.calllists.all = { generateJSON: false, maxEntries: 10};
             if (!settings.calllists.inbound) settings.calllists.inbound = { generateJSON: false, maxEntries: 10};
             if (!settings.calllists.outbound) settings.calllists.outbound = { generateJSON: false, maxEntries: 10};
-
+            if (settings.useDeflectionOptions === undefined) settings.useDeflectionOptions = true;
 
             changed = true;
             g_onChange = onChange;
@@ -374,16 +374,19 @@
                 <h1 class="translate">Options</h1>
                 <tr>
                     <td class="translate">Polling interval (sec)</td><td width=1></td><td><input type="text" id="pollingInterval" class="value"></td><td width=100%></td>
-                    <!--td class="translate">Use MDNS</td><td><input id="useMDNS" class="value" type="checkbox"></td-->
                 </tr>
-                <tr><td class="translate">Use CallMonitor</td><td width=1></td><td><input id="useCallMonitor" class="value" type="checkbox"></td><td width=100%></td></tr>
-                <tr><td class="translate">Watch devices</td><td width=1></td><td><input id="useDevices" class="value" type="checkbox"></td><td width=100%></td></tr>
-
-                <tr><td class="translate">Use phonebook</td><td width=1></td><td><input id="usePhonebook" class="value" type="checkbox"></td><td width=100%></td></tr>
-                <tr><td class="translate">Use MDNS</td><td width=1></td><td><input id="useMDNS" class="value" type="checkbox"></td><td width=100%></td></tr>
-                <tr><td class="translate">Create Json device list</td><td width=1></td><td><input id="jsonDeviceList" class="value" type="checkbox"></td><td width=100%></td></tr>
-
-
+                <tr>
+                    <td class="translate">Use CallMonitor</td><td width=1></td><td><input id="useCallMonitor" class="value" type="checkbox"></td><td width=100%></td>
+                    <td class="translate">Watch devices</td><td width=1></td><td><input id="useDevices" class="value" type="checkbox"></td><td width=100%></td>
+                </tr>
+                <tr>
+                    <td class="translate">Use phonebook</td><td width=1></td><td><input id="usePhonebook" class="value" type="checkbox"></td><td width=100%></td>
+                    <td class="translate">Use MDNS</td><td width=1></td><td><input id="useMDNS" class="value" type="checkbox"></td><td width=100%></td>
+                </tr>
+                <tr>
+                    <td class="translate">Create Json device list</td><td width=1></td><td><input id="jsonDeviceList" class="value" type="checkbox"></td><td width=100%></td>
+                    <td class="translate">Use call forwarding options</td><td width=1></td><td><input id="useDeflectionOptions" class="value" type="checkbox"></td><td width=100%></td>
+                </tr>
             </table>
         </div>
         <div id="tabs-2" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 3px">

@@ -110,7 +110,6 @@ systemDictionary = {
         "ru": "макс. кол-во"
     },
     "TR-064 adapter settings":  {"en": "TR-064 adapter settings", "de": "TR-064 adapter settings",  "ru": "Настройки драйвера TR-064"},
-    "Use MDNS":                 {"en": "Use multicast DNS",       "de": "Multicast DNS",            "ru": "Multicast DNS"},
     "Name":                     {"en": "Name",                    "de": "Name",                     "ru": "Имя"},
     "IP Address":               {"en": "IP Address",              "de": "IP Adresse",               "ru": "IP адрес"},
     "MAC Address":              {"en": "MAC Address",             "de": "MAC Adresse",              "ru": "MAC адрес"},
@@ -176,6 +175,10 @@ systemDictionary = {
     "AddDevice": {
         "de": "Zum manuellen Hinzufügen +-Button unten betätigen",
         "en": "To add a divice manually, press +-Button"
+    },
+    "Use call forwarding options": {
+        "de": "Rufweiterleitungsoptionen verwenden",
+        "en": "Use call forwarding options"
     }
-    
+
 };
