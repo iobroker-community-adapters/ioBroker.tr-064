@@ -376,7 +376,7 @@ TR064.prototype.init = function (callback) {
             //self.WANIPConnection = sslDevice.services["urn:dslforum-org:service:WANIPConnection:1"];
 
             self.GetCallList = safeFunction(sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_OnTel:1.actions.GetCallList');
-            self.refreshCalllist();
+            //self.refreshCalllist();
 
             self.getABInfo = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetInfo');
             self.setEnableAB = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.SetEnable');
@@ -428,7 +428,7 @@ TR064.prototype.init = function (callback) {
                     });
                 }
             });
-            callback (0);
+            self.getWLAN(soef.callbackOrTimeout(2000, callback));
         });
     //}.bind(this));
     });
@@ -800,7 +800,6 @@ function updateDevices(callback) {
     var dev = new devices.CDevice(CHANNEL_DEVICES, '');
     var arr = [];
 
-
     tr064Client.forEachConfiguredDevice(function (device) {
         if (!device) {
             if (adapter.config.jsonDeviceList) {
@@ -820,6 +819,10 @@ function updateDevices(callback) {
     });
 }
 
+function updateDeflections(callback) {
+    return deflections ? deflections.get(callback) : callback();
+}
+
 function updateAll(cb) {
     adapter.log.debug('in updateAll');
     var names = [
@@ -833,14 +836,15 @@ function updateAll(cb) {
 
     function doIt() {
         if (i >= names.length) {
-
             devStates.set('reboot', false);
             devices.update(function (err) {
                 if (err && err !== -1) adapter.log.error('updateAll:' + err);
-                if (adapter.config.pollingInterval) {
-                    if (pollingTimer) clearTimeout(pollingTimer);
-                    pollingTimer = setTimeout(updateAll, adapter.config.pollingInterval*1000);
-                }
+                updateDeflections(soef.callbackOrTimeout(5000, function() {
+                    if (adapter.config.pollingInterval) {
+                        if (pollingTimer) clearTimeout(pollingTimer);
+                        pollingTimer = setTimeout(updateAll, adapter.config.pollingInterval*1000);
+                    }
+                }));
             });
             return;
         }
@@ -857,8 +861,7 @@ function updateAll(cb) {
         });
     }
     tr064Client.setABIndex();
-    if (adapter.config.useDevices) updateDevices(doIt);
-    else doIt();
+    adapter.config.useDevices ? updateDevices(doIt) : doIt();
 }
 
 
@@ -903,7 +906,6 @@ function normalizeConfigVars() {
 function main() {
     module.exports.adapter = adapter;
     devStates = new devices.CDevice(0, '');
-    //devStates.setDevice(CHANNEL_STATES, {common: {name: CHANNEL_STATES, role: 'channel'}, native: {} });
     devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
 
     normalizeConfigVars();
@@ -921,6 +923,7 @@ function main() {
             adapter.log.error('~');
             return;
         }
+        tr064Client.refreshCalllist(); //xxx
         createObjects();
         createConfiguredDevices(function (err) {
             phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook, adapter: adapter }, function () {

@@ -1,7 +1,11 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.3",
+    "version": "0.4.4",
+    "0.4.4": {
+      "en": "states of call forwarding will now be updated in the configured interval",
+      "de": "Werte der Weiterleitungen werden nun im Intervall erneuert"
+    },
     "0.4.3": {
       "en": "Call forwarding now configurable",
       "de": "Rufweiterleitung jetzt konfigurierbar"
