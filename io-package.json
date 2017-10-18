@@ -1,7 +1,11 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "0.4.4",
+        "version": "0.4.5",
+        "0.4.5": {
+          "en": "update basic package-file testing (Apollon77)",
+          "de": "Erweiterung der Tests (Apollon77)"
+        },
         "0.4.4": {
             "en": "states of call forwarding will now be updated in the configured interval",
             "de": "Werte der Weiterleitungen werden nun im Intervall erneuert"
