@@ -1,150 +1,157 @@
 {
-  "common": {
-    "name": "tr-064",
-    "version": "0.4.4",
-    "0.4.4": {
-      "en": "states of call forwarding will now be updated in the configured interval",
-      "de": "Werte der Weiterleitungen werden nun im Intervall erneuert"
+    "common": {
+        "name": "tr-064",
+        "version": "0.4.4",
+        "0.4.4": {
+            "en": "states of call forwarding will now be updated in the configured interval",
+            "de": "Werte der Weiterleitungen werden nun im Intervall erneuert"
+        },
+        "0.4.3": {
+            "en": "Call forwarding now configurable",
+            "de": "Rufweiterleitung jetzt konfigurierbar"
+        },
+        "0.4.2": {
+            "en": "fixed exception in deflections",
+            "de": "SChutzverletzung in deflections behoben"
+        },
+        "0.4.1": {
+            "en": "fix changing forwarding state",
+            "de": "Ändern des Wertes für Rufweiterleitungen gefixed"
+        },
+        "0.4.0": {
+            "en": "enable/disable call forwarding added",
+            "de": "Aktivieren/Deaktivieren von Rufweiterleitungen hinzugefügt"
+        },
+        "0.3.24": {
+            "en": "States from the callmonitor are renewed, even if no change",
+            "de": "Werte vom Callmonitor werden erneuert, auch bei wiederholten Anrufen"
+        },
+        "0.3.23": {
+            "en": "node 0.12 removed from testing",
+            "de": "node 0.12 auf testing entfernt"
+        },
+        "0.3.22": {
+            "en": "Enhance CI testing",
+            "de": "CI testing erweitert"
+        },
+        "0.3.21": {
+            "en": "using soef 0.4.6 to fix adapter load",
+            "de": "Verwende nun soef 0.4.6 um das Laden des adapters zu ermöglichen"
+        },
+        "0.3.20": {
+            "en": "adapter type changed to media",
+            "de": "Adapter type nach media geändert"
+        },
+        "news": {
+            "0.3.19": {
+                "en": "error message removed",
+                "de": "Fehlermeldung entfernt"
+            },
+            "0.3.18": {
+                "en": "clear caller/callee before next call",
+                "de": "Anrufer/Angerufener zurückgesetzt"
+            },
+            "0.3.17": {
+                "en": "Only active will be shone in configuration",
+                "de": "Nur aktive Geräte werden in der Konfiguration angzeigt"
+            },
+            "0.3.16": {
+                "en": "Some extensions in onMessage discovery",
+                "de": "Einige Erweiterungen in der function onMessage discovery"
+            },
+            "0.3.15": {
+                "en": "toPauseState added. Values: ring, connect, end",
+                "de": "toPauseState hinzugefügt. Werte: wing, connect, end"
+            },
+            "0.3.14": {
+                "en": "callee name added",
+                "de": "Anrufername hinzugefügt"
+            },
+            "0.3.12": {
+                "en": "phone book for repeater excluded",
+                "de": "Telefonnbuch für Repeater ausgeschlossen"
+            },
+            "0.3.11": {
+                "de": "external property der Anrufliste hinzugefügt",
+                "en": "external property adde to call list"
+            },
+            "0.3.10": {
+                "de": "Fehlermeldung in der Konfiguration, wenn noch ein älterer admin adapter installiert",
+                "en": "Error message in configuration, if an older admin adapter is installed"
+            },
+            "0.3.7": {
+                "de": "Imageurl für externe Telefonbücer erneut korrigiert",
+                "en": "Fixed imageurl for external phone book again. E.g. google"
+            },
+            "0.3.6": {
+                "de": "Imageurl für externe Telefonbücer korrigiert",
+                "en": "Fixed imageurl for external phone book. E.g. google"
+            },
+            "0.3.5": {
+                "de": "Geräteliste als Json",
+                "en": "Json device list"
+            },
+            "0.3.4": {
+                "de": "Absolute Image URL",
+                "en": "Absolute image url"
+            },
+            "0.3.3": {
+                "de": "Telefonbuch Functionsn und States hinzugefügt",
+                "en": "phonebook functions/states added"
+            },
+            "0.3.2": {
+                "en": "readme adapted",
+                "de": "readme angepasst"
+            },
+            "0.3.1": {
+                "en": "some bug fixes & call lists added",
+                "de": "Einige Bug fixes & Anruflisten hinzugefügt"
+            },
+            "0.3.0": {
+                "en": "use new table for configuration dialog",
+                "de": "Benutze neue Tabelle für Konfigurationsdialog",
+                "ru": "Новая таблица в диалоге настроек"
+            }
+        },
+        "title": "TR 064",
+        "desc": "TR 064",
+        "platform": "Javascript/Node.js",
+        "keywords": [
+            "tr-064",
+            "fritz.box",
+            "fritzbox",
+            "avm"
+        ],
+        "mode": "daemon",
+        "icon": "tr-064.png",
+        "extIcon": "https://raw.githubusercontent.com/soef/iobroker.tr-064/master/admin/tr-064.png",
+        "readme": "https://github.com/soef/iobroker.tr-064/blob/master/README.md",
+        "loglevel": "info",
+        "type": "infrastructure",
+        "enabled": true,
+        "messagebox": true,
+        "authors": [
+            {
+                "name": "soef",
+                "email": "soef@gmx.net"
+            }
+        ]
     },
-    "0.4.3": {
-      "en": "Call forwarding now configurable",
-      "de": "Rufweiterleitung jetzt konfigurierbar"
+    "native": {
+        "ip": "fritz.box",
+        "user": "",
+        "password": "",
+        "pollingInterval": 10,
+        "useCallMonitor": true,
+        "usePhonebook": true,
+        "useDevices": true,
+        "devices": [],
+        "calllists": {
+            "missed": {
+                "generateJSON": true,
+                "maxEntries": 10
+            }
+        }
     },
-    "0.4.2": {
-      "en": "fixed exception in deflections",
-      "de": "SChutzverletzung in deflections behoben"
-    },
-    "0.4.1": {
-      "en": "fix changing forwarding state",
-      "de": "Ändern des Wertes für Rufweiterleitungen gefixed"
-    },
-    "0.4.0": {
-      "en": "enable/disable call forwarding added",
-      "de": "Aktivieren/Deaktivieren von Rufweiterleitungen hinzugefügt"
-    },
-    "0.3.24": {
-      "en": "States from the callmonitor are renewed, even if no change",
-      "de": "Werte vom Callmonitor werden erneuert, auch bei wiederholten Anrufen"
-    },
-    "0.3.23": {
-      "en": "node 0.12 removed from testing",
-      "de": "node 0.12 auf testing entfernt"
-    },
-    "0.3.22": {
-      "en": "Enhance CI testing",
-      "de": "CI testing erweitert"
-    },
-    "0.3.21": {
-      "en": "using soef 0.4.6 to fix adapter load",
-      "de": "Verwende nun soef 0.4.6 um das Laden des adapters zu ermöglichen"
-    },
-    "0.3.20": {
-      "en": "adapter type changed to media",
-      "de": "Adapter type nach media geändert"
-    },
-    "news": {
-      "0.3.19": {
-        "en": "error message removed",
-        "de": "Fehlermeldung entfernt"
-      },
-      "0.3.18": {
-        "en": "clear caller/callee before next call",
-        "de": "Anrufer/Angerufener zurückgesetzt"
-      },
-      "0.3.17": {
-        "en": "Only active will be shone in configuration",
-        "de": "Nur aktive Geräte werden in der Konfiguration angzeigt"
-      },
-      "0.3.16": {
-        "en": "Some extensions in onMessage discovery",
-        "de": "Einige Erweiterungen in der function onMessage discovery"
-      },
-      "0.3.15": {
-        "en": "toPauseState added. Values: ring, connect, end",
-        "de": "toPauseState hinzugefügt. Werte: wing, connect, end"
-      },
-      "0.3.14": {
-        "en": "callee name added",
-        "de": "Anrufername hinzugefügt"
-      },
-      "0.3.12": {
-        "en": "phone book for repeater excluded",
-        "de": "Telefonnbuch für Repeater ausgeschlossen"
-      },
-      "0.3.11":{
-        "de": "external property der Anrufliste hinzugefügt",
-        "en": "external property adde to call list"
-      },
-      "0.3.10":{
-        "de": "Fehlermeldung in der Konfiguration, wenn noch ein älterer admin adapter installiert",
-        "en": "Error message in configuration, if an older admin adapter is installed"
-      },
-      "0.3.7": {
-        "de": "Imageurl für externe Telefonbücer erneut korrigiert",
-        "en": "Fixed imageurl for external phone book again. E.g. google"
-      },
-      "0.3.6": {
-        "de": "Imageurl für externe Telefonbücer korrigiert",
-        "en": "Fixed imageurl for external phone book. E.g. google"
-      },
-      "0.3.5": {
-        "de": "Geräteliste als Json",
-        "en": "Json device list"
-      },
-      "0.3.4": {
-        "de": "Absolute Image URL",
-        "en": "Absolute image url"
-      },
-      "0.3.3": {
-        "de": "Telefonbuch Functionsn und States hinzugefügt",
-        "en": "phonebook functions/states added"
-      },
-      "0.3.2": {
-        "en": "readme adapted",
-        "de": "readme angepasst"
-      },
-      "0.3.1": {
-        "en": "some bug fixes & call lists added",
-        "de": "Einige Bug fixes & Anruflisten hinzugefügt"
-      },
-      "0.3.0": {
-        "en": "use new table for configuration dialog",
-        "de": "Benutze neue Tabelle für Konfigurationsdialog",
-        "ru": "Новая таблица в диалоге настроек"
-      }
-    },
-    "title": "TR 064",
-    "desc": "TR 064",
-    "platform": "Javascript/Node.js",
-    "keywords": [
-      "tr-064",
-      "fritz.box",
-      "fritzbox",
-      "avm"
-    ],
-    "mode": "daemon",
-    "icon": "tr-064.png",
-    "extIcon": "https://raw.githubusercontent.com/soef/iobroker.tr-064/master/admin/tr-064.png",
-    "readme":  "https://github.com/soef/iobroker.tr-064/blob/master/README.md",
-    "loglevel": "info",
-    "type": "media",
-    "enabled": true,
-    "messagebox": true
-  },
-  "native": {
-    "ip":  "fritz.box",
-    "user": "",
-    "password": "",
-    "pollingInterval":  10,
-    "useCallMonitor": true,
-    "usePhonebook": true,
-    "useDevices": true,
-    "devices": [],
-    "calllists": {
-      "missed": { "generateJSON": true, "maxEntries": 10 }
-    }
-  },
-  "objects": [
-
-  ]
+    "objects": []
 }
