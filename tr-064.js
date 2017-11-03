@@ -839,7 +839,7 @@ function updateAll(cb) {
             devStates.set('reboot', false);
             devices.update(function (err) {
                 if (err && err !== -1) adapter.log.error('updateAll:' + err);
-                updateDeflections(soef.callbackOrTimeout(5000, function() {
+                updateDeflections(soef.callbackOrTimeout(3000, function() {
                     if (adapter.config.pollingInterval) {
                         if (pollingTimer) clearTimeout(pollingTimer);
                         pollingTimer = setTimeout(updateAll, adapter.config.pollingInterval*1000);
@@ -850,15 +850,17 @@ function updateAll(cb) {
         }
 
         var name = names[i++];
-        if (!tr064Client[name.func]) {
+        if (typeof tr064Client[name.func] !== 'function') {
             return doIt();
         }
-        tr064Client[name.func] ( function (err, res) {
+
+        tr064Client[name.func] ( soef.callbackOrTimeout (3000, function (err, res) {
             if (!err && res) {
                 devStates.set(name.state, name.format ? name.format(res[name.result]) : name.result);
             }
             setTimeout(doIt, 10);
-        });
+        }));
+
     }
     tr064Client.setABIndex();
     adapter.config.useDevices ? updateDevices(doIt) : doIt();
