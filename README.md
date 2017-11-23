@@ -104,6 +104,48 @@ iobroker upload tr-064
 ```
 
 ## Changelog
+###0.4.10 (2017-11-23)
+* (soef) readme changelog extended
+###0.4.9
+* (soef) fix tag error in io-package.json
+###0.4.8
+* (soef) fix posible timeout on getting WLAN-Infos
+###0.4.6
+* (soef) fix posible exception in deflections
+###0.4.5
+* (apollon77) update basic package-file testing
+###0.4.4
+* (soef) states of call forwarding will now be updated in the configured interval
+###0.4.3
+* (soef) Call forwarding now configurable
+###0.4.2
+* (soef) fixed exception in deflections
+###0.4.1
+* (soef) fix changing forwarding state
+###0.4.0
+* (soef) enable/disable call forwarding added
+###0.3.24
+* (soef) States from the callmonitor are renewed, even if no change
+###0.3.23
+* (soef) node 0.12 removed from testing
+###0.3.22
+* (soef) Enhance CI testing
+###0.3.21
+* (soef) using soef 0.4.6 to fix adapter load
+###0.3.20
+* (soef) adapter type changed to media
+###0.3.19
+* (soef) error message removed
+###0.3.18
+* (soef) clear caller/callee before next call
+###0.3.17
+* (soef) Only active will be shone in configuration
+###0.3.16
+* (soef) Some extensions in onMessage discovery
+###0.3.15
+* (soef) toPauseState added. Values: ring, connect, end
+###0.3.14
+* (soef) callee name added
 ### 0.3.12 (2017-03-15)
 * (bluefox) phone book for repeater excluded
 * (bluefox) readme extended 

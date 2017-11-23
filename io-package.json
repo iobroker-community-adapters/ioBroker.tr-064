@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.9",
+    "version": "0.4.10",
     "news": {
+      "0.4.10": {
+        "en": "readme changelog extended",
+        "de": "readme changelog erweitert"
+      },
       "0.4.9": {
         "en": "fix tag error in io-package.json",
         "de": "Tag Fehler in io-package.json behoben"
