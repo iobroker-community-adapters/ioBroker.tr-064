@@ -30,12 +30,12 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
-    "mocha": "^3.5.3",
+    "mocha": "^4.1.0",
     "chai": "^4.1.2"
   },
   "main": "tr-064.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha"
+    "test": "node node_modules/mocha/bin/mocha --exit"
   },
   "engines": {
     "node": ">=4.0.0"
