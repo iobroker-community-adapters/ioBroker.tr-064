@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.10",
+    "version": "0.4.11",
     "news": {
+      "0.4.11": {
+        "en": "Update utils.js and usage, CI Testing and deps (Apollon77)",
+        "de": "utils.js und Benutzung erneuert, CI Testing (Apollon77)"
+      },
       "0.4.10": {
         "en": "readme changelog extended",
         "de": "readme changelog erweitert"
