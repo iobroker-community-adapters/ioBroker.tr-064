@@ -362,7 +362,7 @@ TR064.prototype.init = function (callback) {
     }
 
     self.initTR064Device(self.ip, self.port, function (err, device) {
-        if (err || !device) return (callback(err));
+        if (err || !device) return (callback(err || '!device'));
         getSSLDevice(device, function (err, sslDevice) {
             if (err || !sslDevice) return callback(err);
             sslDevice.login(self.user, self.password);

@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.12",
+    "version": "0.4.14",
     "news": {
+      "0.4.14": {
+        "en": "Errorhandling of connection to FritzBox extended",
+        "de": "Fehlerbehandlung beim Verbinden zur FritzBox erweitert"
+      },
       "0.4.12": {
         "en": "Errorhandling of deflections fixed",
         "de": "Fehlerbehandlung der Weiterleitungen repariert"
