@@ -104,6 +104,18 @@ iobroker upload tr-064
 ```
 
 ## Changelog
+###0.4.17
+* (soef) readme updated
+###0.4.16
+* (soef) terminating adapter, if init fails, so that the adapter will be restarted",
+###0.4.15
+* (soef) callmonitor: new toPauseState with extension
+###0.4.14
+* (soef) Errorhandling of connecting to FritzBox extended
+###0.4.12
+* (soef) Errorhandling of deflections fixed
+###0.4.11
+* (Apollon77) Update utils.js and usage, CI Testing and deps
 ###0.4.10 (2017-11-23)
 * (soef) readme changelog extended
 ###0.4.9
