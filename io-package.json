@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.15",
+    "version": "0.4.16",
     "news": {
+      "0.4.16": {
+        "en": "terminating adapter, if init fails, so that the adapter will be restarted",
+        "de": "Adapter wird un bei einem init-Fehler beendet, so dass er neu gestartet wird"
+      },
       "0.4.15": {
         "en": "callmonitor: new toPauseState with extension",
         "de": "callmonitor: neuer Datenpunkt toPauseState mit Nebenstellennummer"

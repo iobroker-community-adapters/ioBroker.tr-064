@@ -11,6 +11,7 @@ var tr064Client, deflections;
 var commandDesc = 'eg. { "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
 var debug = false;
 var pollingTimer = null;
+var initError = false;
 
 var adapter = soef.Adapter(
     //onStateChange,
@@ -20,6 +21,11 @@ var adapter = soef.Adapter(
     { name: 'tr-064',
       stateChange: function (id, state) {
           if (state) {
+              if (initError) {
+                  adapter.log.error('tr-064 adapter not connected to a FritzBox. Terminating');
+                  setTimeout(process.exit.bind(process, -1), 2000);
+                  return;
+              }
               if (!state.ack) onStateChange(id, state);
               else if (adapter.config.calllists.use && id.indexOf('callmonitor.lastCall.timestamp') > 0) {
                   tr064Client.refreshCalllist();
@@ -917,12 +923,16 @@ function main() {
 
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
     tr064Client.init(function (err) {
+        initError = err;
         if (err) {
             adapter.log.error(err + ' - ' + JSON.stringify(err));
             adapter.log.error('~');
             adapter.log.error('~~ Fatal error. Can not connect to your FritzBox.');
             adapter.log.error('~~ If configuration, networt, IP address, etc. ok, try to restart your FritzBox');
             adapter.log.error('~');
+            setTimeout(function() {
+                process.exit(1);
+            }, 5000);
             return;
         }
         tr064Client.refreshCalllist(); //xxx
