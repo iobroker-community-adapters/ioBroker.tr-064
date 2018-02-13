@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "0.4.17",
+    "version": "0.4.18",
     "news": {
+      "0.4.18": {
+        "en": "IP and MAC-address added to device object",
+        "de": "IP und MAC-Adresse den Geräten hinzugefügt"
+      },
       "0.4.17": {
         "en": "readme updated",
         "de": "Readme angepasst"

@@ -770,7 +770,7 @@ function deleteUnusedDevices(callback) {
 }
 
 
-function setActive(dev, val, ip) {
+function setActive(dev, val, ip, mac) {
     val = !!(val >> 0);
 
     if (ip !== undefined && ipActive[ip] !== val) ipActive[ip] = val;
@@ -781,6 +781,8 @@ function setActive(dev, val, ip) {
     if (val) {
         dev.set('lastActive', sts);
         dev.set('lastActive-ts', ts);
+        dev.set('lastIP', ip);
+        dev.set('lastMAC-address', mac)
     } else {
         dev.set('lastInactive', sts);
         dev.set('lastInactive-ts', ts);
@@ -797,7 +799,7 @@ function createConfiguredDevices(callback) {
             return;
         }
         dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
-        setActive(dev, device.NewActive, device.NewIPAddress);
+        setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
     });
 }
 
