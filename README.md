@@ -104,10 +104,6 @@ iobroker upload tr-064
 ```
 
 ## Changelog
-###0.4.18
-* (soef) IP and MAC-address added to device object
-###0.4.17
-* (soef) readme updated
 ###0.4.16
 * (soef) terminating adapter, if init fails, so that the adapter will be restarted",
 ###0.4.15
