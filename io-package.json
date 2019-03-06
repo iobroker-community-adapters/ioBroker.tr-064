@@ -163,6 +163,7 @@
     },
     "title": "TR 064",
     "desc": "TR 064",
+    "license": "MIT",
     "platform": "Javascript/Node.js",
     "keywords": [
       "tr-064",
