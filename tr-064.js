@@ -18,7 +18,7 @@ var adapter = soef.Adapter(
     main,
     onMessage,
     onUpdate,
-    { name: 'tr-064',
+    { name: 'tr-064-community',
       stateChange: function (id, state) {
           if (state) {
               if (initError) {
