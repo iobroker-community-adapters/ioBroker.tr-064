@@ -1,7 +1,7 @@
 ![Logo](admin/tr-064.png)
 # ioBroker.tr-064
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
+![Number of Installations](http://iobroker.live/badges/tr-064-community-installed.svg) ![Number of Installations](http://iobroker.live/badges/tr-064-community-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 [![Tests](http://img.shields.io/travis/soef/ioBroker.tr-064/master.svg)](https://travis-ci.org/soef/ioBroker.tr-064)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/soef/iobroker.tr-064/blob/master/LICENSE)
 
