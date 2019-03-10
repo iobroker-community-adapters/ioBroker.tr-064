@@ -349,7 +349,7 @@ TR064.prototype.refreshCalllist = function () {
             var id = calllist.ROOT + '.' + n;
             list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
             devices.root.set(id + '.count', list.count);
-            list.cfg.generateHtml && devices.root.set(id + '.html.html', html);
+            list.cfg.generateHtml && devices.root.set(id + '.html', html);
         }, devices.root.update.bind(devices.root));
     });
 };
