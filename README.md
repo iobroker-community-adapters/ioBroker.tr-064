@@ -13,6 +13,9 @@
 This adapter reads main information from AVM Fritz!Box, like call list or number of messages on answering machine.
 Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
 
+### Initial Creation
+This adapter was initialy created by @soef at https://github.com/soef/ioBroker.tr-064 but not maintained any more, so we moved it to iobroker-community so that bugs could be fixed. thanks @soef for his work.
+
 ### Simple states and functions
 - turn on/off wifi for 2.4GHz and 5GHz,
 - turn on/off guest wifi,
