@@ -1,6 +1,6 @@
 <h1>
   <img src="https://raw.githubusercontent.com/ldittmar81/ioBroker.tr-064-community/master/admin/tr-064-community.png" width="64"/>
-  ioBroker.tr-064-comminity
+  ioBroker.tr-064-community
 </h1>
 
 ![Number of Installations](http://iobroker.live/badges/tr-064-community-installed.svg) 
