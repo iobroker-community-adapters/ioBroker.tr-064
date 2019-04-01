@@ -157,7 +157,7 @@
                 for (var i in obj) {
                     if (typeof obj[i] === 'object') {
                         if (Array.isArray(obj[i])) continue;
-                        forAllKeys(obj[i], s ? s + sep + i : i, cb)
+                        forAllKeys(obj[i], s ? s + sep + i : i, cb);
                     } else {
                         cb && cb (s ? s + sep + i : i);
                     }
@@ -263,7 +263,6 @@
         }
         h2 {
             font-size: 14px;
-            #color: #505050;
             color: #202060;
             font-weight: bold;
             width: 100%;
