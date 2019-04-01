@@ -1,5 +1,5 @@
 <h1>
-  <img src="https://github.com/iobroker-community-adapters/ioBroker.tr-064-community/blob/master/admin/tr-064-community.png" width="64"/>
+  <img src="https://raw.githubusercontent.com/ldittmar81/ioBroker.tr-064-community/master/admin/tr-064-community.png" width="64"/>
   ioBroker.tr-064-comminity
 </h1>
 
