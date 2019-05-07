@@ -1,3 +1,5 @@
+/* global __dirname, dcs, devices */
+
 'use strict';
 
 var phonebook   = require(__dirname + '/lib/phonebook'),
@@ -256,7 +258,7 @@ function safeFunction(root, path, log) {
         if (typeof fn === 'function') {
             fn(new Error(path + ' is not a function'));
         }
-    }
+    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -331,7 +333,7 @@ var systemData = {
                 self.native.loaded = true;
                 self.save();
             }
-        })
+        });
     },
     save: function () {
         adapter.setObject(adapter.namespace, this, function (err, obj) {
@@ -661,7 +663,7 @@ TR064.prototype.setWPSMode = function (modeOrOnOff, callback) {
         'NewX_AVM-DE_WPSClientPIN': ''
     }, function (err, obj) {
         this.getWLANConfiguration.actions['X_AVM-DE_GetWPSInfo'](function (err, obj) {
-            if (err) adapter.log.error('X_AVM-DE_GetWPSInfo error: ' + err)
+            if (err) adapter.log.error('X_AVM-DE_GetWPSInfo error: ' + err);
         });
     }.bind(this));
 };
@@ -782,7 +784,7 @@ function setActive(dev, val, ip, mac) {
         dev.set('lastActive', sts);
         dev.set('lastActive-ts', ts);
         dev.set('lastIP', ip);
-        dev.set('lastMAC-address', mac)
+        dev.set('lastMAC-address', mac);
     } else {
         dev.set('lastInactive', sts);
         dev.set('lastInactive-ts', ts);

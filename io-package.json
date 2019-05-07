@@ -1,206 +1,85 @@
 {
-  "common": {
-    "name": "tr-064-community",
-    "version": "0.4.18",
-    "news": {
-      "0.4.18": {
-        "en": "IP and MAC-address added to device object",
-        "de": "IP und MAC-Adresse den Geräten hinzugefügt"
-      },
-      "0.4.17": {
-        "en": "readme updated",
-        "de": "Readme angepasst"
-      },
-      "0.4.16": {
-        "en": "terminating adapter, if init fails, so that the adapter will be restarted",
-        "de": "Adapter wird un bei einem init-Fehler beendet, so dass er neu gestartet wird"
-      },
-      "0.4.15": {
-        "en": "callmonitor: new toPauseState with extension",
-        "de": "callmonitor: neuer Datenpunkt toPauseState mit Nebenstellennummer"
-      },
-      "0.4.14": {
-        "en": "Errorhandling of connection to FritzBox extended",
-        "de": "Fehlerbehandlung beim Verbinden zur FritzBox erweitert"
-      },
-      "0.4.12": {
-        "en": "Errorhandling of deflections fixed",
-        "de": "Fehlerbehandlung der Weiterleitungen repariert"
-      },
-      "0.4.11": {
-        "en": "Update utils.js and usage, CI Testing and deps (Apollon77)",
-        "de": "utils.js und Benutzung erneuert, CI Testing (Apollon77)"
-      },
-      "0.4.10": {
-        "en": "readme changelog extended",
-        "de": "readme changelog erweitert"
-      },
-      "0.4.9": {
-        "en": "fix tag error in io-package.json",
-        "de": "Tag Fehler in io-package.json behoben"
-      },
-      "0.4.8": {
-        "en": "fix posible timeout on getting WLAN-Infos",
-        "de": "möglichen Timeout beim holen der WLAN-Infos behoben"
-      },
-      "0.4.6": {
-        "en": "fix posible exception in deflections",
-        "de": "mögliche Schutzverletzung in deflections behoben"
-      },
-      "0.4.5": {
-        "en": "update basic package-file testing (Apollon77)",
-        "de": "Erweiterung der Tests (Apollon77)"
-      },
-      "0.4.4": {
-        "en": "states of call forwarding will now be updated in the configured interval",
-        "de": "Werte der Weiterleitungen werden nun im Intervall erneuert"
-      },
-      "0.4.3": {
-        "en": "Call forwarding now configurable",
-        "de": "Rufweiterleitung jetzt konfigurierbar"
-      },
-      "0.4.2": {
-        "en": "fixed exception in deflections",
-        "de": "SChutzverletzung in deflections behoben"
-      },
-      "0.4.1": {
-        "en": "fix changing forwarding state",
-        "de": "Ändern des Wertes für Rufweiterleitungen gefixed"
-      },
-      "0.4.0": {
-        "en": "enable/disable call forwarding added",
-        "de": "Aktivieren/Deaktivieren von Rufweiterleitungen hinzugefügt"
-      },
-      "0.3.24": {
-        "en": "States from the callmonitor are renewed, even if no change",
-        "de": "Werte vom Callmonitor werden erneuert, auch bei wiederholten Anrufen"
-      },
-      "0.3.23": {
-        "en": "node 0.12 removed from testing",
-        "de": "node 0.12 auf testing entfernt"
-      },
-      "0.3.22": {
-        "en": "Enhance CI testing",
-        "de": "CI testing erweitert"
-      },
-      "0.3.21": {
-        "en": "using soef 0.4.6 to fix adapter load",
-        "de": "Verwende nun soef 0.4.6 um das Laden des adapters zu ermöglichen"
-      },
-      "0.3.20": {
-        "en": "adapter type changed to media",
-        "de": "Adapter type nach media geändert"
-      },
-      "0.3.19": {
-        "en": "error message removed",
-        "de": "Fehlermeldung entfernt"
-      },
-      "0.3.18": {
-        "en": "clear caller/callee before next call",
-        "de": "Anrufer/Angerufener zurückgesetzt"
-      },
-      "0.3.17": {
-        "en": "Only active will be shone in configuration",
-        "de": "Nur aktive Geräte werden in der Konfiguration angzeigt"
-      },
-      "0.3.16": {
-        "en": "Some extensions in onMessage discovery",
-        "de": "Einige Erweiterungen in der function onMessage discovery"
-      },
-      "0.3.15": {
-        "en": "toPauseState added. Values: ring, connect, end",
-        "de": "toPauseState hinzugefügt. Werte: wing, connect, end"
-      },
-      "0.3.14": {
-        "en": "callee name added",
-        "de": "Anrufername hinzugefügt"
-      },
-      "0.3.12": {
-        "en": "phone book for repeater excluded",
-        "de": "Telefonnbuch für Repeater ausgeschlossen"
-      },
-      "0.3.11": {
-        "de": "external property der Anrufliste hinzugefügt",
-        "en": "external property adde to call list"
-      },
-      "0.3.10": {
-        "de": "Fehlermeldung in der Konfiguration, wenn noch ein älterer admin adapter installiert",
-        "en": "Error message in configuration, if an older admin adapter is installed"
-      },
-      "0.3.7": {
-        "de": "Imageurl für externe Telefonbücer erneut korrigiert",
-        "en": "Fixed imageurl for external phone book again. E.g. google"
-      },
-      "0.3.6": {
-        "de": "Imageurl für externe Telefonbücer korrigiert",
-        "en": "Fixed imageurl for external phone book. E.g. google"
-      },
-      "0.3.5": {
-        "de": "Geräteliste als Json",
-        "en": "Json device list"
-      },
-      "0.3.4": {
-        "de": "Absolute Image URL",
-        "en": "Absolute image url"
-      },
-      "0.3.3": {
-        "de": "Telefonbuch Functionsn und States hinzugefügt",
-        "en": "phonebook functions/states added"
-      },
-      "0.3.2": {
-        "en": "readme adapted",
-        "de": "readme angepasst"
-      },
-      "0.3.1": {
-        "en": "some bug fixes & call lists added",
-        "de": "Einige Bug fixes & Anruflisten hinzugefügt"
-      },
-      "0.3.0": {
-        "en": "use new table for configuration dialog",
-        "de": "Benutze neue Tabelle für Konfigurationsdialog",
-        "ru": "Новая таблица в диалоге настроек"
-      }
+    "common": {
+        "name": "tr-064-community",
+        "version": "1.0.0",
+        "news": {
+            "1.0.0": {
+                "en": "first version for the community",
+                "de": "erste Version für die Community",
+                "ru": "первая версия для сообщества",
+                "pt": "primeira versão para a comunidade",
+                "nl": "eerste versie voor de gemeenschap",
+                "fr": "première version pour la communauté",
+                "it": "prima versione per la comunità",
+                "es": "Primera versión para la comunidad.",
+                "pl": "pierwsza wersja dla społeczności",
+                "zh-cn": "社区的第一个版本"
+            }
+        },
+        "title": "TR-064",
+        "titleLang": {
+            "en": "TR-064",
+            "de": "TR-064",
+            "ru": "TR-064",
+            "pt": "TR-064",
+            "nl": "TR-064",
+            "fr": "TR-064",
+            "it": "TR-064",
+            "es": "TR-064",
+            "pl": "TR-064",
+            "zh-cn": "TR-064"
+        },
+        "desc": {
+            "en": "TR-064 is a protocol developed by the DSL Forum to allow DSL Internet access devices from the local area network configure. It is based on the Universal Plug and Play (UPnP) standard, which is generally used for manufacturer-independent control of devices in IP-based networks.",
+            "de": "TR-064 ist ein Protokoll entwickelt, durch das DSL-Forum zu ermöglichen, DSL-Internet-Zugang-Geräten aus dem lokalen Netzwerk konfigurieren. Es basiert auf dem Universal Plug and Play (UPnP) - standard, das ist in der Regel für die Hersteller-unabhängige Steuerung von Geräten in IP-basierten Netzwerken.",
+            "ru": "ТР-064-это протокол, разработанный форума DSL, чтобы разрешить устройствам беспроводной доступ в Интернет из локальной сети настроить. Она основана на универсальный подключи и играй стандарт (UPnP), что, как правило, используется производителем для независимого управления устройствами в IP-сетях.",
+            "pt": "TR-064 é um protocolo desenvolvido por DSL Forum para permitir o acesso à Internet DSL dispositivos de rede de área local de configurar. Ele é baseado no Plug and Play Universal (UPnP) padrão, que geralmente é usado para o fabricante, independente de controlo de dispositivos em redes baseadas em IP.",
+            "nl": "TR-064 is een protocol ontwikkeld door het DSL Forum voor het toestaan van DSL Internet access apparaten in het lokale netwerk configureren. Het is gebaseerd op de Universele Plug en Play (UPnP) - standaard, die wordt over het algemeen gebruikt voor fabrikant-onafhankelijke controle van de apparaten in IP-gebaseerde netwerken.",
+            "fr": "TR-064 est un protocole développé par le DSL Forum pour permettre un accès Internet DSL les périphériques du réseau local configurer. Il est basé sur l'Universal Plug and Play (UPnP), qui est généralement utilisé pour le fabricant indépendant de contrôle des périphériques dans les réseaux IP.",
+            "it": "TR-064 è un protocollo sviluppato da DSL Forum per consentire l'accesso a Internet adsl dispositivi dalla rete locale configurare. Esso è basato su Universal Plug and Play (UPnP) standard, che viene generalmente utilizzato per produttore indipendente di controllo dei dispositivi nelle reti basate su IP.",
+            "es": "TR-064 es un protocolo desarrollado por el DSL Forum para permitir el acceso a Internet DSL de los dispositivos de la red de área local configurar. Se basa en el Universal Plug and Play (UPnP) estándar, que se utiliza generalmente para el fabricante independiente de control de dispositivos en redes basadas en IP.",
+            "pl": "TR-064-jest to protokół opracowany przez forum DSL, aby zezwolić urządzeniom bezprzewodowy dostęp do Internetu z sieci lokalnej dostosować. Opiera się ona na universal plug and play standard (UPnP), co jest zwykle stosowany przez producenta do niezależnego sterowania urządzeniami w sieciach IP.",
+            "zh-cn": "TR-064是协议制定的DSL论坛，以允许DSL互联网接入设备从该地区的网络配置。 它基于普遍即插即用(即用)的标准，该标准是通常用于制造商的独立控制的设备在基于IP网络。"
+        },
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "keywords": [
+            "tr-064",
+            "fritz.box",
+            "fritzbox",
+            "avm"
+        ],
+        "mode": "daemon",
+        "icon": "tr-064-community.png",
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064-community/master/admin/tr-064.png",
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community/blob/master/README.md",
+        "loglevel": "info",
+        "type": "infrastructure",
+        "enabled": true,
+        "messagebox": true,
+        "main": "tr-064.js",
+        "authors": [
+            {
+                "name": "soef",
+                "email": "soef@gmx.net"
+            }
+        ]
     },
-    "title": "TR 064",
-    "desc": "TR 064",
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "keywords": [
-      "tr-064",
-      "fritz.box",
-      "fritzbox",
-      "avm"
-    ],
-    "mode": "daemon",
-    "icon": "tr-064.png",
-    "extIcon": "https://raw.githubusercontent.com/soef/iobroker.tr-064/master/admin/tr-064.png",
-    "readme": "https://github.com/soef/iobroker.tr-064/blob/master/README.md",
-    "loglevel": "info",
-    "type": "infrastructure",
-    "enabled": true,
-    "messagebox": true,
-    "authors": [
-      {
-        "name": "soef",
-        "email": "soef@gmx.net"
-      }
-    ]
-  },
-  "native": {
-    "ip": "fritz.box",
-    "user": "",
-    "password": "",
-    "pollingInterval": 10,
-    "useCallMonitor": true,
-    "usePhonebook": true,
-    "useDevices": true,
-    "devices": [],
-    "calllists": {
-      "missed": {
-        "generateJSON": true,
-        "maxEntries": 10
-      }
-    }
-  },
-  "objects": []
+    "native": {
+        "ip": "fritz.box",
+        "user": "",
+        "password": "",
+        "pollingInterval": 10,
+        "useCallMonitor": true,
+        "usePhonebook": true,
+        "useDevices": true,
+        "devices": [],
+        "calllists": {
+            "missed": {
+                "generateJSON": true,
+                "maxEntries": 10
+            }
+        }
+    },
+    "objects": []
 }
