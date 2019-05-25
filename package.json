@@ -24,10 +24,10 @@
     "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community"
   },
   "dependencies": {
-    "mdns-discovery": "^0.1.9",
-    "soef": "^0.4.9",
+    "mdns-discovery": "^0.2.6",
+    "soef": "^0.1.49",
     "tr-O64": "^0.2.4",
-    "xml2js": "^0.4.17",
+    "xml2js": "^0.4.19",
     "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
