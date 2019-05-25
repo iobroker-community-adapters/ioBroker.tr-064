@@ -1,6 +1,6 @@
 {
   "name": "iobroker.tr-064-community",
-  "version": "0.4.18",
+  "version": "1.0.0",
   "description": "ioBroker tr-064 Adapter",
   "author": {
     "name": "soef",
@@ -12,7 +12,7 @@
       "email": "soef@gmx.net"
     }
   ],
-  "homepage": "https://github.com/soef/iobroker.tr-064",
+  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community",
   "license": "MIT",
   "keywords": [
     "tr-064",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/soef/iobroker.tr-064"
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community"
   },
   "dependencies": {
     "mdns-discovery": "^0.1.9",
@@ -31,18 +31,24 @@
     "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
-    "mocha": "^4.1.0",
-    "chai": "^4.1.2"
+    "gulp": "^4.0.0",
+    "mocha": "^6.0.2",
+    "chai": "^4.1.2",
+    "axios": "^0.18.0",
+    "@iobroker/testing": "^1.1.10"
   },
   "main": "tr-064.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit"
+    "test": "npm run test:package && npm run test:unit",
+    "test:package": "mocha test/package --exit",
+    "test:unit": "mocha test/unit --exit",
+    "test:integration": "mocha test/integration --exit"
   },
   "engines": {
     "node": ">=4.0.0"
   },
   "bugs": {
-    "url": "https://github.com/soef/iobroker.tr-064/issues"
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community/issues"
   },
   "readmeFilename": "README.md"
 }

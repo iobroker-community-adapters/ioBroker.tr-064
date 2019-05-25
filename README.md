@@ -1,11 +1,19 @@
-![Logo](admin/tr-064.png)
-# ioBroker.tr-064
+<h1>
+  <img src="https://raw.githubusercontent.com/ldittmar81/ioBroker.tr-064-community/master/admin/tr-064-community.png" width="64"/>
+  ioBroker.tr-064-community
+</h1>
 
-![Number of Installations](http://iobroker.live/badges/tr-064-community-installed.svg) ![Number of Installations](http://iobroker.live/badges/tr-064-community-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
-[![Tests](http://img.shields.io/travis/soef/ioBroker.tr-064/master.svg)](https://travis-ci.org/soef/ioBroker.tr-064)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/soef/iobroker.tr-064/blob/master/LICENSE)
+![Number of Installations](http://iobroker.live/badges/tr-064-community-installed.svg) 
+![Number of Installations](http://iobroker.live/badges/tr-064-community-stable.svg)
+[![NPM version](http://img.shields.io/npm/v/iobroker.tr-064-community.svg)](https://www.npmjs.com/package/iobroker.tr-064-community)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.tr-064-community.svg)](https://www.npmjs.com/package/iobroker.tr-064-community)
 
-<!--[![Build status](https://ci.appveyor.com/api/projects/status/485gflwiw7p54x7q?svg=true)](https://ci.appveyor.com/project/soef/iobroker-tr-064)-->
+[![NPM](https://nodei.co/npm/iobroker.tr-064-community.png?downloads=true)](https://nodei.co/npm/iobroker.tr-064-community/)
+
+[![Travis-CI](http://img.shields.io/travis/iobroker-community-adapters/ioBroker.tr-064-community/master.svg)](https://travis-ci.org/iobroker-community-adapters/ioBroker.tr-064-community)
+[![Greenkeeper badge](https://badges.greenkeeper.io/iobroker-community-adapters/ioBroker.tr-064-community.svg)](https://greenkeeper.io/)
+[![Dependency Status](https://img.shields.io/david/iobroker-community-adapters/iobroker.tr-064-community.svg)](https://david-dm.org/iobroker-community-adapters/iobroker.tr-064-community)
+[![Known Vulnerabilities](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064-community/badge.svg)](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064-community)
 
 ***This adapter requires at least Node 4.x***
 
@@ -106,83 +114,30 @@ npm install iobroker.tr-064@dev
 iobroker upload tr-064
 ```
 
-## Changelog
-### 0.4.18
-* (soef) IP and MAC-address added to device object
-### 0.4.17
-* (soef) readme updated
-### 0.4.16
-* (soef) terminating adapter, if init fails, so that the adapter will be restarted",
-### 0.4.15
-* (soef) callmonitor: new toPauseState with extension
-### 0.4.14
-* (soef) Errorhandling of connecting to FritzBox extended
-### 0.4.12
-* (soef) Errorhandling of deflections fixed
-### 0.4.11
-* (Apollon77) Update utils.js and usage, CI Testing and deps
-### 0.4.10 (2017-11-23)
-* (soef) readme changelog extended
-### 0.4.9
-* (soef) fix tag error in io-package.json
-### 0.4.8
-* (soef) fix posible timeout on getting WLAN-Infos
-### 0.4.6
-* (soef) fix posible exception in deflections
-### 0.4.5
-* (apollon77) update basic package-file testing
-### 0.4.4
-* (soef) states of call forwarding will now be updated in the configured interval
-### 0.4.3
-* (soef) Call forwarding now configurable
-### 0.4.2
-* (soef) fixed exception in deflections
-### 0.4.1
-* (soef) fix changing forwarding state
-### 0.4.0
-* (soef) enable/disable call forwarding added
-### 0.3.24
-* (soef) States from the callmonitor are renewed, even if no change
-### 0.3.23
-* (soef) node 0.12 removed from testing
-### 0.3.22
-* (soef) Enhance CI testing
-### 0.3.21
-* (soef) using soef 0.4.6 to fix adapter load
-### 0.3.20
-* (soef) adapter type changed to media
-### 0.3.19
-* (soef) error message removed
-### 0.3.18
-* (soef) clear caller/callee before next call
-### 0.3.17
-* (soef) Only active will be shone in configuration
-### 0.3.16
-* (soef) Some extensions in onMessage discovery
-### 0.3.15
-* (soef) toPauseState added. Values: ring, connect, end
-### 0.3.14
-* (soef) callee name added
-### 0.3.12 (2017-03-15)
-* (bluefox) phone book for repeater excluded
-* (bluefox) readme extended
-### 0.3.11 (2017-03-07)
-* (soef) external property adde to call list
-### 0.3.10 (2017-03-07)
-* (soef) Error message in configuration, if an older admin adapter is installed
-### 0.3.7 (2017-03-06)
-* (soef) Fixed imageurl for external phone book again. E.g. google
-### 0.3.6 (2017-03-06)
-* (soef) Fixed imageurl for external phone book. e.g. google
-### 0.3.5 (2017-03-06)
-* (soef) Json device list added
-### 0.3.3 (2017-03-01)
-* (soef) phonebook functions/states added
-### 0.3.1 (2017-02-28)
-* (soef) some bug fixes
-* (soef) releasing call lists
-### 0.3.0 (2017-02-25)
-* (bluefox) use new table for configuration dialog
+### Changelog
 
-### 0.2.0 (2016)
-* (soef) initial commit
+## 1.0.0 (2019-04-01)
+* (ldittmar) first version for the community
+
+## License
+The MIT License (MIT)
+
+Copyright (c) 2015-2019 soef <soef@gmx.net>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
