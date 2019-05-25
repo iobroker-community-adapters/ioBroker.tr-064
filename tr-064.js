@@ -6,7 +6,7 @@ var phonebook   = require(__dirname + '/lib/phonebook'),
     callMonitor = require(__dirname + '/lib/callmonitor'),
     calllist    = require(__dirname + '/lib/calllist'),
     Deflections = require(__dirname + '/lib/deflections'),
-    soef        = require('soef'),
+    soef        = require(__dirname + '/lib/soef'),
     tr064Lib    = require('tr-O64');
 
 var tr064Client, deflections;
