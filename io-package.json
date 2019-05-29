@@ -51,7 +51,7 @@
         ],
         "mode": "daemon",
         "icon": "tr-064-community.png",
-        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064-community/master/admin/tr-064.png",
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064-community/master/admin/tr-064-community.png",
         "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community/blob/master/README.md",
         "loglevel": "info",
         "type": "infrastructure",
