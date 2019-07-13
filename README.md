@@ -46,8 +46,13 @@ e.g.: **610[,timeout]
 - Resume can be done on the end value.
 
 ### Presence
-You can configure a list of devices to listen to.
-Can be triggert by mDNS. When using MDNS, no polling ist needet and it is faster
+To monitor the presence of persons in your home, so to control once anyone of your family/roommate is leaving or arriving, you can use this adapter as follows: 
+- Enter the Adapter options and switch to the 'Devices' tab
+- Add all devices (like smart phones) of your family/roommate members accordingly, and confirm with 'Save'.
+- For each device, the adapter will now create a folder structure under the ioBroker Objects of the adapter, typically in the folder "tr-064-community.0.devices"
+- Now once anyone is arriving or leaving, this adapter will get the information accordingly. For example, the state "tr-064-community.0.devices.xxx.active", where xxx is the device name, will indicate if the specific device is available or not, so if the person is present or not. User feedback is that this works reliable for iOS devices as well, like with iPhones. For iPhones, user feedback is that it takes up to 10 minutes until the Fritz!Box notices that a person left and is no longer connected with WiFi, and it takes up to 1 minute until the Fritz!Box will notice the presence again.
+
+Also, a script was published by the ioBroker community which uses this adapter information to trigger actions (e.g. everyone left home, so turn off everything automatically, see number of persons currently being present, or person status in general, via VIS, etc.). See [ioBroker forum thread](https://forum.iobroker.net/topic/4538/anwesenheitscontrol-basierend-auf-tr64-adapter-script) (in German)
 
 ### AB - Anrufbeantworter (answering machine)
 Can be switch on/off.
