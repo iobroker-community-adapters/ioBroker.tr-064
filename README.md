@@ -36,8 +36,8 @@ This adapter was initialy created by @soef at https://github.com/soef/ioBroker.t
 - When using an internel number (like **610) the ring state will let ring that internal phone.
 e.g.: **610[,timeout]
 - When using an external number, the ring state will connect you to the external number.
- The FritzBox will call the external number and your default phone will ring, when the called phone is picked up.
- The default phone can be configured in the FritsBox under:
+ The Fritz!Box will call the external number and your default phone will ring, when the called phone is picked up.
+ The default phone can be configured in the Fritz!Box under:
  Telefonie/Anrufe/[Tab]Wahlhilfe/Wählhilfe verwenden
 
 ### toPauseState
