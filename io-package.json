@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "tr-064-community",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "news": {
-            "1.0.0": {
+            "1.0.1": {
                 "en": "first version for the community",
                 "de": "erste Version für die Community",
                 "ru": "первая версия для сообщества",
@@ -57,7 +57,7 @@
         "type": "infrastructure",
         "enabled": true,
         "messagebox": true,
-        "main": "tr-064.js",
+        "main": "main.js",
         "authors": [
             {
                 "name": "soef",
