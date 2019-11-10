@@ -121,6 +121,9 @@ iobroker upload tr-064
 
 ### Changelog
 
+## 1.1.0 (2019-11-10)
+* (jey cee) added Admin v3 support
+
 ## 1.0.0 (2019-04-01)
 * (ldittmar) first version for the community
 

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064-community",
-        "version": "1.0.1",
+        "version": "1.1.0",
         "news": {
+            "1.1.0": {
+                    "en": "added Admin v3 support",
+                    "de": "Unterstützung für Admin v3 hinzugefügt",
+                    "ru": "добавлена поддержка Admin v3",
+                    "pt": "suporte Admin v3 adicionado",
+                    "nl": "ondersteuning voor Admin v3 toegevoegd",
+                    "fr": "ajout du support Admin v3",
+                    "it": "aggiunto supporto Admin v3",
+                    "es": "Soporte agregado de Admin v3",
+                    "pl": "dodano obsługę Admin v3",
+                    "zh-cn": "添加了Admin v3支持"
+                },
             "1.0.1": {
                 "en": "first version for the community",
                 "de": "erste Version für die Community",
@@ -57,6 +69,7 @@
         "type": "infrastructure",
         "enabled": true,
         "messagebox": true,
+        "materialize": true,
         "main": "main.js",
         "authors": [
             {
@@ -77,6 +90,22 @@
         "calllists": {
             "missed": {
                 "generateJSON": true,
+                "generateHTML": true,
+                "maxEntries": 10
+            },
+            "all": {
+                "generateJSON": true,
+                "generateHTML": true,
+                "maxEntries": 10
+            },
+            "inbound": {
+                "generateJSON": true,
+                "generateHTML": true,
+                "maxEntries": 10
+            },
+            "outbound": {
+                "generateJSON": true,
+                "generateHTML": true,
                 "maxEntries": 10
             }
         }

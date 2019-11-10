@@ -1,0 +1,519 @@
+<html>
+
+<head>
+
+    <!-- Load ioBroker scripts and styles-->
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+    <!-- Load our own files -->
+    <script type="text/javascript" src="words.js"></script>
+
+    <script type="text/javascript">
+        let active = false;
+
+        //Show error message
+        function errorMessage(msg){
+                $('#modalError > div > p').replaceWith('<p class="translate" style="font-size: large">' + msg + '</p>');
+                $('#modalError').modal('open');
+        }
+
+        //Add new row to table for device
+        function addDeviceRow(onChange, name, ip, mac){
+            let countRows = $('#devices > tr').length;
+            let newIndex = countRows + 1;
+
+            let newRow = '<tr>\n' +
+                '                        <td>\n' +
+                '                            <p>'+ newIndex +'</p>\n' +
+                '                        </td>\n' +
+                '                        <td>\n' +
+                '                                <input type="text" class="validate">\n' +
+                '                        </td>\n' +
+                '                        <td>\n' +
+                '                            <input type="text" class="validate">\n' +
+                '                        </td>\n' +
+                '                        <td>\n' +
+                '                            <input type="text" class="validate">\n' +
+                '                        </td>\n' +
+                '                        <td>\n' +
+                '                            <a class="delete-device values-buttons btn-floating btn-small waves-effect waves-light red"><i class="material-icons" title="Remove device">delete</i></a>\n' +
+                '                        </td>\n' +
+                '                    </tr>';
+
+            $('#devices').append(newRow);
+
+
+            $('.delete-device').on('click', function(){
+                $(this).parents('tr').remove();
+                reIndex();
+                onChange();
+            });
+
+            if(name !== null && ip !== null && mac !== null){
+                $('#devices > tr').eq(countRows).find('td').eq(1).find('input').val(name)
+                    .on('change', () => onChange())
+                    .on('keyup', () => onChange());
+                $('#devices > tr').eq(countRows).find('td').eq(2).find('input').val(ip)
+                    .on('change', () => onChange())
+                    .on('keyup', () => onChange());
+                $('#devices > tr').eq(countRows).find('td').eq(3).find('input').val(mac)
+                    .on('change', () => onChange())
+                    .on('keyup', () => onChange());
+            }
+
+
+            if (M) M.updateTextFields();
+            onChange();
+        }
+
+        //give table rows new index number
+        function reIndex(){
+            let count = $('#devices > tr').length;
+            for(let i = 0; i < count; i++){
+                let newIndex = i + 1;
+                $('#devices > tr').eq(i).find('p').replaceWith('<p>' + newIndex + '</p>');
+            }
+        }
+
+        //look for devices on router
+        function deviceLookup(onChange){
+            sendTo('tr-064-community.' + instance, 'discovery', { onlyActive: true, reread: false }, function (result) {
+
+                let arr = JSON.parse(result);
+
+                $('#chooseDevice').empty();
+                for(let i = 0; i < arr.length; i++){
+                    let name = arr[i].name;
+                    let ip = arr[i].ip;
+                    let mac = arr[i].mac;
+
+                    let newRow = '<tr>\n' +
+                        '                        <td>\n' +
+                        '                                <p>'+ name + '</p>\n' +
+                        '                        </td>\n' +
+                        '                        <td>\n' +
+                        '                            <p>'+ ip + '</p>\n' +
+                        '                        </td>\n' +
+                        '                        <td>\n' +
+                        '                            <p>'+ mac +'</p>\n' +
+                        '                        </td>\n' +
+                        '                    </tr>';
+
+                    $('#chooseDevice').append(newRow);
+
+                    $('#modalDevices > div > p').remove();
+                }
+
+                //push device to devices table
+                $('#chooseDevice > tr').on('click', function(){
+                    let name, ip, mac;
+                    $(this).find('td > p').each(function(elem){
+                        console.log($(this).text());
+                        switch(elem){
+                            case 0:
+                                name = $(this).text();
+                                break;
+                            case 1:
+                                 ip = $(this).text();
+                                break;
+                            case 2:
+                                mac = $(this).text();
+                                break;
+                        }
+                    });
+                    addDeviceRow(onChange, name, ip, mac);
+
+                });
+
+            });
+
+
+        }
+
+        // This will be called by the admin adapter when the settings page loads
+        function load(settings, onChange) {
+
+            if (!settings) return;
+
+            $('#find').on('click', function(){
+                if(!active){
+                    errorMessage('You have to enable/start ' + adapter + ' adapter befor you can use this function!');
+                    return;
+                }else{
+                    deviceLookup(onChange);
+                    $('#modalDevices').modal('open');
+                }
+            });
+
+            $('#addDevice').on('click', function(){
+               addDeviceRow(onChange, null, null, null);
+            });
+
+
+            $('.value').each(function () {
+                let $key = $(this);
+                let id = $key.attr('id');
+                id = id.split('_');
+                let sObj;
+                switch(id.length){
+                    case 1:
+                        sObj = settings[id[0]];
+                        break;
+                    case 2:
+                        sObj = settings[id[0]][id[1]];
+                        break;
+                    case 3:
+                        sObj = settings[id[0]][id[1]][id[2]];
+                        break;
+                }
+
+                if ($key.attr('type') === 'checkbox') {
+                    // do not call onChange direct, because onChange could expect some arguments
+                    $key.prop('checked', sObj)
+                        .on('change', () => onChange())
+                    ;
+                } else {
+                    // do not call onChange direct, because onChange could expect some arguments
+                    $key.val(sObj)
+                        .on('change', () => onChange())
+                        .on('keyup', () => onChange())
+                    ;
+                }
+            });
+
+            //read devices from settings and show in table
+            let countDevices = settings.devices.length;
+            if(countDevices > 0){
+                for(let i = 0; i < countDevices; i++){
+                    let name = settings.devices[i].name;
+                    let ip = settings.devices[i].ip;
+                    let mac = settings.devices[i].mac;
+                    addDeviceRow(onChange, name, ip, mac);
+                }
+            }
+
+            socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
+                active = /*common.enabled ||*/ (state && state.val);
+            });
+
+            //initialize modals
+            $('.modal').modal();
+
+            onChange(false);
+            // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+            if (M) M.updateTextFields();
+        }
+
+        // This will be called by the admin adapter when the user presses the save button
+        function save(callback) {
+            // example: select elements with class=value and build settings object
+            let obj = {};
+            $('.value').each(function () {
+                let $this = $(this);
+                let id = $this.attr('id');
+                id = id.split('_');
+                let key;
+
+                if ($this.attr('type') === 'checkbox') {
+                    key = $this.prop('checked');
+                } else {
+                    key = $this.val();
+                }
+
+                switch(id.length){
+                    case 1:
+                        obj[id[0]] = key;
+                        break;
+                    case 2:
+                        if(!obj[id[0]]){
+                            obj[id[0]] = {};
+                        }
+                        obj[id[0]][id[1]] = key;
+                        break;
+                    case 3:
+                        if(!obj[id[0]]){
+                            obj[id[0]] = {};
+                        }
+                        if(!obj[id[0]][id[1]]){
+                            obj[id[0]][id[1]] =  {};
+                        }
+                        obj[id[0]][id[1]][id[2]] = key;
+                        break;
+                }
+
+
+            });
+
+            //save devices list
+            let countDevices = $('#devices > tr').length;
+            if(countDevices > 0){
+                let arrDevices = [];
+                for(let i = 0; i < countDevices; i++){
+                    let name = $('#devices > tr').eq(i).find('td').eq(1).find('input').val();
+                    let ip = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
+                    let mac = $('#devices > tr').eq(i).find('td').eq(3).find('input').val();
+                    let json = {name: name, ip: ip, mac: mac};
+                    arrDevices.push(json);
+                }
+                obj['devices'] = arrDevices;
+            }
+
+
+            callback(obj);
+        }
+    </script>
+
+</head>
+
+<body>
+
+<div class="m adapter-container">
+ <div class="row">
+    <!-- Tabs navigation -->
+    <div class="col s12">
+        <ul class="tabs">
+            <li class="tab col s2">
+                <a href="#tab-options" class="translate" data-lang="Options">Options</a>
+            </li>
+            <li class="tab col s2">
+                <a href="#tab-devices" class="translate" data-lang="Devices">Devices</a>
+            </li>
+            <li class="tab col s2">
+                <a href="#tab-calllists" class="translate" data-lang="Calllists">Calllists</a>
+            </li>
+        </ul>
+    </div>
+
+
+
+
+
+    <!-- Tabs content -->
+    <div id="tab-options" class="col s12 page">
+
+            <div class="row">
+                <div class="col s11 m4 l2">
+                    <img src="tr-064-community.png" class="logo">
+                </div>
+            </div>
+            <div class="input-field col">
+                <input class="value text" id="ip" for="ip" size="25" maxlength="25" type="text">
+                <label class="translate active">IP</label>
+            </div>
+            <div class="input-field col">
+                <input class="value text" id="user" for="user" size="25" maxlength="25" type="text">
+                <label class="translate active">User</label>
+            </div>
+            <div class="input-field col">
+                <input class="value text" id="password" for="password" size="55" maxlength="55" type="password">
+                <label class="translate active">Password</label>
+            </div>
+
+        <div class="row">
+            <div class="input-field col">
+                <input class="value number" id="pollingInterval" for="pollingInterval" size="2" maxlength="2" type="number">
+                <label class="translate active">Polling interval (sec)</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12 m6 l4">
+                <input class="value filled-in" id="useCallMonitor" type="checkbox">
+                <span style="" class="translate">Use CallMonitor</span>
+            </div>
+            <div class="input-field col s12 m6 l4">
+                <input class="value filled-in" id="usePhonebook" type="checkbox">
+                <span style="" class="translate">Use phonebook</span>
+            </div>
+            <div class="input-field col s12 m6 l4">
+                <input class="value filled-in" id="useDeflectionOptions" type="checkbox">
+                <span style="" class="translate">Use call forwarding options</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12 m6 l4">
+                <input class="value filled-in" id="useDevices" type="checkbox">
+                <span style="" class="translate">Watch devices</span>
+            </div>
+            <div class="input-field col s12 m6 l4">
+                <input class="value filled-in" id="useMDNS" type="checkbox">
+                <span style="" class="translate">Use MDNS</span>
+            </div>
+            <div class="input-field col s12 m6 l4">
+                <input class="value filled-in" id="jsonDeviceList" type="checkbox">
+                <span style="" class="translate">Create Json device list</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="tab-devices" class="col s12 page">
+
+            <div class="row">
+                <div class="input-field col">
+                    <a class="waves-effect waves-light btn" id="addDevice">
+                        <span class="translate">Add device</span>
+                    </a>
+                </div>
+                <div class="input-field col">
+                    <a class="waves-effect waves-light btn" id="find">
+                        <span class="translate">Find a device</span>
+                    </a>
+                </div>
+            </div>
+            <div class="table-values-div">
+                <table class="centered highlight">
+                    <thead>
+                    <tr>
+                        <th class="translate" id="index"></th>
+                        <th class="translate" id="deviceName">name</th>
+                        <th class="translate" id="deviceIP">ip</th>
+                        <th class="translate" id="deviceMac">MAC</th>
+                        <th class="translate" id="deviceDelete"></th>
+                    </tr>
+                    </thead>
+                    <tbody id="devices">
+                    </tbody>
+                </table>
+            </div>
+    </div>
+
+    <div id="tab-calllists" class="col s12 page">
+        <div class="row">
+            <div class="col s12 m6 l3">
+                <div class="card grey lighten-5">
+                    <div class="card-content black-text">
+                        <span class="card-title translate">All calls</span>
+                        <div class="card-action">
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_all_generateJSON" type="checkbox">
+                                <span style="" class="translate">Generate JSON</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_all_generateHTML" type="checkbox">
+                                <span style="" class="translate">Generate HTML</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value number" id="calllists_all_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                <label class="translate active">max Entries</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12 m6 l3">
+                <div class="card grey lighten-5">
+                    <div class="card-content black-text">
+                        <span class="card-title translate">Missed calls</span>
+                        <div class="card-action">
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_missed_generateJSON" type="checkbox">
+                                <span style="" class="translate">Generate JSON</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_missed_generateHTML" type="checkbox">
+                                <span style="" class="translate">Generate HTML</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value number" id="calllists_missed_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                <label class="translate active">max Entries</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12 m6 l3">
+                <div class="card grey lighten-5">
+                    <div class="card-content black-text">
+                        <span class="card-title translate">Outbound</span>
+                        <div class="card-action">
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_outbound_generateJSON" type="checkbox">
+                                <span style="" class="translate">Generate JSON</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_outbound_generateHTML" type="checkbox">
+                                <span style="" class="translate">Generate HTML</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value number" id="calllists_outbound_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                <label class="translate active">max Entries</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12 m6 l3">
+                <div class="card grey lighten-5">
+                    <div class="card-content black-text">
+                        <span class="card-title translate">Inbound</span>
+                        <div class="card-action">
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_inbound_generateJSON" type="checkbox">
+                                <span style="" class="translate">Generate JSON</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value filled-in" id="calllists_inbound_generateHTML" type="checkbox">
+                                <span style="" class="translate">Generate HTML</span>
+                            </div>
+                            <div class="input-field">
+                                <input class="value number" id="calllists_inbound_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                <label class="translate active">max Entries</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ </div>
+
+    <!-- Modal for Device selection -->
+    <div id="modalDevices" class="modal">
+        <div class="modal-content">
+            <h5 class="blue white-text center-align">Choose Device</h5>
+            <div class="table-values-div">
+                <table class="centered highlight">
+                    <thead>
+                    <tr>
+                        <th class="translate" id="modalDeviceName">name</th>
+                        <th class="translate" id="modalDeviceIP">ip</th>
+                        <th class="translate" id="modalDeviceMac">MAC</th>
+                    </tr>
+                    </thead>
+                    <tbody id="chooseDevice"></tbody>
+                </table>
+            </div>
+            <p class="center-align" style="font-size: larger">Please wait</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-blue btn">Close</a>
+        </div>
+    </div>
+
+    <div id="modalError" class="modal">
+        <div class="modal-content center-align">
+            <h5 class="red white-text center-align">ERROR</h5>
+            <p>Error message</p>
+        </div>
+        <div class="row center">
+            <a href="#!" class="modal-close waves-effect waves-blue btn">Close</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+
+</html>
