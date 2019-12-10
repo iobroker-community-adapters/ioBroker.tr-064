@@ -725,7 +725,7 @@ function isKnownMac(mac) {
 
 // function deleteUnusedDevices(callback) {
 //     var ch = adapter.namespace + '.' + CHANNEL_DEVICES;
-//     adapter.objects.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
+//     adapter.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
 //         if (err || !res) return;
 //         var toDelete = [];
 //         res.rows.forEach(function (o){
@@ -752,7 +752,7 @@ function isKnownMac(mac) {
 
 function deleteUnusedDevices(callback) {
     const ch = adapter.namespace + '.' + CHANNEL_DEVICES;
-    adapter.objects.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
+    adapter.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
         if (err || !res) return;
         const toDelete = [];
         res.rows.forEach (function (o) {
