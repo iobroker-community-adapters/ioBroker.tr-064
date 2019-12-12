@@ -28,6 +28,7 @@ var adapter = soef.Adapter(
                     setTimeout(process.exit.bind(process, -1), 2000);
                     return;
                 }
+                adapter.log.debug('State changed: ' + id + ' = ' + JSON.stringify(state));
                 if (!state.ack) onStateChange(id, state);
                 else if (adapter.config.calllists.use && id.indexOf('callmonitor.lastCall.timestamp') > 0) {
                     tr064Client.refreshCalllist();
