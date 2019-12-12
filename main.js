@@ -945,7 +945,7 @@ function main() {
             phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook, adapter: adapter }, function () {
                 if (pollingTimer) clearTimeout(pollingTimer);
                 pollingTimer = setTimeout(updateAll, 2000);
-                adapter.log.debug('Final Phonebook: ' + JSON.stringify(phonebook));
+                //adapter.log.debug('Final Phonebook: ' + JSON.stringify(phonebook));
                 callMonitor(adapter, devices, phonebook);
                 runMDNS();
             });
