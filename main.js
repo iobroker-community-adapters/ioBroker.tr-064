@@ -92,6 +92,7 @@ String.prototype.normalizeNumber = function () {
 function createObjects(cb) {
 
     //devStates = new devices.CDevice(0, '');
+    devStates.setDevice('');
     devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {} });
     devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {} });
     devStates.setDevice(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {} });
