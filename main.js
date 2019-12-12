@@ -348,6 +348,7 @@ TR064.prototype.refreshCalllist = function () {
     if (!adapter.config.calllists.use) return;
     this.GetCallList (function (err, data) {
         calllist.refresh (err, data, function(list, n, html) {
+            adapter.log.debug('Refresh Calllist ' + n + ': ' + JSON.stringify(list));
             const id = calllist.ROOT + '.' + n;
             list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
             devices.root.set(id + '.count', list.count);
