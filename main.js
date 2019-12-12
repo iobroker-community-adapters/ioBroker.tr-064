@@ -99,7 +99,7 @@ function createObjects(cb) {
 
     for (const i in states) {
         if (i.indexOf('wlan50') === 0 && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
-        adapter.setObjectNotExists(CHANNEL_STATES + '.' + st.name, states[i]);
+        adapter.setObjectNotExists(CHANNEL_STATES + '.' + states[i].name, states[i]);
     }
     if (adapter.config.calllists.use) adapter.setObjectNotExists(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
     //devices.update(cb);
