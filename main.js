@@ -90,7 +90,11 @@ String.prototype.normalizeNumber = function () {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function createObjects(cb) {
-
+    devStates.add(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {} });
+    devStates.add(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {} });
+    devStates.add(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {} });
+    devStates.add(CHANNEL_PHONEBOOK, {common: {name: 'Phone book', role: 'device'}, native: {} });
+    devStates.add(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
     adapter.setObjectNotExists(CHANNEL_CALLLISTS, {type: 'device', common: {name: 'Call lists', role: 'device'}, native: {} });
     adapter.setObjectNotExists(CHANNEL_DEVICES, {type: 'device', common: {name: 'Devices', role: 'device'}, native: {} });
     adapter.setObjectNotExists(CHANNEL_CALLMONITOR, {type: 'device', common: {name: 'Call monitor', role: 'device'}, native: {} });
@@ -100,8 +104,13 @@ function createObjects(cb) {
     for (const i in states) {
         if (i.indexOf('wlan50') === 0 && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
         adapter.setObjectNotExists(CHANNEL_STATES + '.' + states[i].name, states[i]);
+        const st = Object.assign({}, states[i]);
+        devStates.createNew(st.name, st);
     }
-    if (adapter.config.calllists.use) adapter.setObjectNotExists(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
+    if (adapter.config.calllists.use) {
+        adapter.setObjectNotExists(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
+        devices.root.createNew(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
+    }
     //devices.update(cb);
 }
 
@@ -193,6 +202,9 @@ function setPhonebookStates(v) {
     adapter.setState(CHANNEL_PHONEBOOK + '.number', (v && v.number) ? v.number : '', true);
     adapter.setState(CHANNEL_PHONEBOOK + '.name', (v && v.name) ? v.name : '', true);
     adapter.setState(CHANNEL_PHONEBOOK + '.image', (v && v.imageurl) ? v.imageurl : '', true);
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.number', (v && v.number) ? v.number : '');
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.name', (v && v.name) ? v.name : '');
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.image', (v && v.imageurl) ? v.imageurl : '');
 }
 
 function onPhonebook(cmd, val) {
@@ -349,6 +361,10 @@ TR064.prototype.refreshCalllist = function () {
             list.cfg.generateJson && adapter.setState(id + '.json', JSON.stringify(list.array), true);
             adapter.setState(id + '.count', list.count, true);
             list.cfg.generateHtml && adapter.setState(id + '.html', html, true);
+
+            list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
+            devices.root.set(id + '.count', list.count);
+            list.cfg.generateHtml && devices.root.set(id + '.html', html);
         }, devices.root.update.bind(devices.root));
     });
 };
