@@ -121,9 +121,10 @@ iobroker upload tr-064
 
 ### Changelog
 
-### 1.2.0 (2019-12-10)
+### 2.0.0 (2019-12-13)
 * (foxriver76) no longer use adapter.objects
 * __requires js-controller v2__
+* (Apollon77) several fixes, Calllists working again
 
 ## 1.1.0 (2019-11-10)
 * (jey cee) added Admin v3 support

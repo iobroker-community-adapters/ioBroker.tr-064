@@ -159,7 +159,6 @@ function onStateChange(id, state) {
     const as = id.split('.');
     if (as.length < 3) return;
     const cmd = as [3];
-    adapter.log.debug('stateChange ' + id + ' ' + JSON.stringify(state));
     switch(as[2]) {
         case CHANNEL_STATES:
             var func = states [cmd] && states [cmd].native ? states [cmd].native.func : null;
@@ -346,12 +345,9 @@ var systemData = {
 
 
 TR064.prototype.refreshCalllist = function () {
-adapter.log.debug('Refresh Calllists Outer ' + JSON.stringify(adapter.config.calllists));
     if (!adapter.config.calllists.use) return;
     this.GetCallList (function (err, data) {
-        adapter.log.debug('Refresh Calllists Outer 2' + err);
         calllist.refresh (err, data, function(list, n, html) {
-            adapter.log.debug('Refresh Calllist ' + n + ': ' + JSON.stringify(list));
             const id = calllist.ROOT + '.' + n;
             list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
             devices.root.set(id + '.count', list.count);

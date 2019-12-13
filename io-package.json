@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "tr-064-community",
-        "version": "1.2.0",
+        "version": "2.0.0",
         "news": {
-            "1.2.0": {
+            "2.0.0": {
                 "en": "we no longer use adapter.objects",
                 "de": "Wir verwenden keine adapter.objects mehr",
                 "ru": "мы больше не используем адаптер.объекты",
@@ -87,6 +87,11 @@
             {
                 "name": "soef",
                 "email": "soef@gmx.net"
+            }
+        ],
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
             }
         ]
     },
