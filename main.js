@@ -346,8 +346,10 @@ var systemData = {
 
 
 TR064.prototype.refreshCalllist = function () {
+adapter.log.debug('Refresh Calllists Outer ' + JSON.stringify(adapter.config.calllists));
     if (!adapter.config.calllists.use) return;
     this.GetCallList (function (err, data) {
+        adapter.log.debug('Refresh Calllists Outer 2' + err);
         calllist.refresh (err, data, function(list, n, html) {
             adapter.log.debug('Refresh Calllist ' + n + ': ' + JSON.stringify(list));
             const id = calllist.ROOT + '.' + n;
@@ -907,6 +909,7 @@ function runMDNS () {
 function normalizeConfigVars() {
     if (!adapter.config.calllists) adapter.config.calllists = adapter.ioPack.native.calllists;
     calllist.normalizeConfig (adapter.config.calllists);
+    adapter.log.debug('Calllist Config after normalizing: ' + JSON.stringify(adapter.config.calllists));
 
     adapter.config.pollingInterval = adapter.config.pollingInterval >> 0;
     adapter.config.port = adapter.config.port >> 0;
