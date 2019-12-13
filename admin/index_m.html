@@ -172,6 +172,11 @@
                         break;
                     case 3:
                         sObj = settings[id[0]][id[1]][id[2]];
+                        if (sObj === undefined && (id[2] === 'generateJson' || id[2] === 'generateHtml')) {
+                            if (id[2] === 'generateJson') id[2] = 'generateJSON';
+                                else if (id[2] === 'generateHtml') id[2] = 'generateHTML';
+                            sObj = settings[id[0]][id[1]][id[2]];
+                        }
                         break;
                 }
 
@@ -393,11 +398,11 @@
                         <span class="card-title translate">All calls</span>
                         <div class="card-action">
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_all_generateJSON" type="checkbox">
+                                <input class="value filled-in" id="calllists_all_generateJson" type="checkbox">
                                 <span style="" class="translate">Generate JSON</span>
                             </div>
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_all_generateHTML" type="checkbox">
+                                <input class="value filled-in" id="calllists_all_generateHtml" type="checkbox">
                                 <span style="" class="translate">Generate HTML</span>
                             </div>
                             <div class="input-field">
@@ -415,11 +420,11 @@
                         <span class="card-title translate">Missed calls</span>
                         <div class="card-action">
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_missed_generateJSON" type="checkbox">
+                                <input class="value filled-in" id="calllists_missed_generateJson" type="checkbox">
                                 <span style="" class="translate">Generate JSON</span>
                             </div>
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_missed_generateHTML" type="checkbox">
+                                <input class="value filled-in" id="calllists_missed_generateHtml" type="checkbox">
                                 <span style="" class="translate">Generate HTML</span>
                             </div>
                             <div class="input-field">
@@ -437,11 +442,11 @@
                         <span class="card-title translate">Outbound</span>
                         <div class="card-action">
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_outbound_generateJSON" type="checkbox">
+                                <input class="value filled-in" id="calllists_outbound_generateJson" type="checkbox">
                                 <span style="" class="translate">Generate JSON</span>
                             </div>
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_outbound_generateHTML" type="checkbox">
+                                <input class="value filled-in" id="calllists_outbound_generateHtml" type="checkbox">
                                 <span style="" class="translate">Generate HTML</span>
                             </div>
                             <div class="input-field">
@@ -459,11 +464,11 @@
                         <span class="card-title translate">Inbound</span>
                         <div class="card-action">
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_inbound_generateJSON" type="checkbox">
+                                <input class="value filled-in" id="calllists_inbound_generateJson" type="checkbox">
                                 <span style="" class="translate">Generate JSON</span>
                             </div>
                             <div class="input-field">
-                                <input class="value filled-in" id="calllists_inbound_generateHTML" type="checkbox">
+                                <input class="value filled-in" id="calllists_inbound_generateHtml" type="checkbox">
                                 <span style="" class="translate">Generate HTML</span>
                             </div>
                             <div class="input-field">
