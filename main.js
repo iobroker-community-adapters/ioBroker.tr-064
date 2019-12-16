@@ -58,28 +58,48 @@ const allDevices = [];
 const ipActive = {};
 
 const states = {
-    wps:               { name: 'wps',               val: false,   common: { }, native: { func: 'setWPSMode' }},
-    wlan:              { name: 'wlan',              val: false,   common: { desc: 'All WLANs' }, native: { func: 'setWLAN' }},
-    wlan24:            { name: 'wlan24',            val: true,    common: { desc: '2.4 GHz WLAN' }, native: { func: 'setWLAN24' }},
-    wlan50:            { name: 'wlan50',            val: true,    common: { desc: '5.0 GHz WLAN' }, native: { func: 'setWLAN50' }},
-    wlanGuest:         { name: 'wlanGuest',         val: true,    common: { desc: 'Guest WLAN' }, native: { func: 'setWLANGuest' }},
-    wlan24Password:    { name: 'wlan24Password',    val: '',      common: { desc: 'Passphrase for 2.4 GHz WLAN' }, native: { func: 'setWLAN24Password' }},
-    wlan50Password:    { name: 'wlan50Password',    val: '',      common: { desc: 'Passphrase for 5.0 GHz WLAN' }, native: { func: 'setWLAN50Password' }},
-    wlanGuestPassword: { name: 'wlanGuestPassword', val: '',      common: { desc: 'Passphrase for Guest WLAN' }, native: { func: 'setWLANGuestPassword' }},
-    abIndex:           { name: 'abIndex',           val: 0,       common: { }, native: { func: 'setABIndex' }},
-    ab:                { name: 'ab',                val: false,   common: { desc: 'parameter: index, state' }, native: { func: 'setAB' }},
-    ring:              { name: 'ring',              val: '**610', common: { desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'}, native: { func: 'ring' } },
-    reconnectInternet: { name: 'reconnectInternet', val: false,   common: { }, native: { func: 'reconnectInternet' }  },
-    command:           { name: 'command',           val: '',      native: { func: 'command', desc: commandDesc }},
-    commandResult:     { name: 'commandResult',     val: '',      common: { write: false }},
-    externalIP:        { name: 'externalIP',        val: '',      common: { write: false}},
-    reboot:            { name: 'reboot',            val: false,   common: { }, native: { func: 'reboot' }  },
-
-    pbNumber:          { name: '.'+CHANNEL_PHONEBOOK + '.number', val: '', common: { name: 'Number'} },
-    pbName:            { name: '.'+CHANNEL_PHONEBOOK + '.name', val: '', common: { name: 'Name'} },
-    pbImageUrl:        { name: '.'+CHANNEL_PHONEBOOK + '.image', val: '', common: { name: 'Image URL'} },
-    ringing:           { name: '.'+CHANNEL_CALLMONITOR + '.ringing', val: false, common: { name: 'Ringing'} }
-
+    wps: {name: 'wps', val: false, common: {}, native: {func: 'setWPSMode'}},
+    wlan: {name: 'wlan', val: false, common: {desc: 'All WLANs'}, native: {func: 'setWLAN'}},
+    wlan24: {name: 'wlan24', val: true, common: {desc: '2.4 GHz WLAN'}, native: {func: 'setWLAN24'}},
+    wlan50: {name: 'wlan50', val: true, common: {desc: '5.0 GHz WLAN'}, native: {func: 'setWLAN50'}},
+    wlanGuest: {name: 'wlanGuest', val: true, common: {desc: 'Guest WLAN'}, native: {func: 'setWLANGuest'}},
+    wlan24Password: {
+        name: 'wlan24Password',
+        val: '',
+        common: {desc: 'Passphrase for 2.4 GHz WLAN'},
+        native: {func: 'setWLAN24Password'}
+    },
+    wlan50Password: {
+        name: 'wlan50Password',
+        val: '',
+        common: {desc: 'Passphrase for 5.0 GHz WLAN'},
+        native: {func: 'setWLAN50Password'}
+    },
+    wlanGuestPassword: {
+        name: 'wlanGuestPassword',
+        val: '',
+        common: {desc: 'Passphrase for Guest WLAN'},
+        native: {func: 'setWLANGuestPassword'}
+    },
+    abIndex: {name: 'abIndex', val: 0, common: {}, native: {func: 'setABIndex'}},
+    ab: {name: 'ab', val: false, common: {desc: 'parameter: index, state'}, native: {func: 'setAB'}},
+    ring: {
+        name: 'ring',
+        val: '**610',
+        common: {desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'},
+        native: {func: 'ring'}
+    },
+    reconnectInternet: {name: 'reconnectInternet', val: false, common: {}, native: {func: 'reconnectInternet'}},
+    command: {name: 'command', val: '', native: {func: 'command', desc: commandDesc}},
+    commandResult: {name: 'commandResult', val: '', common: {write: false}},
+    externalIP: {name: 'externalIP', val: '', common: {write: false}},
+    reboot: {name: 'reboot', val: false, common: {}, native: {func: 'reboot'}},
+};
+const pbStates = {
+    pbNumber:          { name: 'number', val: '', common: { name: 'Number'} },
+    pbName:            { name: 'name', val: '', common: { name: 'Name'} },
+    pbImageUrl:        { name: 'image', val: '', common: { name: 'Image URL'} },
+    ringing:           { name: 'ringing', val: false, common: { name: 'Ringing'} }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,17 +114,24 @@ function createObjects(cb) {
 
     //devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {} });
-    devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {} });
-    devStates.setDevice(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {} });
-    devStates.setDevice(CHANNEL_PHONEBOOK, {common: {name: 'Phone book', role: 'device'}, native: {} });
-    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
+    if (adapter.config.calllists.use) devices.root.createNew(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
 
+    devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {} });
+
+    devStates.setDevice(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {} });
+
+    devStates.setDevice(CHANNEL_PHONEBOOK, {common: {name: 'Phone book', role: 'device'}, native: {} });
+    for (const i in pbStates) {
+        const st = Object.assign({}, pbStates[i]);
+        devStates.createNew(st.name, st);
+    }
+
+    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
     for (const i in states) {
         if (i.indexOf('wlan50') === 0 && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
         const st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
-    if (adapter.config.calllists.use) devices.root.createNew(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
     devices.update(cb);
 }
 
