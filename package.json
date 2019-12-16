@@ -1,6 +1,6 @@
 {
   "name": "iobroker.tr-064-community",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "ioBroker tr-064 Adapter",
   "author": {
     "name": "soef",
