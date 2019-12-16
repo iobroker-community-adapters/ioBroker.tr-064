@@ -126,10 +126,10 @@ iobroker upload tr-064
 * (foxriver76) no longer use adapter.objects
 * (Apollon77) several fixes, Calllists working again, Phonebook fixed and many more
 
-## 1.1.0 (2019-11-10)
+### 1.1.0 (2019-11-10)
 * (jey cee) added Admin v3 support
 
-## 1.0.0 (2019-04-01)
+### 1.0.0 (2019-04-01)
 * (ldittmar) first version for the community
 
 ## License
