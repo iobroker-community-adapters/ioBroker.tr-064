@@ -476,13 +476,18 @@ TR064.prototype.ring = function (val) {
     const ar = val.split(',');
     if (!ar || ar.length < 1 || !this.voip) return;
 
-    safeFunction(this.voip, 'X_AVM-DE_DialNumber', true) ({'NewX_AVM-DE_PhoneNumber': ar[0]}, function(err,data) {
-        if (ar.length >= 2) {
-            const duration = ar[1].trim() >> 0;
-            setTimeout(function () {
-                safeFunction(self.voip, 'X_AVM-DE_DialHangup', true) ({}, function (err,data) {
-                });
-            }, duration * 1000);
+    safeFunction(this.voip, 'X_AVM-DE_DialNumber', true) ({'NewX_AVM-DE_PhoneNumber': ar[0]}, function(err, data) {
+        if (!err) {
+            if (ar.length >= 2) {
+                const duration = ar[1].trim() >> 0;
+                setTimeout(function () {
+                    safeFunction(self.voip, 'X_AVM-DE_DialHangup', true) ({}, function (err,data) {
+                    });
+                }, duration * 1000);
+            }
+        }
+        else {
+            adapter.log.warn('Ring Error: ' + err);
         }
     });
 };
