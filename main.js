@@ -235,7 +235,7 @@ function onPhonebook(cmd, val) {
             break;
         case 'name':
             v = phonebook.byName(val);
-            setPhonebookState(v);
+            setPhonebookStates(v);
             break;
         case 'command':
             break;
