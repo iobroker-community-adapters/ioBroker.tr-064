@@ -89,11 +89,11 @@ const states = {
         common: {desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'},
         native: {func: 'ring'}
     },
-    reconnectInternet: {name: 'reconnectInternet', val: false, common: {}, native: {func: 'reconnectInternet'}},
+    reconnectInternet: {name: 'reconnectInternet', val: false, common: {role: 'button'}, native: {func: 'reconnectInternet'}},
     command: {name: 'command', val: '', native: {func: 'command', desc: commandDesc}},
     commandResult: {name: 'commandResult', val: '', common: {write: false}},
     externalIP: {name: 'externalIP', val: '', common: {write: false}},
-    reboot: {name: 'reboot', val: false, common: {}, native: {func: 'reboot'}},
+    reboot: {name: 'reboot', val: false, common: {role: 'button'}, native: {func: 'reboot'}},
 };
 const pbStates = {
     pbNumber:          { name: 'number', val: '', common: { name: 'Number'} },
