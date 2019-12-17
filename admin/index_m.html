@@ -259,8 +259,8 @@
 
             //save devices list
             let countDevices = $('#devices > tr').length;
+            let arrDevices = [];
             if(countDevices > 0){
-                let arrDevices = [];
                 for(let i = 0; i < countDevices; i++){
                     let name = $('#devices > tr').eq(i).find('td').eq(1).find('input').val();
                     let ip = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
@@ -268,9 +268,11 @@
                     let json = {name: name, ip: ip, mac: mac};
                     arrDevices.push(json);
                 }
-                obj['devices'] = arrDevices;
+            }else if(countDevices === 0) {
+                let json = {name: '', ip: '', mac: ''};
+                    arrDevices.push(json);
             }
-
+            obj['devices'] = arrDevices;
 
             callback(obj);
         }
