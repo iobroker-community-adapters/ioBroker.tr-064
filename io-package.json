@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064-community",
-        "version": "2.0.2",
+        "version": "2.0.3",
         "news": {
+            "2.0.3":{
+                "en": "fix delete last device from list",
+                "de": "behebt das Löschen des letzten Geräts aus der Liste",
+                "ru": "исправить удаление последнего устройства из списка",
+                "pt": "corrigir excluir o último dispositivo da lista",
+                "nl": "repareer laatste apparaat uit lijst verwijderen",
+                "fr": "correction supprimer le dernier appareil de la liste",
+                "it": "correggi elimina l'ultimo dispositivo dall'elenco",
+                "es": "corregir eliminar el último dispositivo de la lista",
+                "pl": "napraw usuń ostatnie urządzenie z listy",
+                "zh-cn": "修复从列表中删除最后一个设备"
+            },
             "2.0.2": {
                 "en": "we no longer use adapter.objects",
                 "de": "Wir verwenden keine adapter.objects mehr",
