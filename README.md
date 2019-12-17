@@ -121,6 +121,9 @@ iobroker upload tr-064
 
 ### Changelog
 
+### 2.0.3 (2019-12-17)
+* (Jey Cee) fix delete last device from list
+
 ### 2.0.2 (2019-12-16)
 * __requires js-controller v2__
 * (foxriver76) no longer use adapter.objects
