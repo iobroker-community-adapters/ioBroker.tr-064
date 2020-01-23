@@ -85,7 +85,7 @@
 
         //look for devices on router
         function deviceLookup(onChange){
-            sendTo('tr-064-community.' + instance, 'discovery', { onlyActive: true, reread: false }, function (result) {
+            sendTo('tr-064.' + instance, 'discovery', { onlyActive: true, reread: false }, function (result) {
 
                 let arr = JSON.parse(result);
 
@@ -308,7 +308,7 @@
 
             <div class="row">
                 <div class="col s11 m4 l2">
-                    <img src="tr-064-community.png" class="logo">
+                    <img src="tr-064.png" class="logo">
                 </div>
             </div>
             <div class="input-field col">

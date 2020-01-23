@@ -6,3 +6,6 @@ appveyor.yml
 .ba
 .idea
 
+.github
+package-lock.json
+.gitattributes

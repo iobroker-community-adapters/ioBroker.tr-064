@@ -1,8 +1,20 @@
 {
     "common": {
-        "name": "tr-064-community",
-        "version": "2.0.3",
+        "name": "tr-064",
+        "version": "3.0.0",
         "news": {
+            "3.0.0":{
+                "en": "switch back to tr-064 as name and fix a lot of bugs and issues",
+                "de": "Wechseln Sie zurück zu tr-064 als Name und beheben Sie viele Fehler und Probleme",
+                "ru": "вернитесь к tr-064 в качестве имени и исправьте множество ошибок и проблем",
+                "pt": "volte para tr-064 como nome e corrija muitos bugs e problemas",
+                "nl": "schakel terug naar tr-064 als naam en los veel bugs en problemen op",
+                "fr": "revenir au tr-064 comme nom et corriger de nombreux bugs et problèmes",
+                "it": "tornare a tr-064 come nome e correggere molti bug e problemi",
+                "es": "cambie de nuevo a tr-064 como nombre y corrija muchos errores y problemas",
+                "pl": "przełącz się z powrotem na tr-064 jako nazwę i napraw wiele błędów i problemów",
+                "zh-cn": "切换回tr-064作为名称，并修复许多错误和问题"
+            },
             "2.0.3":{
                 "en": "fix delete last device from list",
                 "de": "behebt das Löschen des letzten Geräts aus der Liste",
@@ -86,9 +98,9 @@
             "avm"
         ],
         "mode": "daemon",
-        "icon": "tr-064-community.png",
-        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064-community/master/admin/tr-064-community.png",
-        "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community/blob/master/README.md",
+        "icon": "tr-064.png",
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064/master/admin/tr-064.png",
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/blob/master/README.md",
         "loglevel": "info",
         "type": "infrastructure",
         "enabled": true,

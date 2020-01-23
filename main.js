@@ -20,7 +20,7 @@ var adapter = soef.Adapter(
     main,
     onMessage,
     onUpdate,
-    { name: 'tr-064-community',
+    { name: 'tr-064',
         stateChange: function (id, state) {
             if (state) {
                 if (initError) {
@@ -98,8 +98,8 @@ const states = {
 const pbStates = {
     pbNumber:          { name: 'number', val: '', common: { name: 'Number'} },
     pbName:            { name: 'name', val: '', common: { name: 'Name'} },
-    pbImageUrl:        { name: 'image', val: '', common: { name: 'Image URL'} },
-    ringing:           { name: 'ringing', val: false, common: { name: 'Ringing'} }
+    pbImageUrl:        { name: 'image', val: '', common: { name: 'Image URL'} }//,
+//    ringing:           { name: 'ringing', val: false, common: { name: 'Ringing'} }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

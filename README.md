@@ -1,19 +1,19 @@
 <h1>
-  <img src="https://raw.githubusercontent.com/ldittmar81/ioBroker.tr-064-community/master/admin/tr-064-community.png" width="64"/>
-  ioBroker.tr-064-community
+  <img src="https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064/master/admin/tr-064.png" width="64"/>
+  ioBroker.tr-064
 </h1>
 
-![Number of Installations](http://iobroker.live/badges/tr-064-community-installed.svg) 
-![Number of Installations](http://iobroker.live/badges/tr-064-community-stable.svg)
-[![NPM version](http://img.shields.io/npm/v/iobroker.tr-064-community.svg)](https://www.npmjs.com/package/iobroker.tr-064-community)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.tr-064-community.svg)](https://www.npmjs.com/package/iobroker.tr-064-community)
+![Number of Installations](http://iobroker.live/badges/tr-064-installed.svg) 
+![Number of Installations](http://iobroker.live/badges/tr-064-stable.svg)
+[![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 
-[![NPM](https://nodei.co/npm/iobroker.tr-064-community.png?downloads=true)](https://nodei.co/npm/iobroker.tr-064-community/)
+[![NPM](https://nodei.co/npm/iobroker.tr-064.png?downloads=true)](https://nodei.co/npm/iobroker.tr-064/)
 
-[![Travis-CI](http://img.shields.io/travis/iobroker-community-adapters/ioBroker.tr-064-community/master.svg)](https://travis-ci.org/iobroker-community-adapters/ioBroker.tr-064-community)
-[![Greenkeeper badge](https://badges.greenkeeper.io/iobroker-community-adapters/ioBroker.tr-064-community.svg)](https://greenkeeper.io/)
-[![Dependency Status](https://img.shields.io/david/iobroker-community-adapters/iobroker.tr-064-community.svg)](https://david-dm.org/iobroker-community-adapters/iobroker.tr-064-community)
-[![Known Vulnerabilities](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064-community/badge.svg)](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064-community)
+[![Travis-CI](http://img.shields.io/travis/iobroker-community-adapters/ioBroker.tr-064/master.svg)](https://travis-ci.org/iobroker-community-adapters/ioBroker.tr-064)
+[![Greenkeeper badge](https://badges.greenkeeper.io/iobroker-community-adapters/ioBroker.tr-064.svg)](https://greenkeeper.io/)
+[![Dependency Status](https://img.shields.io/david/iobroker-community-adapters/iobroker.tr-064.svg)](https://david-dm.org/iobroker-community-adapters/iobroker.tr-064)
+[![Known Vulnerabilities](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064/badge.svg)](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064)
 
 ***This adapter requires at least Node 4.x***
 
@@ -49,8 +49,8 @@ e.g.: **610[,timeout]
 To monitor the presence of persons in your home, so to control once anyone of your family/roommate is leaving or arriving, you can use this adapter as follows: 
 - Enter the Adapter options and switch to the 'Devices' tab
 - Add all devices (like smart phones) of your family/roommate members accordingly, and confirm with 'Save'.
-- For each device, the adapter will now create a folder structure under the ioBroker Objects of the adapter, typically in the folder "tr-064-community.0.devices"
-- Now once anyone is arriving or leaving, this adapter will get the information accordingly. For example, the state "tr-064-community.0.devices.xxx.active", where xxx is the device name, will indicate if the specific device is available or not, so if the person is present or not. User feedback is that this works reliable for iOS devices as well, like with iPhones. For iPhones, user feedback is that it takes up to 10 minutes until the Fritz!Box notices that a person left and is no longer connected with WiFi, and it takes up to 1 minute until the Fritz!Box will notice the presence again.
+- For each device, the adapter will now create a folder structure under the ioBroker Objects of the adapter, typically in the folder "tr-064.0.devices"
+- Now once anyone is arriving or leaving, this adapter will get the information accordingly. For example, the state "tr-064.0.devices.xxx.active", where xxx is the device name, will indicate if the specific device is available or not, so if the person is present or not. User feedback is that this works reliable for iOS devices as well, like with iPhones. For iPhones, user feedback is that it takes up to 10 minutes until the Fritz!Box notices that a person left and is no longer connected with WiFi, and it takes up to 1 minute until the Fritz!Box will notice the presence again.
 
 Also, a script was published by the ioBroker community which uses this adapter information to trigger actions (e.g. everyone left home, so turn off everything automatically, see number of persons currently being present, or person status in general, via VIS, etc.). See [ioBroker forum thread](https://forum.iobroker.net/topic/4538/anwesenheitscontrol-basierend-auf-tr64-adapter-script) (in German)
 
@@ -120,6 +120,11 @@ iobroker upload tr-064
 ```
 
 ### Changelog
+
+### 3.0.0 (2020-01-24)
+* (Apollon77) Switch Name back to tr064 becaus ewe got it from npmjs
+* (maeb3) Enhance call handling and fix wrong data for currently active calls 
+* (Apollon77) Remove unused state phonebook.ringing
 
 ### 2.0.3 (2019-12-17)
 * (Jey Cee) fix delete last device from list

@@ -1,6 +1,6 @@
 {
-  "name": "iobroker.tr-064-community",
-  "version": "2.0.3",
+  "name": "iobroker.tr-064",
+  "version": "3.0.0",
   "description": "ioBroker tr-064 Adapter",
   "author": {
     "name": "soef",
@@ -12,7 +12,7 @@
       "email": "soef@gmx.net"
     }
   ],
-  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community",
+  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064",
   "license": "MIT",
   "keywords": [
     "tr-064",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community"
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064"
   },
   "dependencies": {
     "mdns-discovery": "^0.2.6",
@@ -48,7 +48,7 @@
     "node": ">=4.0.0"
   },
   "bugs": {
-    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064-community/issues"
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues"
   },
   "readmeFilename": "README.md"
 }
