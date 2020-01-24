@@ -24,6 +24,18 @@ Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
 ### Initial Creation
 This adapter was initialy created by @soef at https://github.com/soef/ioBroker.tr-064 but not maintained any more, so we moved it to iobroker-community so that bugs could be fixed. thanks @soef for his work.
 
+## How to migrate from tr-064-community (intermediate verison and name)
+If you move from tr-064-community adapters you can easily copy whole device list or settings by:
+* Go in admin to objects and enable expert mode
+*Look for an object tree which is called system.adapter.tr-064-community.0 (where 0 is the instance, if you had multiple instances select the right one)
+* On the very right of this line is a buttom with a pencil, click on it
+* On the window you get select "raw (experts only)" and there copy the NATIVE part of the json
+* then open system.adapter.tr-064.0 (where 0 is the instance, if you had multiple instances select the right one)
+* paste the copied native part in there in native
+* save the changes
+* start the adapter
+* check configuration if anything was restored correctly
+
 ### Simple states and functions
 - turn on/off wifi for 2.4GHz and 5GHz,
 - turn on/off guest wifi,
