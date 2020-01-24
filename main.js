@@ -1,57 +1,131 @@
 /* global __dirname, dcs, devices */
+/* jshint -W097 */
+/* jshint strict: false */
+/* jslint node: true */
 
 'use strict';
+const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
+const adapterName = require('./package.json').name.split('.').pop();
+const phonebook   = require('./lib/phonebook');
+const callMonitor = require('./lib/callmonitor');
+const callList    = require('./lib/calllist');
+const Deflections = require('./lib/deflections');
+const Devices     = require('./lib/devices');
+const tr064Lib    = require('tr-O64');
 
-const phonebook   = require(__dirname + '/lib/phonebook'),
-    callMonitor = require(__dirname + '/lib/callmonitor'),
-    calllist    = require(__dirname + '/lib/calllist'),
-    Deflections = require(__dirname + '/lib/deflections'),
-    soef        = require(__dirname + '/lib/soef'),
-    tr064Lib    = require('tr-O64');
-
-let tr064Client, deflections;
+let tr064Client;
+let deflections;
 const commandDesc = 'eg. { "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
-const debug = false;
+let callbackTimers = {};
 let pollingTimer = null;
+let ringTimeout = null;
 let initError = false;
+let adapter;
+let devices;
 
-var adapter = soef.Adapter(
-    //onStateChange,
-    main,
-    onMessage,
-    onUpdate,
-    { name: 'tr-064',
-        stateChange: function (id, state) {
-            if (state) {
-                if (initError) {
-                    adapter.log.error('tr-064 adapter not connected to a FritzBox. Terminating');
-                    setTimeout(process.exit.bind(process, -1), 2000);
-                    return;
-                }
-                adapter.log.debug('State changed: ' + id + ' = ' + JSON.stringify(state));
-                if (!state.ack) onStateChange(id, state);
-                else if (adapter.config.calllists.use && id.indexOf('callmonitor.lastCall.timestamp') > 0) {
-                    tr064Client.refreshCalllist();
-                }
-            }
+// extract from object the attribute by path like "attr1.attr2.subAttr3"
+function getProp(obj, propString) {
+    if (!obj) {
+        return undefined;
+    }
+
+    const ar = propString.split('.');
+    const len = ar.length;
+
+    for (let i = 0; i < len; i++) {
+        obj = obj[ar[i]];
+        if (obj === undefined) {
+            return undefined;
         }
     }
-);
 
-function onUpdate(oldVersion, newVersion, callback) {
-    if(oldVersion < 3009) {
-        dcs.delOS(adapter.namespace + '.states.externalP');
-    }
-    callback();
+    return obj;
 }
 
+function hasProp(obj, propString) {
+    if (!obj) {
+        return false;
+    }
+    const ar = propString.split('.');
+    const len = ar.length;
+    for (let i = 0; i < len; i++) {
+        obj = obj[ar[i]];
+        if (obj === undefined) {
+            return false;
+        }
+    }
 
-const CHANNEL_STATES = 'states',
-    CHANNEL_DEVICES = 'devices',
-    CHANNEL_PHONEBOOK = 'phonebook',
-    CHANNEL_CALLLISTS = 'calllists',
-    CHANNEL_CALLMONITOR = 'callmonitor'
-    ;
+    return true;
+}
+
+function callbackOrTimeout(timeout, callback) {
+    if (typeof timeout === 'function') {
+        const cb = timeout;
+        timeout = callback;
+        callback = cb;
+    }
+
+    let id = Date.now() + '_' + Math.round(Math.random() * 10000);
+
+    callbackTimers[id] = setTimeout(() => {
+        callback('timeout', null);
+        callback = null;
+        delete callbackTimers[id];
+    }, timeout);
+
+    return function(err, data) {
+        if (callbackTimers[id]) {
+            clearTimeout(callbackTimers[id]);
+            delete callbackTimers[id];
+        }
+
+        return callback && callback(err, data);
+    };
+}
+
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options, {name: adapterName});
+    adapter = new utils.Adapter(options);
+
+    adapter.on('message', obj => obj && onMessage(obj));
+    adapter.on('stateChange', (id, state) => {
+        if (state && id.startsWith(adapter.namespace + '.')) {
+            if (initError) {
+                adapter.log.error('tr-064 adapter not connected to a FritzBox. Terminating');
+                return adapter.terminate ? adapter.terminate() : setTimeout(() => process.exit(1), 2000);
+            }
+
+            adapter.log.debug('State changed: ' + id + ' = ' + JSON.stringify(state));
+
+            if (!state.ack) {
+                onStateChange(id, state);
+            } else if (adapter.config.calllists.use && id.includes('callmonitor.lastCall.timestamp')) {
+                tr064Client.refreshCalllist();
+            }
+        }
+    });
+    adapter.on('ready', () => {
+        devices = new Devices(adapter);
+        main();
+    });
+    adapter.on('unload', () => {
+        pollingTimer && clearTimeout(pollingTimer);
+        pollingTimer = null;
+        ringTimeout && clearTimeout(ringTimeout);
+        ringTimeout = null;
+        Object.keys(callbackTimers).forEach(id => clearTimeout(callbackTimers[id]));
+        callbackTimers = {};
+    });
+
+    return adapter;
+}
+
+const CHANNEL_STATES = 'states';
+const CHANNEL_DEVICES = 'devices';
+const CHANNEL_PHONEBOOK = 'phonebook';
+const CHANNEL_CALLLISTS = 'calllists';
+const CHANNEL_CALLMONITOR = 'callmonitor';
 
 let devStates;
 const allDevices = [];
@@ -105,30 +179,34 @@ const pbStates = {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 String.prototype.normalizeNumber = function () {
-    return this.replace (/\+/g, '00').replace(/[^0-9\*]/g, '');
+    return this.replace (/\+/g, '00').replace(/[^0-9*]/g, '');
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function createObjects(cb) {
-
     //devStates = new devices.CDevice(0, '');
-    devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {} });
-    if (adapter.config.calllists.use) devices.root.createNew(calllist.S_HTML_TEMPLATE, soef.getProp(systemData, 'native.callLists.htmlTemplate') || '');
+    devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {}});
 
-    devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {} });
+    adapter.config.calllists.use && devices.root.createNew(callList.S_HTML_TEMPLATE, getProp(systemData, 'native.callLists.htmlTemplate') || '');
 
-    devStates.setDevice(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {}});
 
-    devStates.setDevice(CHANNEL_PHONEBOOK, {common: {name: 'Phone book', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_CALLMONITOR, {common: {name: 'Call monitor', role: 'device'}, native: {}});
+
+    devStates.setDevice(CHANNEL_PHONEBOOK, {common: {name: 'Phone book', role: 'device'}, native: {}});
+
     for (const i in pbStates) {
         const st = Object.assign({}, pbStates[i]);
         devStates.createNew(st.name, st);
     }
 
-    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {}});
+
     for (const i in states) {
-        if (i.indexOf('wlan50') === 0 && !tr064Client.wlan50 && tr064Client.wlanGuest) continue;
+        if (i.startsWith('wlan50') && !tr064Client.wlan50 && tr064Client.wlanGuest) {
+            continue;
+        }
         const st = Object.assign({}, states[i]);
         devStates.createNew(st.name, st);
     }
@@ -138,27 +216,27 @@ function createObjects(cb) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function onMessage(obj) {
-    if (!obj) return;
-
-    function reply(result) {
-        adapter.sendTo (obj.from, obj.command, JSON.stringify(result), obj.callback);
-    }
-
     switch (obj.command) {
         case 'discovery':
-            var onlyActive, reread;
+            let onlyActive;
+            let reread;
+
             if (typeof obj.message === 'object') {
                 onlyActive = obj.message.onlyActive;
                 reread = obj.message.reread;
             }
-            if (!obj.callback) return false;
+            if (!obj.callback) {
+                return false;
+            }
             if (!reread && allDevices.length > 0 && allDevices.onlyActive === onlyActive) {
-                reply(allDevices);
+                adapter.sendTo(obj.from, obj.command, JSON.stringify(allDevices), obj.callback);
                 return true;
             }
             allDevices.onlyActive = onlyActive;
-            tr064Client.forEachHostEntry(function (err, device, cnt, all) {
+
+            tr064Client.forEachHostEntry((err, device, cnt, all) => {
                 const active = !!(~~device.NewActive);
+
                 if (!onlyActive || active) {
                     allDevices.push ({
                         name: device.NewHostName,
@@ -168,120 +246,140 @@ function onMessage(obj) {
                     });
                 }
                 if (cnt + 1 >= all) {
-                    reply(allDevices);
+                    adapter.sendTo(obj.from, obj.command, JSON.stringify(allDevices), obj.callback);
                 }
             });
             return true;
+
         default:
             adapter.log.warn('Unknown command: ' + obj.command);
             break;
     }
-    if (obj.callback) adapter.sendTo(obj.from, obj.command, obj.message, obj.callback);
+
+    obj.callback && adapter.sendTo(obj.from, obj.command, obj.message, obj.callback);
+
     return true;
 }
 
-
 function onStateChange(id, state) {
-    if (!soef.ns.is(id)) return;
     const as = id.split('.');
-    if (as.length < 3) return;
+
+    if (as.length < 3) {
+        return;
+    }
+
     const cmd = as [3];
+    let func;
     switch(as[2]) {
         case CHANNEL_STATES:
-            var func = states [cmd] && states [cmd].native ? states [cmd].native.func : null;
+            func = states [cmd] && states [cmd].native ? states [cmd].native.func : null;
             if (func && tr064Client[func]) {
-                const ret = tr064Client[func] (state.val, function (err, res) {});
+                const ret = tr064Client[func](state.val, (err, res) => {});
                 if (ret === true) {
                     devices.root.clear(id);
                 }
             }
             break;
+
         case CHANNEL_CALLLISTS:
-        case calllist.ROOT:
+        case callList.ROOT:
             if (cmd === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val;
             else if (as[4] === 'count') {
                 systemData.native.callLists[cmd][as[4]] = ~~state.val;
                 systemData.save();
             }
             return;
+
         case CHANNEL_PHONEBOOK:
             onPhonebook(cmd, state.val);
             return;
+
         // case CHANNEL_DEVICES:
         // case CHANNEL_CALLMONITOR:
         //     return;
+
         case Deflections.CHANNEL_DEFLECTIONS:
             deflections && deflections.onStateChange(cmd, as[4], state.val);
             break;
+
         default:
             return;
     }
 }
 
 function setPhonebookStates(v) {
-    devices.root.set('.'+CHANNEL_PHONEBOOK+'.number', (v && v.number) ? v.number : '');
-    devices.root.set('.'+CHANNEL_PHONEBOOK+'.name', (v && v.name) ? v.name : '');
-    devices.root.set('.'+CHANNEL_PHONEBOOK+'.image', (v && v.imageurl) ? v.imageurl : '');
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.number', (v && v.number)   ? v.number : '');
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.name',   (v && v.name)     ? v.name : '');
+    devices.root.set('.'+CHANNEL_PHONEBOOK+'.image',  (v && v.imageurl) ? v.imageurl : '');
     devices.update();
 }
 
 function onPhonebook(cmd, val) {
-    if (!adapter.config.usePhonebook) return;
+    if (!adapter.config.usePhonebook) {
+        return;
+    }
+
     let v;
+
     switch (cmd) {
         case 'number':
             v = phonebook.byNumber(val);
             setPhonebookStates (v);
             break;
+
         case 'name':
             v = phonebook.byName(val);
             setPhonebookStates(v);
             break;
+
         case 'command':
             break;
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function getLastValidProp(obj, propString) {
-    if (!obj) return undefined;
-    const ar = propString.split('.');
-    const len = ar.length;
-    for (let i = 0; i < len; i++) {
-        if (obj[ar[i]] === undefined) return obj;
-        obj = obj[ar[i]];
-    }
-    return obj;
-}
-
 function getLastValidPropEx(obj, propString) {
     if (!obj) return undefined;
     const ar = propString.split('.');
     const len = ar.length;
+
     for (let i = 0; i < len; i++) {
         if (obj[ar[i]] === undefined) {
-            let ret = { obj: {}, invalifName: '', errPath: ''};
-            try { ret = {obj: obj, invalidName: ar[i], errPath: ar.slice(i).join('.')}; }
-            catch (e) {}
+            let ret = { obj: {}, invalidName: '', errPath: ''};
+            try {
+                ret = {obj: obj, invalidName: ar[i], errPath: ar.slice(i).join('.')};
+            } catch (e) {
+
+            }
             return ret;
         }
         obj = obj[ar[i]];
     }
-    return { obj: {}, invalifName: '', errPath: ''};
+
+    return { obj: {}, invalidName: '', errPath: ''};
 }
 
 function safeFunction(root, path, log) {
-    const fn = soef.getProp(root, path);
-    if (typeof fn === 'function') return fn;
+    const fn = getProp(root, path);
+    if (typeof fn === 'function') {
+        return fn;
+    }
+
     if (log) {
         const err = getLastValidPropEx(root, path);
-        if (typeof log !== 'function') log = adapter.log.debug;
-        if (err) log(err.errPath + ' is not a function (' + path +')');
+        if (typeof log !== 'function') {
+            log = adapter.log.debug;
+        }
+        err && log(err.errPath + ' is not a function (' + path +')');
     }
+
     return function (params, callback) {
-        if (!arguments.length) return;
+        if (!arguments.length) {
+            return;
+        }
+
         const fn = arguments [arguments.length-1];
+
         if (typeof fn === 'function') {
             fn(new Error(path + ' is not a function'));
         }
@@ -314,19 +412,25 @@ TR064.prototype = Object.create(tr064Lib.TR064.prototype);
 
 TR064.prototype.setABIndex = function (val, cb) {
 
-    if (val === undefined) val = this.abIndex;
+    if (val === undefined) {
+        val = this.abIndex;
+    }
+
     if (val === undefined) {
         val = devices.getval('states.abIdex', 0);
     }
     this.abIndex = val >> 0;
-    this.getABInfo({ NewIndex: this.abIndex }, function (err, data) {
-        if (err || !data) return;
+    this.getABInfo({NewIndex: this.abIndex}, (err, data) => {
+        if (err || !data) {
+            return;
+        }
         devStates.setAndUpdate('ab', data.NewEnable);
     });
 };
 
 TR064.prototype.setAB = function (val) {
     let idx = this.abIndex;
+
     if (typeof val === 'string') {
         const ar = val.replace(/\s/g, '').split(',');
         if (ar && ar.length > 1) {
@@ -334,27 +438,32 @@ TR064.prototype.setAB = function (val) {
             idx = ar[0] >> 0;
         }
     }
-    this.setEnableAB({ NewIndex: idx, NewEnable: val ? 1 : 0}, function (err, data) {
-    });
+    this.setEnableAB({ NewIndex: idx, NewEnable: val ? 1 : 0}, (err, data) => {});
 };
 
 
-var systemData = {
+const systemData = {
     type: 'meta',
     common: { name: 'tr-064' },
     native: {},
     load: function () {
-        if (this.native.loaded) return;
+        if (this.native.loaded) {
+            return;
+        }
+
         const self = this;
-        adapter.getObject(adapter.namespace, function (err, obj) {
+        adapter.getObject(adapter.namespace, (err, obj) => {
             if (!err && obj && obj.native.loaded) {
                 delete obj.acl;
                 Object.assign(self, obj);
             }
             if (adapter.config.calllists.use) {
-                if (!self.native.callLists) self.native.callLists = new calllist.callLists();
-                else calllist.callLists.call(self.native.callLists);
-                self.native.callLists.htmlTemplate = devices.getval(calllist.S_HTML_TEMPLATE);
+                if (!self.native.callLists) {
+                    self.native.callLists = new callList.callLists();
+                } else {
+                    callList.callLists.call(self.native.callLists);
+                }
+                self.native.callLists.htmlTemplate = devices.getval(callList.S_HTML_TEMPLATE);
             }
             if (!self.native.loaded) {
                 self.native.loaded = true;
@@ -366,16 +475,17 @@ var systemData = {
         adapter.setObject(adapter.namespace, this, function (err, obj) {
         });
     },
-    xsave: adapter.setObject.bind(adapter, adapter.namespace, this, function (err, obj) {
-    })
+    /*xsave: adapter.setObject.bind(adapter, adapter.namespace, this, function (err, obj) {
+    })*/
 };
 
 
 TR064.prototype.refreshCalllist = function () {
     if (!adapter.config.calllists.use) return;
-    this.GetCallList (function (err, data) {
-        calllist.refresh (err, data, function(list, n, html) {
-            const id = calllist.ROOT + '.' + n;
+
+    this.GetCallList ((err, data) => {
+        callList.refresh (err, data, (list, n, html) => {
+            const id = callList.ROOT + '.' + n;
             list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
             devices.root.set(id + '.count', list.count);
             list.cfg.generateHtml && devices.root.set(id + '.html', html);
@@ -399,13 +509,15 @@ TR064.prototype.init = function (callback) {
     self.initTR064Device(self.ip, self.port, function (err, device) {
         if (err || !device) return (callback(err || '!device'));
         getSSLDevice(device, function (err, sslDevice) {
-            if (err || !sslDevice) return callback(err);
+            if (err || !sslDevice) {
+                return callback(err);
+            }
             sslDevice.login(self.user, self.password);
             self.sslDevice = sslDevice;
             self.hosts = sslDevice.services['urn:dslforum-org:service:Hosts:1'];
             self.getWLANConfiguration = sslDevice.services['urn:dslforum-org:service:WLANConfiguration:1'];
             self.getWLANConfiguration2 = sslDevice.services['urn:dslforum-org:service:WLANConfiguration:2'];
-            self.getWLANConfiguration3 = soef.getProp(sslDevice.services, 'urn:dslforum-org:service:WLANConfiguration:3');
+            self.getWLANConfiguration3 = getProp(sslDevice.services, 'urn:dslforum-org:service:WLANConfiguration:3');
             self.reboot = sslDevice.services['urn:dslforum-org:service:DeviceConfig:1'].actions.Reboot;
             self.getConfigFile = sslDevice.services['urn:dslforum-org:service:DeviceConfig:1'].actions['X_AVM-DE_GetConfigFile'];  //in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             //self.WANIPConnection = sslDevice.services["urn:dslforum-org:service:WANIPConnection:1"];
@@ -416,18 +528,19 @@ TR064.prototype.init = function (callback) {
             self.getABInfo = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetInfo');
             self.setEnableAB = safeFunction (sslDevice, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.SetEnable');
 
-            self.wlan24 = { setEnable: soef.getProp(self.getWLANConfiguration, 'actions.SetEnable') };
-            self.wlan50 = { setEnable: soef.getProp(self.getWLANConfiguration2, 'actions.SetEnable') };
-            self.wlanGuest = { setEnable: soef.getProp(self.getWLANConfiguration3, 'actions.SetEnable') };
-            self.wlan24.getInfo = soef.getProp(self.getWLANConfiguration, 'actions.GetInfo');
-            self.wlan50.getInfo = soef.getProp(self.getWLANConfiguration2, 'actions.GetInfo');
-            self.wlanGuest.getInfo = soef.getProp(self.getWLANConfiguration3, 'actions.GetInfo');
-            self.wlan24.getSecurityKeys = soef.getProp(self.getWLANConfiguration, 'actions.GetSecurityKeys');
-            self.wlan24.setSecurityKeys = soef.getProp(self.getWLANConfiguration, 'actions.SetSecurityKeys');
-            self.wlan50.getSecurityKeys = soef.getProp(self.getWLANConfiguration2, 'actions.GetSecurityKeys');
-            self.wlan50.setSecurityKeys = soef.getProp(self.getWLANConfiguration2, 'actions.SetSecurityKeys');
-            self.wlanGuest.getSecurityKeys = soef.getProp(self.getWLANConfiguration3, 'actions.GetSecurityKeys');
-            self.wlanGuest.setSecurityKeys = soef.getProp(self.getWLANConfiguration3, 'actions.SetSecurityKeys');
+            self.wlan24 = { setEnable: getProp(self.getWLANConfiguration, 'actions.SetEnable') };
+            self.wlan50 = { setEnable: getProp(self.getWLANConfiguration2, 'actions.SetEnable') };
+            self.wlanGuest = { setEnable: getProp(self.getWLANConfiguration3, 'actions.SetEnable') };
+            self.wlan24.getInfo = getProp(self.getWLANConfiguration, 'actions.GetInfo');
+            self.wlan50.getInfo = getProp(self.getWLANConfiguration2, 'actions.GetInfo');
+            self.wlanGuest.getInfo = getProp(self.getWLANConfiguration3, 'actions.GetInfo');
+            self.wlan24.getSecurityKeys = getProp(self.getWLANConfiguration, 'actions.GetSecurityKeys');
+            self.wlan24.setSecurityKeys = getProp(self.getWLANConfiguration, 'actions.SetSecurityKeys');
+            self.wlan50.getSecurityKeys = getProp(self.getWLANConfiguration2, 'actions.GetSecurityKeys');
+            self.wlan50.setSecurityKeys = getProp(self.getWLANConfiguration2, 'actions.SetSecurityKeys');
+            self.wlanGuest.getSecurityKeys = getProp(self.getWLANConfiguration3, 'actions.GetSecurityKeys');
+            self.wlanGuest.setSecurityKeys = getProp(self.getWLANConfiguration3, 'actions.SetSecurityKeys');
+
             if (!self.getWLANConfiguration3 || !self.wlanGuest.getInfo || !self.wlanGuest.setEnable) {
                 self.wlanGuest.setEnable = self.wlan50.setEnable;
                 self.wlanGuest.getInfo = self.wlan50.getInfo;
@@ -436,7 +549,7 @@ TR064.prototype.init = function (callback) {
                 delete self.wlan50;
             }
 
-            self.voip = soef.getProp(self.sslDevice, 'services.urn:dslforum-org:service:X_VoIP:1.actions');
+            self.voip = getProp(self.sslDevice, 'services.urn:dslforum-org:service:X_VoIP:1.actions');
 
             // self.getSpecificHostEntry = self.hosts.actions.GetSpecificHostEntry;
             // self.getGenericHostEntry = self.hosts.actions.GetGenericHostEntry;
@@ -454,39 +567,40 @@ TR064.prototype.init = function (callback) {
             self.stateVariables.changeCounter = self.hosts.stateVariables['X_AVM-DE_ChangeCounter'];
 
             self.initIGDDevice(self.ip, self.port, function (err, device) {
-                if (err) adapter.log.error('initIGDDevice:' + err + ' - ' + JSON.stringify(err));
+                err && adapter.log.error('initIGDDevice:' + err + ' - ' + JSON.stringify(err));
                 if (!err && device) {
                     getSSLDevice(device, function (err, sslDevice) {
-                        if (err) adapter.log.error('getSSLDevice:' + err + ' - ' + JSON.stringify(err));
+                        err && adapter.log.error('getSSLDevice:' + err + ' - ' + JSON.stringify(err));
                         self.getExternalIPAddress = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.GetExternalIPAddress;
                         self.reconnectInternet = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.ForceTermination;
                     });
                 }
             });
-            self.getWLAN(soef.callbackOrTimeout(2000, callback));
+
+            self.getWLAN(callbackOrTimeout(2000, callback));
         });
     //}.bind(this));
     });
 };
 
-function nop(err,res) {}
-
 TR064.prototype.ring = function (val) {
     const self = this;
     const ar = val.split(',');
-    if (!ar || ar.length < 1 || !this.voip) return;
 
-    safeFunction(this.voip, 'X_AVM-DE_DialNumber', true) ({'NewX_AVM-DE_PhoneNumber': ar[0]}, function(err, data) {
+    if (!ar || ar.length < 1 || !this.voip) {
+        return;
+    }
+
+    safeFunction(this.voip, 'X_AVM-DE_DialNumber', true)({'NewX_AVM-DE_PhoneNumber': ar[0]}, (err, data) => {
         if (!err) {
             if (ar.length >= 2) {
                 const duration = ar[1].trim() >> 0;
-                setTimeout(function () {
-                    safeFunction(self.voip, 'X_AVM-DE_DialHangup', true) ({}, function (err,data) {
-                    });
+                ringTimeout = setTimeout(() => {
+                    ringTimeout = null;
+                    safeFunction(self.voip, 'X_AVM-DE_DialHangup', true)({}, (err, data) => {});
                 }, duration * 1000);
             }
-        }
-        else {
+        } else {
             adapter.log.warn('Ring Error: ' + err);
         }
     });
@@ -498,16 +612,18 @@ TR064.prototype.dialNumber = function (number, callback) {
     }, callback);
 };
 
-
-
 TR064.prototype.forEachHostEntry = function (callback) {
     const self = this;
 
     adapter.log.debug('forEachHostEntry');
     //self.hosts.actions.GetHostNumberOfEntries(function (err, obj) {
-    safeFunction(self, 'hosts.actions.GetHostNumberOfEntries') (function (err, obj) {
-        if (err) adapter.log.error('GetHostNumberOfEntries:' + err + ' - ' + JSON.stringify(err));
-        if (err || !obj) return;
+    safeFunction(self, 'hosts.actions.GetHostNumberOfEntries')((err, obj) => {
+        err && adapter.log.error('GetHostNumberOfEntries:' + err + ' - ' + JSON.stringify(err));
+
+        if (err || !obj) {
+            return;
+        }
+
         const all = obj.NewHostNumberOfEntries >> 0;
         adapter.log.debug('forEachHostEntry: all=' + all);
         let cnt = 0;
@@ -517,9 +633,13 @@ TR064.prototype.forEachHostEntry = function (callback) {
                 return;
             }
             //self.getGenericHostEntry({NewIndex: cnt}, function (err, obj) {
-            safeFunction(self, 'getGenericHostEntry') ({NewIndex: cnt}, function (err, obj) {
-                if (err) adapter.log.error('forEachHostEntry: in getGenericHostEntry ' + (cnt) + ':' + err + ' - ' + JSON.stringify(err));
-                if (err || !obj) return;
+            safeFunction(self, 'getGenericHostEntry') ({NewIndex: cnt}, (err, obj) => {
+                err && adapter.log.error('forEachHostEntry: in getGenericHostEntry ' + (cnt) + ':' + err + ' - ' + JSON.stringify(err));
+
+                if (err || !obj) {
+                    return;
+                }
+
                 adapter.log.debug('forEachHostEntry cnt=' + cnt + ' ' + obj.NewHostName);
                 callback(err, obj, cnt++, all);
                 setTimeout(doIt, 10);
@@ -535,54 +655,64 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
     adapter.log.debug('forEachConfiguredDevice');
 
     function doIt() {
-        if (i >= adapter.config.devices.length) return callback && callback(null);
+        if (i >= adapter.config.devices.length) {
+            return callback && callback(null);
+        }
+
         const dev = adapter.config.devices[i++];
+
         if (dev.mac && dev.mac !== '') {
-            safeFunction(self, 'getSpecificHostEntry') ({NewMACAddress: dev.mac}, function (err, device) {
-            //self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
-            //self.GetSpecificHostEntryExt({NewMACAddress: dev.mac}, function (err, device) {
-                if (err) adapter.log.warn('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i-1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
+            safeFunction(self, 'getSpecificHostEntry') ({NewMACAddress: dev.mac}, (err, device) => {
+                //self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
+                //self.GetSpecificHostEntryExt({NewMACAddress: dev.mac}, function (err, device) {
+                err && adapter.log.warn('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i - 1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
                 if (!err && device) {
                     adapter.log.debug('forEachConfiguredDevice: i=' + (i-1) + ' ' + device.NewHostName + ' active=' + device.NewActive);
                     device.NewMACAddress = dev.mac;
                     callback (device);
                 }
-                setTimeout(doIt, 0);
+                setImmediate(doIt);
             });
         } else {
-            setTimeout(doIt, 0);
+            setImmediate(doIt);
         }
     }
+
     doIt();
 };
-
 
 TR064.prototype.dumpServices = function (ar) {
     let fs;
     let doLog;
 
-    if (ar && ar.length) switch (ar[1]) {
-        case 'log':
-            doLog = true;
-            break;
+    if (ar && ar.length) {
+        switch (ar[1]) {
+            case 'log':
+                doLog = true;
+                break;
 
-        case 'fs':
-            fs = require('fs');
-            break;
+            case 'fs':
+                fs = require('fs');
+                break;
+        }
     }
     const services = {};
+
     for (const service in this.sslDevice.services) {
-        services[service] = { actions: {} };
+        services[service] = {actions: {}};
         const oService = this.sslDevice.services[service];
         if (oService.actions) for (const action in oService.actions) {
             let v = oService.actions[action];
             v = typeof v === 'function' ? 'fn' : v;
             services[service].actions[action] = v;
-            if (doLog) adapter.log.debug(service + '.actions.' + action);
+            doLog && adapter.log.debug(service + '.actions.' + action);
         }
     }
+
     const dump = JSON.stringify(services);
+
     devStates.setImmediately(states.commandResult.name, dump);
+
     if (fs) {
         let logName = '';
         const controllerDir = require(__dirname + '/lib/utils').controllerDir;
@@ -594,6 +724,7 @@ TR064.prototype.dumpServices = function (ar) {
         } else {
             logName = __dirname + '/../../log/tr-64-services.json';
         }
+
         try {
             fs.writeFileSync(logName, dump);
         } catch (e) {
@@ -604,10 +735,10 @@ TR064.prototype.dumpServices = function (ar) {
 
 
 TR064.prototype.command = function (command, callback) {
-    if (command && command.toLowerCase().indexOf('dumpservices') === 0) {
-        this.dumpServices(command.toLowerCase().split('.'));
-        return;
+    if (command && command.toLowerCase().startsWith('dumpservices')) {
+        return this.dumpServices(command.toLowerCase().split('.'));
     }
+
     let o;
     try {
         o = JSON.parse(command);
@@ -615,7 +746,7 @@ TR064.prototype.command = function (command, callback) {
         return;
     }   //xxx
 
-    safeFunction(this.sslDevice.services, o.service + '.actions.' + o.action) (o.params, function (err, res) {
+    safeFunction(this.sslDevice.services, o.service + '.actions.' + o.action)(o.params, (err, res) => {
         if (err || !res) {
             adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(err||{}), true);
             return;
@@ -626,14 +757,14 @@ TR064.prototype.command = function (command, callback) {
 };
 
 TR064.prototype.setWLAN24 = function (val, callback) {
-    safeFunction(this.wlan24, 'setEnable', true) ({NewEnable: val ? 1 : 0 }, callback);
+    safeFunction(this.wlan24, 'setEnable', true)({NewEnable: val ? 1 : 0 }, callback);
 };
 
 TR064.prototype.setWLAN50 = function (val, callback) {
     if (!this.wlan50 || !this.wlan50.setEnable) return;
     const self = this;
-    safeFunction (this.wlan50, 'setEnable', true) ({NewEnable: val ? 1 : 0 }, function (err, result) {
-        if (err) adapter.log.error('getWLANConfiguration2: ' + err + ' - ' + JSON.stringify(err));
+    safeFunction (this.wlan50, 'setEnable', true)({NewEnable: val ? 1 : 0 }, (err, result) => {
+        err && adapter.log.error('getWLANConfiguration2: ' + err + ' - ' + JSON.stringify(err));
         //if (!val) setTimeout(function (err, res) {
         //    self.setWLAN(true, function (err, res) {
         //    });
@@ -648,10 +779,10 @@ TR064.prototype.setWLANGuest = function (val, callback) {
 TR064.prototype.setWLAN = function (val, callback) {
     const self = this;
     this.setWLAN24(val, function (err, result) {
-        if (err) adapter.log.error('setWLAN24: ' + err + ' - ' + JSON.stringify(err));
+        err && adapter.log.error('setWLAN24: ' + err + ' - ' + JSON.stringify(err));
         if (err || !result) return callback(-1);
         self.setWLANGuest(val, function (err, result) {
-            if (err) adapter.log.error('setWLANGuest: ' + err + ' - ' + JSON.stringify(err));
+            err && adapter.log.error('setWLANGuest: ' + err + ' - ' + JSON.stringify(err));
             self.setWLAN50(val, callback);
         });
     });
@@ -660,7 +791,9 @@ TR064.prototype.setWLAN = function (val, callback) {
 
 TR064.prototype.setWLANPassword = function (kind, pw, cb) {
     const self = this;
-    if (!soef.hasProp(self, kind + '.getSecurityKeys')) return cb && cb(-1);
+    if (!hasProp(self, kind + '.getSecurityKeys')) {
+        return cb && cb(-1);
+    }
 
     self[kind].getSecurityKeys (function (err, ret) {
         if (err || !ret || ret.NewKeyPassphrase === pw) return cb && cb(err,ret);
@@ -695,7 +828,7 @@ TR064.prototype.setWPSMode = function (modeOrOnOff, callback) {
         'NewX_AVM-DE_WPSClientPIN': ''
     }, function (err, obj) {
         this.getWLANConfiguration.actions['X_AVM-DE_GetWPSInfo'](function (err, obj) {
-            if (err) adapter.log.error('X_AVM-DE_GetWPSInfo error: ' + err);
+            err && adapter.log.error('X_AVM-DE_GetWPSInfo error: ' + err);
         });
     }.bind(this));
 };
@@ -756,10 +889,10 @@ function isKnownMac(mac) {
 }
 
 // function deleteUnusedDevices(callback) {
-//     var ch = adapter.namespace + '.' + CHANNEL_DEVICES;
+//     const ch = adapter.namespace + '.' + CHANNEL_DEVICES;
 //     adapter.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
 //         if (err || !res) return;
-//         var toDelete = [];
+//         const toDelete = [];
 //         res.rows.forEach(function (o){
 //             if ((!o.value.native || !o.value.native.mac) && o.id.substr(ch.length+1).indexOf('.') < 0) { // old device, without native.mac
 //                 toDelete.push(o.id);
@@ -782,24 +915,29 @@ function isKnownMac(mac) {
 //     });
 // }
 
+function _deleteUnusedDevices(list, callback) {
+    if (!list || !list.length) {
+        callback && callback();
+    } else {
+        adapter.delForeignObject(list.shift(), () => setImmediate(_deleteUnusedDevices, list, callback));
+    }
+}
+
 function deleteUnusedDevices(callback) {
     const ch = adapter.namespace + '.' + CHANNEL_DEVICES;
-    adapter.getObjectView('system', 'state', { startkey: ch + '.', endkey: ch + '.\u9999' }, function (err, res) {
-        if (err || !res) return;
+    adapter.getObjectView('system', 'state', {startkey: ch + '.', endkey: ch + '.\u9999'}, (err, res) => {
+        if (err || !res) {
+            return callback && callback(err);
+        }
+
         const toDelete = [];
-        res.rows.forEach (function (o) {
-            let doDelete = ((!o.value.native || !o.value.native.mac) && o.id.substr (ch.length + 1).indexOf ('.') < 0); // old device, without native.mac
-            doDelete = doDelete || (o.value.native && o.value.native.mac && !isKnownMac (o.value.native.mac));
-            // doDelete = doDelete ||  (!adapter.config.devices.find(function(v) {
-            //     return v.mac === o.value.native.mac;
-            // }));
-            if (doDelete) toDelete.push(o.id);
+
+        res.rows.forEach(o => {
+            let doDelete = ((!o.value.native || !o.value.native.mac) && !o.id.substr(ch.length + 1).includes('.')); // old device, without native.mac
+            doDelete = doDelete || (o.value.native && o.value.native.mac && !isKnownMac(o.value.native.mac));
+            doDelete && toDelete.push(o.id);
         });
-        forEachArrayCallback (toDelete, callback, function (id, next) {
-            dcs.del (id, function (err) {
-                next ();
-            });
-        });
+        _deleteUnusedDevices(toDelete, callback);
     });
 }
 
@@ -879,12 +1017,16 @@ function updateAll(cb) {
     function doIt() {
         if (i >= names.length) {
             devStates.set('reboot', false);
-            devices.update(function (err) {
-                if (err && err !== -1) adapter.log.error('updateAll:' + err);
-                updateDeflections(soef.callbackOrTimeout(3000, function() {
+            devices.update(err => {
+                err && err !== -1 && adapter.log.error('updateAll:' + err);
+
+                updateDeflections(callbackOrTimeout(3000, () => {
                     if (adapter.config.pollingInterval) {
-                        if (pollingTimer) clearTimeout(pollingTimer);
-                        pollingTimer = setTimeout(updateAll, adapter.config.pollingInterval*1000);
+                        pollingTimer && clearTimeout(pollingTimer);
+                        pollingTimer = setTimeout(() => {
+                            pollingTimer = null;
+                            updateAll();
+                        }, adapter.config.pollingInterval * 1000);
                     }
                 }));
             });
@@ -896,10 +1038,8 @@ function updateAll(cb) {
             return doIt();
         }
 
-        tr064Client[name.func] ( soef.callbackOrTimeout (3000, function (err, res) {
-            if (!err && res) {
-                devStates.set(name.state, name.format ? name.format(res[name.result]) : name.result);
-            }
+        tr064Client[name.func](callbackOrTimeout(3000, (err, res) => {
+            !err && res && devStates.set(name.state, name.format ? name.format(res[name.result]) : name.result);
             setTimeout(doIt, 10);
         }));
 
@@ -919,7 +1059,7 @@ function runMDNS () {
         if (ipActive[rinfo.address] !== false) return;
         ipActive[rinfo.address] = true;
         // if (rinfo.address === '192.168.1.41') {
-        //     var xyz = 1;
+        //     const xyz = 1;
         // }
         const d =  adapter.config.devices.find(function (device) {
             return device.ip === rinfo.address;
@@ -936,7 +1076,7 @@ function runMDNS () {
 
 function normalizeConfigVars() {
     if (!adapter.config.calllists) adapter.config.calllists = adapter.ioPack.native.calllists;
-    calllist.normalizeConfig (adapter.config.calllists);
+    callList.normalizeConfig (adapter.config.calllists);
     adapter.log.debug('Calllist Config after normalizing: ' + JSON.stringify(adapter.config.calllists));
 
     adapter.config.pollingInterval = adapter.config.pollingInterval >> 0;
@@ -950,13 +1090,14 @@ function normalizeConfigVars() {
 
 function main() {
     module.exports.adapter = adapter;
+
     devStates = new devices.CDevice(0, '');
-    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {} });
+    devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {}});
 
     normalizeConfigVars();
     systemData.load();
     deleteUnusedDevices();
-    calllist.init(adapter, systemData);
+    callList.init(adapter, systemData);
 
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
     tr064Client.init(function (err) {
@@ -965,23 +1106,26 @@ function main() {
             adapter.log.error(err + ' - ' + JSON.stringify(err));
             adapter.log.error('~');
             adapter.log.error('~~ Fatal error. Can not connect to your FritzBox.');
-            adapter.log.error('~~ If configuration, networt, IP address, etc. ok, try to restart your FritzBox');
+            adapter.log.error('~~ If configuration, network, IP address, etc. ok, try to restart your FritzBox');
             adapter.log.error('~');
-            setTimeout(function() {
-                process.exit(1);
-            }, 5000);
-            return;
+            return adapter.terminate ? adapter.terminate() : setTimeout(() => process.exit(1), 5000);
         }
+
         tr064Client.refreshCalllist(); //xxx
         createObjects();
-        createConfiguredDevices(function (err) {
-            phonebook.start(tr064Client.sslDevice, { return: !adapter.config.usePhonebook, adapter: adapter }, function () {
-                if (pollingTimer) clearTimeout(pollingTimer);
-                pollingTimer = setTimeout(updateAll, 2000);
+
+        createConfiguredDevices(err => {
+            phonebook.start(tr064Client.sslDevice, {return: !adapter.config.usePhonebook, adapter}, () => {
+                pollingTimer && clearTimeout(pollingTimer);
+                pollingTimer = setTimeout(() => {
+                    pollingTimer = null;
+                    updateAll();
+                }, 2000);
                 callMonitor(adapter, devices, phonebook);
                 runMDNS();
             });
         });
+
         if (adapter.config.useDeflectionOptions) {
             deflections = new Deflections (tr064Client.sslDevice, adapter, devices);
         }
@@ -991,4 +1135,11 @@ function main() {
 }
 
 //http://192.168.1.1:49000/tr64desc.xml
-//npm install https://github.com/soef/ioBroker.tr-064/tarball/master --production
+
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
+}
