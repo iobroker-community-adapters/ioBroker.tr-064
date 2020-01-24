@@ -12,17 +12,62 @@
     <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
-
     <!-- Load our own files -->
     <script type="text/javascript" src="words.js"></script>
+
+    <style>
+        #chooseDevice tr:hover {
+            background: #6ab9ff;
+            cursor: pointer;
+        }
+        #tab-devices td {
+            padding-top: 0;
+        }
+        .mac-included {
+            opacity: 0.5;
+        }
+    </style>
 
     <script type="text/javascript">
         let active = false;
 
         //Show error message
-        function errorMessage(msg){
-                $('#modalError > div > p').replaceWith('<p class="translate" style="font-size: large">' + msg + '</p>');
-                $('#modalError').modal('open');
+        function errorMessage(msg) {
+            $('#modalError > div > p').replaceWith('<p class="translate" style="font-size: large">' + msg + '</p>');
+            $('#modalError').modal('open');
+        }
+
+        function getDeviceMacs() {
+            var macs = [];
+            $('.mac').each(function () {
+                var mac = $(this).val();
+                mac && macs.indexOf(mac) === -1 && macs.push(mac);
+            });
+
+            return macs;
+        }
+
+        function hideExistingDevices() {
+            var macs = getDeviceMacs();
+            $('#chooseDevice').find('tr').each(function () {
+                var mac = $(this).find('.found-mac').text().toUpperCase();
+                if (macs.indexOf(mac) !== -1) {
+                    $(this).addClass('mac-included');
+                } else {
+                    $(this).removeClass('mac-included');
+                }
+            });
+        }
+
+        function removeDeviceRow(mac) {
+            mac = mac.toUpperCase();
+            $('.mac').each(function () {
+                var _mac = $(this).val().toUpperCase();
+                if (_mac === mac) {
+                    $(this).parent().parent().remove();
+                    return false;
+                }
+            });
         }
 
         //Add new row to table for device
@@ -41,7 +86,7 @@
                 '                            <input type="text" class="validate">\n' +
                 '                        </td>\n' +
                 '                        <td>\n' +
-                '                            <input type="text" class="validate">\n' +
+                '                            <input type="text" class="validate mac">\n' +
                 '                        </td>\n' +
                 '                        <td>\n' +
                 '                            <a class="delete-device values-buttons btn-floating btn-small waves-effect waves-light red"><i class="material-icons" title="Remove device">delete</i></a>\n' +
@@ -57,27 +102,29 @@
                 onChange();
             });
 
-            if(name !== null && ip !== null && mac !== null){
+            if (name && ip && mac) {
                 $('#devices > tr').eq(countRows).find('td').eq(1).find('input').val(name)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
+
                 $('#devices > tr').eq(countRows).find('td').eq(2).find('input').val(ip)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
+
                 $('#devices > tr').eq(countRows).find('td').eq(3).find('input').val(mac)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
             }
 
 
-            if (M) M.updateTextFields();
+            M && M.updateTextFields();
             onChange();
         }
 
         //give table rows new index number
-        function reIndex(){
+        function reIndex() {
             let count = $('#devices > tr').length;
-            for(let i = 0; i < count; i++){
+            for (let i = 0; i < count; i++) {
                 let newIndex = i + 1;
                 $('#devices > tr').eq(i).find('p').replaceWith('<p>' + newIndex + '</p>');
             }
@@ -90,20 +137,21 @@
                 let arr = JSON.parse(result);
 
                 $('#chooseDevice').empty();
-                for(let i = 0; i < arr.length; i++){
+
+                for (let i = 0; i < arr.length; i++) {
                     let name = arr[i].name;
                     let ip = arr[i].ip;
                     let mac = arr[i].mac;
 
                     let newRow = '<tr>\n' +
                         '                        <td>\n' +
-                        '                                <p>'+ name + '</p>\n' +
+                        '                                <p>' + name + '</p>\n' +
                         '                        </td>\n' +
                         '                        <td>\n' +
-                        '                            <p>'+ ip + '</p>\n' +
+                        '                            <p>' + ip + '</p>\n' +
                         '                        </td>\n' +
                         '                        <td>\n' +
-                        '                            <p>'+ mac +'</p>\n' +
+                        '                            <p class="found-mac">' + mac +'</p>\n' +
                         '                        </td>\n' +
                         '                    </tr>';
 
@@ -113,11 +161,14 @@
                 }
 
                 //push device to devices table
-                $('#chooseDevice > tr').on('click', function(){
-                    let name, ip, mac;
-                    $(this).find('td > p').each(function(elem){
+                $('#chooseDevice > tr').on('click', function () {
+                    let name;
+                    let ip;
+                    let mac;
+
+                    $(this).find('td > p').each(function (elem) {
                         console.log($(this).text());
-                        switch(elem){
+                        switch (elem) {
                             case 0:
                                 name = $(this).text();
                                 break;
@@ -129,31 +180,38 @@
                                 break;
                         }
                     });
-                    addDeviceRow(onChange, name, ip, mac);
 
+                    var macs = getDeviceMacs();
+                    if (macs.indexOf(mac) !== -1) {
+                        removeDeviceRow(mac);
+                    } else {
+                        addDeviceRow(onChange, name, ip, mac);
+                    }
+
+                    hideExistingDevices();
                 });
-
+                hideExistingDevices();
             });
-
-
         }
 
         // This will be called by the admin adapter when the settings page loads
         function load(settings, onChange) {
+            if (!settings) {
+                return;
+            }
 
-            if (!settings) return;
-
-            $('#find').on('click', function(){
-                if(!active){
-                    errorMessage('You have to enable/start ' + adapter + ' adapter before you can use this function!');
-                    return;
-                }else{
+            $('#find').on('click', function () {
+                if (!active) {
+                    // 'You have to enable/start ' + adapter + ' adapter before you can use this function!'
+                    var text = _('Not enabled', adapter);
+                    errorMessage();
+                } else {
                     deviceLookup(onChange);
                     $('#modalDevices').modal('open');
                 }
             });
 
-            $('#addDevice').on('click', function(){
+            $('#addDevice').on('click', function () {
                addDeviceRow(onChange, null, null, null);
             });
 
@@ -163,7 +221,7 @@
                 let id = $key.attr('id');
                 id = id.split('_');
                 let sObj;
-                switch(id.length){
+                switch (id.length) {
                     case 1:
                         sObj = settings[id[0]];
                         break;
@@ -196,17 +254,14 @@
 
             //read devices from settings and show in table
             let countDevices = settings.devices.length;
-            if(countDevices > 0){
-                for(let i = 0; i < countDevices; i++){
-                    let name = settings.devices[i].name;
-                    let ip = settings.devices[i].ip;
-                    let mac = settings.devices[i].mac;
-                    addDeviceRow(onChange, name, ip, mac);
+            if (countDevices > 0) {
+                for (let i = 0; i < countDevices; i++) {
+                    addDeviceRow(onChange, settings.devices[i].name, settings.devices[i].ip, settings.devices[i].mac);
                 }
             }
 
-            socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
-                active = /*common.enabled ||*/ (state && state.val);
+            getIsAdapterAlive(function (isAlive) {
+                active = /*common.enabled ||*/ isAlive;
             });
 
             //initialize modals
@@ -214,7 +269,7 @@
 
             onChange(false);
             // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
-            if (M) M.updateTextFields();
+            M && M.updateTextFields();
         }
 
         // This will be called by the admin adapter when the user presses the save button
@@ -260,32 +315,30 @@
             //save devices list
             let countDevices = $('#devices > tr').length;
             let arrDevices = [];
-            if(countDevices > 0){
+            if (countDevices > 0) {
                 for(let i = 0; i < countDevices; i++){
                     let name = $('#devices > tr').eq(i).find('td').eq(1).find('input').val();
-                    let ip = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
-                    let mac = $('#devices > tr').eq(i).find('td').eq(3).find('input').val();
+                    let ip   = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
+                    let mac  = $('#devices > tr').eq(i).find('td').eq(3).find('input').val();
                     let json = {name: name, ip: ip, mac: mac};
                     arrDevices.push(json);
                 }
-            }else if(countDevices === 0) {
+            } else if (!countDevices) {
                 let json = {name: '', ip: '', mac: ''};
-                    arrDevices.push(json);
+                arrDevices.push(json);
             }
+
             obj['devices'] = arrDevices;
 
             callback(obj);
         }
     </script>
-
 </head>
-
 <body>
-
 <div class="m adapter-container">
- <div class="row">
-    <!-- Tabs navigation -->
-    <div class="col s12">
+    <div class="row">
+        <!-- Tabs navigation -->
+        <div class="col s12">
         <ul class="tabs">
             <li class="tab col s2">
                 <a href="#tab-options" class="translate" data-lang="Options">Options</a>
@@ -299,13 +352,8 @@
         </ul>
     </div>
 
-
-
-
-
-    <!-- Tabs content -->
-    <div id="tab-options" class="col s12 page">
-
+        <!-- Tabs content -->
+        <div id="tab-options" class="col s12 page">
             <div class="row">
                 <div class="col s11 m4 l2">
                     <img src="tr-064.png" class="logo">
@@ -361,21 +409,20 @@
         </div>
     </div>
 
-    <div id="tab-devices" class="col s12 page">
-
-            <div class="row">
+        <div id="tab-devices" class="col s12 page">
+            <div class="row" style="padding-bottom: 0">
                 <div class="input-field col">
                     <a class="waves-effect waves-light btn" id="addDevice">
-                        <span class="translate">Add device</span>
+                        <i class="material-icons left">add</i><span class="translate">Add device</span>
                     </a>
                 </div>
                 <div class="input-field col">
                     <a class="waves-effect waves-light btn" id="find">
-                        <span class="translate">Find a device</span>
+                        <i class="material-icons left">search</i><span class="translate">Find a device</span>
                     </a>
                 </div>
             </div>
-            <div class="table-values-div">
+            <div class="table-values-div" style="height: calc(100% - 90px); overflow: auto">
                 <table class="centered highlight">
                     <thead>
                     <tr>
@@ -392,7 +439,7 @@
             </div>
     </div>
 
-    <div id="tab-calllists" class="col s12 page">
+        <div id="tab-calllists" class="col s12 page">
         <div class="row">
             <div class="col s12 m6 l3">
                 <div class="card grey lighten-5">
@@ -483,14 +530,13 @@
             </div>
         </div>
     </div>
-
- </div>
+    </div>
 
     <!-- Modal for Device selection -->
-    <div id="modalDevices" class="modal">
+    <div id="modalDevices" class="modal" style="height: 100%; overflow: hidden;">
         <div class="modal-content">
-            <h5 class="blue white-text center-align">Choose Device</h5>
-            <div class="table-values-div">
+            <h5 class="blue white-text center-align"><span class="translate">Choose Device</span><span class="translate" style="font-size: 12px; margin-left: 5px">click to insert</span></h5>
+            <div class="table-values-div" style="width: 100%; height: calc(100% - 60px); overflow: auto;">
                 <table class="centered highlight">
                     <thead>
                     <tr>
@@ -502,25 +548,22 @@
                     <tbody id="chooseDevice"></tbody>
                 </table>
             </div>
-            <p class="center-align" style="font-size: larger">Please wait</p>
+            <p class="center-align translate" style="font-size: larger">Please wait</p>
         </div>
         <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-blue btn">Close</a>
+            <a href="#!" class="modal-close waves-effect waves-blue btn translate">Close</a>
         </div>
     </div>
 
     <div id="modalError" class="modal">
         <div class="modal-content center-align">
-            <h5 class="red white-text center-align">ERROR</h5>
+            <h5 class="red white-text center-align translate">ERROR</h5>
             <p>Error message</p>
         </div>
         <div class="row center">
-            <a href="#!" class="modal-close waves-effect waves-blue btn">Close</a>
+            <a href="#!" class="modal-close waves-effect waves-blue btn translate">Close</a>
         </div>
     </div>
-
 </div>
-
 </body>
-
 </html>
