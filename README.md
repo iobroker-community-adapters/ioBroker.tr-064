@@ -15,7 +15,7 @@
 [![Dependency Status](https://img.shields.io/david/iobroker-community-adapters/iobroker.tr-064.svg)](https://david-dm.org/iobroker-community-adapters/iobroker.tr-064)
 [![Known Vulnerabilities](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064/badge.svg)](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064)
 
-***This adapter requires at least Node 4.x***
+***This adapter requires at least Node 8.x***
 
 ### Info
 This adapter reads main information from AVM Fritz!Box, like call list or number of messages on answering machine.
