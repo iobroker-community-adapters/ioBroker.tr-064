@@ -118,6 +118,7 @@
         "enabled": true,
         "messagebox": true,
         "materialize": true,
+        "compact": true,
         "main": "main.js",
         "authors": [
             {
