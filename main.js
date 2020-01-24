@@ -93,7 +93,7 @@ function startAdapter(options) {
         if (state && id.startsWith(adapter.namespace + '.')) {
             if (initError) {
                 adapter.log.error('tr-064 adapter not connected to a FritzBox. Terminating');
-                return adapter.terminate ? adapter.terminate('tr-064 adapter not connected to a FritzBox. Terminating', -1) : setTimeout(() => process.exit(1), 2000);
+                return adapter.terminate ? adapter.terminate('tr-064 adapter not connected to a FritzBox. Terminating', 1) : setTimeout(() => process.exit(1), 2000);
             }
 
             adapter.log.debug('State changed: ' + id + ' = ' + JSON.stringify(state));
@@ -1108,7 +1108,7 @@ function main() {
             adapter.log.error('~~ Fatal error. Can not connect to your FritzBox.');
             adapter.log.error('~~ If configuration, network, IP address, etc. ok, try to restart your FritzBox');
             adapter.log.error('~');
-            return adapter.terminate ? adapter.terminate('Fatal error. Can not connect to your FritzBox.', -1) : setTimeout(() => process.exit(1), 5000);
+            return adapter.terminate ? adapter.terminate('Fatal error. Can not connect to your FritzBox.', 1) : setTimeout(() => process.exit(1), 5000);
         }
 
         tr064Client.refreshCalllist(); //xxx
