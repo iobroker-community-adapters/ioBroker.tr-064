@@ -2,10 +2,15 @@
 test
 .travis.yml
 appveyor.yml
-
+node_modules
 .ba
 .idea
-
+admin/i18n
+iob_npm.done
+.eslintrc.json
+.idea
+lib/_soef.js
+gulpfile.js
 .github
 package-lock.json
 .gitattributes
