@@ -60,5 +60,65 @@ systemDictionary = {
     "tooltip_pollingInterval": {                     "en": "Poll Intervall of ??? in seconds",                "de": "Pollintervall von ??? in Sekunden",               "ru": "Интервал опроса ??? в секундах",                  "pt": "Poll Intervall de ??? ",                          "nl": "Poll Intervall van ??? ",                         "fr": "Sondage Intervall de ??? ",                       "it": "Sondaggio Intervall di ??? ",                     "es": "Encuesta Intervalo de ??? ",                      "pl": "Ankieta Intervall of ??? ",                       "zh-cn": "调查区间的了吗？ 在几秒钟内"},
     "tooltip_useMDNS": {                             "en": "multicast Domain Name System (mDNS) resolves host names to IP addresses within small networks that do not include a local name server", "de": "mDNS ist nichts anderes als eine Beschreibung, wie Clients verfahren müssen, wenn sie DNS-Anfragen an Multicast-Adressen senden", "ru": "позволяет устройству выбрать имя в зоне .local",  "pt": "O sistema de nome de domínio (mDNS) multicast resolve nomes de host para endereços IP em redes pequenas que não incluem um servidor de nomes local", "nl": "multicast Domain Name System (mDNS) lost hostnamen op IP-adressen op in kleine netwerken die geen lokale naamserver bevatten", "fr": "Le système de nom de domaine multidiffusion (mDNS) résout les noms d'hôte en adresses IP au sein de petits réseaux n'incluant pas de serveur de noms local.", "it": "Il multicast Domain Name System (mDNS) risolve i nomi degli host in indirizzi IP all'interno di piccole reti che non includono un name server locale", "es": "el sistema de nombres de dominio de multidifusión (mDNS) resuelve los nombres de host a direcciones IP dentro de redes pequeñas que no incluyen un servidor de nombres local", "pl": "multicast Domain Name System (mDNS) rozwiązuje nazwy hostów na adresy IP w małych sieciach, które nie zawierają lokalnego serwera nazw", "zh-cn": "播域名系统(mdn)解决主机名的IP地址内的小型网络，其中不包括当地的服务器名称"},
     "You have to enable/start tr-064 adapter before you can use this function!": { "en": "You have to enable/start tr-064 adapter befor you can use this function!", "de": "Sie müssen den tr-064-Adapter aktivieren / starten, bevor Sie diese Funktion verwenden können!", "ru": "Вы должны включить / запустить адаптер tr-064, чтобы использовать эту функцию!", "pt": "Você precisa ativar / iniciar o adaptador tr-064 antes de poder usar esta função!", "nl": "U moet de tr-064-adapter inschakelen / starten voordat u deze functie kunt gebruiken!", "fr": "Vous devez activer / démarrer l'adaptateur tr-064 avant de pouvoir utiliser cette fonction!", "it": "Devi abilitare / avviare l'adattatore tr-064 prima di poter usare questa funzione!", "es": "¡Debe habilitar / iniciar el adaptador tr-064 antes de poder usar esta función!", "pl": "Musisz włączyć / uruchomić adapter społeczności TR-064, zanim będziesz mógł korzystać z tej funkcji!", "zh-cn": "您必须启用/启动tr-064-社区适配器，然后才能使用此功能！"},
-    "type": {                                        "en": "Type",                                            "de": "Typ",                                             "ru": "Тип",                                             "pt": "Tipo",                                            "nl": "Type",                                            "fr": "Type",                                            "it": "genere",                                          "es": "Tipo",                                            "pl": "Rodzaj",                                          "zh-cn": "类型"}
+    "type": {                                        "en": "Type",                                            "de": "Typ",                                             "ru": "Тип",                                             "pt": "Tipo",                                            "nl": "Type",                                            "fr": "Type",                                            "it": "genere",                                          "es": "Tipo",                                            "pl": "Rodzaj",                                          "zh-cn": "类型"},
+    "MAC": {
+        "en": "MAC",
+        "de": "MAC",
+        "ru": "MAC",
+        "pt": "MAC",
+        "nl": "MAC",
+        "fr": "MAC",
+        "it": "MAC",
+        "es": "MAC",
+        "pl": "PROCHOWIEC",
+        "zh-cn": "苹果电脑"
+    },
+    "Not enabled": {
+        "en": "You have to enable/start %s adapter before you can use this function!",
+        "de": "Sie müssen %s  Adapter aktivieren / starten, bevor Sie diese Funktion verwenden können!",
+        "ru": "Вы должны включить / запустить %s  адаптер, прежде чем сможете использовать эту функцию!",
+        "pt": "Você precisa ativar / iniciar o adaptador %s  antes de poder usar esta função!",
+        "nl": "U moet %s  adapter inschakelen / starten voordat u deze functie kunt gebruiken!",
+        "fr": "Vous devez activer / démarrer l'adaptateur %s  avant de pouvoir utiliser cette fonction!",
+        "it": "Devi abilitare / avviare l'adattatore %s  prima di poter usare questa funzione!",
+        "es": "¡Debe habilitar / iniciar el adaptador %s  antes de poder usar esta función!",
+        "pl": "Musisz włączyć / uruchomić %s  adapter, aby móc korzystać z tej funkcji!",
+        "zh-cn": "您必须先启用/启动％s适配器，然后才能使用此功能！"
+    },
+    "click to insert": {
+        "en": "click to insert",
+        "de": "Klicken Sie, um einzufügen",
+        "ru": "нажмите, чтобы вставить",
+        "pt": "clique para inserir",
+        "nl": "klik om in te voegen",
+        "fr": "cliquez pour insérer",
+        "it": "fai clic per inserire",
+        "es": "haga clic para insertar",
+        "pl": "kliknij, aby wstawić",
+        "zh-cn": "点击插入"
+    },
+    "Please wait": {
+        "en": "Please wait",
+        "de": "Warten Sie mal",
+        "ru": "пожалуйста, подождите",
+        "pt": "Por favor, espere",
+        "nl": "Wacht alsjeblieft",
+        "fr": "S'il vous plaît, attendez",
+        "it": "attendere prego",
+        "es": "por favor espera",
+        "pl": "Proszę czekać",
+        "zh-cn": "请耐心等待"
+    },
+    "Close": {
+        "en": "Close",
+        "de": "Schließen",
+        "ru": "близко",
+        "pt": "Fechar",
+        "nl": "Dichtbij",
+        "fr": "Fermer",
+        "it": "Vicino",
+        "es": "Cerca",
+        "pl": "Blisko",
+        "zh-cn": "关"
+    }
 };

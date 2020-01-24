@@ -131,33 +131,27 @@
         }
 
         //look for devices on router
-        function deviceLookup(onChange){
-            sendTo('tr-064.' + instance, 'discovery', { onlyActive: true, reread: false }, function (result) {
-
+        function deviceLookup(onChange) {
+            $('.load-wait').show();
+            $('#chooseDevice').empty();
+            sendTo('tr-064.' + instance, 'discovery', {onlyActive: true, reread: false}, function (result) {
+                $('.load-wait').hide();
                 let arr = JSON.parse(result);
 
-                $('#chooseDevice').empty();
-
                 for (let i = 0; i < arr.length; i++) {
-                    let name = arr[i].name;
-                    let ip = arr[i].ip;
-                    let mac = arr[i].mac;
-
                     let newRow = '<tr>\n' +
                         '                        <td>\n' +
-                        '                                <p>' + name + '</p>\n' +
+                        '                                <p>' + arr[i].name + '</p>\n' +
                         '                        </td>\n' +
                         '                        <td>\n' +
-                        '                            <p>' + ip + '</p>\n' +
+                        '                            <p>' + arr[i].ip + '</p>\n' +
                         '                        </td>\n' +
                         '                        <td>\n' +
-                        '                            <p class="found-mac">' + mac +'</p>\n' +
+                        '                            <p class="found-mac">' + arr[i].mac +'</p>\n' +
                         '                        </td>\n' +
                         '                    </tr>';
 
                     $('#chooseDevice').append(newRow);
-
-                    $('#modalDevices > div > p').remove();
                 }
 
                 //push device to devices table
@@ -203,16 +197,15 @@
             $('#find').on('click', function () {
                 if (!active) {
                     // 'You have to enable/start ' + adapter + ' adapter before you can use this function!'
-                    var text = _('Not enabled', adapter);
-                    errorMessage();
+                    errorMessage(_('Not enabled', adapter));
                 } else {
-                    deviceLookup(onChange);
                     $('#modalDevices').modal('open');
+                    deviceLookup(onChange);
                 }
             });
 
             $('#addDevice').on('click', function () {
-               addDeviceRow(onChange, null, null, null);
+               addDeviceRow(onChange);
             });
 
 
@@ -231,8 +224,12 @@
                     case 3:
                         sObj = settings[id[0]][id[1]][id[2]];
                         if (sObj === undefined && (id[2] === 'generateJson' || id[2] === 'generateHtml')) {
-                            if (id[2] === 'generateJson') id[2] = 'generateJSON';
-                                else if (id[2] === 'generateHtml') id[2] = 'generateHTML';
+                            if (id[2] === 'generateJson') {
+                                id[2] = 'generateJSON';
+                            } else if (id[2] === 'generateHtml') {
+                                id[2] = 'generateHTML';
+                            }
+
                             sObj = settings[id[0]][id[1]][id[2]];
                         }
                         break;
@@ -240,8 +237,7 @@
 
                 if ($key.attr('type') === 'checkbox') {
                     // do not call onChange direct, because onChange could expect some arguments
-                    $key.prop('checked', sObj)
-                        .on('change', () => onChange())
+                    $key.prop('checked', sObj).on('change', () => onChange())
                     ;
                 } else {
                     // do not call onChange direct, because onChange could expect some arguments
@@ -548,7 +544,18 @@
                     <tbody id="chooseDevice"></tbody>
                 </table>
             </div>
-            <p class="center-align translate" style="font-size: larger">Please wait</p>
+            <div class="preloader-wrapper big active load-wait">
+                <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+                </div>
+            </div>
+            <!--p class="center-align translate" style="font-size: larger">Please wait</p-->
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-close waves-effect waves-blue btn translate">Close</a>

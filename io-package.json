@@ -3,7 +3,19 @@
         "name": "tr-064",
         "version": "3.0.1",
         "news": {
-            "3.0.1":{
+            "3.1.0": {
+                "en": "Configuration dialog was improved\nSoef library was removed",
+                "de": "Konfigurationsdialog wurde verbessert\nSoef Bibliothek wurde entfernt",
+                "ru": "Диалог конфигурации был улучшен\nSoef библиотека была удалена",
+                "pt": "O diálogo de configuração foi aprimorado\nA biblioteca Soef foi removida",
+                "nl": "Configuratiedialoog is verbeterd\nSoef-bibliotheek werd verwijderd",
+                "fr": "La boîte de dialogue de configuration a été améliorée\nLa bibliothèque Soef a été supprimée",
+                "it": "La finestra di configurazione è stata migliorata\nLa libreria Soef è stata rimossa",
+                "es": "Se mejoró el diálogo de configuración\nSe eliminó la biblioteca Soef",
+                "pl": "Okno konfiguracji zostało ulepszone\nBiblioteka Soef została usunięta",
+                "zh-cn": "配置对话框进行了改进\nSoef库已删除"
+            },
+            "3.0.1": {
                 "en": "REQUIRES js-controller 2.x!! Switch back to tr-064 as name and fix a lot of bugs and issues",
                 "de": "ERFORDERT js-controller 2.x !! Wechseln Sie zurück zu tr-064 als Name und beheben Sie viele Fehler und Probleme",
                 "ru": "ТРЕБУЕТСЯ js-контроллер 2.x !! Вернитесь к названию tr-064 и исправьте множество ошибок и проблем.",
@@ -15,7 +27,7 @@
                 "pl": "WYMAGA js-kontrolera 2.x !! Wróć z powrotem do tr-064 jako nazwa i napraw wiele błędów i problemów",
                 "zh-cn": "需要js-controller 2.x !!切换回tr-064作为名称，并修复许多错误和问题"
             },
-            "2.0.3":{
+            "2.0.3": {
                 "en": "fix delete last device from list",
                 "de": "behebt das Löschen des letzten Geräts aus der Liste",
                 "ru": "исправить удаление последнего устройства из списка",

@@ -1,7 +1,5 @@
-<h1>
-  <img src="https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064/master/admin/tr-064.png" width="64"/>
-  ioBroker.tr-064
-</h1>
+![Logo](admin/tr-064.png)
+# ioBroker.tr-064
 
 ![Number of Installations](http://iobroker.live/badges/tr-064-installed.svg) 
 ![Number of Installations](http://iobroker.live/badges/tr-064-stable.svg)
@@ -17,18 +15,18 @@
 
 ***This adapter requires at least Node 8.x***
 
-### Info
+## Info
 This adapter reads main information from AVM Fritz!Box, like call list or number of messages on answering machine.
 Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
 
-### Initial Creation
-This adapter was initialy created by @soef at https://github.com/soef/ioBroker.tr-064 but not maintained any more, so we moved it to iobroker-community so that bugs could be fixed. thanks @soef for his work.
+## Initial Creation
+This adapter was initially created by @soef at https://github.com/soef/ioBroker.tr-064 but not maintained any more, so we moved it to iobroker-community so that bugs could be fixed. thanks @soef for his work.
 
-## How to migrate from tr-064-community (intermediate verison and name)
+## How to migrate from tr-064-community (intermediate version and name)
 If you move from tr-064-community adapters you can easily copy whole device list or settings by:
 * Go in admin to objects and enable expert mode
-*Look for an object tree which is called system.adapter.tr-064-community.0 (where 0 is the instance, if you had multiple instances select the right one)
-* On the very right of this line is a buttom with a pencil, click on it
+* Look for an object tree which is called system.adapter.tr-064-community.0 (where 0 is the instance, if you had multiple instances select the right one)
+* On the very right of this line is a button with a pencil, click on it
 * On the window you get select "raw (experts only)" and there copy the NATIVE part of the json
 * then open system.adapter.tr-064.0 (where 0 is the instance, if you had multiple instances select the right one)
 * paste the copied native part in there in native
@@ -36,6 +34,7 @@ If you move from tr-064-community adapters you can easily copy whole device list
 * start the adapter
 * check configuration if anything was restored correctly
 
+## Features
 ### Simple states and functions
 - turn on/off wifi for 2.4GHz and 5GHz,
 - turn on/off guest wifi,
@@ -45,7 +44,7 @@ If you move from tr-064-community adapters you can easily copy whole device list
 - external ip address
 
 ### ring (dial a number)
-- When using an internel number (like **610) the ring state will let ring that internal phone.
+- When using an internal number (like **610) the ring state will let ring that internal phone.
 e.g.: **610[,timeout]
 - When using an external number, the ring state will connect you to the external number.
  The Fritz!Box will call the external number and your default phone will ring, when the called phone is picked up.
@@ -54,7 +53,7 @@ e.g.: **610[,timeout]
 
 ### toPauseState
 - Values: ring, connect, end
-- Can be used to pause a videoplayer on an incomming call (ring), or on pick up the phone (connect).
+- Can be used to pause a video player on an incoming call (ring), or on pick up the phone (connect).
 - Resume can be done on the end value.
 
 ### Presence
@@ -66,24 +65,24 @@ To monitor the presence of persons in your home, so to control once anyone of yo
 
 Also, a script was published by the ioBroker community which uses this adapter information to trigger actions (e.g. everyone left home, so turn off everything automatically, see number of persons currently being present, or person status in general, via VIS, etc.). See [ioBroker forum thread](https://forum.iobroker.net/topic/4538/anwesenheitscontrol-basierend-auf-tr64-adapter-script) (in German)
 
-### AB - Anrufbeantworter (answering machine)
-Can be switch on/off.
-The state cbIndex can be set, to address # of the answerig machine.
+### AB - `Anrufbeantworter` (answering machine)
+Can be switched on/off.
+The state cbIndex can be set, to address # of the answering machine.
 
 ### Call monitor
-The callmonitor will create realtime states for every inbound and outbound call.
-If the phonebook is enabled (default), numbers will be resolved to Names
+The call monitor will create realtime states for every inbound and outbound call.
+If the phone book is enabled (default), numbers will be resolved to Names
 There ist also a state indicating a ringing phone.
 
-### Phonebook
+### Phone book
 - The phone book, if enabled, will be used to get the name of callers phone number.
 - Further there are three states to resolve a number or a name. If available you will also get the image URL of the contact.
-  e.g.: if you set the state phonebook.number all 3 states, name, number and image will be set to the found contact. Note, searches by     name will first compare the complete name, if not found, part of is used.
+  e.g.: if you set the state `phonebook.number` all 3 states, name, number and image will be set to the found contact. Note, searches by name will first compare the complete name, if not found, part of is used.
 
 ### Call lists
 Output formats:
-- json
-- html
+- `json`
+- `html`
 
 Call lists are:
 - all calls
@@ -92,13 +91,14 @@ Call lists are:
 - outbound calls
 
 Call count:
-The call count can be set to 0. The next call will incement 1.
+The call count can be set to 0. The next call will increment 1.
 
-The html output can be configured by a template
+The html output can be configured by a template.
 
 ### command & commandResult state
 With the command state you can call every tr-064 command from this [documentation](https://avm.de/service/schnittstellen/).
 e.g.
+
 ```javascript
 command = {
     "service": "urn:dslforum-org:service:WLANConfiguration:1",
@@ -109,32 +109,21 @@ command = {
     }
 };
 ```
-The command state shoud be set to a JSON of the above Lines. So { ... } (without command = and line breaks)
+
+The command state should be set to a JSON of the above Lines. So { ... } (without command = and line breaks)
 The callback of the call will set the commandResult state.
 
-<!--
-### Installation
-Execute the following command in the iobroker root directory (e.g. in /opt/iobroker)
-```
-npm install iobroker.tr-064
-```
--->
 ### Enable call monitor
 To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
-### pre release versions
-Prerelease versions are available at npm with the tag dev.
-You cann install them from the ioBroker root directory with:
-```
-npm install iobroker.tr-064@dev
-iobroker upload tr-064
-```
-
-### Changelog
+## Changelog
+### 3.1.0 (2020-01-24)
+* (bluefox) Configuration dialog was improved
+* (bluefox) Soef library was removed
 
 ### 3.0.0 (2020-01-24)
-* (Apollon77) Switch Name back to tr064 becaus ewe got it from npmjs
+* (Apollon77) Switch Name back to tr064 because ewe got it from npmjs
 * (maeb3) Enhance call handling and fix wrong data for currently active calls 
 * (Apollon77) Remove unused state phonebook.ringing
 
@@ -144,7 +133,7 @@ iobroker upload tr-064
 ### 2.0.2 (2019-12-16)
 * __requires js-controller v2__
 * (foxriver76) no longer use adapter.objects
-* (Apollon77) several fixes, Calllists working again, Phonebook fixed and many more
+* (Apollon77) several fixes, Call lists working again, Phonebook fixed and many more
 
 ### 1.1.0 (2019-11-10)
 * (jey cee) added Admin v3 support
@@ -155,7 +144,7 @@ iobroker upload tr-064
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2015-2019 soef <soef@gmx.net>
+Copyright (c) 2015-2020 soef <soef@gmx.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
