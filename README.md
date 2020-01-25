@@ -118,7 +118,7 @@ To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ## Changelog
-### 3.1.0 (2020-01-24)
+### 3.1.1 (2020-01-25)
 * (bluefox) Configuration dialog was improved
 * (bluefox) Soef library was removed
 

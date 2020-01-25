@@ -1,4 +1,3 @@
-/* global __dirname, dcs, devices */
 /* jshint -W097 */
 /* jshint strict: false */
 /* jslint node: true */
@@ -65,7 +64,7 @@ function callbackOrTimeout(timeout, callback) {
         callback = cb;
     }
 
-    let id = Date.now() + '_' + Math.round(Math.random() * 10000);
+    const id = Date.now() + '_' + Math.round(Math.random() * 10000);
 
     callbackTimers[id] = setTimeout(() => {
         callback('timeout', null);
@@ -216,11 +215,11 @@ function createObjects(cb) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function onMessage(obj) {
+    let onlyActive;
+    let reread;
+
     switch (obj.command) {
         case 'discovery':
-            let onlyActive;
-            let reread;
-
             if (typeof obj.message === 'object') {
                 onlyActive = obj.message.onlyActive;
                 reread = obj.message.reread;
@@ -294,9 +293,9 @@ function onStateChange(id, state) {
             onPhonebook(cmd, state.val);
             return;
 
-        // case CHANNEL_DEVICES:
-        // case CHANNEL_CALLMONITOR:
-        //     return;
+            // case CHANNEL_DEVICES:
+            // case CHANNEL_CALLMONITOR:
+            //     return;
 
         case Deflections.CHANNEL_DEFLECTIONS:
             deflections && deflections.onStateChange(cmd, as[4], state.val);
@@ -378,7 +377,7 @@ function safeFunction(root, path, log) {
             return;
         }
 
-        const fn = arguments [arguments.length-1];
+        const fn = arguments[arguments.length-1];
 
         if (typeof fn === 'function') {
             fn(new Error(path + ' is not a function'));
@@ -411,7 +410,6 @@ TR064.prototype = Object.create(tr064Lib.TR064.prototype);
 //};
 
 TR064.prototype.setABIndex = function (val, cb) {
-
     if (val === undefined) {
         val = this.abIndex;
     }
@@ -424,7 +422,7 @@ TR064.prototype.setABIndex = function (val, cb) {
         if (err || !data) {
             return;
         }
-        devStates.setAndUpdate('ab', data.NewEnable);
+        devStates.setAndUpdate('ab', data.NewEnable, cb);
     });
 };
 
@@ -472,8 +470,7 @@ const systemData = {
         });
     },
     save: function () {
-        adapter.setObject(adapter.namespace, this, function (err, obj) {
-        });
+        adapter.setObject(adapter.namespace, this, (err, obj) => {});
     },
     /*xsave: adapter.setObject.bind(adapter, adapter.namespace, this, function (err, obj) {
     })*/
@@ -651,7 +648,8 @@ TR064.prototype.forEachHostEntry = function (callback) {
 };
 
 TR064.prototype.forEachConfiguredDevice = function (callback) {
-    let i = 0, self = this;
+    let i = 0;
+    const self = this;
     adapter.log.debug('forEachConfiguredDevice');
 
     function doIt() {
@@ -748,11 +746,11 @@ TR064.prototype.command = function (command, callback) {
 
     safeFunction(this.sslDevice.services, o.service + '.actions.' + o.action)(o.params, (err, res) => {
         if (err || !res) {
-            adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(err||{}), true);
+            adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(err||{}), true, callback);
             return;
         }
         adapter.log.info(JSON.stringify(res));
-        adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(res), true);
+        adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(res), true, callback);
     });
 };
 
@@ -762,11 +760,10 @@ TR064.prototype.setWLAN24 = function (val, callback) {
 
 TR064.prototype.setWLAN50 = function (val, callback) {
     if (!this.wlan50 || !this.wlan50.setEnable) return;
-    const self = this;
     safeFunction (this.wlan50, 'setEnable', true)({NewEnable: val ? 1 : 0 }, (err, result) => {
         err && adapter.log.error('getWLANConfiguration2: ' + err + ' - ' + JSON.stringify(err));
         //if (!val) setTimeout(function (err, res) {
-        //    self.setWLAN(true, function (err, res) {
+        //    this.setWLAN(true, function (err, res) {
         //    });
         //}, 20000);
     });
@@ -826,11 +823,9 @@ TR064.prototype.setWPSMode = function (modeOrOnOff, callback) {
     this.getWLANConfiguration.actions['X_AVM-DE_SetWPSConfig']({
         'NewX_AVM-DE_WPSMode': mode,
         'NewX_AVM-DE_WPSClientPIN': ''
-    }, function (err, obj) {
-        this.getWLANConfiguration.actions['X_AVM-DE_GetWPSInfo'](function (err, obj) {
-            err && adapter.log.error('X_AVM-DE_GetWPSInfo error: ' + err);
-        });
-    }.bind(this));
+    }, (err, obj) =>
+        this.getWLANConfiguration.actions['X_AVM-DE_GetWPSInfo']((err, obj) =>
+            err && adapter.log.error('X_AVM-DE_GetWPSInfo error: ' + err)));
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -859,10 +854,10 @@ function _checkError(err, res) {
     this(err, res);
 }
 
-function checkError(cb) {
+/*function checkError(cb) {
     return _checkError.bind(cb);
 }
-
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -915,11 +910,27 @@ function isKnownMac(mac) {
 //     });
 // }
 
+function _deleteStates(list, callback) {
+    if (!list || !list.length) {
+        callback && callback();
+    } else {
+        const id = list.shift();
+        adapter.delForeignObject(id, () =>
+            setImmediate(_deleteStates, list, callback));
+    }
+}
+
 function _deleteUnusedDevices(list, callback) {
     if (!list || !list.length) {
         callback && callback();
     } else {
-        adapter.delForeignObject(list.shift(), () => setImmediate(_deleteUnusedDevices, list, callback));
+        const id = list.shift();
+        adapter.getObjectView('system', 'state', {startkey: id + '.', endkey: id + '.\u9999'}, (err, res) => {
+            const ids = res ? res.rows.map(el => el.id) : [];
+            _deleteStates(ids, () =>
+                adapter.delForeignObject(id, () =>
+                    setImmediate(_deleteUnusedDevices, list, callback)));
+        });
     }
 }
 
