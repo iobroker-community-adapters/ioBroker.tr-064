@@ -6,7 +6,7 @@
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
 const adapterName = require('./package.json').name.split('.').pop();
 const phonebook   = require('./lib/phonebook');
-const callMonitor = require('./lib/callmonitor');
+const CallMonitor = require('./lib/callmonitor');
 const callList    = require('./lib/calllist');
 const Deflections = require('./lib/deflections');
 const Devices     = require('./lib/devices');
@@ -21,6 +21,7 @@ let ringTimeout = null;
 let initError = false;
 let adapter;
 let devices;
+let callMonitor;
 
 // extract from object the attribute by path like "attr1.attr2.subAttr3"
 function getProp(obj, propString) {
@@ -113,6 +114,8 @@ function startAdapter(options) {
         pollingTimer = null;
         ringTimeout && clearTimeout(ringTimeout);
         ringTimeout = null;
+        callMonitor && callMonitor.close();
+        callMonitor = null;
         Object.keys(callbackTimers).forEach(id => clearTimeout(callbackTimers[id]));
         callbackTimers = {};
     });
@@ -1132,7 +1135,7 @@ function main() {
                     pollingTimer = null;
                     updateAll();
                 }, 2000);
-                callMonitor(adapter, devices, phonebook);
+                callMonitor = new CallMonitor(adapter, devices, phonebook);
                 runMDNS();
             });
         });
