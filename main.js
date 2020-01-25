@@ -169,9 +169,9 @@ const states = {
     reboot: {name: 'reboot', val: false, common: {role: 'button'}, native: {func: 'reboot'}},
 };
 const pbStates = {
-    pbNumber:          { name: 'number', val: '', common: { name: 'Number'} },
-    pbName:            { name: 'name', val: '', common: { name: 'Name'} },
-    pbImageUrl:        { name: 'image', val: '', common: { name: 'Image URL'} }//,
+    pbNumber:          {name: 'number', val: '', common: {name: 'Number'}},
+    pbName:            {name: 'name', val: '', common: {name: 'Name'}},
+    pbImageUrl:        {name: 'image', val: '', common: {name: 'Image URL'}},
 //    ringing:           { name: 'ringing', val: false, common: { name: 'Ringing'} }
 };
 

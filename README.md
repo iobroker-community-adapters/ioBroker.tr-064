@@ -44,8 +44,7 @@ If you move from tr-064-community adapters you can easily copy whole device list
 - external ip address
 
 ### ring (dial a number)
-- When using an internal number (like **610) the ring state will let ring that internal phone.
-e.g.: **610[,timeout]
+- When using an internal number (like **610) the ring state will let ring that internal phone. E.g.: **610[,timeout]
 - When using an external number, the ring state will connect you to the external number.
  The Fritz!Box will call the external number and your default phone will ring, when the called phone is picked up.
  The default phone can be configured in the Fritz!Box under:
