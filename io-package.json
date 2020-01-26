@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "3.1.3",
+        "version": "3.1.4",
         "news": {
-            "3.1.3": {
+            "3.1.4": {
                 "en": "Configuration dialog was improved\nSoef library was removed",
                 "de": "Konfigurationsdialog wurde verbessert\nSoef Bibliothek wurde entfernt",
                 "ru": "Диалог конфигурации был улучшен\nSoef библиотека была удалена",

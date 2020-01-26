@@ -109,7 +109,7 @@ function startAdapter(options) {
         devices = new Devices(adapter);
         main();
     });
-    adapter.on('unload', (callbck) => {
+    adapter.on('unload', callback => {
         try {
             pollingTimer && clearTimeout(pollingTimer);
             pollingTimer = null;
@@ -119,10 +119,10 @@ function startAdapter(options) {
             callbackTimers = {};
             callMonitor && typeof callMonitor.close === 'function' && callMonitor.close();
             callMonitor = null;
-            calback();
+            callback && callback();
         }
         catch (err) {
-            callback();
+            callback && callback();
         }
     });
 
