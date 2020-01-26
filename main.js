@@ -109,15 +109,21 @@ function startAdapter(options) {
         devices = new Devices(adapter);
         main();
     });
-    adapter.on('unload', () => {
-        pollingTimer && clearTimeout(pollingTimer);
-        pollingTimer = null;
-        ringTimeout && clearTimeout(ringTimeout);
-        ringTimeout = null;
-        callMonitor && callMonitor.close();
-        callMonitor = null;
-        Object.keys(callbackTimers).forEach(id => clearTimeout(callbackTimers[id]));
-        callbackTimers = {};
+    adapter.on('unload', (callbck) => {
+        try {
+            pollingTimer && clearTimeout(pollingTimer);
+            pollingTimer = null;
+            ringTimeout && clearTimeout(ringTimeout);
+            ringTimeout = null;
+            Object.keys(callbackTimers).forEach(id => clearTimeout(callbackTimers[id]));
+            callbackTimers = {};
+            callMonitor && typeof callMonitor.close === 'function' && callMonitor.close();
+            callMonitor = null;
+            calback();
+        }
+        catch (err) {
+            callback();
+        }
     });
 
     return adapter;
@@ -165,11 +171,11 @@ const states = {
         common: {desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'},
         native: {func: 'ring'}
     },
-    reconnectInternet: {name: 'reconnectInternet', val: false, common: {role: 'button'}, native: {func: 'reconnectInternet'}},
+    reconnectInternet: {name: 'reconnectInternet', val: false, common: {role: 'button', read: false, write: true}, native: {func: 'reconnectInternet'}},
     command: {name: 'command', val: '', native: {func: 'command', desc: commandDesc}},
     commandResult: {name: 'commandResult', val: '', common: {write: false}},
     externalIP: {name: 'externalIP', val: '', common: {write: false}},
-    reboot: {name: 'reboot', val: false, common: {role: 'button'}, native: {func: 'reboot'}},
+    reboot: {name: 'reboot', val: false, common: {role: 'button', read: false, write: true}, native: {func: 'reboot'}},
 };
 const pbStates = {
     pbNumber:          {name: 'number', val: '', common: {name: 'Number'}},
