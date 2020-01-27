@@ -29,7 +29,8 @@
     </style>
 
     <script type="text/javascript">
-        let active = false;
+        var active = false;
+        var secret = '';
 
         //Show error message
         function errorMessage(msg) {
@@ -194,6 +195,12 @@
                 return;
             }
 
+            secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
+
+            if (settings.password) {
+                settings.password = decrypt(secret, settings.password);
+            }
+
             $('#find').on('click', function () {
                 if (!active) {
                     // 'You have to enable/start ' + adapter + ' adapter before you can use this function!'
@@ -322,6 +329,10 @@
             } else if (!countDevices) {
                 let json = {name: '', ip: '', mac: ''};
                 arrDevices.push(json);
+            }
+
+            if (obj.password) {
+                obj.password = encrypt(secret, obj.password);
             }
 
             obj['devices'] = arrDevices;

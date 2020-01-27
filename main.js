@@ -4,6 +4,7 @@
 
 'use strict';
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
+const tools       = require(utils.controllerDir + '/lib/tools');
 const adapterName = require('./package.json').name.split('.').pop();
 const phonebook   = require('./lib/phonebook');
 const CallMonitor = require('./lib/callmonitor');
@@ -107,7 +108,12 @@ function startAdapter(options) {
     });
     adapter.on('ready', () => {
         devices = new Devices(adapter);
-        main();
+        adapter.getForeignObject('system.config', (err, systemConfig) => {
+            if (adapter.config.password) {
+                adapter.config.password = tools.decrypt((systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', adapter.config.password);
+            }
+            main(adapter);
+        });
     });
     adapter.on('unload', callback => {
         try {
@@ -1108,8 +1114,10 @@ function normalizeConfigVars() {
     if (adapter.config.useDeflectionOptions === undefined) adapter.config.useDeflectionOptions = true;
 }
 
-function main() {
-    module.exports.adapter = adapter;
+function main(adapter) {
+    if (adapter.config.password) {
+        adapter.config.password = tools.decrypt(secret, adapter.config.password);
+    }
 
     devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {}});
