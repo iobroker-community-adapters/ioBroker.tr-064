@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "3.2.0",
+        "version": "4.0.0",
         "news": {
+            "4.0.0": {
+                "en": "BREAKING CHANGE: Password is now stored encrypted. Please re-enter the password in admin!",
+                "de": "BREAKING CHANGE: Das Passwort wird jetzt verschlüsselt gespeichert. Bitte geben Sie das Passwort in admin erneut ein!",
+                "ru": "BREAKING CHANGE: пароль теперь хранится в зашифрованном виде. Пожалуйста, введите пароль еще раз в админке!",
+                "pt": "BREAKING CHANGE: A senha agora está armazenada criptografada. Por favor, digite novamente a senha em admin!",
+                "nl": "BREAKING CHANGE: Wachtwoord wordt nu versleuteld opgeslagen. Voer het wachtwoord opnieuw in in admin!",
+                "fr": "CHANGEMENT DE RUPTURE: Le mot de passe est maintenant stocké crypté. Veuillez ressaisir le mot de passe dans admin!",
+                "it": "MODIFICA DI ROTTURA: la password è ora memorizzata crittografata. Inserisci nuovamente la password in admin!",
+                "es": "CAMBIO DE ROMPER: La contraseña ahora se almacena encriptada. ¡Vuelva a ingresar la contraseña en admin!",
+                "pl": "ZŁAMANIE ZMIANY: Hasło jest teraz przechowywane w postaci zaszyfrowanej. Proszę ponownie wprowadzić hasło w adminie!",
+                "zh-cn": "BREAKING CHANGE：密码现在已加密存储。请在admin中重新输入密码！"
+            },
             "3.1.4": {
                 "en": "Configuration dialog was improved\nSoef library was removed",
                 "de": "Konfigurationsdialog wurde verbessert\nSoef Bibliothek wurde entfernt",
@@ -130,8 +142,22 @@
             {
                 "js-controller": ">=2.0.0"
             }
-        ]
+        ],
+        "connectionType": "local",
+        "dataSource": "push",
+        "plugins": {
+            "sentry": {
+                "dsn": "https://5423236b998b415bb9118690986763ea@sentry.iobroker.net/13"
+            }
+        }
+
     },
+    "encryptedNative": [
+        "password"
+    ],
+    "protectedNative": [
+        "password"
+    ],
     "native": {
         "ip": "fritz.box",
         "user": "",

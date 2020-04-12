@@ -117,6 +117,10 @@ To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ## Changelog
+### 4.0.0 (2020-04-12)
+* (Apollon77) update dependencies, use auto decrypt features with js-controller 3.0
+* (foxriver76) make callmonitor compatible with js-controller 3.0
+
 ### 3.1.4 (2020-01-26)
 * (Apollon77) fix error and check some other code check comments
 * (Apollon77) Add proper meta data for buttons

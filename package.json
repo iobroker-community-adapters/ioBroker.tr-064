@@ -1,6 +1,6 @@
 {
   "name": "iobroker.tr-064",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "description": "ioBroker tr-064 Adapter",
   "author": {
     "name": "soef",
@@ -27,14 +27,14 @@
     "mdns-discovery": "^0.2.6",
     "tr-O64": "^0.2.4",
     "xml2js": "^0.4.23",
-    "@iobroker/adapter-core": "^2.1.0"
+    "@iobroker/adapter-core": "^2.2.1"
   },
   "devDependencies": {
     "gulp": "^4.0.2",
-    "mocha": "^7.0.0",
+    "mocha": "^7.1.1",
     "chai": "^4.2.0",
     "axios": "^0.19.2",
-    "@iobroker/testing": "^2.0.1",
+    "@iobroker/testing": "^2.1.0",
     "eslint": "^6.8.0"
   },
   "main": "main.js",
