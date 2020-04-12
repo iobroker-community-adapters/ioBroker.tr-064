@@ -454,7 +454,6 @@ TR064.prototype.setAB = function (val) {
     this.setEnableAB({ NewIndex: idx, NewEnable: val ? 1 : 0}, (err, data) => {});
 };
 
-
 const systemData = {
     type: 'meta',
     common: { name: 'tr-064' },
@@ -492,11 +491,12 @@ const systemData = {
 };
 
 
+
 TR064.prototype.refreshCalllist = function () {
     if (!adapter.config.calllists.use) return;
 
     this.GetCallList ((err, data) => {
-        callList.refresh (err, data, (list, n, html) => {
+        callList.refresh(err, data, (list, n, html) => {
             const id = callList.ROOT + '.' + n;
             list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
             devices.root.set(id + '.count', list.count);
@@ -1115,10 +1115,6 @@ function normalizeConfigVars() {
 }
 
 function main(adapter) {
-    if (adapter.config.password) {
-        adapter.config.password = tools.decrypt(secret, adapter.config.password);
-    }
-
     devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {}});
 
