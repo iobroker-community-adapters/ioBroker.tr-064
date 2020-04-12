@@ -300,7 +300,8 @@ function onStateChange(id, state) {
             if (cmd === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val;
             else if (as[4] === 'count') {
                 systemData.native.callLists[cmd][as[4]] = ~~state.val;
-                systemData.save();
+                // save system data in namespace
+                adapter.setObject(adapter.namespace, systemData);
             }
             return;
 
@@ -463,31 +464,26 @@ const systemData = {
             return;
         }
 
-        const self = this;
         adapter.getObject(adapter.namespace, (err, obj) => {
             if (!err && obj && obj.native.loaded) {
                 delete obj.acl;
-                Object.assign(self, obj);
+                Object.assign(this, obj);
             }
             if (adapter.config.calllists.use) {
-                if (!self.native.callLists) {
-                    self.native.callLists = new callList.callLists();
+                if (!this.native.callLists) {
+                    this.native.callLists = new callList.callLists();
                 } else {
-                    callList.callLists.call(self.native.callLists);
+                    callList.callLists.call(this.native.callLists);
                 }
-                self.native.callLists.htmlTemplate = devices.getval(callList.S_HTML_TEMPLATE);
+                this.native.callLists.htmlTemplate = devices.getval(callList.S_HTML_TEMPLATE);
             }
-            if (!self.native.loaded) {
-                self.native.loaded = true;
-                self.save();
+            if (!this.native.loaded) {
+                this.native.loaded = true;
+                // save system data in namespace
+                adapter.setObject(adapter.namespace, this);
             }
         });
-    },
-    save: function () {
-        adapter.setObject(adapter.namespace, this, (err, obj) => {});
-    },
-    /*xsave: adapter.setObject.bind(adapter, adapter.namespace, this, function (err, obj) {
-    })*/
+    }
 };
 
 
