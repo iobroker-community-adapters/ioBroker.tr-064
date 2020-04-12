@@ -109,7 +109,7 @@ function startAdapter(options) {
     adapter.on('ready', () => {
         devices = new Devices(adapter);
         adapter.getForeignObject('system.config', (err, systemConfig) => {
-            if (adapter.config.password && (!adapter.supportsFeature || !adapter.supportsFeature('ADAPTER_AUTO_DECRYPT'))) {
+            if (adapter.config.password && (!adapter.supportsFeature || !adapter.supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
                 adapter.config.password = tools.decrypt((systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', adapter.config.password);
             }
             main(adapter);

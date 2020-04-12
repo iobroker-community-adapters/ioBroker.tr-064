@@ -197,7 +197,7 @@
 
             secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
 
-            if (settings.password) {
+            if (settings.password && (typeof supportsFeature !== 'function' || !supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
                 settings.password = decrypt(secret, settings.password);
             }
 
@@ -331,7 +331,7 @@
                 arrDevices.push(json);
             }
 
-            if (obj.password) {
+            if (obj.password && (typeof supportsFeature !== 'function' || !supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
                 obj.password = encrypt(secret, obj.password);
             }
 
