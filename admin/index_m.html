@@ -189,13 +189,23 @@
             });
         }
 
-        // This will be called by the admin adapter when the settings page loads
+        // the function loadSettings has to exist ...
         function load(settings, onChange) {
+            if (systemConfig) {
+                secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
+                loadHelper(settings, onChange);
+                return;
+            }
+            socket.emit('getObject', 'system.config', function (err, obj) {
+                secret = (obj.native ? obj.native.secret : '') || 'Zgfr56gFe87jJOM';
+                loadHelper(settings, onChange);
+            });
+        }
+        // This will be called by the admin adapter when the settings page loads
+        function loadHelper(settings, onChange) {
             if (!settings) {
                 return;
             }
-
-            secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
 
             if (settings.password && (typeof supportsFeature !== 'function' || !supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
                 settings.password = decrypt(secret, settings.password);
