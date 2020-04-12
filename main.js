@@ -112,6 +112,10 @@ function startAdapter(options) {
             if (adapter.config.password && (!adapter.supportsFeature || !adapter.supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
                 adapter.config.password = tools.decrypt((systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', adapter.config.password);
             }
+            if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(adapter.config.password)) {
+                adapter.log.error('Password error: Please re rnter the password in Admin. Stopping');
+                return;
+            }
             main(adapter);
         });
     });
