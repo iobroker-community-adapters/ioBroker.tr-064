@@ -1,0 +1,11 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - mdns-discovery > debug:
+        patched: '2020-04-15T07:51:56.068Z'
+  'npm:ms:20170412':
+    - mdns-discovery > debug > ms:
+        patched: '2020-04-15T07:51:56.068Z'
