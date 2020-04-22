@@ -27,7 +27,8 @@
     "mdns-discovery": "^0.2.6",
     "tr-O64": "^0.2.4",
     "xml2js": "^0.4.23",
-    "@iobroker/adapter-core": "^2.2.1"
+    "@iobroker/adapter-core": "^2.2.1",
+    "snyk": "^1.307.0"
   },
   "devDependencies": {
     "gulp": "^4.0.2",
@@ -42,7 +43,9 @@
     "test": "npm run test:package && npm run test:integration",
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit",
-    "test:integration": "mocha test/integration --exit"
+    "test:integration": "mocha test/integration --exit",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -50,5 +53,6 @@
   "bugs": {
     "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues"
   },
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "snyk": true
 }
