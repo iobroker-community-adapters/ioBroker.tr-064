@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.0.2",
+        "version": "4.0.3",
         "news": {
-            "4.0.2": {
+            "4.0.3": {
                 "en": "Make sure adapter no not crash of no calls were returned (Sentry IOBROKER-TR-064-7)\nMake sure adapter do not crash when providing a non string to \"ring\" state (Sentry IOBROKER-TR-064-8)",
                 "de": "Stellen Sie sicher, dass der Adapter kein Absturz oder keine Anrufe zurückgegeben wurden (Sentry IOBROKER-TR-064-7).\nStellen Sie sicher, dass der Adapter nicht abstürzt, wenn eine Nicht-Zeichenfolge in den Status \"Klingeln\" versetzt wird (Sentry IOBROKER-TR-064-8).",
                 "ru": "Убедитесь, что адаптер не сбой, не было возвращено ни одного вызова (Sentry IOBROKER-TR-064-7)\nУбедитесь, что адаптер не дает сбоя при переводе нестрокового в состояние «кольцо» (Sentry IOBROKER-TR-064-8)",

@@ -124,7 +124,7 @@ Sentry.io is a way for developers to get an overview about errors from their app
 When the adapter crashes or an other Code error happens, this error message that also appears in the ioBroker log is submitted to our own Sentry server hosted in germany. When you allowed iobroker GmbH to collect diagnostic data then also your installation ID (this is just a unique ID **without** any additional infos about you, email, name or such) is included. This allows Sentry to group errors and show how many unique users are affected by such an error. All of this helps me to provide error free adapters that basically never crashs.  
 
 ## Changelog
-### 4.0.2 (2020-05-11)
+### 4.0.3 (2020-05-11)
 * (Apollon77) Make sure adapter no not crash of no calls were returned (Sentry IOBROKER-TR-064-7)
 * (Apollon77) Make sure adapter do not crash when providing a non string to "ring" state (Sentry IOBROKER-TR-064-8) 
 
