@@ -597,7 +597,10 @@ TR064.prototype.init = function (callback) {
 
 TR064.prototype.ring = function (val) {
     const self = this;
-    const ar = val.split(',');
+    if (!val) {
+        return;
+    }
+    const ar = val.toString().split(',');
 
     if (!ar || ar.length < 1 || !this.voip) {
         return;

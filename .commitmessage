@@ -1,0 +1,4 @@
+chore: release v4.0.2
+
+Make sure adapter no not crash of no calls were returned (Sentry IOBROKER-TR-064-7)
+Make sure adapter do not crash when providing a non string to "ring" state (Sentry IOBROKER-TR-064-8)

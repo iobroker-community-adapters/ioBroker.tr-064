@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.0.1",
+        "version": "4.0.2",
         "news": {
+            "4.0.2": {
+                "en": "Make sure adapter no not crash of no calls were returned (Sentry IOBROKER-TR-064-7)\nMake sure adapter do not crash when providing a non string to \"ring\" state (Sentry IOBROKER-TR-064-8)",
+                "de": "Stellen Sie sicher, dass der Adapter kein Absturz oder keine Anrufe zurückgegeben wurden (Sentry IOBROKER-TR-064-7).\nStellen Sie sicher, dass der Adapter nicht abstürzt, wenn eine Nicht-Zeichenfolge in den Status \"Klingeln\" versetzt wird (Sentry IOBROKER-TR-064-8).",
+                "ru": "Убедитесь, что адаптер не сбой, не было возвращено ни одного вызова (Sentry IOBROKER-TR-064-7)\nУбедитесь, что адаптер не дает сбоя при переводе нестрокового в состояние «кольцо» (Sentry IOBROKER-TR-064-8)",
+                "pt": "Certifique-se de que o adaptador não não falhe, pois nenhuma chamada foi retornada (Sentry IOBROKER-TR-064-7)\nCertifique-se de que o adaptador não trava ao fornecer um estado não string para \"tocar\" (Sentry IOBROKER-TR-064-8)",
+                "nl": "Zorg ervoor dat de adapter niet niet crasht of dat er geen oproepen zijn geretourneerd (Sentry IOBROKER-TR-064-7)\nZorg ervoor dat de adapter niet crasht bij het leveren van een niet-tekenreeks om te \"bellen\" (Sentry IOBROKER-TR-064-8)",
+                "fr": "Assurez-vous que l'adaptateur ne se bloque pas ou qu'aucun appel n'a été renvoyé (Sentry IOBROKER-TR-064-7)\nAssurez-vous que l'adaptateur ne se bloque pas lors de la fourniture d'une chaîne non à l'état de \"sonnerie\" (Sentry IOBROKER-TR-064-8)",
+                "it": "Assicurarsi che non sia stato restituito l'adattatore no crash di nessuna chiamata (Sentry IOBROKER-TR-064-7)\nAssicurarsi che l'adattatore non si arresti in modo anomalo quando si fornisce uno stato \"stringa\" senza stringa (Sentry IOBROKER-TR-064-8)",
+                "es": "Asegúrese de que el adaptador no se bloquee o que no se hayan devuelto llamadas (Sentry IOBROKER-TR-064-7)\nAsegúrese de que el adaptador no se bloquee al proporcionar una cadena que no esté en estado de \"anillo\" (Sentry IOBROKER-TR-064-8)",
+                "pl": "Upewnij się, że adapter nie zawiesił się i nie zostały zwrócone żadne połączenia (Sentry IOBROKER-TR-064-7)\nUpewnij się, że adapter nie ulega awarii, gdy podajesz łańcuch „non” do stanu „ring” (Sentry IOBROKER-TR-064-8)",
+                "zh-cn": "确保适配器没有不崩溃，没有返回任何呼叫（Sentry IOBROKER-TR-064-7）\n确保提供非字符串“ ring”状态时适配器不会崩溃（Sentry IOBROKER-TR-064-8）"
+            },
             "4.0.0": {
                 "en": "BREAKING CHANGE: Password is now stored encrypted. Please re-enter the password in admin!",
                 "de": "BREAKING CHANGE: Das Passwort wird jetzt verschlüsselt gespeichert. Bitte geben Sie das Passwort in admin erneut ein!",
@@ -150,7 +162,6 @@
                 "dsn": "https://5423236b998b415bb9118690986763ea@sentry.iobroker.net/13"
             }
         }
-
     },
     "encryptedNative": [
         "password"
