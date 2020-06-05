@@ -9,7 +9,7 @@
 [![NPM](https://nodei.co/npm/iobroker.tr-064.png?downloads=true)](https://nodei.co/npm/iobroker.tr-064/)
 
 [![Travis-CI](http://img.shields.io/travis/iobroker-community-adapters/ioBroker.tr-064/master.svg)](https://travis-ci.org/iobroker-community-adapters/ioBroker.tr-064)
-[![Greenkeeper badge](https://badges.greenkeeper.io/iobroker-community-adapters/ioBroker.tr-064.svg)](https://greenkeeper.io/)
+
 [![Dependency Status](https://img.shields.io/david/iobroker-community-adapters/iobroker.tr-064.svg)](https://david-dm.org/iobroker-community-adapters/iobroker.tr-064)
 [![Known Vulnerabilities](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064/badge.svg)](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064)
 
