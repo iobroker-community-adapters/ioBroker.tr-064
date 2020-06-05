@@ -761,6 +761,9 @@ TR064.prototype.command = function (command, callback) {
     } catch(e) {
         return;
     }   //xxx
+    if (typeof o.params !== 'object' || o.params === null) {
+        return;
+    }
 
     safeFunction(this.sslDevice.services, o.service + '.actions.' + o.action)(o.params, (err, res) => {
         if (err || !res) {
