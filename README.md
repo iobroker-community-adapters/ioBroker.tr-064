@@ -125,7 +125,7 @@ When the adapter crashes or an other Code error happens, this error message that
 
 ## Changelog
 
-### 4.0.5 (2020-06-09)
+### 4.0.6 (2020-06-09)
 * (Apollon77) Fix Admin UI to allow setting poll Interval correctly again
 
 ### 4.0.4 (2020-06-05)
