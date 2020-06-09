@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.0.4",
+        "version": "4.0.5",
         "news": {
+            "4.0.5": {
+                "en": "Fix Admin UI to allow setting poll Interval correctly again",
+                "de": "Korrigieren Sie die Admin-Benutzeroberfläche, damit das Abfrageintervall wieder korrekt eingestellt werden kann",
+                "ru": "Исправлена ошибка, из-за которой пользовательский интерфейс администратора снова корректно устанавливал интервал опроса.",
+                "pt": "Corrija a interface do usuário do administrador para permitir que o intervalo da pesquisa seja definido corretamente novamente",
+                "nl": "Fix Admin UI om het instellen van het pollinterval weer correct toe te staan",
+                "fr": "Correction de l'interface utilisateur d'administration pour permettre de définir correctement l'intervalle d'interrogation",
+                "it": "Correggere l'interfaccia utente dell'amministratore per consentire di impostare correttamente nuovamente l'intervallo di polling",
+                "es": "Se corrigió la interfaz de usuario del administrador para permitir configurar nuevamente el intervalo de sondeo correctamente",
+                "pl": "Napraw interfejs administratora, aby znów poprawnie ustawiał interwał sondowania",
+                "zh-cn": "修复管理界面，以允许再次正确设置轮询间隔"
+            },
             "4.0.4": {
                 "en": "Make sure adapter do not crash of no calls were returned (Sentry IOBROKER-TR-064-D)\nMake sure adapter do not crash when invalid parameter are provided (Sentry IOBROKER-TR-064-B)\nhttps is not supported right now (Sentry IOBROKER-TR-064-E)",
                 "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt und keine Anrufe zurückgegeben wurden (Sentry IOBROKER-TR-064-D).\nStellen Sie sicher, dass der Adapter nicht abstürzt, wenn ungültige Parameter angegeben werden (Sentry IOBROKER-TR-064-B).\nhttps wird derzeit nicht unterstützt (Sentry IOBROKER-TR-064-E)",
