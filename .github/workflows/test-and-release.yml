@@ -151,6 +151,7 @@ jobs:
             sentry-cli releases new $SENTRY_VERSION
             sentry-cli releases set-commits $SENTRY_VERSION --auto
             sentry-cli releases finalize $SENTRY_VERSION
+
   #       Add the following line BEFORE finalize if sourcemap uploads are needed
   #       sentry-cli releases files $SENTRY_VERSION upload-sourcemaps build/
   # Dummy job for skipped builds - without this, github reports the build as failed
