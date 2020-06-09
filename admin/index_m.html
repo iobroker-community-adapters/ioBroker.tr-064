@@ -356,18 +356,18 @@
     <div class="row">
         <!-- Tabs navigation -->
         <div class="col s12">
-        <ul class="tabs">
-            <li class="tab col s2">
-                <a href="#tab-options" class="translate" data-lang="Options">Options</a>
-            </li>
-            <li class="tab col s2">
-                <a href="#tab-devices" class="translate" data-lang="Devices">Devices</a>
-            </li>
-            <li class="tab col s2">
-                <a href="#tab-calllists" class="translate" data-lang="Calllists">Calllists</a>
-            </li>
-        </ul>
-    </div>
+            <ul class="tabs">
+                <li class="tab col s2">
+                    <a href="#tab-options" class="translate" data-lang="Options">Options</a>
+                </li>
+                <li class="tab col s2">
+                    <a href="#tab-devices" class="translate" data-lang="Devices">Devices</a>
+                </li>
+                <li class="tab col s2">
+                    <a href="#tab-calllists" class="translate" data-lang="Calllists">Calllists</a>
+                </li>
+            </ul>
+        </div>
 
         <!-- Tabs content -->
         <div id="tab-options" class="col s12 page">
@@ -376,55 +376,59 @@
                     <img src="tr-064.png" class="logo">
                 </div>
             </div>
-            <div class="input-field col">
-                <input class="value text" id="ip" for="ip" size="25" maxlength="25" type="text">
-                <label class="translate active">IP</label>
-            </div>
-            <div class="input-field col">
-                <input class="value text" id="user" for="user" size="25" maxlength="25" type="text">
-                <label class="translate active">User</label>
-            </div>
-            <div class="input-field col">
-                <input class="value text" id="password" for="password" size="55" maxlength="55" type="password">
-                <label class="translate active">Password</label>
+
+            <div class="row">
+                <div class="input-field col">
+                    <input class="value text" id="ip" for="ip" size="25" maxlength="25" type="text">
+                    <label class="translate active">IP</label>
+                </div>
+                <div class="input-field col">
+                    <input class="value number" id="pollingInterval" for="pollingInterval" size="6" maxlength="2" type="number">
+                    <label class="translate active">Polling interval (sec)</label>
+                </div>
             </div>
 
-        <div class="row">
-            <div class="input-field col">
-                <input class="value number" id="pollingInterval" for="pollingInterval" size="2" maxlength="2" type="number">
-                <label class="translate active">Polling interval (sec)</label>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s12 m6 l4">
-                <input class="value filled-in" id="useCallMonitor" type="checkbox">
-                <span style="" class="translate">Use CallMonitor</span>
-            </div>
-            <div class="input-field col s12 m6 l4">
-                <input class="value filled-in" id="usePhonebook" type="checkbox">
-                <span style="" class="translate">Use phonebook</span>
-            </div>
-            <div class="input-field col s12 m6 l4">
-                <input class="value filled-in" id="useDeflectionOptions" type="checkbox">
-                <span style="" class="translate">Use call forwarding options</span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s12 m6 l4">
-                <input class="value filled-in" id="useDevices" type="checkbox">
-                <span style="" class="translate">Watch devices</span>
-            </div>
-            <div class="input-field col s12 m6 l4">
-                <input class="value filled-in" id="useMDNS" type="checkbox">
-                <span style="" class="translate">Use MDNS</span>
-            </div>
-            <div class="input-field col s12 m6 l4">
-                <input class="value filled-in" id="jsonDeviceList" type="checkbox">
-                <span style="" class="translate">Create Json device list</span>
+            <div class="row">
+                <div class="input-field col">
+                    <input class="value text" id="user" for="user" size="25" maxlength="25" type="text">
+                    <label class="translate active">User</label>
+                </div>
+                <div class="input-field col">
+                    <input class="value text" id="password" for="password" size="55" maxlength="55" type="password">
+                    <label class="translate active">Password</label>
+                </div>
             </div>
 
+            <div class="row">
+                <div class="input-field col s12 m6 l4">
+                    <input class="value filled-in" id="useCallMonitor" type="checkbox">
+                    <span style="" class="translate">Use CallMonitor</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input class="value filled-in" id="usePhonebook" type="checkbox">
+                    <span style="" class="translate">Use phonebook</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input class="value filled-in" id="useDeflectionOptions" type="checkbox">
+                    <span style="" class="translate">Use call forwarding options</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12 m6 l4">
+                    <input class="value filled-in" id="useDevices" type="checkbox">
+                    <span style="" class="translate">Watch devices</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input class="value filled-in" id="useMDNS" type="checkbox">
+                    <span style="" class="translate">Use MDNS</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input class="value filled-in" id="jsonDeviceList" type="checkbox">
+                    <span style="" class="translate">Create Json device list</span>
+                </div>
+            </div>
         </div>
-    </div>
 
         <div id="tab-devices" class="col s12 page">
             <div class="row" style="padding-bottom: 0">
@@ -439,6 +443,7 @@
                     </a>
                 </div>
             </div>
+
             <div class="table-values-div" style="height: calc(100% - 90px); overflow: auto">
                 <table class="centered highlight">
                     <thead>
@@ -454,99 +459,99 @@
                     </tbody>
                 </table>
             </div>
-    </div>
+        </div>
 
         <div id="tab-calllists" class="col s12 page">
-        <div class="row">
-            <div class="col s12 m6 l3">
-                <div class="card grey lighten-5">
-                    <div class="card-content black-text">
-                        <span class="card-title translate">All calls</span>
-                        <div class="card-action">
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_all_generateJson" type="checkbox">
-                                <span style="" class="translate">Generate JSON</span>
-                            </div>
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_all_generateHtml" type="checkbox">
-                                <span style="" class="translate">Generate HTML</span>
-                            </div>
-                            <div class="input-field">
-                                <input class="value number" id="calllists_all_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
-                                <label class="translate active">max Entries</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col s12 m6 l3">
-                <div class="card grey lighten-5">
-                    <div class="card-content black-text">
-                        <span class="card-title translate">Missed calls</span>
-                        <div class="card-action">
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_missed_generateJson" type="checkbox">
-                                <span style="" class="translate">Generate JSON</span>
-                            </div>
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_missed_generateHtml" type="checkbox">
-                                <span style="" class="translate">Generate HTML</span>
-                            </div>
-                            <div class="input-field">
-                                <input class="value number" id="calllists_missed_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
-                                <label class="translate active">max Entries</label>
+            <div class="row">
+                <div class="col s12 m6 l3">
+                    <div class="card grey lighten-5">
+                        <div class="card-content black-text">
+                            <span class="card-title translate">All calls</span>
+                            <div class="card-action">
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_all_generateJson" type="checkbox">
+                                    <span style="" class="translate">Generate JSON</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_all_generateHtml" type="checkbox">
+                                    <span style="" class="translate">Generate HTML</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value number" id="calllists_all_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                    <label class="translate active">max Entries</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col s12 m6 l3">
-                <div class="card grey lighten-5">
-                    <div class="card-content black-text">
-                        <span class="card-title translate">Outbound</span>
-                        <div class="card-action">
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_outbound_generateJson" type="checkbox">
-                                <span style="" class="translate">Generate JSON</span>
-                            </div>
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_outbound_generateHtml" type="checkbox">
-                                <span style="" class="translate">Generate HTML</span>
-                            </div>
-                            <div class="input-field">
-                                <input class="value number" id="calllists_outbound_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
-                                <label class="translate active">max Entries</label>
+                <div class="col s12 m6 l3">
+                    <div class="card grey lighten-5">
+                        <div class="card-content black-text">
+                            <span class="card-title translate">Missed calls</span>
+                            <div class="card-action">
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_missed_generateJson" type="checkbox">
+                                    <span style="" class="translate">Generate JSON</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_missed_generateHtml" type="checkbox">
+                                    <span style="" class="translate">Generate HTML</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value number" id="calllists_missed_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                    <label class="translate active">max Entries</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col s12 m6 l3">
-                <div class="card grey lighten-5">
-                    <div class="card-content black-text">
-                        <span class="card-title translate">Inbound</span>
-                        <div class="card-action">
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_inbound_generateJson" type="checkbox">
-                                <span style="" class="translate">Generate JSON</span>
+                <div class="col s12 m6 l3">
+                    <div class="card grey lighten-5">
+                        <div class="card-content black-text">
+                            <span class="card-title translate">Outbound</span>
+                            <div class="card-action">
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_outbound_generateJson" type="checkbox">
+                                    <span style="" class="translate">Generate JSON</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_outbound_generateHtml" type="checkbox">
+                                    <span style="" class="translate">Generate HTML</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value number" id="calllists_outbound_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                    <label class="translate active">max Entries</label>
+                                </div>
                             </div>
-                            <div class="input-field">
-                                <input class="value filled-in" id="calllists_inbound_generateHtml" type="checkbox">
-                                <span style="" class="translate">Generate HTML</span>
-                            </div>
-                            <div class="input-field">
-                                <input class="value number" id="calllists_inbound_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
-                                <label class="translate active">max Entries</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m6 l3">
+                    <div class="card grey lighten-5">
+                        <div class="card-content black-text">
+                            <span class="card-title translate">Inbound</span>
+                            <div class="card-action">
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_inbound_generateJson" type="checkbox">
+                                    <span style="" class="translate">Generate JSON</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value filled-in" id="calllists_inbound_generateHtml" type="checkbox">
+                                    <span style="" class="translate">Generate HTML</span>
+                                </div>
+                                <div class="input-field">
+                                    <input class="value number" id="calllists_inbound_maxEntries" for="calllists_all_maxEntries" size="3" maxlength="3" type="number">
+                                    <label class="translate active">max Entries</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Modal for Device selection -->

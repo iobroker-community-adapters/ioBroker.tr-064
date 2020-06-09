@@ -56,12 +56,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [10.x, 12.x, 14.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
-        exclude:
-          # Don't test Node.js 8 on Windows. npm is weird here
-          - os: windows-latest
-            node-version: 8.x
 
     steps:
       - uses: actions/checkout@v1
@@ -112,7 +108,8 @@ jobs:
         # The body may be multiline, therefore we need to escape some characters
         run: |
           VERSION="${{ github.ref }}"
-          VERSION=${VERSION##*/v}
+          VERSION=${VERSION##*/}
+          VERSION=${VERSION##*v}
           echo "::set-env name=VERSION::$VERSION"
           BODY=$(git show -s --format=%b)
           BODY="${BODY//'%'/'%25'}"
@@ -143,6 +140,19 @@ jobs:
           prerelease: ${{ contains(env.VERSION, '-') }}
           body: ${{ env.BODY }}
 
+      - name: Notify Sentry.io about the release
+          run: |
+            npm i -g @sentry/cli
+            export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            export SENTRY_URL=https://sentry.iobroker.net
+            export SENTRY_ORG=iobroker
+            export SENTRY_PROJECT=iobroker-tr-064
+            export SENTRY_VERSION=iobroker.tr-064@${{ env.VERSION }}
+            sentry-cli releases new $SENTRY_VERSION
+            sentry-cli releases set-commits $SENTRY_VERSION --auto
+            sentry-cli releases finalize $SENTRY_VERSION
+          # Add the following line BEFORE finalize if sourcemap uploads are needed
+          # sentry-cli releases files $SENTRY_VERSION upload-sourcemaps build/
   # Dummy job for skipped builds - without this, github reports the build as failed
   skip-ci:
     if: contains(github.event.head_commit.message, '[skip ci]')
