@@ -1153,6 +1153,8 @@ function main(adapter) {
                 }, 2000);
                 callMonitor = new CallMonitor(adapter, devices, phonebook);
                 runMDNS();
+
+                adapter.subscribeStates('*');
             });
         });
 
@@ -1160,8 +1162,6 @@ function main(adapter) {
             deflections = new Deflections (tr064Client.sslDevice, adapter, devices);
         }
     });
-
-    adapter.subscribeStates('*');
 }
 
 //http://192.168.1.1:49000/tr64desc.xml
