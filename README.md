@@ -15,7 +15,7 @@
 
 ***This adapter requires at least Node 8.x***
 
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to me as the developer.** More details see below!
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
 ## Info
 This adapter reads main information from AVM Fritz!Box, like call list or number of messages on answering machine.
@@ -118,12 +118,10 @@ The callback of the call will set the commandResult state.
 To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
-## What is Sentry and what is reported to the servers?
-Sentry.io is a way for developers to get an overview about errors from their applications. And exactly this is implemented in this adapter.
-
-When the adapter crashes or an other Code error happens, this error message that also appears in the ioBroker log is submitted to our own Sentry server hosted in germany. When you allowed iobroker GmbH to collect diagnostic data then also your installation ID (this is just a unique ID **without** any additional infos about you, email, name or such) is included. This allows Sentry to group errors and show how many unique users are affected by such an error. All of this helps me to provide error free adapters that basically never crashs.  
-
 ## Changelog
+
+### 4.0.8 (2020-06-20)
+* (Apollon77) Make sure states are only subscribed if initialization is done (Sentry IOBROKER-TR-064-J)
 
 ### 4.0.7 (2020-06-09)
 * (Apollon77) Fix Admin UI to allow setting poll Interval correctly again

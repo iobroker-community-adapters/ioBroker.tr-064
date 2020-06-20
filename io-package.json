@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.0.7",
+        "version": "4.0.8",
         "news": {
+            "4.0.8": {
+                "en": "Make sure states are only subscribed if initialization is done (Sentry IOBROKER-TR-064-J)",
+                "de": "Stellen Sie sicher, dass Status nur abonniert werden, wenn die Initialisierung abgeschlossen ist (Sentry IOBROKER-TR-064-J).",
+                "ru": "Убедитесь, что состояния подписаны только после инициализации (Sentry IOBROKER-TR-064-J)",
+                "pt": "Verifique se os estados são inscritos apenas se a inicialização for concluída (Sentry IOBROKER-TR-064-J)",
+                "nl": "Zorg ervoor dat staten alleen zijn geabonneerd als initialisatie is voltooid (Sentry IOBROKER-TR-064-J)",
+                "fr": "Assurez-vous que les états ne sont souscrits que si l'initialisation est effectuée (Sentry IOBROKER-TR-064-J)",
+                "it": "Assicurarsi che gli stati siano sottoscritti solo se l'inizializzazione è stata eseguita (Sentry IOBROKER-TR-064-J)",
+                "es": "Asegúrese de que los estados solo estén suscritos si la inicialización se realiza (Sentry IOBROKER-TR-064-J)",
+                "pl": "Upewnij się, że stany są subskrybowane tylko po zakończeniu inicjalizacji (Sentry IOBROKER-TR-064-J)",
+                "zh-cn": "确保仅在完成初始化后才预订状态（Sentry IOBROKER-TR-064-J）"
+            },
             "4.0.7": {
                 "en": "Fix Admin UI to allow setting poll Interval correctly again",
                 "de": "Korrigieren Sie die Admin-Benutzeroberfläche, damit das Abfrageintervall wieder korrekt eingestellt werden kann",
