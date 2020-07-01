@@ -120,6 +120,9 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
+### __WORK IN PROGRESS__
+* (Apollon77) handle cases correctly when no hosts are existing on device (Sentry IOBROKER-TR-064-R)
+
 ### 4.0.8 (2020-06-20)
 * (Apollon77) Make sure states are only subscribed if initialization is done (Sentry IOBROKER-TR-064-J)
 

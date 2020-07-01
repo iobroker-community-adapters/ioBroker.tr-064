@@ -570,13 +570,15 @@ TR064.prototype.init = function (callback) {
             self.getSpecificHostEntry = safeFunction(self, 'hosts.actions.GetSpecificHostEntry');
             self.getGenericHostEntry = safeFunction(self, 'hosts.actions.GetGenericHostEntry');
             self.GetSpecificHostEntryExt = safeFunction(self, 'hosts.actions.X_AVM-DE_GetSpecificHostEntryExt');
-            self.GetChangeCounter = self.hosts.actions['X_AVM-DE_GetChangeCounter'];
+            self.GetChangeCounter = safeFunction(self, 'hosts.actions.X_AVM-DE_GetChangeCounter');
             //self.hostsDoUpdate = self.hosts.actions ['X_AVM-DE_HostDoUpdate'];
             //self.hostsCheckUpdate = self.hosts.actions ['X_AVM-DE_HostCheckUpdate'];
 
             self.stateVariables = {};
-            self.stateVariables.HostNumberOfEntries = self.hosts.stateVariables.HostNumberOfEntries;
-            self.stateVariables.changeCounter = self.hosts.stateVariables['X_AVM-DE_ChangeCounter'];
+            if (self.hosts && self.hosts.stateVariables) {
+                self.stateVariables.HostNumberOfEntries = self.hosts.stateVariables.HostNumberOfEntries;
+                self.stateVariables.changeCounter = self.hosts.stateVariables['X_AVM-DE_ChangeCounter'];
+            }
 
             self.initIGDDevice(self.ip, self.port, function (err, device) {
                 err && adapter.log.error('initIGDDevice:' + err + ' - ' + JSON.stringify(err));
