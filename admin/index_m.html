@@ -186,6 +186,32 @@
                     hideExistingDevices();
                 });
                 hideExistingDevices();
+
+                //add table-sort
+                $("#modalDeviceName,#modalDeviceIP,#modalDeviceMac").unbind();
+                $('#modalDeviceName,#modalDeviceIP,#modalDeviceMac').click(function(){
+                    var table = $(this).parents('table').eq(0);
+                    var name = $(this).attr("data-lang").trim();
+                    var rows = table.find('tr:gt(0)').toArray().sort(deviceListComparer($(this).index(), name));
+                    this.asc = !this.asc;
+                    if (!this.asc){rows = rows.reverse()}
+                    for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+                });
+
+                //compare func
+                function deviceListComparer(index, name) {
+                    return function(a, b) {
+                        var valA = $(a).children('td').eq(index).text().trim(), valB = $(b).children('td').eq(index).text().trim();
+                        if(name=='ip'){
+                            return (valA.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0) - (valB.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0);
+                        } else {
+                            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+                        }
+                    }
+                }
+
+                //defaul sort by name =)
+                $("#modalDeviceName").click();
             });
         }
 
