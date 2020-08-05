@@ -26,6 +26,10 @@
         .mac-included {
             opacity: 0.5;
         }
+        .modal .material-icons {
+            position: absolute;
+            margin-top: -2px;
+        }
     </style>
 
     <script type="text/javascript">
@@ -188,13 +192,19 @@
                 hideExistingDevices();
 
                 //add table-sort
-                $("#modalDeviceName,#modalDeviceIP,#modalDeviceMac").unbind();
-                $('#modalDeviceName,#modalDeviceIP,#modalDeviceMac').click(function(){
+                var th = $('#modalDeviceName,#modalDeviceIP,#modalDeviceMac');
+                th.unbind().removeAttr("data-table-sort");
+                th.click(function(){
+                	th.not($(this)).removeAttr("data-table-sort");
                     var table = $(this).parents('table').eq(0);
-                    var name = $(this).attr("data-lang").trim();
+                    var name = $(this).attr('data-lang').trim();
+                    var sort = $(this).attr('data-table-sort') === 'true' || false;
                     var rows = table.find('tr:gt(0)').toArray().sort(deviceListComparer($(this).index(), name));
-                    this.asc = !this.asc;
-                    if (!this.asc){rows = rows.reverse()}
+                    var asc = !sort;
+                    $(this).attr('data-table-sort', asc);
+                    $('.material-icons',th).remove();
+                    $(this).append('<i class="material-icons">'+(asc?'keyboard_arrow_down':'keyboard_arrow_up')+'</i>');
+                    if (!asc){rows = rows.reverse()}
                     for (var i = 0; i < rows.length; i++){table.append(rows[i])}
                 });
 
@@ -211,7 +221,7 @@
                 }
 
                 //defaul sort by name =)
-                $("#modalDeviceName").click();
+                $('#modalDeviceName').click();
             });
         }
 
