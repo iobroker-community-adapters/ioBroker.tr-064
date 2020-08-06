@@ -301,7 +301,7 @@ function onStateChange(id, state) {
 
         case CHANNEL_CALLLISTS:
         case callList.ROOT:
-            if (cmd === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val;
+            if (cmd === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val.toString();
             else if (as[4] === 'count') {
                 systemData.native.callLists[cmd][as[4]] = ~~state.val;
                 // save system data in namespace
