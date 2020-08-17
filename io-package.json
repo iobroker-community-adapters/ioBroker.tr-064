@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.0.12",
+        "version": "4.0.13",
         "news": {
+            "4.0.13": {
+                "en": "Crash prevented (Sentry IOBROKER-TR-064-10)",
+                "de": "Absturz verhindert (Sentry IOBROKER-TR-064-10)",
+                "ru": "Сбой предотвращен (Sentry IOBROKER-TR-064-10)",
+                "pt": "Falha evitada (Sentry IOBROKER-TR-064-10)",
+                "nl": "Crash voorkomen (Sentry IOBROKER-TR-064-10)",
+                "fr": "Crash évité (Sentry IOBROKER-TR-064-10)",
+                "it": "Blocco impedito (Sentry IOBROKER-TR-064-10)",
+                "es": "Accidente prevenido (Sentry IOBROKER-TR-064-10)",
+                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-10)",
+                "zh-cn": "防止崩溃（Sentry IOBROKER-TR-064-10）"
+            },
             "4.0.12": {
                 "en": "Crash prevented (Sentry IOBROKER-TR-064-Y)",
                 "de": "Absturz verhindert (Sentry IOBROKER-TR-064-Y)",
