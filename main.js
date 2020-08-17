@@ -280,6 +280,7 @@ function onMessage(obj) {
 }
 
 function onStateChange(id, state) {
+    if (!state) return;
     const as = id.split('.');
 
     if (as.length < 3) {
@@ -290,7 +291,7 @@ function onStateChange(id, state) {
     let func;
     switch(as[2]) {
         case CHANNEL_STATES:
-            func = states [cmd] && states [cmd].native ? states [cmd].native.func : null;
+            func = states[cmd] && states[cmd].native ? states[cmd].native.func : null;
             if (func && tr064Client[func]) {
                 const ret = tr064Client[func](state.val, (err, res) => {});
                 if (ret === true) {
@@ -301,7 +302,9 @@ function onStateChange(id, state) {
 
         case CHANNEL_CALLLISTS:
         case callList.ROOT:
-            if (cmd === 'htmlTemplate') systemData.native.callLists.htmlTemplate = state.val.toString();
+            if (cmd === 'htmlTemplate') {
+                if (state.val) systemData.native.callLists.htmlTemplate = state.val.toString();
+            }
             else if (as[4] === 'count') {
                 systemData.native.callLists[cmd][as[4]] = ~~state.val;
                 // save system data in namespace
