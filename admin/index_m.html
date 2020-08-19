@@ -247,6 +247,11 @@
                 settings.password = decrypt(secret, settings.password);
             }
 
+
+            if (settings.ip) {
+                settings.iporhost = settings.ip;
+            }
+
             $('#find').on('click', function () {
                 if (!active) {
                     // 'You have to enable/start ' + adapter + ' adapter before you can use this function!'
@@ -380,7 +385,9 @@
             }
 
             obj['devices'] = arrDevices;
-            obj['iporhost'] = obj['ip'];
+
+            //reset ip
+            obj['ip'] = null;
 
             callback(obj);
         }

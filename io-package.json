@@ -267,7 +267,6 @@
         "password"
     ],
     "native": {
-        "ip": "fritz.box",
         "iporhost": "fritz.box",
         "user": "",
         "password": "",
