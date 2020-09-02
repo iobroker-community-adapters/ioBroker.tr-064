@@ -114,6 +114,18 @@ command = {
 The command state should be set to a JSON of the above Lines. So { ... } (without command = and line breaks)
 The callback of the call will set the commandResult state.
 
+
+Here you will find an example how to switch the answering machine in the Fritzbox on and off by using the command state. For testing you can just copy & paste the string into the state tr-064.0.states.command
+
+Switch the answering machine on: 
+`{"service": "urn:dslforum-org:service:X_AVM-DE_TAM:1","action": "SetEnable", "params": {"NewIndex": "0","NewEnable": "1"}}`
+
+Switch the answering machine off: 
+`{"service": "urn:dslforum-org:service:X_AVM-DE_TAM:1","action": "SetEnable", "params": {"NewIndex": "0","NewEnable": "0"}}`
+
+A detailed description of the actions and parameters for TAM you can find here https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_tam.pdf (link is contained in the AVM documentation above).
+
+
 ### Enable call monitor
 To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
