@@ -137,7 +137,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 4.1.0 (2020-09-17)
 * (Apollon77) Fix crash case (Sentry IOBROKER-TR-064-14)
 * (bazidibavaria) added tablesort to device search
 * (bazidibavaria) added Fritzbox link to admin

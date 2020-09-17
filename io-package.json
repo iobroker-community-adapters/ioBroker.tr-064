@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.0.13",
+        "version": "4.1.0",
         "news": {
+            "4.1.0": {
+                "en": "Fix crash case (Sentry IOBROKER-TR-064-14)\nadded tablesort to device search\nadded Fritzbox link to admin",
+                "de": "Absturz behoben (Sentry IOBROKER-TR-064-14)\nTablesort zur Gerätesuche hinzugefügt\nFritzbox-Link zu admin hinzugefügt",
+                "ru": "Исправить случай сбоя (Sentry IOBROKER-TR-064-14)\nдобавлена сортировка таблиц в поиск устройств\nдобавлена ссылка на Fritzbox в админку",
+                "pt": "Corrigir caso de falha (Sentry IOBROKER-TR-064-14)\nadicionado tablesort para pesquisa de dispositivo\nadicionou o link do Fritzbox ao administrador",
+                "nl": "Crashcase repareren (Sentry IOBROKER-TR-064-14)\ntafelsort toegevoegd aan apparaat zoeken\nFritzbox-link toegevoegd aan admin",
+                "fr": "Correction d'un cas de crash (Sentry IOBROKER-TR-064-14)\nAjout de tablesort à la recherche de périphériques\nAjout du lien Fritzbox à l'administrateur",
+                "it": "Risolto il crash case (Sentry IOBROKER-TR-064-14)\naggiunto tablesort alla ricerca del dispositivo\naggiunto il collegamento Fritzbox all'amministratore",
+                "es": "Reparar caso de accidente (Sentry IOBROKER-TR-064-14)\norden de tabla agregado a la búsqueda de dispositivos\nSe agregó el enlace de Fritzbox al administrador",
+                "pl": "Napraw przypadek awarii (Sentry IOBROKER-TR-064-14)\ndodano tableort do wyszukiwania urządzeń\ndodano link Fritzbox do administratora",
+                "zh-cn": "修复崩溃的情况（Sentry IOBROKER-TR-064-14）\n在设备搜索中添加了tablesort\n将Fritzbox链接添加到管理员"
+            },
             "4.0.13": {
                 "en": "Crash prevented (Sentry IOBROKER-TR-064-10)",
                 "de": "Absturz verhindert (Sentry IOBROKER-TR-064-10)",
