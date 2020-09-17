@@ -732,7 +732,7 @@ TR064.prototype.dumpServices = function (ar) {
 
     const dump = JSON.stringify(services);
 
-    devStates.setImmediately(states.commandResult.name, dump);
+    devStates.setAndUpdate(states.commandResult.name, dump);
 
     if (fs) {
         let logName = '';
@@ -1134,7 +1134,7 @@ function main(adapter) {
     deleteUnusedDevices();
     callList.init(adapter, systemData);
 
-    tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip || adapter.config.iporhost);
+    tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.iporhost || adapter.config.ip);
     tr064Client.init(err => {
         initError = err;
         if (err) {

@@ -21,6 +21,11 @@
 This adapter reads main information from AVM Fritz!Box, like call list or number of messages on answering machine.
 Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
 
+## Needed Settings in your Fritzbox:
+* You need to change the Login to "Use Username and password"
+* Create a user and allow him to "control the Fritzbox and settings"
+* Enable Application Access (on Network tab). Click flow in german: Netzwerk ->Heimnetzfreigaben -> Zugriff für Anwendungen -> aktiviert
+
 ## Initial Creation
 This adapter was initially created by @soef at https://github.com/soef/ioBroker.tr-064 but not maintained any more, so we moved it to iobroker-community so that bugs could be fixed. thanks @soef for his work.
 
@@ -131,6 +136,11 @@ To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Fix crash case (Sentry IOBROKER-TR-064-14)
+* (bazidibavaria) added tablesort to device search
+* (bazidibavaria) added Fritzbox link to admin
 
 ### 4.0.13 (2020-08-17)
 * (Apollon77) Crash prevented (Sentry IOBROKER-TR-064-10)
