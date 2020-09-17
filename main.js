@@ -410,9 +410,9 @@ function safeFunction(root, path, log) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const TR064 = function (user, password, iporhost, port) {
+const TR064 = function (user, password, ip, port) {
     tr064Lib.TR064.call(this);
-    this.ip = iporhost;
+    this.ip = ip;
     this.port = port || 49000;
     this.user = user;
     this.password = password;
@@ -1134,7 +1134,7 @@ function main(adapter) {
     deleteUnusedDevices();
     callList.init(adapter, systemData);
 
-    tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip);
+    tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip || adapter.config.iporhost);
     tr064Client.init(err => {
         initError = err;
         if (err) {

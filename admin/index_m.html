@@ -26,6 +26,10 @@
         .mac-included {
             opacity: 0.5;
         }
+        .modal .material-icons {
+            position: absolute;
+            margin-top: -2px;
+        }
     </style>
 
     <script type="text/javascript">
@@ -186,6 +190,38 @@
                     hideExistingDevices();
                 });
                 hideExistingDevices();
+
+                //add table-sort
+                var th = $('#modalDeviceName,#modalDeviceIP,#modalDeviceMac');
+                th.unbind().removeAttr("data-table-sort");
+                th.click(function(){
+                	th.not($(this)).removeAttr("data-table-sort");
+                    var table = $(this).parents('table').eq(0);
+                    var name = $(this).attr('data-lang').trim();
+                    var sort = $(this).attr('data-table-sort') === 'true' || false;
+                    var rows = table.find('tr:gt(0)').toArray().sort(deviceListComparer($(this).index(), name));
+                    var asc = !sort;
+                    $(this).attr('data-table-sort', asc);
+                    $('.material-icons',th).remove();
+                    $(this).append('<i class="material-icons">'+(asc?'keyboard_arrow_down':'keyboard_arrow_up')+'</i>');
+                    if (!asc){rows = rows.reverse()}
+                    for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+                });
+
+                //compare func
+                function deviceListComparer(index, name) {
+                    return function(a, b) {
+                        var valA = $(a).children('td').eq(index).text().trim(), valB = $(b).children('td').eq(index).text().trim();
+                        if(name=='ip'){
+                            return (valA.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0) - (valB.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0);
+                        } else {
+                            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+                        }
+                    }
+                }
+
+                //defaul sort by name =)
+                $('#modalDeviceName').click();
             });
         }
 
@@ -209,6 +245,11 @@
 
             if (settings.password && (typeof supportsFeature !== 'function' || !supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
                 settings.password = decrypt(secret, settings.password);
+            }
+
+
+            if (settings.ip) {
+                settings.iporhost = settings.ip;
             }
 
             $('#find').on('click', function () {
@@ -321,8 +362,6 @@
                         obj[id[0]][id[1]][id[2]] = key;
                         break;
                 }
-
-
             });
 
             //save devices list
@@ -346,6 +385,9 @@
             }
 
             obj['devices'] = arrDevices;
+
+            //reset ip
+            obj['ip'] = null;
 
             callback(obj);
         }

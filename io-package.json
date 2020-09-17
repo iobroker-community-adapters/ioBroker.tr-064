@@ -257,6 +257,7 @@
         "icon": "tr-064.png",
         "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064/master/admin/tr-064.png",
         "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/blob/master/README.md",
+        "localLink": "http://%iporhost%",
         "loglevel": "info",
         "type": "infrastructure",
         "enabled": true,
@@ -290,7 +291,7 @@
         "password"
     ],
     "native": {
-        "ip": "fritz.box",
+        "iporhost": "fritz.box",
         "user": "",
         "password": "",
         "pollingInterval": 10,
