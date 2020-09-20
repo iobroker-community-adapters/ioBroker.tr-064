@@ -4,7 +4,7 @@
 
 'use strict';
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
-const tools       = require(utils.controllerDir + '/lib/tools');
+const tools       = require(`${utils.controllerDir}/lib/tools`);
 const adapterName = require('./package.json').name.split('.').pop();
 const phonebook   = require('./lib/phonebook');
 const CallMonitor = require('./lib/callmonitor');
@@ -333,9 +333,9 @@ function onStateChange(id, state) {
 }
 
 function setPhonebookStates(v) {
-    devices.root.set('.'+CHANNEL_PHONEBOOK+'.number', (v && v.number)   ? v.number : '');
-    devices.root.set('.'+CHANNEL_PHONEBOOK+'.name',   (v && v.name)     ? v.name : '');
-    devices.root.set('.'+CHANNEL_PHONEBOOK+'.image',  (v && v.imageurl) ? v.imageurl : '');
+    devices.root.set(`.${CHANNEL_PHONEBOOK}.number`, (v && v.number)   ? v.number : '');
+    devices.root.set(`.${CHANNEL_PHONEBOOK}.name`,   (v && v.name)     ? v.name : '');
+    devices.root.set(`.${CHANNEL_PHONEBOOK}.image`,  (v && v.imageurl) ? v.imageurl : '');
     devices.update();
 }
 
