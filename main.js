@@ -112,6 +112,7 @@ function startAdapter(options) {
             if (adapter.config.password && (!adapter.supportsFeature || !adapter.supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
                 adapter.config.password = tools.decrypt((systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', adapter.config.password);
             }
+            // eslint-disable-next-line no-control-regex
             if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(adapter.config.password)) {
                 adapter.log.error('Password error: Please re-enter the password in Admin. Stopping');
                 return;
@@ -386,9 +387,9 @@ function getLastValidPropEx(obj, propString) {
 }
 
 function safeFunction(root, path, log) {
-    const fn = getProp(root, path);
-    if (typeof fn === 'function') {
-        return fn;
+    const cb = getProp(root, path);
+    if (typeof cb === 'function') {
+        return cb;
     }
 
     if (log) {
@@ -396,18 +397,18 @@ function safeFunction(root, path, log) {
         if (typeof log !== 'function') {
             log = adapter.log.debug;
         }
-        err && log(err.errPath + ' is not a function (' + path +')');
+        err && log(`${err.errPath} is not a function (${path})`);
     }
 
-    return function (params, callback) {
-        if (!arguments.length) {
-            return;
+    return function (params, cb) {
+        if (typeof params === 'function') {
+            cb = params;
         }
 
-        const fn = arguments[arguments.length-1];
-
-        if (typeof fn !== 'function') {
-            fn(new Error(`${path} is not a function`));
+        if (typeof cb === 'function') {
+            cb();
+        } else {
+            adapter.log.error(new Error(`${path} is not a function`));
         }
     };
 }
@@ -631,11 +632,13 @@ TR064.prototype.ring = function (val) {
     });
 };
 
+/*
 TR064.prototype.dialNumber = function (number, callback) {
     this.sslDevice.services['urn:dslforum-org:service:X_VoIP:1'].actions['X_AVM-DE_DialNumber']({
         'NewX_AVM-DE_PhoneNumber': number
     }, callback);
 };
+*/
 
 TR064.prototype.forEachHostEntry = function (callback) {
     const self = this;
@@ -689,9 +692,7 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
 
         if (dev.mac && dev.mac !== '') {
             safeFunction(self, 'getSpecificHostEntry') ({NewMACAddress: dev.mac}, (err, device) => {
-                //self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
-                //self.GetSpecificHostEntryExt({NewMACAddress: dev.mac}, function (err, device) {
-                err && adapter.log.warn('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i - 1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
+                err && adapter.log.warn(`forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${dev.mac}):${err} - ${JSON.stringify(err)}`);
                 if (!err && device) {
                     adapter.log.debug('forEachConfiguredDevice: i=' + (i-1) + ' ' + device.NewHostName + ' active=' + device.NewActive);
                     device.NewMACAddress = dev.mac;
@@ -732,7 +733,7 @@ TR064.prototype.dumpServices = function (ar) {
                 let v = oService.actions[action];
                 v = typeof v === 'function' ? 'fn' : v;
                 services[service].actions[action] = v;
-                doLog && adapter.log.debug(service + '.actions.' + action);
+                doLog && adapter.log.debug(`${service}.actions.${action}`);
             }
         }
     }
@@ -750,7 +751,7 @@ TR064.prototype.dumpServices = function (ar) {
             logName = parts.join('/');
             logName += '/log/tr-64-services.json';
         } else {
-            logName = __dirname + '/../../log/tr-64-services.json';
+            logName = `${__dirname}/../../log/tr-64-services.json`;
         }
 
         try {
@@ -778,11 +779,11 @@ TR064.prototype.command = function (command, callback) {
 
     safeFunction(this.sslDevice.services, o.service + '.actions.' + o.action)(o.params, (err, res) => {
         if (err || !res) {
-            adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(err||{}), true, callback);
+            adapter.setState(`${CHANNEL_STATES}.${states.commandResult.name}`, JSON.stringify(err||{}), true, callback);
             return;
         }
         adapter.log.info(JSON.stringify(res));
-        adapter.setState(CHANNEL_STATES + '.' + states.commandResult.name, JSON.stringify(res), true, callback);
+        adapter.setState(`${CHANNEL_STATES}.${states.commandResult.name}`, JSON.stringify(res), true, callback);
     });
 };
 
