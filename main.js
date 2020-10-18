@@ -185,6 +185,8 @@ const states = {
     command: {name: 'command', val: '', native: {func: 'command', desc: commandDesc}},
     commandResult: {name: 'commandResult', val: '', common: {write: false}},
     externalIP: {name: 'externalIP', val: '', common: {write: false}},
+    externalIPv6: {name: 'externalIPv6', val: '', common: {write: false}},
+    externalIPv6Prefix: {name: 'externalIPv6Prefix', val: '', common: {write: false}},
     reboot: {name: 'reboot', val: false, common: {role: 'button', read: false, write: true}, native: {func: 'reboot'}}
 };
 const pbStates = {
@@ -595,6 +597,8 @@ TR064.prototype.init = function (callback) {
                     getSSLDevice(device, function (err, sslDevice) {
                         err && adapter.log.error('getSSLDevice:' + err + ' - ' + JSON.stringify(err));
                         self.getExternalIPAddress = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.GetExternalIPAddress;
+                        self.getExternalIPv6Address = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.X_AVM_DE_GetExternalIPv6Address;
+                        self.getExternalIPv6Prefix = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.X_AVM_DE_GetIPv6Prefix;
                         self.reconnectInternet = sslDevice.services['urn:schemas-upnp-org:service:WANIPConnection:1'].actions.ForceTermination;
                     });
                 }
@@ -1062,6 +1066,12 @@ function updateAll() {
     adapter.log.debug('in updateAll');
     const names = [
         { func: 'getExternalIPAddress', state: states.externalIP.name, result: 'NewExternalIPAddress', format: function (val) {
+            return val;
+        }},
+        { func: 'getExternalIPv6Address', state: states.externalIPv6.name, result: 'NewExternalIPv6Address', format: function (val) {
+            return val;
+        }},
+        { func: 'getExternalIPv6Prefix', state: states.externalIPv6Prefix.name, result: 'NewIPv6Prefix', format: function (val) {
             return val;
         }},
         { func: 'getWLAN', state: states.wlan24.name, result: 'NewEnable', format: function (val) {
