@@ -697,14 +697,23 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
         if (dev.mac && dev.mac !== '') {
             safeFunction(self, 'getSpecificHostEntry') ({NewMACAddress: dev.mac}, (err, device) => {
                 if (err && err.code === 500) {
-                    adapter.log.info(`forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${dev.mac}) device seems offline:${err} - ${JSON.stringify(err)}`);
+                    if (dev.lastResult) {
+                        device = dev.lastResult;
+                        device.NewActive = false;
+                    } else {
+                        adapter.log.info(`forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${dev.mac}) device seems offline but we never saw it since adapter was started:${err} - ${JSON.stringify(err)}`);
+                        device = null;
+                    }
                 } else if (err) {
                     adapter.log.warn(`forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${dev.mac}):${err} - ${JSON.stringify(err)}`);
+                    device = null;
+                } else {
+                    dev.lastResult = device; // store last result to reuse if device goes offline and error 500 is returned
                 }
-                if (!err && device) {
+                if (device) {
                     adapter.log.debug('forEachConfiguredDevice: i=' + (i-1) + ' ' + device.NewHostName + ' active=' + device.NewActive);
                     device.NewMACAddress = dev.mac;
-                    callback (device);
+                    callback(device);
                 }
                 setImmediate(doIt);
             });
