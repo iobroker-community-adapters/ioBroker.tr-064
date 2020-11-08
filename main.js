@@ -1193,7 +1193,7 @@ function main(adapter) {
     deleteUnusedDevices();
     callList.init(adapter, systemData);
 
-    tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.iporhost || adapter.config.ip);
+    tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip || adapter.config.iporhost);
     tr064Client.init(err => {
         initError = err;
         if (err) {
