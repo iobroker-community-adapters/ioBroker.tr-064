@@ -292,7 +292,7 @@ function onStateChange(id, state) {
     switch(as[2]) {
         case CHANNEL_STATES:
             func = states[cmd] && states[cmd].native ? states[cmd].native.func : null;
-            if (func && tr064Client[func]) {
+            if (func && tr064Client[func] && state.val) {
                 const ret = tr064Client[func](state.val, (err, res) => {});
                 if (ret === true) {
                     devices.root.clear(id);
@@ -686,7 +686,11 @@ TR064.prototype.forEachConfiguredDevice = function (callback) {
             safeFunction(self, 'getSpecificHostEntry') ({NewMACAddress: dev.mac}, (err, device) => {
                 //self.getSpecificHostEntry({NewMACAddress: dev.mac}, function (err, device) {
                 //self.GetSpecificHostEntryExt({NewMACAddress: dev.mac}, function (err, device) {
-                err && adapter.log.warn('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i - 1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
+                if (err && err.code === 500) {
+                    adapter.log.info('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i - 1) + '(' + dev.name + '/' + dev.mac + ') device seems offline:' + err + ' - ' + JSON.stringify(err));
+                } else {
+                    adapter.log.warn('forEachConfiguredDevice: in GetSpecificHostEntry ' + (i - 1) + '(' + dev.name + '/' + dev.mac + '):' + err + ' - ' + JSON.stringify(err));
+                }
                 if (!err && device) {
                     adapter.log.debug('forEachConfiguredDevice: i=' + (i-1) + ' ' + device.NewHostName + ' active=' + device.NewActive);
                     device.NewMACAddress = dev.mac;
