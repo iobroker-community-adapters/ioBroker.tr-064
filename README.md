@@ -137,7 +137,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 4.1.1 (2020-11-08)
 * (Apollon77) Crash case prevented (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)
 * (Apollon77) Small solution for Error 500 on device check means device offline ... log this case as info only
 

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.1.0",
+        "version": "4.1.1",
         "news": {
+            "4.1.1": {
+                "en": "Crash case prevented (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nSmall solution for Error 500 on device check means device offline ... log this case as info only",
+                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nEine kleine Lösung für Fehler 500 bei der Geräteprüfung bedeutet, dass das Gerät offline ist. Protokollieren Sie diesen Fall nur als Info",
+                "ru": "Случай сбоя предотвращен (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nНебольшое решение для ошибки 500 при проверке устройства означает, что устройство отключено ... регистрируйте этот случай только как информацию",
+                "pt": "Caso de falha impedido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nUma pequena solução para o erro 500 na verificação do dispositivo significa que o dispositivo está offline ... registre este caso apenas como informação",
+                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nKleine oplossing voor fout 500 bij apparaatcontrole betekent apparaat offline ... log dit geval alleen als info",
+                "fr": "Crash case évité (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nPetite solution pour l'erreur 500 sur la vérification de l'appareil signifie que l'appareil est hors ligne ... enregistrez ce cas en tant qu'informations uniquement",
+                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nUna piccola soluzione per l'errore 500 sul controllo del dispositivo significa che il dispositivo è offline ... registra questo caso solo come informazioni",
+                "es": "Caso de choque prevenido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nUna pequeña solución para el Error 500 en la verificación del dispositivo significa que el dispositivo está desconectado ... registre este caso solo como información",
+                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nMałe rozwiązanie błędu 500 podczas sprawdzania urządzenia oznacza, że urządzenie jest w trybie offline ... zarejestruj ten przypadek tylko jako informacje",
+                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-15，IOBROKER-TR-064-16）\n设备检查中的错误500的小型解决方案意味着设备离线...将此案例记录为仅信息"
+            },
             "4.1.0": {
                 "en": "Fix crash case (Sentry IOBROKER-TR-064-14)\nadded tablesort to device search\nadded Fritzbox link to admin",
                 "de": "Absturz behoben (Sentry IOBROKER-TR-064-14)\nTablesort zur Gerätesuche hinzugefügt\nFritzbox-Link zu admin hinzugefügt",
