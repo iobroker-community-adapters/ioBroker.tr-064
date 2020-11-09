@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.1.1",
+        "version": "4.2.0",
         "news": {
+            "4.2.0": {
+                "en": "Crash case prevented (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nTry to solve error 500 problem with offline devices\nAdd IPv6 states\noptimizations\nFix initialization if ip/host",
+                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nVersuchen Sie, das Problem mit Fehler 500 mit Offline-Geräten zu lösen\nFügen Sie IPv6-Status hinzu\nOptimierungen\nKorrektur der Initialisierung bei IP / Host",
+                "ru": "Случай сбоя предотвращен (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nПопробуйте решить ошибку 500 проблема с автономными устройствами\nДобавить состояния IPv6\nоптимизации\nИсправить инициализацию, если ip / host",
+                "pt": "Caso de falha impedido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nTente resolver o problema do erro 500 com dispositivos offline\nAdicionar estados IPv6\notimizações\nCorrija a inicialização se ip / host",
+                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nProbeer het 500-probleem met offline apparaten op te lossen\nVoeg IPv6-staten toe\noptimalisaties\nHerstel initialisatie als ip / host",
+                "fr": "Crash case évité (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nEssayez de résoudre le problème d'erreur 500 avec les appareils hors ligne\nAjouter des états IPv6\noptimisations\nCorrection de l'initialisation si ip / hôte",
+                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nProva a risolvere il problema dell'errore 500 con i dispositivi offline\nAggiungi stati IPv6\nottimizzazioni\nRisolve l'inizializzazione se ip / host",
+                "es": "Caso de choque prevenido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nIntente resolver el problema del error 500 con dispositivos fuera de línea\nAgregar estados de IPv6\noptimizaciones\nArreglar la inicialización si ip / host",
+                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nSpróbuj rozwiązać problem błędu 500 z urządzeniami offline\nDodaj stany IPv6\noptymalizacje\nNapraw inicjalizację, jeśli ip / host",
+                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-15，IOBROKER-TR-064-16）\n尝试解决离线设备的错误500问题\n添加IPv6状态\n优化\n如果IP /主机，请修复初始化"
+            },
             "4.1.1": {
                 "en": "Crash case prevented (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nSmall solution for Error 500 on device check means device offline ... log this case as info only",
                 "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nEine kleine Lösung für Fehler 500 bei der Geräteprüfung bedeutet, dass das Gerät offline ist. Protokollieren Sie diesen Fall nur als Info",
@@ -230,18 +242,6 @@
                 "es": "Soporte agregado de Admin v3",
                 "pl": "dodano obsługę Admin v3",
                 "zh-cn": "添加了Admin v3支持"
-            },
-            "1.0.1": {
-                "en": "first version for the community",
-                "de": "erste Version für die Community",
-                "ru": "первая версия для сообщества",
-                "pt": "primeira versão para a comunidade",
-                "nl": "eerste versie voor de gemeenschap",
-                "fr": "première version pour la communauté",
-                "it": "prima versione per la comunità",
-                "es": "Primera versión para la comunidad.",
-                "pl": "pierwsza wersja dla społeczności",
-                "zh-cn": "社区的第一个版本"
             }
         },
         "title": "TR-064",
