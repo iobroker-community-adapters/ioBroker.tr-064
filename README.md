@@ -137,7 +137,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 4.2.1 (2020-11-13)
 * (Apollon77) try to fix pot. not working disabling commands
 
 ### 4.2.0 (2020-11-09)

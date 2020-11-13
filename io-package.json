@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.0",
+        "version": "4.2.1",
         "news": {
+            "4.2.1": {
+                "en": "try to fix pot. not working disabling commands",
+                "de": "versuche den Topf zu reparieren. Befehle zum Deaktivieren funktionieren nicht",
+                "ru": "попробуйте починить горшок. не работает отключение команд",
+                "pt": "tente consertar maconha. não funciona desabilitando comandos",
+                "nl": "probeer de pot te repareren. werkt niet met het uitschakelen van opdrachten",
+                "fr": "essayez de réparer le pot. ne fonctionne pas désactiver les commandes",
+                "it": "prova a riparare l'erba. non funziona disabilitando i comandi",
+                "es": "intenta arreglar la olla. no funciona desactivando comandos",
+                "pl": "spróbuj naprawić garnek. nie działa wyłączanie poleceń",
+                "zh-cn": "尝试修复锅。不起作用禁用命令"
+            },
             "4.2.0": {
                 "en": "Crash case prevented (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nTry to solve error 500 problem with offline devices\nAdd IPv6 states\noptimizations\nFix initialization if ip/host",
                 "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nVersuchen Sie, das Problem mit Fehler 500 mit Offline-Geräten zu lösen\nFügen Sie IPv6-Status hinzu\nOptimierungen\nKorrektur der Initialisierung bei IP / Host",
@@ -230,18 +242,6 @@
                 "es": "ya no usamos adaptador.objetos",
                 "pl": "nie używamy już adapter.objects",
                 "zh-cn": "我们不再使用adapter.objects"
-            },
-            "1.1.0": {
-                "en": "added Admin v3 support",
-                "de": "Unterstützung für Admin v3 hinzugefügt",
-                "ru": "добавлена поддержка Admin v3",
-                "pt": "suporte Admin v3 adicionado",
-                "nl": "ondersteuning voor Admin v3 toegevoegd",
-                "fr": "ajout du support Admin v3",
-                "it": "aggiunto supporto Admin v3",
-                "es": "Soporte agregado de Admin v3",
-                "pl": "dodano obsługę Admin v3",
-                "zh-cn": "添加了Admin v3支持"
             }
         },
         "title": "TR-064",
