@@ -296,7 +296,7 @@ function onStateChange(id, state) {
     switch(as[2]) {
         case CHANNEL_STATES:
             func = states[cmd] && states[cmd].native ? states[cmd].native.func : null;
-            if (func && tr064Client[func] && state.val) {
+            if (func && tr064Client[func] && state.val !== null && state.val !== undefined) {
                 const ret = tr064Client[func](state.val, () => {});
                 if (ret === true) {
                     devices.root.clear(id);
