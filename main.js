@@ -876,6 +876,11 @@ TR064.prototype.setWPSMode = function (modeOrOnOff) {
         mode = modeOrOnOff ? 'pbc' : 'stop';
     }
 
+    if (!this.getWLANConfiguration.actions['X_AVM-DE_SetWPSConfig'] || !this.getWLANConfiguration.actions['X_AVM-DE_GetWPSInfo']) {
+        adapter.log.error('WPS control options not available');
+        return;
+    }
+
     this.getWLANConfiguration.actions['X_AVM-DE_SetWPSConfig']({
         'NewX_AVM-DE_WPSMode': mode,
         'NewX_AVM-DE_WPSClientPIN': ''
