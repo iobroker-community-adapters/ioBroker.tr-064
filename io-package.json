@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.1",
+        "version": "4.2.2",
         "news": {
+            "4.2.2": {
+                "en": "Crash case prevented (Sentry IOBROKER-TR-064-1K)",
+                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-1K)",
+                "ru": "Случай сбоя предотвращен (Sentry IOBROKER-TR-064-1K)",
+                "pt": "Caso de falha evitado (Sentry IOBROKER-TR-064-1K)",
+                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-1K)",
+                "fr": "Crash case évité (Sentry IOBROKER-TR-064-1K)",
+                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-1K)",
+                "es": "Caso de choque evitado (Sentry IOBROKER-TR-064-1K)",
+                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-1K)",
+                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-1K）"
+            },
             "4.2.1": {
                 "en": "try to fix pot. not working disabling commands",
                 "de": "versuche den Topf zu reparieren. Befehle zum Deaktivieren funktionieren nicht",
@@ -230,18 +242,6 @@
                 "es": "corregir eliminar el último dispositivo de la lista",
                 "pl": "napraw usuń ostatnie urządzenie z listy",
                 "zh-cn": "修复从列表中删除最后一个设备"
-            },
-            "2.0.2": {
-                "en": "we no longer use adapter.objects",
-                "de": "Wir verwenden keine adapter.objects mehr",
-                "ru": "мы больше не используем адаптер.объекты",
-                "pt": "não usamos mais adapter.objects",
-                "nl": "we gebruiken niet langer adapter.objects",
-                "fr": "nous n'utilisons plus adapter.objects",
-                "it": "non usiamo più adapter.objects",
-                "es": "ya no usamos adaptador.objetos",
-                "pl": "nie używamy już adapter.objects",
-                "zh-cn": "我们不再使用adapter.objects"
             }
         },
         "title": "TR-064",
