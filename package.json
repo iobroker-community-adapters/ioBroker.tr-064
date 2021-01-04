@@ -35,7 +35,7 @@
     "mocha": "^8.2.1",
     "chai": "^4.2.0",
     "axios": "^0.21.1",
-    "@iobroker/testing": "^2.4.0",
+    "@iobroker/testing": "^2.4.1",
     "eslint": "^7.16.0"
   },
   "main": "main.js",
