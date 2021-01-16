@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.2",
+        "version": "4.2.3",
         "news": {
+            "4.2.3": {
+                "en": "Crash case prevented (Sentry IOBROKER-TR-064-1N)",
+                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-1N)",
+                "ru": "Защитный кейс предотвращен (Sentry IOBROKER-TR-064-1N)",
+                "pt": "Caso de falha evitado (Sentry IOBROKER-TR-064-1N)",
+                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-1N)",
+                "fr": "Crash case évité (Sentry IOBROKER-TR-064-1N)",
+                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-1N)",
+                "es": "Caso de choque evitado (Sentry IOBROKER-TR-064-1N)",
+                "pl": "Zapobiegano awariom (Sentry IOBROKER-TR-064-1N)",
+                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-1N）"
+            },
             "4.2.2": {
                 "en": "Crash case prevented (Sentry IOBROKER-TR-064-1K)",
                 "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-1K)",
@@ -230,18 +242,6 @@
                 "es": "REQUIERE js-controller 2.x !! Vuelva al tr-064 como nombre y corrija muchos errores y problemas",
                 "pl": "WYMAGA js-kontrolera 2.x !! Wróć z powrotem do tr-064 jako nazwa i napraw wiele błędów i problemów",
                 "zh-cn": "需要js-controller 2.x !!切换回tr-064作为名称，并修复许多错误和问题"
-            },
-            "2.0.3": {
-                "en": "fix delete last device from list",
-                "de": "behebt das Löschen des letzten Geräts aus der Liste",
-                "ru": "исправить удаление последнего устройства из списка",
-                "pt": "corrigir excluir o último dispositivo da lista",
-                "nl": "repareer laatste apparaat uit lijst verwijderen",
-                "fr": "correction supprimer le dernier appareil de la liste",
-                "it": "correggi elimina l'ultimo dispositivo dall'elenco",
-                "es": "corregir eliminar el último dispositivo de la lista",
-                "pl": "napraw usuń ostatnie urządzenie z listy",
-                "zh-cn": "修复从列表中删除最后一个设备"
             }
         },
         "title": "TR-064",
