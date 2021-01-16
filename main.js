@@ -780,7 +780,7 @@ TR064.prototype.dumpServices = function (ar) {
 };
 
 TR064.prototype.command = function (command, callback) {
-    if (command && command.toLowerCase().startsWith('dumpservices')) {
+    if (typeof command === 'string' && command.toLowerCase().startsWith('dumpservices')) {
         return this.dumpServices(command.toLowerCase().split('.'));
     }
 
