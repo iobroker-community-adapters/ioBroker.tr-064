@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.3",
+        "version": "4.2.4",
         "news": {
+            "4.2.4": {
+                "en": "Prevent crash case (Sentry IOBROKER-TR-064-1T)",
+                "de": "Absturz verhindern (Sentry IOBROKER-TR-064-1T)",
+                "ru": "Случай предотвращения сбоя (Sentry IOBROKER-TR-064-1T)",
+                "pt": "Prevenir caso de travamento (Sentry IOBROKER-TR-064-1T)",
+                "nl": "Voorkom een crashgeval (Sentry IOBROKER-TR-064-1T)",
+                "fr": "Prévenir les cas de crash (Sentry IOBROKER-TR-064-1T)",
+                "it": "Prevenire il crash case (Sentry IOBROKER-TR-064-1T)",
+                "es": "Caso de prevención de accidentes (Sentry IOBROKER-TR-064-1T)",
+                "pl": "Zapobiegaj awariom (Sentry IOBROKER-TR-064-1T)",
+                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-1T）"
+            },
             "4.2.3": {
                 "en": "Crash case prevented (Sentry IOBROKER-TR-064-1N)",
                 "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-1N)",
@@ -230,18 +242,6 @@
                 "es": "Se mejoró el diálogo de configuración\nSe eliminó la biblioteca Soef",
                 "pl": "Okno konfiguracji zostało ulepszone\nBiblioteka Soef została usunięta",
                 "zh-cn": "配置对话框进行了改进\nSoef库已删除"
-            },
-            "3.0.1": {
-                "en": "REQUIRES js-controller 2.x!! Switch back to tr-064 as name and fix a lot of bugs and issues",
-                "de": "ERFORDERT js-controller 2.x !! Wechseln Sie zurück zu tr-064 als Name und beheben Sie viele Fehler und Probleme",
-                "ru": "ТРЕБУЕТСЯ js-контроллер 2.x !! Вернитесь к названию tr-064 и исправьте множество ошибок и проблем.",
-                "pt": "EXIGE js-controller 2.x !! Volte para tr-064 como nome e corrija muitos bugs e problemas",
-                "nl": "VEREIST js-controller 2.x !! Schakel terug naar tr-064 als naam en los veel bugs en problemen op",
-                "fr": "REQUIERT js-controller 2.x !! Revenez au tr-064 comme nom et corrigez de nombreux bugs et problèmes",
-                "it": "RICHIEDE js-controller 2.x !! Torna a tr-064 come nome e correggi molti bug e problemi",
-                "es": "REQUIERE js-controller 2.x !! Vuelva al tr-064 como nombre y corrija muchos errores y problemas",
-                "pl": "WYMAGA js-kontrolera 2.x !! Wróć z powrotem do tr-064 jako nazwa i napraw wiele błędów i problemów",
-                "zh-cn": "需要js-controller 2.x !!切换回tr-064作为名称，并修复许多错误和问题"
             }
         },
         "title": "TR-064",
