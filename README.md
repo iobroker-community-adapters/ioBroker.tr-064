@@ -137,6 +137,9 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
+### __WORK IN PROGRESS__
+* (Apollon77) Prevent crash case (Sentry IOBROKER-TR-064-1T)
+
 ### 4.2.3 (2021-01-16)
 * (Apollon77) Crash case prevented (Sentry IOBROKER-TR-064-1N)
 

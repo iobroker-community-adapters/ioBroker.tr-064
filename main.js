@@ -318,7 +318,9 @@ function onStateChange(id, state) {
             return;
 
         case CHANNEL_PHONEBOOK:
-            onPhonebook(cmd, state.val);
+            if (state.val) {
+                onPhonebook(cmd, state.val);
+            }
             return;
 
             // case CHANNEL_DEVICES:
