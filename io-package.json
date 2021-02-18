@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.5",
+        "version": "4.2.6",
         "news": {
+            "4.2.6": {
+                "en": "Fix crash case (IOBROKER-TR-064-20)\nGet calllists working again",
+                "de": "Absturzfall behoben (IOBROKER-TR-064-20)\nBringen Sie die Anruflisten wieder zum Laufen",
+                "ru": "Устранение сбоя (IOBROKER-TR-064-20)\nЗаставить абонентов снова работать",
+                "pt": "Corrigir caso de falha (IOBROKER-TR-064-20)\nFaça com que as listas de chamadas funcionem novamente",
+                "nl": "Crashcase repareren (IOBROKER-TR-064-20)\nZorg dat oproeplijsten weer werken",
+                "fr": "Correction d'un cas de crash (IOBROKER-TR-064-20)\nRemettre en service les listes d'appels",
+                "it": "Risolto il crash case (IOBROKER-TR-064-20)\nFai funzionare di nuovo le liste di chiamate",
+                "es": "Reparar caso de accidente (IOBROKER-TR-064-20)\nHaz que las listas de llamadas vuelvan a funcionar",
+                "pl": "Napraw przypadek awarii (IOBROKER-TR-064-20)\nSpraw, aby listy połączeń znów działały",
+                "zh-cn": "修复崩溃的情况（IOBROKER-TR-064-20）\n让通话清单重新工作"
+            },
             "4.2.4": {
                 "en": "Prevent crash case (Sentry IOBROKER-TR-064-1T)",
                 "de": "Absturz verhindern (Sentry IOBROKER-TR-064-1T)",
