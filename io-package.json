@@ -3,18 +3,6 @@
         "name": "tr-064",
         "version": "4.2.5",
         "news": {
-            "4.2.5": {
-                "en": "Get calllists working again",
-                "de": "Bringen Sie die Anruflisten wieder zum Laufen",
-                "ru": "Заставить абонентов снова работать",
-                "pt": "Faça com que as listas de chamadas funcionem novamente",
-                "nl": "Zorg dat oproeplijsten weer werken",
-                "fr": "Remettre en service les listes d'appels",
-                "it": "Fai funzionare di nuovo le liste di chiamate",
-                "es": "Haz que las listas de llamadas vuelvan a funcionar",
-                "pl": "Spraw, aby listy połączeń znów działały",
-                "zh-cn": "让通话清单重新工作"
-            },
             "4.2.4": {
                 "en": "Prevent crash case (Sentry IOBROKER-TR-064-1T)",
                 "de": "Absturz verhindern (Sentry IOBROKER-TR-064-1T)",
