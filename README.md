@@ -137,7 +137,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 4.2.5 (2021-02-18)
 * (Apollon77) Get calllists working again
 
 ### 4.2.4 (2021-02-02)

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.4",
+        "version": "4.2.5",
         "news": {
+            "4.2.5": {
+                "en": "Get calllists working again",
+                "de": "Bringen Sie die Anruflisten wieder zum Laufen",
+                "ru": "Заставить абонентов снова работать",
+                "pt": "Faça com que as listas de chamadas funcionem novamente",
+                "nl": "Zorg dat oproeplijsten weer werken",
+                "fr": "Remettre en service les listes d'appels",
+                "it": "Fai funzionare di nuovo le liste di chiamate",
+                "es": "Haz que las listas de llamadas vuelvan a funcionar",
+                "pl": "Spraw, aby listy połączeń znów działały",
+                "zh-cn": "让通话清单重新工作"
+            },
             "4.2.4": {
                 "en": "Prevent crash case (Sentry IOBROKER-TR-064-1T)",
                 "de": "Absturz verhindern (Sentry IOBROKER-TR-064-1T)",
@@ -230,18 +242,6 @@
                 "es": "CAMBIO DE ROMPER: La contraseña ahora se almacena encriptada. ¡Vuelva a ingresar la contraseña en admin!",
                 "pl": "ZŁAMANIE ZMIANY: Hasło jest teraz przechowywane w postaci zaszyfrowanej. Proszę ponownie wprowadzić hasło w adminie!",
                 "zh-cn": "BREAKING CHANGE：密码现在已加密存储。请在admin中重新输入密码！"
-            },
-            "3.1.4": {
-                "en": "Configuration dialog was improved\nSoef library was removed",
-                "de": "Konfigurationsdialog wurde verbessert\nSoef Bibliothek wurde entfernt",
-                "ru": "Диалог конфигурации был улучшен\nSoef библиотека была удалена",
-                "pt": "O diálogo de configuração foi aprimorado\nA biblioteca Soef foi removida",
-                "nl": "Configuratiedialoog is verbeterd\nSoef-bibliotheek werd verwijderd",
-                "fr": "La boîte de dialogue de configuration a été améliorée\nLa bibliothèque Soef a été supprimée",
-                "it": "La finestra di configurazione è stata migliorata\nLa libreria Soef è stata rimossa",
-                "es": "Se mejoró el diálogo de configuración\nSe eliminó la biblioteca Soef",
-                "pl": "Okno konfiguracji zostało ulepszone\nBiblioteka Soef została usunięta",
-                "zh-cn": "配置对话框进行了改进\nSoef库已删除"
             }
         },
         "title": "TR-064",
