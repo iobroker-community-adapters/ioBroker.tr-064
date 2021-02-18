@@ -513,7 +513,11 @@ TR064.prototype.refreshCalllist = function () {
             list.cfg.generateJson && devices.root.set(id + '.json', JSON.stringify(list.array));
             devices.root.set(id + '.count', list.count);
             list.cfg.generateHtml && devices.root.set(id + '.html', html);
-        }, devices.root.update.bind(devices.root));
+            adapter.log.debug('Calllist ' + n + ' regenerated');
+        }, () => {
+            devices.root.update();
+            adapter.log.debug('Calllist ' + n + ' states updated');
+        });
     });
 };
 
