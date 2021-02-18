@@ -516,7 +516,7 @@ TR064.prototype.refreshCalllist = function () {
             adapter.log.debug('Calllist ' + n + ' regenerated');
         }, () => {
             devices.root.update();
-            adapter.log.debug('Calllist ' + n + ' states updated');
+            adapter.log.debug('Calllist states updated');
         });
     });
 };
