@@ -32,8 +32,8 @@
   "devDependencies": {
     "@alcalzone/release-script": "^1.8.3",
     "gulp": "^4.0.2",
-    "mocha": "^8.3.0",
-    "chai": "^4.3.0",
+    "mocha": "^8.3.1",
+    "chai": "^4.3.3",
     "axios": "^0.21.1",
     "@iobroker/testing": "^2.4.2",
     "eslint": "^7.21.0"
