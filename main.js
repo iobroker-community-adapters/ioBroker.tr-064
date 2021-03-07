@@ -480,7 +480,7 @@ const systemData = {
             return;
         }
 
-        adapter.getObject(adapter.namespace, (err, obj) => {
+        adapter.getObject(adapter.namespace, async (err, obj) => {
             if (!err && obj && obj.native.loaded) {
                 delete obj.acl;
                 Object.assign(this, obj);
@@ -491,7 +491,11 @@ const systemData = {
                 } else {
                     callList.callLists.call(this.native.callLists);
                 }
-                this.native.callLists.htmlTemplate = devices.getval(callList.S_HTML_TEMPLATE);
+                try {
+                    this.native.callLists.htmlTemplate = await adapter.getStateAsync(callList.S_HTML_TEMPLATE);
+                } catch (err) {
+                    // ignore
+                }
             }
             if (!this.native.loaded) {
                 this.native.loaded = true;

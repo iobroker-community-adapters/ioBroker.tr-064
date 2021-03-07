@@ -137,6 +137,9 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
+### __WORK IN PROGRESS__
+* (Apollon77) Allow customized HTML templates again
+
 ### 4.2.6 (2021-02-18)
 * (Apollon77) Fix crash case (IOBROKER-TR-064-20)
 * (Apollon77) Get calllists working again
