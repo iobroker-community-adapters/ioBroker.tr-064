@@ -475,34 +475,37 @@ const systemData = {
     type: 'meta',
     common: { name: 'tr-064' },
     native: {},
-    load: function () {
+    load: async function () {
         if (this.native.loaded) {
             return;
         }
 
-        adapter.getObject(adapter.namespace, async (err, obj) => {
-            if (!err && obj && obj.native.loaded) {
+        try {
+            const obj = await adapter.getObjectAsync(adapter.namespace);
+            if (obj && obj.native.loaded) {
                 delete obj.acl;
                 Object.assign(this, obj);
             }
-            if (adapter.config.calllists.use) {
-                if (!this.native.callLists) {
-                    this.native.callLists = new callList.callLists();
-                } else {
-                    callList.callLists.call(this.native.callLists);
-                }
-                try {
-                    this.native.callLists.htmlTemplate = await adapter.getStateAsync(callList.S_HTML_TEMPLATE);
-                } catch (err) {
-                    // ignore
-                }
+        } catch (err) {
+            // ignore
+        }
+        if (adapter.config.calllists.use) {
+            if (!this.native.callLists) {
+                this.native.callLists = new callList.callLists();
+            } else {
+                callList.callLists.call(this.native.callLists);
             }
-            if (!this.native.loaded) {
-                this.native.loaded = true;
-                // save system data in namespace
-                adapter.setObject(adapter.namespace, this);
+            try {
+                this.native.callLists.htmlTemplate = await adapter.getStateAsync(callList.S_HTML_TEMPLATE);
+            } catch (err) {
+                // ignore
             }
-        });
+        }
+        if (!this.native.loaded) {
+            this.native.loaded = true;
+            // save system data in namespace
+            adapter.setObject(adapter.namespace, this);
+        }
     }
 };
 
@@ -1199,12 +1202,12 @@ function normalizeConfigVars() {
     }
 }
 
-function main(adapter) {
+async function main(adapter) {
     devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {}});
 
     normalizeConfigVars();
-    systemData.load();
+    await systemData.load();
     deleteUnusedDevices();
     callList.init(adapter, systemData);
 
