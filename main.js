@@ -496,7 +496,7 @@ const systemData = {
                 callList.callLists.call(this.native.callLists);
             }
             try {
-                this.native.callLists.htmlTemplate = await adapter.getStateAsync(callList.S_HTML_TEMPLATE);
+                this.native.callLists.htmlTemplate = (await adapter.getStateAsync(callList.S_HTML_TEMPLATE)).val;
             } catch (err) {
                 // ignore
             }
