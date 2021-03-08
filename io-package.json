@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.6",
+        "version": "4.2.7",
         "news": {
+            "4.2.7": {
+                "en": "Allow customized HTML templates again",
+                "de": "Erlaube wieder angepasste HTML-Vorlagen",
+                "ru": "Разрешить настраиваемые шаблоны HTML снова",
+                "pt": "Permitir modelos HTML personalizados novamente",
+                "nl": "Sta opnieuw aangepaste HTML-sjablonen toe",
+                "fr": "Autoriser à nouveau les modèles HTML personnalisés",
+                "it": "Consenti di nuovo i modelli HTML personalizzati",
+                "es": "Permitir plantillas HTML personalizadas nuevamente",
+                "pl": "Zezwól ponownie na niestandardowe szablony HTML",
+                "zh-cn": "再次允许自定义HTML模板"
+            },
             "4.2.6": {
                 "en": "Fix crash case (IOBROKER-TR-064-20)\nGet calllists working again",
                 "de": "Absturzfall behoben (IOBROKER-TR-064-20)\nBringen Sie die Anruflisten wieder zum Laufen",
@@ -230,18 +242,6 @@
                 "es": "Asegúrese de que el adaptador no se bloquee o que no se hayan devuelto llamadas (Sentry IOBROKER-TR-064-7)\nAsegúrese de que el adaptador no se bloquee al proporcionar una cadena que no esté en estado de \"anillo\" (Sentry IOBROKER-TR-064-8)",
                 "pl": "Upewnij się, że adapter nie zawiesił się i nie zostały zwrócone żadne połączenia (Sentry IOBROKER-TR-064-7)\nUpewnij się, że adapter nie ulega awarii, gdy podajesz łańcuch „non” do stanu „ring” (Sentry IOBROKER-TR-064-8)",
                 "zh-cn": "确保适配器没有不崩溃，没有返回任何呼叫（Sentry IOBROKER-TR-064-7）\n确保提供非字符串“ ring”状态时适配器不会崩溃（Sentry IOBROKER-TR-064-8）"
-            },
-            "4.0.0": {
-                "en": "BREAKING CHANGE: Password is now stored encrypted. Please re-enter the password in admin!",
-                "de": "BREAKING CHANGE: Das Passwort wird jetzt verschlüsselt gespeichert. Bitte geben Sie das Passwort in admin erneut ein!",
-                "ru": "BREAKING CHANGE: пароль теперь хранится в зашифрованном виде. Пожалуйста, введите пароль еще раз в админке!",
-                "pt": "BREAKING CHANGE: A senha agora está armazenada criptografada. Por favor, digite novamente a senha em admin!",
-                "nl": "BREAKING CHANGE: Wachtwoord wordt nu versleuteld opgeslagen. Voer het wachtwoord opnieuw in in admin!",
-                "fr": "CHANGEMENT DE RUPTURE: Le mot de passe est maintenant stocké crypté. Veuillez ressaisir le mot de passe dans admin!",
-                "it": "MODIFICA DI ROTTURA: la password è ora memorizzata crittografata. Inserisci nuovamente la password in admin!",
-                "es": "CAMBIO DE ROMPER: La contraseña ahora se almacena encriptada. ¡Vuelva a ingresar la contraseña en admin!",
-                "pl": "ZŁAMANIE ZMIANY: Hasło jest teraz przechowywane w postaci zaszyfrowanej. Proszę ponownie wprowadzić hasło w adminie!",
-                "zh-cn": "BREAKING CHANGE：密码现在已加密存储。请在admin中重新输入密码！"
             }
         },
         "title": "TR-064",
