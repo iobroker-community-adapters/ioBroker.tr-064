@@ -1207,9 +1207,9 @@ async function main(adapter) {
     devStates.setDevice(CHANNEL_STATES, {common: {name: 'States and commands', role: 'device'}, native: {}});
 
     normalizeConfigVars();
-    await systemData.load();
     deleteUnusedDevices();
     callList.init(adapter, systemData);
+    await systemData.load();
 
     tr064Client = new TR064(adapter.config.user, adapter.config.password, adapter.config.ip || adapter.config.iporhost);
     tr064Client.init(err => {
