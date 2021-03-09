@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.7",
+        "version": "4.2.8",
         "news": {
+            "4.2.8": {
+                "en": "Optimize customized HTML templates if state is empty",
+                "de": "Optimieren Sie angepasste HTML-Vorlagen, wenn der Status leer ist",
+                "ru": "Оптимизируйте настраиваемые шаблоны HTML, если состояние пусто",
+                "pt": "Otimize modelos HTML personalizados se o estado estiver vazio",
+                "nl": "Optimaliseer aangepaste HTML-sjablonen als de status leeg is",
+                "fr": "Optimiser les modèles HTML personnalisés si l'état est vide",
+                "it": "Ottimizza i modelli HTML personalizzati se lo stato è vuoto",
+                "es": "Optimice las plantillas HTML personalizadas si el estado está vacío",
+                "pl": "Zoptymalizuj dostosowane szablony HTML, jeśli stan jest pusty",
+                "zh-cn": "如果状态为空，则优化自定义HTML模板"
+            },
             "4.2.7": {
                 "en": "Allow customized HTML templates again",
                 "de": "Erlaube wieder angepasste HTML-Vorlagen",
@@ -230,18 +242,6 @@
                 "es": "Asegúrese de que el adaptador no se bloquee porque no se devolvieron llamadas (Sentry IOBROKER-TR-064-D)\nAsegúrese de que el adaptador no se bloquee cuando se proporcionan parámetros no válidos (Sentry IOBROKER-TR-064-B)\nhttps no es compatible en este momento (Sentry IOBROKER-TR-064-E)",
                 "pl": "Upewnij się, że adapter nie ulega awarii, ponieważ żadne połączenia nie zostały zwrócone (Sentry IOBROKER-TR-064-D)\nUpewnij się, że adapter nie ulega awarii, gdy podano niepoprawny parametr (Sentry IOBROKER-TR-064-B)\nObecnie protokół https nie jest obsługiwany (Sentry IOBROKER-TR-064-E)",
                 "zh-cn": "确保适配器不崩溃，没有返回任何呼叫（Sentry IOBROKER-TR-064-D）\n确保在提供无效参数时适配器不会崩溃（Sentry IOBROKER-TR-064-B）\n目前不支持https（Sentry IOBROKER-TR-064-E）"
-            },
-            "4.0.3": {
-                "en": "Make sure adapter no not crash of no calls were returned (Sentry IOBROKER-TR-064-7)\nMake sure adapter do not crash when providing a non string to \"ring\" state (Sentry IOBROKER-TR-064-8)",
-                "de": "Stellen Sie sicher, dass der Adapter kein Absturz oder keine Anrufe zurückgegeben wurden (Sentry IOBROKER-TR-064-7).\nStellen Sie sicher, dass der Adapter nicht abstürzt, wenn eine Nicht-Zeichenfolge in den Status \"Klingeln\" versetzt wird (Sentry IOBROKER-TR-064-8).",
-                "ru": "Убедитесь, что адаптер не сбой, не было возвращено ни одного вызова (Sentry IOBROKER-TR-064-7)\nУбедитесь, что адаптер не дает сбоя при переводе нестрокового в состояние «кольцо» (Sentry IOBROKER-TR-064-8)",
-                "pt": "Certifique-se de que o adaptador não não falhe, pois nenhuma chamada foi retornada (Sentry IOBROKER-TR-064-7)\nCertifique-se de que o adaptador não trava ao fornecer um estado não string para \"tocar\" (Sentry IOBROKER-TR-064-8)",
-                "nl": "Zorg ervoor dat de adapter niet niet crasht of dat er geen oproepen zijn geretourneerd (Sentry IOBROKER-TR-064-7)\nZorg ervoor dat de adapter niet crasht bij het leveren van een niet-tekenreeks om te \"bellen\" (Sentry IOBROKER-TR-064-8)",
-                "fr": "Assurez-vous que l'adaptateur ne se bloque pas ou qu'aucun appel n'a été renvoyé (Sentry IOBROKER-TR-064-7)\nAssurez-vous que l'adaptateur ne se bloque pas lors de la fourniture d'une chaîne non à l'état de \"sonnerie\" (Sentry IOBROKER-TR-064-8)",
-                "it": "Assicurarsi che non sia stato restituito l'adattatore no crash di nessuna chiamata (Sentry IOBROKER-TR-064-7)\nAssicurarsi che l'adattatore non si arresti in modo anomalo quando si fornisce uno stato \"stringa\" senza stringa (Sentry IOBROKER-TR-064-8)",
-                "es": "Asegúrese de que el adaptador no se bloquee o que no se hayan devuelto llamadas (Sentry IOBROKER-TR-064-7)\nAsegúrese de que el adaptador no se bloquee al proporcionar una cadena que no esté en estado de \"anillo\" (Sentry IOBROKER-TR-064-8)",
-                "pl": "Upewnij się, że adapter nie zawiesił się i nie zostały zwrócone żadne połączenia (Sentry IOBROKER-TR-064-7)\nUpewnij się, że adapter nie ulega awarii, gdy podajesz łańcuch „non” do stanu „ring” (Sentry IOBROKER-TR-064-8)",
-                "zh-cn": "确保适配器没有不崩溃，没有返回任何呼叫（Sentry IOBROKER-TR-064-7）\n确保提供非字符串“ ring”状态时适配器不会崩溃（Sentry IOBROKER-TR-064-8）"
             }
         },
         "title": "TR-064",
