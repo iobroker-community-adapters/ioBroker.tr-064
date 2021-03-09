@@ -495,11 +495,13 @@ const systemData = {
             } else {
                 callList.callLists.call(this.native.callLists);
             }
+            let htmlTemplate = null;
             try {
-                this.native.callLists.htmlTemplate = (await adapter.getStateAsync(callList.S_HTML_TEMPLATE)).val;
+                htmlTemplate = (await adapter.getStateAsync(callList.S_HTML_TEMPLATE)).val;
             } catch (err) {
                 // ignore
             }
+            this.native.callLists.htmlTemplate = htmlTemplate;
         }
         if (!this.native.loaded) {
             this.native.loaded = true;
