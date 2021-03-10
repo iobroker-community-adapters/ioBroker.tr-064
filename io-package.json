@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.8",
+        "version": "4.2.9",
         "news": {
+            "4.2.9": {
+                "en": "try to better handle calllist resets on FW updates\nMake sure jsonDeviceList do not get deleted on start\nBetter handle not initialized calllist templates",
+                "de": "Versuchen Sie, das Zurücksetzen der Anrufliste bei FW-Updates besser zu handhaben\nStellen Sie sicher, dass jsonDeviceList beim Start nicht gelöscht wird\nBehandeln Sie nicht initialisierte Anruflistenvorlagen besser",
+                "ru": "попытаться лучше обрабатывать сбросы списка вызывающих при обновлениях прошивки\nУбедитесь, что jsonDeviceList не удаляется при запуске\nЛучшая обработка неинициализированных шаблонов списков вызовов",
+                "pt": "tente lidar melhor com as redefinições da lista de chamadas nas atualizações do FW\nCertifique-se de que jsonDeviceList não seja excluído na inicialização\nMelhor lidar com modelos de lista de chamadas não inicializados",
+                "nl": "probeer calllist-resets op FW-updates beter af te handelen\nZorg ervoor dat jsonDeviceList niet wordt verwijderd bij het starten\nBeter omgaan met niet-geïnitialiseerde oproeplijstsjablonen",
+                "fr": "essayez de mieux gérer les réinitialisations de la liste d'appels sur les mises à jour du micrologiciel\nAssurez-vous que jsonDeviceList ne soit pas supprimé au démarrage\nMieux gérer les modèles de liste d'appels non initialisés",
+                "it": "provare a gestire meglio i ripristini delle liste di chiamata sugli aggiornamenti FW\nAssicurati che jsonDeviceList non venga eliminato all'avvio\nGestire meglio i modelli di elenchi di chiamate non inizializzati",
+                "es": "intente manejar mejor los restablecimientos de la lista de llamadas en las actualizaciones de FW\nAsegúrese de que jsonDeviceList no se elimine al iniciar\nManeje mejor las plantillas de listas de llamadas no inicializadas",
+                "pl": "spróbuj lepiej radzić sobie z resetowaniem listy wywołań przy aktualizacjach FW\nUpewnij się, że jsonDeviceList nie zostaną usunięte podczas uruchamiania\nLepsza obsługa niezainicjowanych szablonów list wywołań",
+                "zh-cn": "尝试更好地处理固件更新中的呼叫清单重置\n确保jsonDeviceList不会在启动时被删除\n更好地处理未初始化的呼叫列表模板"
+            },
             "4.2.8": {
                 "en": "Optimize customized HTML templates if state is empty",
                 "de": "Optimieren Sie angepasste HTML-Vorlagen, wenn der Status leer ist",
@@ -230,18 +242,6 @@
                 "es": "Se corrigió la interfaz de usuario del administrador para permitir configurar nuevamente el intervalo de sondeo correctamente",
                 "pl": "Napraw interfejs administratora, aby znów poprawnie ustawiał interwał sondowania",
                 "zh-cn": "修复管理界面，以允许再次正确设置轮询间隔"
-            },
-            "4.0.4": {
-                "en": "Make sure adapter do not crash of no calls were returned (Sentry IOBROKER-TR-064-D)\nMake sure adapter do not crash when invalid parameter are provided (Sentry IOBROKER-TR-064-B)\nhttps is not supported right now (Sentry IOBROKER-TR-064-E)",
-                "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt und keine Anrufe zurückgegeben wurden (Sentry IOBROKER-TR-064-D).\nStellen Sie sicher, dass der Adapter nicht abstürzt, wenn ungültige Parameter angegeben werden (Sentry IOBROKER-TR-064-B).\nhttps wird derzeit nicht unterstützt (Sentry IOBROKER-TR-064-E)",
-                "ru": "Убедитесь, что адаптер не дает сбоя, если не было возвращено ни одного вызова (Sentry IOBROKER-TR-064-D)\nУбедитесь, что адаптер не дает сбоя, если указан неверный параметр (Sentry IOBROKER-TR-064-B)\nhttps не поддерживается сейчас (Sentry IOBROKER-TR-064-E)",
-                "pt": "Verifique se o adaptador não trava ou se nenhuma chamada foi retornada (Sentry IOBROKER-TR-064-D)\nVerifique se o adaptador não falha quando são fornecidos parâmetros inválidos (Sentry IOBROKER-TR-064-B)\nhttps não é suportado no momento (Sentry IOBROKER-TR-064-E)",
-                "nl": "Zorg ervoor dat de adapter niet crasht of dat er geen oproepen zijn geretourneerd (Sentry IOBROKER-TR-064-D)\nZorg ervoor dat de adapter niet crasht wanneer er een ongeldige parameter wordt opgegeven (Sentry IOBROKER-TR-064-B)\nhttps wordt momenteel niet ondersteund (Sentry IOBROKER-TR-064-E)",
-                "fr": "Assurez-vous que l'adaptateur ne plante pas car aucun appel n'a été renvoyé (Sentry IOBROKER-TR-064-D)\nAssurez-vous que l'adaptateur ne plante pas lorsque des paramètres non valides sont fournis (Sentry IOBROKER-TR-064-B)\nhttps n'est pas pris en charge pour le moment (Sentry IOBROKER-TR-064-E)",
-                "it": "Assicurarsi che l'adattatore non si blocchi in caso di nessuna chiamata restituita (Sentry IOBROKER-TR-064-D)\nAssicurarsi che l'adattatore non si arresti in modo anomalo quando vengono forniti parametri non validi (Sentry IOBROKER-TR-064-B)\nhttps non è attualmente supportato (Sentry IOBROKER-TR-064-E)",
-                "es": "Asegúrese de que el adaptador no se bloquee porque no se devolvieron llamadas (Sentry IOBROKER-TR-064-D)\nAsegúrese de que el adaptador no se bloquee cuando se proporcionan parámetros no válidos (Sentry IOBROKER-TR-064-B)\nhttps no es compatible en este momento (Sentry IOBROKER-TR-064-E)",
-                "pl": "Upewnij się, że adapter nie ulega awarii, ponieważ żadne połączenia nie zostały zwrócone (Sentry IOBROKER-TR-064-D)\nUpewnij się, że adapter nie ulega awarii, gdy podano niepoprawny parametr (Sentry IOBROKER-TR-064-B)\nObecnie protokół https nie jest obsługiwany (Sentry IOBROKER-TR-064-E)",
-                "zh-cn": "确保适配器不崩溃，没有返回任何呼叫（Sentry IOBROKER-TR-064-D）\n确保在提供无效参数时适配器不会崩溃（Sentry IOBROKER-TR-064-B）\n目前不支持https（Sentry IOBROKER-TR-064-E）"
             }
         },
         "title": "TR-064",
