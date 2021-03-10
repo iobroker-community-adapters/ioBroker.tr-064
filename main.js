@@ -1057,13 +1057,21 @@ function setActive(dev, val, ip, mac) {
 function createConfiguredDevices(callback) {
     adapter.log.debug('createConfiguredDevices');
     const dev = new devices.CDevice(CHANNEL_DEVICES, '');
+    const arr = [];
+
     tr064Client.forEachConfiguredDevice(function (device) {
         if (!device) {
+            if (adapter.config.jsonDeviceList) {
+                const json = JSON.stringify(arr);
+                dev.setChannelEx();
+                dev.set('jsonDeviceList', { common: { name: 'jsonDeviceList', type: 'json', role: 'state' }, val: json});
+            }
             devices.update(callback);
             return;
         }
         dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
         setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
+        arr.push( { active: !!device.NewActive, ip: device.NewIPAddress, name: device.NewHostName, mac: device.NewMACAddress } );
     });
 }
 
@@ -1084,7 +1092,7 @@ function updateDevices(callback) {
         }
         adapter.log.debug('forEachConfiguredDevice: ' + JSON.stringify(device));
         dev.setChannelEx(device.NewHostName);
-        setActive(dev, device.NewActive, device.NewIPAddress);
+        setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
         if (adapter.config.jsonDeviceList) {
             arr.push( { active: !!device.NewActive, ip: device.NewIPAddress, name: device.NewHostName, mac: device.NewMACAddress } );
         }
