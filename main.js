@@ -1022,7 +1022,7 @@ function deleteUnusedDevices(callback) {
         const toDelete = [];
 
         res.rows.forEach(o => {
-            if (o.id.endsWith('jsonDeviceList')) return;
+            if (o.id.endsWith('.jsonDeviceList')) return;
             let doDelete = ((!o.value.native || !o.value.native.mac) && !o.id.substr(ch.length + 1).includes('.')); // old device, without native.mac
             doDelete = doDelete || (o.value.native && o.value.native.mac && !isKnownMac(o.value.native.mac));
             doDelete && toDelete.push(o.id);
