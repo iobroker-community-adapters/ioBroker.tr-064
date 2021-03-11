@@ -137,7 +137,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 4.2.10 (2021-03-11)
 * (Apollon77) better handle caller id resets by reboots/FW updates to also update list specific counter and log when this happened
 
 ### 4.2.9 (2021-03-10)
