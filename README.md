@@ -137,6 +137,9 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
+### __WORK IN PROGRESS__
+* (Apollon77) better handle caller id resets by reboots/FW updates to also update list specific counter and log when this happened
+
 ### 4.2.9 (2021-03-10)
 * (Apollon77) try to better handle calllist resets on FW updates
 * (Apollon77) Make sure jsonDeviceList do not get deleted on start
