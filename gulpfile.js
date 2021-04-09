@@ -7,11 +7,11 @@
 const gulp = require('gulp');
 const fs = require('fs');
 const pkg = require('./package.json');
-const iopackage = require('./io-package.json');
-const version = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
+const ioPackage = require('./io-package.json');
+const version = (pkg && pkg.version) ? pkg.version : ioPackage.common.version;
 const fileName = 'words.js';
 const EMPTY = '';
-const translate = require('./lib/tools').translateText;
+const translate = require('./lib/tools.js').translateText;
 const languages = {
     en: {},
     de: {},
@@ -34,7 +34,7 @@ function lang2data(lang, isFlat) {
             if (isFlat) {
                 str += (lang[w] === '' ? (isFlat[w] || w) : lang[w]) + '\n';
             } else {
-                const key = '    "' + w.replace(/"/g, '\\"') + '": ';
+                const key = '    "' + w.replace(/'/g, '\\"') + '": ';
                 str += key + '"' + lang[w].replace(/"/g, '\\"') + '",\n';
             }
         }
@@ -74,7 +74,7 @@ function padRight(text, totalLength) {
 function writeWordJs(data, src) {
     let text = '';
     text += '/*global systemDictionary:true */\n';
-    text += "'use strict';\n\n";
+    text += '\'use strict\';\n\n';
     text += 'systemDictionary = {\n';
     for (const word in data) {
         if (data.hasOwnProperty(word)) {
@@ -218,9 +218,10 @@ function languagesFlat2words(src) {
     });
     const keys = fs.readFileSync(src + 'i18n/flat.txt').toString().split('\n');
 
-    for (const lang of dirs) {
-        if (lang === 'flat.txt')
+    for (let l = 0; l < dirs.length; l++) {
+        if (dirs[l] === 'flat.txt')
             continue;
+        const lang = dirs[l];
         const values = fs.readFileSync(src + 'i18n/' + lang + '/flat.txt').toString().split('\n');
         langs[lang] = {};
         keys.forEach(function (word, i) {
@@ -290,9 +291,10 @@ function languages2words(src) {
             return 0;
         }
     });
-    for (const lang of dirs) {
-        if (lang === 'flat.txt')
+    for (let l = 0; l < dirs.length; l++) {
+        if (dirs[l] === 'flat.txt')
             continue;
+        const lang = dirs[l];
         langs[lang] = fs.readFileSync(src + 'i18n/' + lang + '/translations.json').toString();
         langs[lang] = JSON.parse(langs[lang]);
         const words = langs[lang];
@@ -372,10 +374,10 @@ gulp.task('adminLanguages2words', function (done) {
 });
 
 gulp.task('updatePackages', function (done) {
-    iopackage.common.version = pkg.version;
-    iopackage.common.news = iopackage.common.news || {};
-    if (!iopackage.common.news[pkg.version]) {
-        const news = iopackage.common.news;
+    ioPackage.common.version = pkg.version;
+    ioPackage.common.news = ioPackage.common.news || {};
+    if (!ioPackage.common.news[pkg.version]) {
+        const news = ioPackage.common.news;
         const newNews = {};
 
         newNews[pkg.version] = {
@@ -390,9 +392,9 @@ gulp.task('updatePackages', function (done) {
             pl: 'nowości',
             'zh-cn': '新'
         };
-        iopackage.common.news = Object.assign(newNews, news);
+        ioPackage.common.news = Object.assign(newNews, news);
     }
-    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
+    fs.writeFileSync('io-package.json', JSON.stringify(ioPackage, null, 4));
     done();
 });
 
@@ -410,8 +412,8 @@ gulp.task('updateReadme', function (done) {
                     ('0' + (timestamp.getDate()).toString(10)).slice(-2);
 
             let news = '';
-            if (iopackage.common.news && iopackage.common.news[pkg.version]) {
-                news += '* ' + iopackage.common.news[pkg.version].en;
+            if (ioPackage.common.news && ioPackage.common.news[pkg.version]) {
+                news += '* ' + ioPackage.common.news[pkg.version].en;
             }
 
             fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
@@ -421,29 +423,28 @@ gulp.task('updateReadme', function (done) {
 });
 
 gulp.task('translate', async function (done) {
-
     let yandex;
     const i = process.argv.indexOf('--yandex');
     if (i > -1) {
         yandex = process.argv[i + 1];
     }
 
-    if (iopackage && iopackage.common) {
-        if (iopackage.common.news) {
+    if (ioPackage && ioPackage.common) {
+        if (ioPackage.common.news) {
             console.log('Translate News');
-            for (let k in iopackage.common.news) {
+            for (let k in ioPackage.common.news) {
                 console.log('News: ' + k);
-                let nw = iopackage.common.news[k];
+                let nw = ioPackage.common.news[k];
                 await translateNotExisting(nw, null, yandex);
             }
         }
-        if (iopackage.common.titleLang) {
+        if (ioPackage.common.titleLang) {
             console.log('Translate Title');
-            await translateNotExisting(iopackage.common.titleLang, iopackage.common.title, yandex);
+            await translateNotExisting(ioPackage.common.titleLang, ioPackage.common.title, yandex);
         }
-        if (iopackage.common.desc) {
+        if (ioPackage.common.desc) {
             console.log('Translate Description');
-            await translateNotExisting(iopackage.common.desc, null, yandex);
+            await translateNotExisting(ioPackage.common.desc, null, yandex);
         }
 
         if (fs.existsSync('./admin/i18n/en/translations.json')) {
@@ -467,9 +468,23 @@ gulp.task('translate', async function (done) {
         }
 
     }
-    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
+    fs.writeFileSync('io-package.json', JSON.stringify(ioPackage, null, 4));
 });
 
 gulp.task('translateAndUpdateWordsJS', gulp.series('translate', 'adminLanguages2words', 'adminWords2languages'));
 
-gulp.task('default', gulp.series('updatePackages', 'updateReadme'));
+gulp.task('copy', done => {
+    const words = fs.readFileSync(__dirname + '/admin/words.js').toString('utf8');
+    const translation = words.substring(words.indexOf('{'), words.lastIndexOf(';'));
+    try {
+        JSON.parse(translation); // check that the words can be parsed
+    } catch (e) {
+        const lines = translation.split(/\r\n|\n\r|\n/);
+        throw new Error('Cannot parse admin/words.js. Please fix. Probably it is a comma a the very last line: ...' + lines[lines.length - 2].substring(lines[lines.length - 2].length - 20));
+    }
+
+    fs.writeFileSync(__dirname + '/widgets/info/js/words.js', words);
+    done();
+});
+
+gulp.task('default', gulp.series('copy'));
