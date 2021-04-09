@@ -14,3 +14,4 @@ gulpfile.js
 .github
 package-lock.json
 .gitattributes
+admin/i18n
