@@ -208,7 +208,11 @@ function createObjects(cb) {
     //devStates = new devices.CDevice(0, '');
     devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {}});
 
-    adapter.config.calllists.use && devices.root.createNew(callList.S_HTML_TEMPLATE, getProp(systemData, 'native.callLists.htmlTemplate') || '');
+    if (adapter.config.calllists.use) {
+        const htmlTemplate = getProp(systemData, 'native.callLists.htmlTemplate') || '';
+        adapter.log.debug('Initialize HTML template: ' + htmlTemplate);
+        devices.root.createNew(callList.S_HTML_TEMPLATE, htmlTemplate);
+    }
 
     devStates.setDevice(CHANNEL_DEVICES, {common: {name: 'Devices', role: 'device'}, native: {}});
 
@@ -499,7 +503,7 @@ const systemData = {
             try {
                 htmlTemplate = (await adapter.getStateAsync(callList.S_HTML_TEMPLATE)).val;
             } catch (err) {
-                // ignore
+                adapter.log.info('Error when initializing html Template: ' + err);
             }
             this.native.callLists.htmlTemplate = htmlTemplate;
         }
