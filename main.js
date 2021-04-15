@@ -209,7 +209,7 @@ function createObjects(cb) {
     devStates.setDevice(CHANNEL_CALLLISTS, {common: {name: 'Call lists', role: 'device'}, native: {}});
 
     if (adapter.config.calllists.use) {
-        const htmlTemplate = getProp(systemData, 'native.callLists.htmlTemplate') || '';
+        const htmlTemplate = systemData.native.callLists.htmlTemplate || '';
         adapter.log.debug('Initialize HTML template: ' + htmlTemplate);
         devices.root.createNew(callList.S_HTML_TEMPLATE, htmlTemplate);
     }
