@@ -40,7 +40,7 @@
     "chai": "^4.3.4",
     "axios": "^0.21.1",
     "@iobroker/testing": "^2.4.4",
-    "eslint": "^7.24.0"
+    "eslint": "^7.25.0"
   },
   "main": "main.js",
   "scripts": {
