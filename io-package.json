@@ -302,6 +302,7 @@
         ],
         "connectionType": "local",
         "dataSource": "push",
+        "tier": 2,
         "plugins": {
             "sentry": {
                 "dsn": "https://5423236b998b415bb9118690986763ea@sentry.iobroker.net/13"

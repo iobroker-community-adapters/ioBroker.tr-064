@@ -1,17 +1,14 @@
 ![Logo](admin/tr-064.png)
 # ioBroker.tr-064
 
-![Number of Installations](http://iobroker.live/badges/tr-064-installed.svg) 
+![Number of Installations](http://iobroker.live/badges/tr-064-installed.svg)
 ![Number of Installations](http://iobroker.live/badges/tr-064-stable.svg)
 [![NPM version](http://img.shields.io/npm/v/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
+
+![Test and Release](https://github.com/iobroker-community-adapters/iobroker.tr-064/workflows/Test%20and%20Release/badge.svg)
+[![Translation status](https://weblate.iobroker.net/widgets/adapters/-/tr-064/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 
-[![NPM](https://nodei.co/npm/iobroker.tr-064.png?downloads=true)](https://nodei.co/npm/iobroker.tr-064/)
-
-[![Travis-CI](http://img.shields.io/travis/iobroker-community-adapters/ioBroker.tr-064/master.svg)](https://travis-ci.org/iobroker-community-adapters/ioBroker.tr-064)
-
-[![Dependency Status](https://img.shields.io/david/iobroker-community-adapters/iobroker.tr-064.svg)](https://david-dm.org/iobroker-community-adapters/iobroker.tr-064)
-[![Known Vulnerabilities](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064/badge.svg)](https://snyk.io/test/github/iobroker-community-adapters/ioBroker.tr-064)
 
 ***This adapter requires at least Node 8.x***
 
@@ -250,7 +247,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2015-2020 soef <soef@gmx.net>
+Copyright (c) 2015-2021 soef <soef@gmx.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
