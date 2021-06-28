@@ -23,6 +23,7 @@ let initError = false;
 let adapter;
 let devices;
 let callMonitor;
+let refreshCalllistTimeout = null;
 
 // extract from object the attribute by path like "attr1.attr2.subAttr3"
 function getProp(obj, propString) {
@@ -102,7 +103,12 @@ function startAdapter(options) {
             if (!state.ack) {
                 onStateChange(id, state);
             } else if (adapter.config.calllists.use && id.includes('callmonitor.lastCall.timestamp')) {
-                tr064Client.refreshCalllist();
+                // If multiple updates come we wait for 100ms stability
+                refreshCalllistTimeout && clearTimeout(refreshCalllistTimeout);
+                refreshCalllistTimeout = setTimeout(() => {
+                    refreshCalllistTimeout = null;
+                    tr064Client.refreshCalllist();
+                }, 100);
             }
         }
     });
