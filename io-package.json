@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.12",
+        "version": "4.2.13",
         "news": {
+            "4.2.13": {
+                "en": "Optimize for js-controller 3.3 and prevent warnings (you pot. need to delete datapoints if you still see errors, they will be recreated)",
+                "de": "Optimieren Sie für js-controller 3.3 und verhindern Sie Warnungen (Sie müssen Datenpunkte löschen, wenn Sie immer noch Fehler sehen, sie werden neu erstellt)",
+                "ru": "Оптимизация для js-controller 3.3 и предотвращение предупреждений (вам нужно удалить точки данных, если вы все еще видите ошибки, они будут воссозданы)",
+                "pt": "Otimize para js-controller 3.3 e evite avisos (você precisa excluir pontos de dados se ainda vir erros, eles serão recriados)",
+                "nl": "Optimaliseer voor js-controller 3.3 en voorkom waarschuwingen (je moet datapunten verwijderen als je nog steeds fouten ziet, ze worden opnieuw gemaakt)",
+                "fr": "Optimisez pour js-controller 3.3 et évitez les avertissements (vous devez supprimer les points de données si vous voyez toujours des erreurs, elles seront recréées)",
+                "it": "Ottimizza per js-controller 3.3 e previeni gli avvisi (potresti eliminare i punti dati se vedi ancora errori, verranno ricreati)",
+                "es": "Optimice para js-controller 3.3 y evite las advertencias (puede que necesite eliminar los puntos de datos si aún ve errores, se volverán a crear)",
+                "pl": "Optymalizuj pod kątem js-controller 3.3 i zapobiegaj ostrzeżeniom (pot. musisz usunąć punkty danych, jeśli nadal widzisz błędy, zostaną one odtworzone)",
+                "zh-cn": "针对 js-controller 3.3 进行优化并防止警告（您可能会。如果您仍然看到错误，则需要删除数据点，它们将被重新创建）"
+            },
             "4.2.12": {
                 "en": "prevent html template for calllists to be overwritten by default one\nfix crash case (Sentry IOBROKER-TR-064-2M)",
                 "de": "Verhindern Sie, dass die HTML-Vorlage für Anruflisten standardmäßig überschrieben wird\nAbsturzfall beheben (Sentry IOBROKER-TR-064-2M)",
@@ -230,18 +242,6 @@
                 "es": "manejar casos correctamente cuando no hay hosts en el dispositivo (Sentry IOBROKER-TR-064-R)",
                 "pl": "poprawnie obsługuje przypadki, gdy na urządzeniu nie ma hostów (Sentry IOBROKER-TR-064-R)",
                 "zh-cn": "当设备上不存在主机时正确处理情况（Sentry IOBROKER-TR-064-R）"
-            },
-            "4.0.8": {
-                "en": "Make sure states are only subscribed if initialization is done (Sentry IOBROKER-TR-064-J)",
-                "de": "Stellen Sie sicher, dass Status nur abonniert werden, wenn die Initialisierung abgeschlossen ist (Sentry IOBROKER-TR-064-J).",
-                "ru": "Убедитесь, что состояния подписаны только после инициализации (Sentry IOBROKER-TR-064-J)",
-                "pt": "Verifique se os estados são inscritos apenas se a inicialização for concluída (Sentry IOBROKER-TR-064-J)",
-                "nl": "Zorg ervoor dat staten alleen zijn geabonneerd als initialisatie is voltooid (Sentry IOBROKER-TR-064-J)",
-                "fr": "Assurez-vous que les états ne sont souscrits que si l'initialisation est effectuée (Sentry IOBROKER-TR-064-J)",
-                "it": "Assicurarsi che gli stati siano sottoscritti solo se l'inizializzazione è stata eseguita (Sentry IOBROKER-TR-064-J)",
-                "es": "Asegúrese de que los estados solo estén suscritos si la inicialización se realiza (Sentry IOBROKER-TR-064-J)",
-                "pl": "Upewnij się, że stany są subskrybowane tylko po zakończeniu inicjalizacji (Sentry IOBROKER-TR-064-J)",
-                "zh-cn": "确保仅在完成初始化后才预订状态（Sentry IOBROKER-TR-064-J）"
             }
         },
         "title": "TR-064",
