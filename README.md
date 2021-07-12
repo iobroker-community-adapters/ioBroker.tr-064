@@ -134,6 +134,9 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
+### __WORK IN PROGRESS__
+* (Apollon77) Optimize for js-controller 3.3 and prevent warnings (you pot. need to delete datapoints if you still see errors, they will be recreated)
+
 ### 4.2.12 (2021-04-16)
 * (Apollon77) prevent html template for calllists to be overwritten by default one
 * (Apollon77) fix crash case (Sentry IOBROKER-TR-064-2M)

@@ -258,16 +258,16 @@
             "zh-cn": "TR-064"
         },
         "desc": {
-            "en": "TR-064 is a protocol developed by the DSL Forum to allow DSL Internet access devices from the local area network configure. It is based on the Universal Plug and Play (UPnP) standard, which is generally used for manufacturer-independent control of devices in IP-based networks.",
-            "de": "TR-064 ist ein Protokoll entwickelt, durch das DSL-Forum zu ermöglichen, DSL-Internet-Zugang-Geräten aus dem lokalen Netzwerk konfigurieren. Es basiert auf dem Universal Plug and Play (UPnP) - standard, das ist in der Regel für die Hersteller-unabhängige Steuerung von Geräten in IP-basierten Netzwerken.",
-            "ru": "ТР-064-это протокол, разработанный форума DSL, чтобы разрешить устройствам беспроводной доступ в Интернет из локальной сети настроить. Она основана на универсальный подключи и играй стандарт (UPnP), что, как правило, используется производителем для независимого управления устройствами в IP-сетях.",
-            "pt": "TR-064 é um protocolo desenvolvido por DSL Forum para permitir o acesso à Internet DSL dispositivos de rede de área local de configurar. Ele é baseado no Plug and Play Universal (UPnP) padrão, que geralmente é usado para o fabricante, independente de controlo de dispositivos em redes baseadas em IP.",
-            "nl": "TR-064 is een protocol ontwikkeld door het DSL Forum voor het toestaan van DSL Internet access apparaten in het lokale netwerk configureren. Het is gebaseerd op de Universele Plug en Play (UPnP) - standaard, die wordt over het algemeen gebruikt voor fabrikant-onafhankelijke controle van de apparaten in IP-gebaseerde netwerken.",
-            "fr": "TR-064 est un protocole développé par le DSL Forum pour permettre un accès Internet DSL les périphériques du réseau local configurer. Il est basé sur l'Universal Plug and Play (UPnP), qui est généralement utilisé pour le fabricant indépendant de contrôle des périphériques dans les réseaux IP.",
-            "it": "TR-064 è un protocollo sviluppato da DSL Forum per consentire l'accesso a Internet adsl dispositivi dalla rete locale configurare. Esso è basato su Universal Plug and Play (UPnP) standard, che viene generalmente utilizzato per produttore indipendente di controllo dei dispositivi nelle reti basate su IP.",
-            "es": "TR-064 es un protocolo desarrollado por el DSL Forum para permitir el acceso a Internet DSL de los dispositivos de la red de área local configurar. Se basa en el Universal Plug and Play (UPnP) estándar, que se utiliza generalmente para el fabricante independiente de control de dispositivos en redes basadas en IP.",
-            "pl": "TR-064-jest to protokół opracowany przez forum DSL, aby zezwolić urządzeniom bezprzewodowy dostęp do Internetu z sieci lokalnej dostosować. Opiera się ona na universal plug and play standard (UPnP), co jest zwykle stosowany przez producenta do niezależnego sterowania urządzeniami w sieciach IP.",
-            "zh-cn": "TR-064是协议制定的DSL论坛，以允许DSL互联网接入设备从该地区的网络配置。 它基于普遍即插即用(即用)的标准，该标准是通常用于制造商的独立控制的设备在基于IP网络。"
+            "en": "The TR-064 adapter is used to control AVM FritzBox and get the network status of devices or phone calls",
+            "de": "Der TR-064 Adapter dient zur Steuerung der AVM FritzBox und zum Abrufen des Netzwerkstatus von Geräten oder Telefonaten",
+            "ru": "Адаптер TR-064 используется для управления AVM FritzBox и получения сетевого статуса устройств или телефонных звонков.",
+            "pt": "O adaptador TR-064 é usado para controlar AVM FritzBox e obter o status da rede de dispositivos ou chamadas telefônicas",
+            "nl": "De TR-064-adapter wordt gebruikt om de AVM FritzBox te bedienen en de netwerkstatus van apparaten of telefoongesprekken te krijgen",
+            "fr": "L'adaptateur TR-064 est utilisé pour contrôler AVM FritzBox et obtenir l'état du réseau des appareils ou des appels téléphoniques",
+            "it": "L'adattatore TR-064 viene utilizzato per controllare AVM FritzBox e ottenere lo stato della rete dei dispositivi o delle telefonate",
+            "es": "El adaptador TR-064 se utiliza para controlar AVM FritzBox y obtener el estado de la red de dispositivos o llamadas telefónicas",
+            "pl": "Adapter TR-064 służy do sterowania AVM FritzBox i uzyskiwania stanu sieci urządzeń lub połączeń telefonicznych",
+            "zh-cn": "TR-064 适配器用于控制 AVM FritzBox 并获取设备或电话的网络状态"
         },
         "license": "MIT",
         "platform": "Javascript/Node.js",

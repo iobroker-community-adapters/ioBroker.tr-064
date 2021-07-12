@@ -184,7 +184,7 @@ const states = {
     ring: {
         name: 'ring',
         val: '**610',
-        common: {desc: 'let a phone ring. Parameter is phonenumer [,duration]. eg. **610'},
+        common: {desc: 'let a phone ring. Parameter is phonenumber [,duration]. eg. **610'},
         native: {func: 'ring'}
     },
     reconnectInternet: {name: 'reconnectInternet', val: false, common: {role: 'button', read: false, write: true}, native: {func: 'reconnectInternet'}},
@@ -646,11 +646,13 @@ TR064.prototype.ring = function (val) {
         return;
     }
 
+    adapter.log.debug('Ring : ' + JSON.stringify(ar));
     safeFunction(this.voip, 'X_AVM-DE_DialNumber', true)({'NewX_AVM-DE_PhoneNumber': ar[0]}, err => {
         if (!err) {
             if (ar.length >= 2) {
                 const duration = ar[1].trim() >> 0;
                 ringTimeout = setTimeout(() => {
+                    adapter.log.debug('End Ring after ' + duration + 's');
                     ringTimeout = null;
                     safeFunction(self.voip, 'X_AVM-DE_DialHangup', true)({}, () => {});
                 }, duration * 1000);
