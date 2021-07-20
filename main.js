@@ -464,7 +464,7 @@ TR064.prototype.setABIndex = function (val, cb) {
         if (err || !data) {
             return;
         }
-        devStates.setAndUpdate('ab', data.NewEnable, cb);
+        devStates.setAndUpdate('ab', !!data.NewEnable, cb);
     });
 };
 
@@ -507,7 +507,10 @@ const systemData = {
             }
             let htmlTemplate = null;
             try {
-                htmlTemplate = (await adapter.getStateAsync(callList.S_HTML_TEMPLATE)).val;
+                const htmlTemplateState = await adapter.getStateAsync(callList.S_HTML_TEMPLATE);
+                if (htmlTemplateState) {
+                    htmlTemplate = htmlTemplateState.val;
+                }
             } catch (err) {
                 adapter.log.info('Error when initializing html Template: ' + err);
             }
