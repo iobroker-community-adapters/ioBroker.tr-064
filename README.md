@@ -134,7 +134,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 4.2.14 (2021-07-21)
 * (Apollon77) Further optimizations for js-controller 3.3
 
 ### 4.2.13 (2021-07-12)

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "tr-064",
-        "version": "4.2.13",
+        "version": "4.2.14",
         "news": {
+            "4.2.14": {
+                "en": "Further optimizations for js-controller 3.3",
+                "de": "Weitere Optimierungen für js-controller 3.3",
+                "ru": "Дальнейшие оптимизации для js-controller 3.3",
+                "pt": "Otimizações adicionais para js-controller 3.3",
+                "nl": "Verdere optimalisaties voor js-controller 3.3",
+                "fr": "Autres optimisations pour js-controller 3.3",
+                "it": "Ulteriori ottimizzazioni per js-controller 3.3",
+                "es": "Más optimizaciones para js-controller 3.3",
+                "pl": "Dalsze optymalizacje dla kontrolera js 3.3",
+                "zh-cn": "js-controller 3.3 进一步优化"
+            },
             "4.2.13": {
                 "en": "Optimize for js-controller 3.3 and prevent warnings (you pot. need to delete datapoints if you still see errors, they will be recreated)",
                 "de": "Optimieren Sie für js-controller 3.3 und verhindern Sie Warnungen (Sie müssen Datenpunkte löschen, wenn Sie immer noch Fehler sehen, sie werden neu erstellt)",
@@ -230,18 +242,6 @@
                 "es": "Accidente evitado (Sentry IOBROKER-TR-064-W)",
                 "pl": "Zapobiegane awariom (Sentry IOBROKER-TR-064-W)",
                 "zh-cn": "防止崩溃（Sentry IOBROKER-TR-064-W）"
-            },
-            "4.0.9": {
-                "en": "handle cases correctly when no hosts are existing on device (Sentry IOBROKER-TR-064-R)",
-                "de": "Behandeln Sie Fälle korrekt, wenn auf dem Gerät keine Hosts vorhanden sind (Sentry IOBROKER-TR-064-R).",
-                "ru": "правильно обрабатывать случаи, когда на устройстве нет хостов (Sentry IOBROKER-TR-064-R)",
-                "pt": "manipular casos corretamente quando não houver hosts no dispositivo (Sentry IOBROKER-TR-064-R)",
-                "nl": "zaken correct afhandelen wanneer er geen hosts op het apparaat aanwezig zijn (Sentry IOBROKER-TR-064-R)",
-                "fr": "gérer correctement les cas où aucun hôte n'existe sur l'appareil (Sentry IOBROKER-TR-064-R)",
-                "it": "gestire i casi correttamente quando non esistono host sul dispositivo (Sentry IOBROKER-TR-064-R)",
-                "es": "manejar casos correctamente cuando no hay hosts en el dispositivo (Sentry IOBROKER-TR-064-R)",
-                "pl": "poprawnie obsługuje przypadki, gdy na urządzeniu nie ma hostów (Sentry IOBROKER-TR-064-R)",
-                "zh-cn": "当设备上不存在主机时正确处理情况（Sentry IOBROKER-TR-064-R）"
             }
         },
         "title": "TR-064",
