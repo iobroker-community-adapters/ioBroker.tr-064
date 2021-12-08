@@ -133,7 +133,7 @@ To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 4.2.15 (2021-12-08)
 * (bluefox) fix crash case (Sentry IOBROKER-TR-064-35)
 
 ### 4.2.14 (2021-07-21)
@@ -216,7 +216,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ### 4.0.3 (2020-05-11)
 * (Apollon77) Make sure adapter do not crash of no calls were returned (Sentry IOBROKER-TR-064-7)
-* (Apollon77) Make sure adapter do not crash when providing a non string to "ring" state (Sentry IOBROKER-TR-064-8) 
+* (Apollon77) Make sure adapter do not crash when providing a non string to "ring" state (Sentry IOBROKER-TR-064-8)
 
 ### 4.0.1 (2020-04-23)
 * (Apollon77) handle case where no Phone deflections are available (Sentry IOBROKER-TR-064-1/2)

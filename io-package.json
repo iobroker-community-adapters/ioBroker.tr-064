@@ -1,351 +1,195 @@
 {
-    "common": {
-        "name": "tr-064",
-        "version": "4.2.14",
-        "news": {
-            "4.2.14": {
-                "en": "Further optimizations for js-controller 3.3",
-                "de": "Weitere Optimierungen für js-controller 3.3",
-                "ru": "Дальнейшие оптимизации для js-controller 3.3",
-                "pt": "Otimizações adicionais para js-controller 3.3",
-                "nl": "Verdere optimalisaties voor js-controller 3.3",
-                "fr": "Autres optimisations pour js-controller 3.3",
-                "it": "Ulteriori ottimizzazioni per js-controller 3.3",
-                "es": "Más optimizaciones para js-controller 3.3",
-                "pl": "Dalsze optymalizacje dla kontrolera js 3.3",
-                "zh-cn": "js-controller 3.3 进一步优化"
-            },
-            "4.2.13": {
-                "en": "Optimize for js-controller 3.3 and prevent warnings (you pot. need to delete datapoints if you still see errors, they will be recreated)",
-                "de": "Optimieren Sie für js-controller 3.3 und verhindern Sie Warnungen (Sie müssen Datenpunkte löschen, wenn Sie immer noch Fehler sehen, sie werden neu erstellt)",
-                "ru": "Оптимизация для js-controller 3.3 и предотвращение предупреждений (вам нужно удалить точки данных, если вы все еще видите ошибки, они будут воссозданы)",
-                "pt": "Otimize para js-controller 3.3 e evite avisos (você precisa excluir pontos de dados se ainda vir erros, eles serão recriados)",
-                "nl": "Optimaliseer voor js-controller 3.3 en voorkom waarschuwingen (je moet datapunten verwijderen als je nog steeds fouten ziet, ze worden opnieuw gemaakt)",
-                "fr": "Optimisez pour js-controller 3.3 et évitez les avertissements (vous devez supprimer les points de données si vous voyez toujours des erreurs, elles seront recréées)",
-                "it": "Ottimizza per js-controller 3.3 e previeni gli avvisi (potresti eliminare i punti dati se vedi ancora errori, verranno ricreati)",
-                "es": "Optimice para js-controller 3.3 y evite las advertencias (puede que necesite eliminar los puntos de datos si aún ve errores, se volverán a crear)",
-                "pl": "Optymalizuj pod kątem js-controller 3.3 i zapobiegaj ostrzeżeniom (pot. musisz usunąć punkty danych, jeśli nadal widzisz błędy, zostaną one odtworzone)",
-                "zh-cn": "针对 js-controller 3.3 进行优化并防止警告（您可能会。如果您仍然看到错误，则需要删除数据点，它们将被重新创建）"
-            },
-            "4.2.12": {
-                "en": "prevent html template for calllists to be overwritten by default one\nfix crash case (Sentry IOBROKER-TR-064-2M)",
-                "de": "Verhindern Sie, dass die HTML-Vorlage für Anruflisten standardmäßig überschrieben wird\nAbsturzfall beheben (Sentry IOBROKER-TR-064-2M)",
-                "ru": "предотвратить перезапись шаблона html для списков вызовов по умолчанию\nисправить случай сбоя (Sentry IOBROKER-TR-064-2M)",
-                "pt": "evita que o modelo html para listas de chamadas seja substituído por um padrão\ncorrigir caso de falha (Sentry IOBROKER-TR-064-2M)",
-                "nl": "voorkomen dat html-sjabloon voor oproeplijsten standaard wordt overschreven\ncrash case repareren (Sentry IOBROKER-TR-064-2M)",
-                "fr": "empêcher le modèle html pour les listes d'appels d'être écrasé par défaut\ncorrection du cas de crash (Sentry IOBROKER-TR-064-2M)",
-                "it": "impedisce che il modello html per le liste di chiamata venga sovrascritto per impostazione predefinita\ncorrezione del crash case (Sentry IOBROKER-TR-064-2M)",
-                "es": "evitar que la plantilla html para listas de llamadas se sobrescriba por defecto\nreparar caso de bloqueo (Sentry IOBROKER-TR-064-2M)",
-                "pl": "zapobiegaj domyślnemu nadpisywaniu szablonu html dla list wywołań\nnaprawa awarii (Sentry IOBROKER-TR-064-2M)",
-                "zh-cn": "防止默认情况下覆盖用于呼叫列表的html模板\n修复崩溃案例（Sentry IOBROKER-TR-064-2M）"
-            },
-            "4.2.11": {
-                "en": "fix id-reset detection for single calls",
-                "de": "ID-Reset-Erkennung für einzelne Anrufe korrigiert",
-                "ru": "исправить обнаружение сброса идентификатора для одиночных вызовов",
-                "pt": "corrigir detecção de redefinição de id para chamadas únicas",
-                "nl": "id-reset-detectie voor enkele oproepen repareren",
-                "fr": "correction de la détection de réinitialisation d'ID pour les appels uniques",
-                "it": "risolto il rilevamento del ripristino dell'ID per singole chiamate",
-                "es": "corregir la detección de reinicio de identificación para llamadas individuales",
-                "pl": "naprawiono wykrywanie resetowania identyfikatora dla pojedynczych połączeń",
-                "zh-cn": "修复单个呼叫的ID重置检测"
-            },
-            "4.2.10": {
-                "en": "better handle caller id resets by reboots/FW updates to also update list specific counter and log when this happened",
-                "de": "Besseres Behandeln des Zurücksetzens der Anrufer-ID durch Neustarts / FW-Aktualisierungen, um auch den listenspezifischen Zähler zu aktualisieren und zu protokollieren, wenn dies passiert ist",
-                "ru": "лучше обрабатывать сброс идентификатора вызывающего абонента при перезагрузке / обновлении прошивки, чтобы также обновлять счетчик конкретного списка и регистрировать, когда это произошло",
-                "pt": "lidar melhor com redefinições de identificador de chamadas por reinicializações / atualizações de FW para também atualizar o contador específico da lista e registrar quando isso aconteceu",
-                "nl": "Beller-ID-resets beter afhandelen door reboots / FW-updates om ook de lijstspecifieke teller en het logboek bij te werken wanneer dit gebeurde",
-                "fr": "mieux gérer les réinitialisations de l'identifiant de l'appelant par des redémarrages / mises à jour du micrologiciel pour également mettre à jour le compteur spécifique de la liste et le journal lorsque cela s'est produit",
-                "it": "gestire meglio i ripristini dell'ID chiamante tramite riavvio / aggiornamenti FW per aggiornare anche il contatore specifico dell'elenco e il registro quando ciò è accaduto",
-                "es": "manejar mejor los reinicios del identificador de llamadas mediante reinicios / actualizaciones de FW para actualizar también el contador específico de la lista y el registro cuando esto sucedió",
-                "pl": "Lepsza obsługa resetowania identyfikatora dzwoniącego przez ponowne uruchomienie / aktualizacje FW, aby również zaktualizować określony licznik listy i dziennik, kiedy to się stało",
-                "zh-cn": "通过重新启动/固件更新更好地处理呼叫者ID重置，以便还更新列表特定计数器并在发生这种情况时进行记录"
-            },
-            "4.2.9": {
-                "en": "try to better handle calllist resets on FW updates\nMake sure jsonDeviceList do not get deleted on start\nBetter handle not initialized calllist templates",
-                "de": "Versuchen Sie, das Zurücksetzen der Anrufliste bei FW-Updates besser zu handhaben\nStellen Sie sicher, dass jsonDeviceList beim Start nicht gelöscht wird\nBehandeln Sie nicht initialisierte Anruflistenvorlagen besser",
-                "ru": "попытаться лучше обрабатывать сбросы списка вызывающих при обновлениях прошивки\nУбедитесь, что jsonDeviceList не удаляется при запуске\nЛучшая обработка неинициализированных шаблонов списков вызовов",
-                "pt": "tente lidar melhor com as redefinições da lista de chamadas nas atualizações do FW\nCertifique-se de que jsonDeviceList não seja excluído na inicialização\nMelhor lidar com modelos de lista de chamadas não inicializados",
-                "nl": "probeer calllist-resets op FW-updates beter af te handelen\nZorg ervoor dat jsonDeviceList niet wordt verwijderd bij het starten\nBeter omgaan met niet-geïnitialiseerde oproeplijstsjablonen",
-                "fr": "essayez de mieux gérer les réinitialisations de la liste d'appels sur les mises à jour du micrologiciel\nAssurez-vous que jsonDeviceList ne soit pas supprimé au démarrage\nMieux gérer les modèles de liste d'appels non initialisés",
-                "it": "provare a gestire meglio i ripristini delle liste di chiamata sugli aggiornamenti FW\nAssicurati che jsonDeviceList non venga eliminato all'avvio\nGestire meglio i modelli di elenchi di chiamate non inizializzati",
-                "es": "intente manejar mejor los restablecimientos de la lista de llamadas en las actualizaciones de FW\nAsegúrese de que jsonDeviceList no se elimine al iniciar\nManeje mejor las plantillas de listas de llamadas no inicializadas",
-                "pl": "spróbuj lepiej radzić sobie z resetowaniem listy wywołań przy aktualizacjach FW\nUpewnij się, że jsonDeviceList nie zostaną usunięte podczas uruchamiania\nLepsza obsługa niezainicjowanych szablonów list wywołań",
-                "zh-cn": "尝试更好地处理固件更新中的呼叫清单重置\n确保jsonDeviceList不会在启动时被删除\n更好地处理未初始化的呼叫列表模板"
-            },
-            "4.2.8": {
-                "en": "Optimize customized HTML templates if state is empty",
-                "de": "Optimieren Sie angepasste HTML-Vorlagen, wenn der Status leer ist",
-                "ru": "Оптимизируйте настраиваемые шаблоны HTML, если состояние пусто",
-                "pt": "Otimize modelos HTML personalizados se o estado estiver vazio",
-                "nl": "Optimaliseer aangepaste HTML-sjablonen als de status leeg is",
-                "fr": "Optimiser les modèles HTML personnalisés si l'état est vide",
-                "it": "Ottimizza i modelli HTML personalizzati se lo stato è vuoto",
-                "es": "Optimice las plantillas HTML personalizadas si el estado está vacío",
-                "pl": "Zoptymalizuj dostosowane szablony HTML, jeśli stan jest pusty",
-                "zh-cn": "如果状态为空，则优化自定义HTML模板"
-            },
-            "4.2.7": {
-                "en": "Allow customized HTML templates again",
-                "de": "Erlaube wieder angepasste HTML-Vorlagen",
-                "ru": "Разрешить настраиваемые шаблоны HTML снова",
-                "pt": "Permitir modelos HTML personalizados novamente",
-                "nl": "Sta opnieuw aangepaste HTML-sjablonen toe",
-                "fr": "Autoriser à nouveau les modèles HTML personnalisés",
-                "it": "Consenti di nuovo i modelli HTML personalizzati",
-                "es": "Permitir plantillas HTML personalizadas nuevamente",
-                "pl": "Zezwól ponownie na niestandardowe szablony HTML",
-                "zh-cn": "再次允许自定义HTML模板"
-            },
-            "4.2.6": {
-                "en": "Fix crash case (IOBROKER-TR-064-20)\nGet calllists working again",
-                "de": "Absturzfall behoben (IOBROKER-TR-064-20)\nBringen Sie die Anruflisten wieder zum Laufen",
-                "ru": "Устранение сбоя (IOBROKER-TR-064-20)\nЗаставить абонентов снова работать",
-                "pt": "Corrigir caso de falha (IOBROKER-TR-064-20)\nFaça com que as listas de chamadas funcionem novamente",
-                "nl": "Crashcase repareren (IOBROKER-TR-064-20)\nZorg dat oproeplijsten weer werken",
-                "fr": "Correction d'un cas de crash (IOBROKER-TR-064-20)\nRemettre en service les listes d'appels",
-                "it": "Risolto il crash case (IOBROKER-TR-064-20)\nFai funzionare di nuovo le liste di chiamate",
-                "es": "Reparar caso de accidente (IOBROKER-TR-064-20)\nHaz que las listas de llamadas vuelvan a funcionar",
-                "pl": "Napraw przypadek awarii (IOBROKER-TR-064-20)\nSpraw, aby listy połączeń znów działały",
-                "zh-cn": "修复崩溃的情况（IOBROKER-TR-064-20）\n让通话清单重新工作"
-            },
-            "4.2.4": {
-                "en": "Prevent crash case (Sentry IOBROKER-TR-064-1T)",
-                "de": "Absturz verhindern (Sentry IOBROKER-TR-064-1T)",
-                "ru": "Случай предотвращения сбоя (Sentry IOBROKER-TR-064-1T)",
-                "pt": "Prevenir caso de travamento (Sentry IOBROKER-TR-064-1T)",
-                "nl": "Voorkom een crashgeval (Sentry IOBROKER-TR-064-1T)",
-                "fr": "Prévenir les cas de crash (Sentry IOBROKER-TR-064-1T)",
-                "it": "Prevenire il crash case (Sentry IOBROKER-TR-064-1T)",
-                "es": "Caso de prevención de accidentes (Sentry IOBROKER-TR-064-1T)",
-                "pl": "Zapobiegaj awariom (Sentry IOBROKER-TR-064-1T)",
-                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-1T）"
-            },
-            "4.2.3": {
-                "en": "Crash case prevented (Sentry IOBROKER-TR-064-1N)",
-                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-1N)",
-                "ru": "Защитный кейс предотвращен (Sentry IOBROKER-TR-064-1N)",
-                "pt": "Caso de falha evitado (Sentry IOBROKER-TR-064-1N)",
-                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-1N)",
-                "fr": "Crash case évité (Sentry IOBROKER-TR-064-1N)",
-                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-1N)",
-                "es": "Caso de choque evitado (Sentry IOBROKER-TR-064-1N)",
-                "pl": "Zapobiegano awariom (Sentry IOBROKER-TR-064-1N)",
-                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-1N）"
-            },
-            "4.2.2": {
-                "en": "Crash case prevented (Sentry IOBROKER-TR-064-1K)",
-                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-1K)",
-                "ru": "Случай сбоя предотвращен (Sentry IOBROKER-TR-064-1K)",
-                "pt": "Caso de falha evitado (Sentry IOBROKER-TR-064-1K)",
-                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-1K)",
-                "fr": "Crash case évité (Sentry IOBROKER-TR-064-1K)",
-                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-1K)",
-                "es": "Caso de choque evitado (Sentry IOBROKER-TR-064-1K)",
-                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-1K)",
-                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-1K）"
-            },
-            "4.2.1": {
-                "en": "try to fix pot. not working disabling commands",
-                "de": "versuche den Topf zu reparieren. Befehle zum Deaktivieren funktionieren nicht",
-                "ru": "попробуйте починить горшок. не работает отключение команд",
-                "pt": "tente consertar maconha. não funciona desabilitando comandos",
-                "nl": "probeer de pot te repareren. werkt niet met het uitschakelen van opdrachten",
-                "fr": "essayez de réparer le pot. ne fonctionne pas désactiver les commandes",
-                "it": "prova a riparare l'erba. non funziona disabilitando i comandi",
-                "es": "intenta arreglar la olla. no funciona desactivando comandos",
-                "pl": "spróbuj naprawić garnek. nie działa wyłączanie poleceń",
-                "zh-cn": "尝试修复锅。不起作用禁用命令"
-            },
-            "4.2.0": {
-                "en": "Crash case prevented (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nTry to solve error 500 problem with offline devices\nAdd IPv6 states\noptimizations\nFix initialization if ip/host",
-                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nVersuchen Sie, das Problem mit Fehler 500 mit Offline-Geräten zu lösen\nFügen Sie IPv6-Status hinzu\nOptimierungen\nKorrektur der Initialisierung bei IP / Host",
-                "ru": "Случай сбоя предотвращен (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nПопробуйте решить ошибку 500 проблема с автономными устройствами\nДобавить состояния IPv6\nоптимизации\nИсправить инициализацию, если ip / host",
-                "pt": "Caso de falha impedido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nTente resolver o problema do erro 500 com dispositivos offline\nAdicionar estados IPv6\notimizações\nCorrija a inicialização se ip / host",
-                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nProbeer het 500-probleem met offline apparaten op te lossen\nVoeg IPv6-staten toe\noptimalisaties\nHerstel initialisatie als ip / host",
-                "fr": "Crash case évité (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nEssayez de résoudre le problème d'erreur 500 avec les appareils hors ligne\nAjouter des états IPv6\noptimisations\nCorrection de l'initialisation si ip / hôte",
-                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nProva a risolvere il problema dell'errore 500 con i dispositivi offline\nAggiungi stati IPv6\nottimizzazioni\nRisolve l'inizializzazione se ip / host",
-                "es": "Caso de choque prevenido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nIntente resolver el problema del error 500 con dispositivos fuera de línea\nAgregar estados de IPv6\noptimizaciones\nArreglar la inicialización si ip / host",
-                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nSpróbuj rozwiązać problem błędu 500 z urządzeniami offline\nDodaj stany IPv6\noptymalizacje\nNapraw inicjalizację, jeśli ip / host",
-                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-15，IOBROKER-TR-064-16）\n尝试解决离线设备的错误500问题\n添加IPv6状态\n优化\n如果IP /主机，请修复初始化"
-            },
-            "4.1.1": {
-                "en": "Crash case prevented (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nSmall solution for Error 500 on device check means device offline ... log this case as info only",
-                "de": "Absturzfall verhindert (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nEine kleine Lösung für Fehler 500 bei der Geräteprüfung bedeutet, dass das Gerät offline ist. Protokollieren Sie diesen Fall nur als Info",
-                "ru": "Случай сбоя предотвращен (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nНебольшое решение для ошибки 500 при проверке устройства означает, что устройство отключено ... регистрируйте этот случай только как информацию",
-                "pt": "Caso de falha impedido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nUma pequena solução para o erro 500 na verificação do dispositivo significa que o dispositivo está offline ... registre este caso apenas como informação",
-                "nl": "Crashcase voorkomen (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nKleine oplossing voor fout 500 bij apparaatcontrole betekent apparaat offline ... log dit geval alleen als info",
-                "fr": "Crash case évité (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nPetite solution pour l'erreur 500 sur la vérification de l'appareil signifie que l'appareil est hors ligne ... enregistrez ce cas en tant qu'informations uniquement",
-                "it": "Crash case prevenuto (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nUna piccola soluzione per l'errore 500 sul controllo del dispositivo significa che il dispositivo è offline ... registra questo caso solo come informazioni",
-                "es": "Caso de choque prevenido (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nUna pequeña solución para el Error 500 en la verificación del dispositivo significa que el dispositivo está desconectado ... registre este caso solo como información",
-                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-15, IOBROKER-TR-064-16)\nMałe rozwiązanie błędu 500 podczas sprawdzania urządzenia oznacza, że urządzenie jest w trybie offline ... zarejestruj ten przypadek tylko jako informacje",
-                "zh-cn": "防止发生崩溃情况（Sentry IOBROKER-TR-064-15，IOBROKER-TR-064-16）\n设备检查中的错误500的小型解决方案意味着设备离线...将此案例记录为仅信息"
-            },
-            "4.1.0": {
-                "en": "Fix crash case (Sentry IOBROKER-TR-064-14)\nadded tablesort to device search\nadded Fritzbox link to admin",
-                "de": "Absturz behoben (Sentry IOBROKER-TR-064-14)\nTablesort zur Gerätesuche hinzugefügt\nFritzbox-Link zu admin hinzugefügt",
-                "ru": "Исправить случай сбоя (Sentry IOBROKER-TR-064-14)\nдобавлена сортировка таблиц в поиск устройств\nдобавлена ссылка на Fritzbox в админку",
-                "pt": "Corrigir caso de falha (Sentry IOBROKER-TR-064-14)\nadicionado tablesort para pesquisa de dispositivo\nadicionou o link do Fritzbox ao administrador",
-                "nl": "Crashcase repareren (Sentry IOBROKER-TR-064-14)\ntafelsort toegevoegd aan apparaat zoeken\nFritzbox-link toegevoegd aan admin",
-                "fr": "Correction d'un cas de crash (Sentry IOBROKER-TR-064-14)\nAjout de tablesort à la recherche de périphériques\nAjout du lien Fritzbox à l'administrateur",
-                "it": "Risolto il crash case (Sentry IOBROKER-TR-064-14)\naggiunto tablesort alla ricerca del dispositivo\naggiunto il collegamento Fritzbox all'amministratore",
-                "es": "Reparar caso de accidente (Sentry IOBROKER-TR-064-14)\norden de tabla agregado a la búsqueda de dispositivos\nSe agregó el enlace de Fritzbox al administrador",
-                "pl": "Napraw przypadek awarii (Sentry IOBROKER-TR-064-14)\ndodano tableort do wyszukiwania urządzeń\ndodano link Fritzbox do administratora",
-                "zh-cn": "修复崩溃的情况（Sentry IOBROKER-TR-064-14）\n在设备搜索中添加了tablesort\n将Fritzbox链接添加到管理员"
-            },
-            "4.0.13": {
-                "en": "Crash prevented (Sentry IOBROKER-TR-064-10)",
-                "de": "Absturz verhindert (Sentry IOBROKER-TR-064-10)",
-                "ru": "Сбой предотвращен (Sentry IOBROKER-TR-064-10)",
-                "pt": "Falha evitada (Sentry IOBROKER-TR-064-10)",
-                "nl": "Crash voorkomen (Sentry IOBROKER-TR-064-10)",
-                "fr": "Crash évité (Sentry IOBROKER-TR-064-10)",
-                "it": "Blocco impedito (Sentry IOBROKER-TR-064-10)",
-                "es": "Accidente prevenido (Sentry IOBROKER-TR-064-10)",
-                "pl": "Zapobieganie awariom (Sentry IOBROKER-TR-064-10)",
-                "zh-cn": "防止崩溃（Sentry IOBROKER-TR-064-10）"
-            },
-            "4.0.12": {
-                "en": "Crash prevented (Sentry IOBROKER-TR-064-Y)",
-                "de": "Absturz verhindert (Sentry IOBROKER-TR-064-Y)",
-                "ru": "Сбой предотвращен (Sentry IOBROKER-TR-064-Y)",
-                "pt": "Travamento evitado (Sentry IOBROKER-TR-064-Y)",
-                "nl": "Crash voorkomen (Sentry IOBROKER-TR-064-Y)",
-                "fr": "Crash évité (Sentry IOBROKER-TR-064-Y)",
-                "it": "Crash prevenuto (Sentry IOBROKER-TR-064-Y)",
-                "es": "Choque prevenido (Sentry IOBROKER-TR-064-Y)",
-                "pl": "Zapobiegane awariom (Sentry IOBROKER-TR-064-Y)",
-                "zh-cn": "防止崩溃（Sentry IOBROKER-TR-064-Y）"
-            },
-            "4.0.11": {
-                "en": "Crash prevented (Sentry IOBROKER-TR-064-W)",
-                "de": "Absturz verhindert (Sentry IOBROKER-TR-064-W)",
-                "ru": "Предотвращение столкновения (Sentry IOBROKER-TR-064-W)",
-                "pt": "Falha evitada (Sentinela IOBROKER-TR-064-W)",
-                "nl": "Crash voorkomen (Sentry IOBROKER-TR-064-W)",
-                "fr": "Crash évité (Sentry IOBROKER-TR-064-W)",
-                "it": "Blocco impedito (Sentry IOBROKER-TR-064-W)",
-                "es": "Accidente evitado (Sentry IOBROKER-TR-064-W)",
-                "pl": "Zapobiegane awariom (Sentry IOBROKER-TR-064-W)",
-                "zh-cn": "防止崩溃（Sentry IOBROKER-TR-064-W）"
-            },
-            "4.0.10": {
-                "en": "Crash prevented (Sentry IOBROKER-TR-064-W)",
-                "de": "Absturz verhindert (Sentry IOBROKER-TR-064-W)",
-                "ru": "Предотвращение столкновения (Sentry IOBROKER-TR-064-W)",
-                "pt": "Falha evitada (Sentinela IOBROKER-TR-064-W)",
-                "nl": "Crash voorkomen (Sentry IOBROKER-TR-064-W)",
-                "fr": "Crash évité (Sentry IOBROKER-TR-064-W)",
-                "it": "Blocco impedito (Sentry IOBROKER-TR-064-W)",
-                "es": "Accidente evitado (Sentry IOBROKER-TR-064-W)",
-                "pl": "Zapobiegane awariom (Sentry IOBROKER-TR-064-W)",
-                "zh-cn": "防止崩溃（Sentry IOBROKER-TR-064-W）"
-            }
-        },
-        "title": "TR-064",
-        "titleLang": {
-            "en": "TR-064",
-            "de": "TR-064",
-            "ru": "TR-064",
-            "pt": "TR-064",
-            "nl": "TR-064",
-            "fr": "TR-064",
-            "it": "TR-064",
-            "es": "TR-064",
-            "pl": "TR-064",
-            "zh-cn": "TR-064"
-        },
-        "desc": {
-            "en": "The TR-064 adapter is used to control AVM FritzBox and get the network status of devices or phone calls",
-            "de": "Der TR-064 Adapter dient zur Steuerung der AVM FritzBox und zum Abrufen des Netzwerkstatus von Geräten oder Telefonaten",
-            "ru": "Адаптер TR-064 используется для управления AVM FritzBox и получения сетевого статуса устройств или телефонных звонков.",
-            "pt": "O adaptador TR-064 é usado para controlar AVM FritzBox e obter o status da rede de dispositivos ou chamadas telefônicas",
-            "nl": "De TR-064-adapter wordt gebruikt om de AVM FritzBox te bedienen en de netwerkstatus van apparaten of telefoongesprekken te krijgen",
-            "fr": "L'adaptateur TR-064 est utilisé pour contrôler AVM FritzBox et obtenir l'état du réseau des appareils ou des appels téléphoniques",
-            "it": "L'adattatore TR-064 viene utilizzato per controllare AVM FritzBox e ottenere lo stato della rete dei dispositivi o delle telefonate",
-            "es": "El adaptador TR-064 se utiliza para controlar AVM FritzBox y obtener el estado de la red de dispositivos o llamadas telefónicas",
-            "pl": "Adapter TR-064 służy do sterowania AVM FritzBox i uzyskiwania stanu sieci urządzeń lub połączeń telefonicznych",
-            "zh-cn": "TR-064 适配器用于控制 AVM FritzBox 并获取设备或电话的网络状态"
-        },
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "keywords": [
-            "tr-064",
-            "fritz.box",
-            "fritzbox",
-            "avm"
-        ],
-        "mode": "daemon",
-        "icon": "tr-064.png",
-        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064/master/admin/tr-064.png",
-        "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/blob/master/README.md",
-        "localLink": "http://%iporhost%",
-        "loglevel": "info",
-        "type": "infrastructure",
-        "enabled": true,
-        "messagebox": true,
-        "materialize": true,
-        "compact": true,
-        "main": "main.js",
-        "authors": [
-            {
-                "name": "soef",
-                "email": "soef@gmx.net"
-            }
-        ],
-        "dependencies": [
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
-        "connectionType": "local",
-        "dataSource": "push",
-        "tier": 2,
-        "plugins": {
-            "sentry": {
-                "dsn": "https://5423236b998b415bb9118690986763ea@sentry.iobroker.net/13"
-            }
-        }
+  "common": {
+    "name": "tr-064",
+    "version": "4.2.15",
+    "news": {
+      "4.2.15": {
+        "en": "fix crash case (Sentry IOBROKER-TR-064-35)",
+        "de": "Crashfall beheben (Sentry IOBROKER-TR-064-35)",
+        "ru": "исправить случай сбоя (Sentry IOBROKER-TR-064-35)",
+        "pt": "corrigir caso de falha (Sentry IOBROKER-TR-064-35)",
+        "nl": "crashkoffer repareren (Sentry IOBROKER-TR-064-35)",
+        "fr": "correction du cas de crash (Sentry IOBROKER-TR-064-35)",
+        "it": "fix crash case (Sentry IOBROKER-TR-064-35)",
+        "es": "reparar caso de bloqueo (Sentry IOBROKER-TR-064-35)",
+        "pl": "napraw przypadek awarii (Sentry IOBROKER-TR-064-35)",
+        "zh-cn": "修复崩溃案例 (Sentry IOBROKER-TR-064-35)"
+      },
+      "4.2.14": {
+        "en": "Further optimizations for js-controller 3.3",
+        "de": "Weitere Optimierungen für js-controller 3.3",
+        "ru": "Дальнейшие оптимизации для js-controller 3.3",
+        "pt": "Otimizações adicionais para js-controller 3.3",
+        "nl": "Verdere optimalisaties voor js-controller 3.3",
+        "fr": "Autres optimisations pour js-controller 3.3",
+        "it": "Ulteriori ottimizzazioni per js-controller 3.3",
+        "es": "Más optimizaciones para js-controller 3.3",
+        "pl": "Dalsze optymalizacje dla kontrolera js 3.3",
+        "zh-cn": "js-controller 3.3 进一步优化"
+      },
+      "4.2.13": {
+        "en": "Optimize for js-controller 3.3 and prevent warnings (you pot. need to delete datapoints if you still see errors, they will be recreated)",
+        "de": "Optimieren Sie für js-controller 3.3 und verhindern Sie Warnungen (Sie müssen Datenpunkte löschen, wenn Sie immer noch Fehler sehen, sie werden neu erstellt)",
+        "ru": "Оптимизация для js-controller 3.3 и предотвращение предупреждений (вам нужно удалить точки данных, если вы все еще видите ошибки, они будут воссозданы)",
+        "pt": "Otimize para js-controller 3.3 e evite avisos (você precisa excluir pontos de dados se ainda vir erros, eles serão recriados)",
+        "nl": "Optimaliseer voor js-controller 3.3 en voorkom waarschuwingen (je moet datapunten verwijderen als je nog steeds fouten ziet, ze worden opnieuw gemaakt)",
+        "fr": "Optimisez pour js-controller 3.3 et évitez les avertissements (vous devez supprimer les points de données si vous voyez toujours des erreurs, elles seront recréées)",
+        "it": "Ottimizza per js-controller 3.3 e previeni gli avvisi (potresti eliminare i punti dati se vedi ancora errori, verranno ricreati)",
+        "es": "Optimice para js-controller 3.3 y evite las advertencias (puede que necesite eliminar los puntos de datos si aún ve errores, se volverán a crear)",
+        "pl": "Optymalizuj pod kątem js-controller 3.3 i zapobiegaj ostrzeżeniom (pot. musisz usunąć punkty danych, jeśli nadal widzisz błędy, zostaną one odtworzone)",
+        "zh-cn": "针对 js-controller 3.3 进行优化并防止警告（您可能会。如果您仍然看到错误，则需要删除数据点，它们将被重新创建）"
+      },
+      "4.2.12": {
+        "en": "prevent html template for calllists to be overwritten by default one\nfix crash case (Sentry IOBROKER-TR-064-2M)",
+        "de": "Verhindern Sie, dass die HTML-Vorlage für Anruflisten standardmäßig überschrieben wird\nAbsturzfall beheben (Sentry IOBROKER-TR-064-2M)",
+        "ru": "предотвратить перезапись шаблона html для списков вызовов по умолчанию\nисправить случай сбоя (Sentry IOBROKER-TR-064-2M)",
+        "pt": "evita que o modelo html para listas de chamadas seja substituído por um padrão\ncorrigir caso de falha (Sentry IOBROKER-TR-064-2M)",
+        "nl": "voorkomen dat html-sjabloon voor oproeplijsten standaard wordt overschreven\ncrash case repareren (Sentry IOBROKER-TR-064-2M)",
+        "fr": "empêcher le modèle html pour les listes d'appels d'être écrasé par défaut\ncorrection du cas de crash (Sentry IOBROKER-TR-064-2M)",
+        "it": "impedisce che il modello html per le liste di chiamata venga sovrascritto per impostazione predefinita\ncorrezione del crash case (Sentry IOBROKER-TR-064-2M)",
+        "es": "evitar que la plantilla html para listas de llamadas se sobrescriba por defecto\nreparar caso de bloqueo (Sentry IOBROKER-TR-064-2M)",
+        "pl": "zapobiegaj domyślnemu nadpisywaniu szablonu html dla list wywołań\nnaprawa awarii (Sentry IOBROKER-TR-064-2M)",
+        "zh-cn": "防止默认情况下覆盖用于呼叫列表的html模板\n修复崩溃案例（Sentry IOBROKER-TR-064-2M）"
+      },
+      "4.2.11": {
+        "en": "fix id-reset detection for single calls",
+        "de": "ID-Reset-Erkennung für einzelne Anrufe korrigiert",
+        "ru": "исправить обнаружение сброса идентификатора для одиночных вызовов",
+        "pt": "corrigir detecção de redefinição de id para chamadas únicas",
+        "nl": "id-reset-detectie voor enkele oproepen repareren",
+        "fr": "correction de la détection de réinitialisation d'ID pour les appels uniques",
+        "it": "risolto il rilevamento del ripristino dell'ID per singole chiamate",
+        "es": "corregir la detección de reinicio de identificación para llamadas individuales",
+        "pl": "naprawiono wykrywanie resetowania identyfikatora dla pojedynczych połączeń",
+        "zh-cn": "修复单个呼叫的ID重置检测"
+      },
+      "4.2.10": {
+        "en": "better handle caller id resets by reboots/FW updates to also update list specific counter and log when this happened",
+        "de": "Besseres Behandeln des Zurücksetzens der Anrufer-ID durch Neustarts / FW-Aktualisierungen, um auch den listenspezifischen Zähler zu aktualisieren und zu protokollieren, wenn dies passiert ist",
+        "ru": "лучше обрабатывать сброс идентификатора вызывающего абонента при перезагрузке / обновлении прошивки, чтобы также обновлять счетчик конкретного списка и регистрировать, когда это произошло",
+        "pt": "lidar melhor com redefinições de identificador de chamadas por reinicializações / atualizações de FW para também atualizar o contador específico da lista e registrar quando isso aconteceu",
+        "nl": "Beller-ID-resets beter afhandelen door reboots / FW-updates om ook de lijstspecifieke teller en het logboek bij te werken wanneer dit gebeurde",
+        "fr": "mieux gérer les réinitialisations de l'identifiant de l'appelant par des redémarrages / mises à jour du micrologiciel pour également mettre à jour le compteur spécifique de la liste et le journal lorsque cela s'est produit",
+        "it": "gestire meglio i ripristini dell'ID chiamante tramite riavvio / aggiornamenti FW per aggiornare anche il contatore specifico dell'elenco e il registro quando ciò è accaduto",
+        "es": "manejar mejor los reinicios del identificador de llamadas mediante reinicios / actualizaciones de FW para actualizar también el contador específico de la lista y el registro cuando esto sucedió",
+        "pl": "Lepsza obsługa resetowania identyfikatora dzwoniącego przez ponowne uruchomienie / aktualizacje FW, aby również zaktualizować określony licznik listy i dziennik, kiedy to się stało",
+        "zh-cn": "通过重新启动/固件更新更好地处理呼叫者ID重置，以便还更新列表特定计数器并在发生这种情况时进行记录"
+      },
+      "4.2.9": {
+        "en": "try to better handle calllist resets on FW updates\nMake sure jsonDeviceList do not get deleted on start\nBetter handle not initialized calllist templates",
+        "de": "Versuchen Sie, das Zurücksetzen der Anrufliste bei FW-Updates besser zu handhaben\nStellen Sie sicher, dass jsonDeviceList beim Start nicht gelöscht wird\nBehandeln Sie nicht initialisierte Anruflistenvorlagen besser",
+        "ru": "попытаться лучше обрабатывать сбросы списка вызывающих при обновлениях прошивки\nУбедитесь, что jsonDeviceList не удаляется при запуске\nЛучшая обработка неинициализированных шаблонов списков вызовов",
+        "pt": "tente lidar melhor com as redefinições da lista de chamadas nas atualizações do FW\nCertifique-se de que jsonDeviceList não seja excluído na inicialização\nMelhor lidar com modelos de lista de chamadas não inicializados",
+        "nl": "probeer calllist-resets op FW-updates beter af te handelen\nZorg ervoor dat jsonDeviceList niet wordt verwijderd bij het starten\nBeter omgaan met niet-geïnitialiseerde oproeplijstsjablonen",
+        "fr": "essayez de mieux gérer les réinitialisations de la liste d'appels sur les mises à jour du micrologiciel\nAssurez-vous que jsonDeviceList ne soit pas supprimé au démarrage\nMieux gérer les modèles de liste d'appels non initialisés",
+        "it": "provare a gestire meglio i ripristini delle liste di chiamata sugli aggiornamenti FW\nAssicurati che jsonDeviceList non venga eliminato all'avvio\nGestire meglio i modelli di elenchi di chiamate non inizializzati",
+        "es": "intente manejar mejor los restablecimientos de la lista de llamadas en las actualizaciones de FW\nAsegúrese de que jsonDeviceList no se elimine al iniciar\nManeje mejor las plantillas de listas de llamadas no inicializadas",
+        "pl": "spróbuj lepiej radzić sobie z resetowaniem listy wywołań przy aktualizacjach FW\nUpewnij się, że jsonDeviceList nie zostaną usunięte podczas uruchamiania\nLepsza obsługa niezainicjowanych szablonów list wywołań",
+        "zh-cn": "尝试更好地处理固件更新中的呼叫清单重置\n确保jsonDeviceList不会在启动时被删除\n更好地处理未初始化的呼叫列表模板"
+      }
     },
-    "encryptedNative": [
-        "password"
-    ],
-    "protectedNative": [
-        "password"
-    ],
-    "native": {
-        "iporhost": "fritz.box",
-        "user": "",
-        "password": "",
-        "pollingInterval": 10,
-        "useCallMonitor": true,
-        "usePhonebook": true,
-        "useDevices": true,
-        "devices": [],
-        "calllists": {
-            "missed": {
-                "generateJSON": true,
-                "generateHTML": true,
-                "maxEntries": 10
-            },
-            "all": {
-                "generateJSON": true,
-                "generateHTML": true,
-                "maxEntries": 10
-            },
-            "inbound": {
-                "generateJSON": true,
-                "generateHTML": true,
-                "maxEntries": 10
-            },
-            "outbound": {
-                "generateJSON": true,
-                "generateHTML": true,
-                "maxEntries": 10
-            }
-        }
+    "title": "TR-064",
+    "titleLang": {
+      "en": "TR-064",
+      "de": "TR-064",
+      "ru": "TR-064",
+      "pt": "TR-064",
+      "nl": "TR-064",
+      "fr": "TR-064",
+      "it": "TR-064",
+      "es": "TR-064",
+      "pl": "TR-064",
+      "zh-cn": "TR-064"
     },
-    "objects": []
+    "desc": {
+      "en": "The TR-064 adapter is used to control AVM FritzBox and get the network status of devices or phone calls",
+      "de": "Der TR-064 Adapter dient zur Steuerung der AVM FritzBox und zum Abrufen des Netzwerkstatus von Geräten oder Telefonaten",
+      "ru": "Адаптер TR-064 используется для управления AVM FritzBox и получения сетевого статуса устройств или телефонных звонков.",
+      "pt": "O adaptador TR-064 é usado para controlar AVM FritzBox e obter o status da rede de dispositivos ou chamadas telefônicas",
+      "nl": "De TR-064-adapter wordt gebruikt om de AVM FritzBox te bedienen en de netwerkstatus van apparaten of telefoongesprekken te krijgen",
+      "fr": "L'adaptateur TR-064 est utilisé pour contrôler AVM FritzBox et obtenir l'état du réseau des appareils ou des appels téléphoniques",
+      "it": "L'adattatore TR-064 viene utilizzato per controllare AVM FritzBox e ottenere lo stato della rete dei dispositivi o delle telefonate",
+      "es": "El adaptador TR-064 se utiliza para controlar AVM FritzBox y obtener el estado de la red de dispositivos o llamadas telefónicas",
+      "pl": "Adapter TR-064 służy do sterowania AVM FritzBox i uzyskiwania stanu sieci urządzeń lub połączeń telefonicznych",
+      "zh-cn": "TR-064 适配器用于控制 AVM FritzBox 并获取设备或电话的网络状态"
+    },
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "keywords": [
+      "tr-064",
+      "fritz.box",
+      "fritzbox",
+      "avm"
+    ],
+    "mode": "daemon",
+    "icon": "tr-064.png",
+    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064/master/admin/tr-064.png",
+    "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/blob/master/README.md",
+    "localLink": "http://%iporhost%",
+    "loglevel": "info",
+    "type": "infrastructure",
+    "enabled": true,
+    "messagebox": true,
+    "materialize": true,
+    "compact": true,
+    "main": "main.js",
+    "authors": [
+      {
+        "name": "soef",
+        "email": "soef@gmx.net"
+      }
+    ],
+    "dependencies": [
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ],
+    "connectionType": "local",
+    "dataSource": "push",
+    "tier": 2,
+    "plugins": {
+      "sentry": {
+        "dsn": "https://5423236b998b415bb9118690986763ea@sentry.iobroker.net/13"
+      }
+    }
+  },
+  "encryptedNative": [
+    "password"
+  ],
+  "protectedNative": [
+    "password"
+  ],
+  "native": {
+    "iporhost": "fritz.box",
+    "user": "",
+    "password": "",
+    "pollingInterval": 10,
+    "useCallMonitor": true,
+    "usePhonebook": true,
+    "useDevices": true,
+    "devices": [],
+    "calllists": {
+      "missed": {
+        "generateJSON": true,
+        "generateHTML": true,
+        "maxEntries": 10
+      },
+      "all": {
+        "generateJSON": true,
+        "generateHTML": true,
+        "maxEntries": 10
+      },
+      "inbound": {
+        "generateJSON": true,
+        "generateHTML": true,
+        "maxEntries": 10
+      },
+      "outbound": {
+        "generateJSON": true,
+        "generateHTML": true,
+        "maxEntries": 10
+      }
+    }
+  },
+  "objects": []
 }
