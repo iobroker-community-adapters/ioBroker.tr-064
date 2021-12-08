@@ -34,7 +34,9 @@
     "@iobroker/adapter-core": "^2.5.1"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^2.2.1",
+    "@alcalzone/release-script": "^3.4.1",
+    "@alcalzone/release-script-plugin-iobroker": "^3.4.1",
+    "@alcalzone/release-script-plugin-license": "^3.4.1",
     "gulp": "^4.0.2",
     "mocha": "^9.1.3",
     "chai": "^4.3.4",
@@ -48,7 +50,10 @@
     "test:package": "mocha test/package --exit",
     "test:unit": "mocha test/unit --exit",
     "test:integration": "mocha test/integration --exit",
-    "release": "release-script"
+    "release": "release-script",
+    "release-patch": "release-script patch --yes",
+    "release-minor": "release-script minor --yes",
+    "release-major": "release-script major --yes"
   },
   "engines": {
     "node": ">=8.0.0"
