@@ -42,7 +42,7 @@
     "chai": "^4.3.6",
     "axios": "^0.26.0",
     "@iobroker/testing": "^2.5.4",
-    "eslint": "^7.32.0"
+    "eslint": "^8.9.0"
   },
   "main": "main.js",
   "scripts": {
