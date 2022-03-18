@@ -820,7 +820,7 @@ TR064.prototype.command = function (command, callback) {
     } catch(e) {
         return;
     }   //xxx
-    if (typeof o.params !== 'object' || o.params === null) {
+    if (!o || typeof o.params !== 'object' || o.params === null) {
         return;
     }
 
