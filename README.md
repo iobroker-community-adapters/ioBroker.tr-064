@@ -259,7 +259,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2015-2021 soef <soef@gmx.net>
+Copyright (c) 2015-2022 soef <soef@gmx.net>, ioBroker-Community-Developers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
