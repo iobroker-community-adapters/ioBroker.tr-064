@@ -136,6 +136,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ### __WORK IN PROGRESS__
 * (Apollon77) Fix info logs on callee/caller
+* (Apollon77) Add special handling for potential broken external image links in phonebook
 * (Apollon77) Prevent some crash cases reported by Sentry
 
 ### 4.2.15 (2021-12-08)
