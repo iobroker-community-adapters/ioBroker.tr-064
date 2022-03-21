@@ -133,8 +133,7 @@ To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 4.2.16 (2022-03-21)
 * (Apollon77) Fix info logs on callee/caller
 * (Apollon77) Add special handling for potential broken external image links in phonebook
 * (Apollon77) Prevent some crash cases reported by Sentry

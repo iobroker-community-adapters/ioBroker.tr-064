@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "4.2.15",
+    "version": "4.2.16",
     "news": {
+      "4.2.16": {
+        "en": "Fix info logs on callee/caller\nAdd special handling for potential broken external image links in phonebook\nPrevent some crash cases reported by Sentry",
+        "de": "Korrigieren Sie Info-Protokolle auf Angerufenem/Anrufer\nFügen Sie eine spezielle Behandlung für potenziell defekte externe Bildlinks im Telefonbuch hinzu\nVerhindern Sie einige von Sentry gemeldete Absturzfälle",
+        "ru": "Исправить журналы информации о вызываемом / вызывающем абоненте\nДобавить специальную обработку для потенциально неработающих ссылок на внешние изображения в телефонной книге.\nПредотвращение некоторых случаев сбоев, о которых сообщает Sentry.",
+        "pt": "Corrigir registros de informações no chamador/chamador\nAdicione tratamento especial para possíveis links de imagens externas quebrados na agenda telefônica\nPrevenir alguns casos de travamento relatados pelo Sentinela",
+        "nl": "Fix info logs op bellee/beller\nVoeg speciale afhandeling toe voor mogelijk verbroken externe afbeeldingslinks in het telefoonboek\nVoorkom enkele door Sentry gemelde crashgevallen",
+        "fr": "Correction des journaux d'informations sur l'appelé/appelant\nAjouter une gestion spéciale pour les liens d'images externes potentiellement rompus dans le répertoire\nEmpêcher certains cas de plantage signalés par Sentry",
+        "it": "Correggi i registri delle informazioni sul chiamato/chiamante\nAggiungi una gestione speciale per potenziali collegamenti di immagini esterne interrotti nella rubrica\nPrevenire alcuni casi di crash segnalati da Sentry",
+        "es": "Arreglar registros de información en el destinatario/persona que llama\nAgregue un manejo especial para posibles enlaces de imágenes externas rotas en la agenda telefónica\nEvitar algunos casos de bloqueo informados por Sentry",
+        "pl": "Napraw dzienniki informacji na rozmówcy/rozmówcy\nDodaj specjalną obsługę potencjalnych uszkodzonych linków do obrazów zewnętrznych w książce telefonicznej\nZapobiegaj niektórym przypadkom awarii zgłaszanych przez Sentry",
+        "zh-cn": "修复被调用者/调用者的信息日志\n为电话簿中可能损坏的外部图像链接添加特殊处理\n防止 Sentry 报告的一些崩溃案例"
+      },
       "4.2.15": {
         "en": "fix crash case (Sentry IOBROKER-TR-064-35)",
         "de": "Crashfall beheben (Sentry IOBROKER-TR-064-35)",
@@ -74,18 +86,6 @@
         "es": "manejar mejor los reinicios del identificador de llamadas mediante reinicios / actualizaciones de FW para actualizar también el contador específico de la lista y el registro cuando esto sucedió",
         "pl": "Lepsza obsługa resetowania identyfikatora dzwoniącego przez ponowne uruchomienie / aktualizacje FW, aby również zaktualizować określony licznik listy i dziennik, kiedy to się stało",
         "zh-cn": "通过重新启动/固件更新更好地处理呼叫者ID重置，以便还更新列表特定计数器并在发生这种情况时进行记录"
-      },
-      "4.2.9": {
-        "en": "try to better handle calllist resets on FW updates\nMake sure jsonDeviceList do not get deleted on start\nBetter handle not initialized calllist templates",
-        "de": "Versuchen Sie, das Zurücksetzen der Anrufliste bei FW-Updates besser zu handhaben\nStellen Sie sicher, dass jsonDeviceList beim Start nicht gelöscht wird\nBehandeln Sie nicht initialisierte Anruflistenvorlagen besser",
-        "ru": "попытаться лучше обрабатывать сбросы списка вызывающих при обновлениях прошивки\nУбедитесь, что jsonDeviceList не удаляется при запуске\nЛучшая обработка неинициализированных шаблонов списков вызовов",
-        "pt": "tente lidar melhor com as redefinições da lista de chamadas nas atualizações do FW\nCertifique-se de que jsonDeviceList não seja excluído na inicialização\nMelhor lidar com modelos de lista de chamadas não inicializados",
-        "nl": "probeer calllist-resets op FW-updates beter af te handelen\nZorg ervoor dat jsonDeviceList niet wordt verwijderd bij het starten\nBeter omgaan met niet-geïnitialiseerde oproeplijstsjablonen",
-        "fr": "essayez de mieux gérer les réinitialisations de la liste d'appels sur les mises à jour du micrologiciel\nAssurez-vous que jsonDeviceList ne soit pas supprimé au démarrage\nMieux gérer les modèles de liste d'appels non initialisés",
-        "it": "provare a gestire meglio i ripristini delle liste di chiamata sugli aggiornamenti FW\nAssicurati che jsonDeviceList non venga eliminato all'avvio\nGestire meglio i modelli di elenchi di chiamate non inizializzati",
-        "es": "intente manejar mejor los restablecimientos de la lista de llamadas en las actualizaciones de FW\nAsegúrese de que jsonDeviceList no se elimine al iniciar\nManeje mejor las plantillas de listas de llamadas no inicializadas",
-        "pl": "spróbuj lepiej radzić sobie z resetowaniem listy wywołań przy aktualizacjach FW\nUpewnij się, że jsonDeviceList nie zostaną usunięte podczas uruchamiania\nLepsza obsługa niezainicjowanych szablonów list wywołań",
-        "zh-cn": "尝试更好地处理固件更新中的呼叫清单重置\n确保jsonDeviceList不会在启动时被删除\n更好地处理未初始化的呼叫列表模板"
       }
     },
     "title": "TR-064",
