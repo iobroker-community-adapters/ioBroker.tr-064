@@ -53,3 +53,6 @@ Temporary Items
 .ba
 .idea
 nbproject
+
+# ioBroker dev-server
+.dev-server/

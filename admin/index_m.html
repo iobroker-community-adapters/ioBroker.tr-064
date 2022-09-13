@@ -36,16 +36,6 @@
         .m.react-blue .card {
             background-color: #272727!important;
         }
-        /* hidden table column */
-        #devices td:nth-of-type(1) {
-            visibility: hidden !important;
-            display: none !important;
-        }
-        /* hidden table column */
-        #devices th:nth-of-type(1) {
-            visibility: hidden !important;
-            display: none !important;
-        }
     </style>
 
     <script type="text/javascript">
@@ -94,12 +84,8 @@
         //Add new row to table for device
         function addDeviceRow(onChange, name, ip, mac){
             let countRows = $('#devices > tr').length;
-            let newIndex = countRows + 1;
 
             let newRow = '<tr>\n' +
-                '                        <td>\n' +
-                '                            <p>'+ newIndex +'</p>\n' +
-                '                        </td>\n' +
                 '                        <td>\n' +
                 '                                <input type="text" class="validate">\n' +
                 '                        </td>\n' +
@@ -124,15 +110,15 @@
             });
 
             if (name && ip && mac) {
-                $('#devices > tr').eq(countRows).find('td').eq(1).find('input').val(name)
+                $('#devices > tr').eq(countRows).find('td').eq(0).find('input').val(name)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
 
-                $('#devices > tr').eq(countRows).find('td').eq(2).find('input').val(ip)
+                $('#devices > tr').eq(countRows).find('td').eq(1).find('input').val(ip)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
 
-                $('#devices > tr').eq(countRows).find('td').eq(3).find('input').val(mac)
+                $('#devices > tr').eq(countRows).find('td').eq(2).find('input').val(mac)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
             }
@@ -238,7 +224,7 @@
                     }
                 }
 
-                //defaul sort by name =)
+                //default sort by name =)
                 $('#modalDeviceName').click();
             });
         }
@@ -312,19 +298,18 @@
 
                 if ($key.attr('type') === 'checkbox') {
                     // do not call onChange direct, because onChange could expect some arguments
-                    $key.prop('checked', sObj).on('change', () => onChange())
-                    ;
+                    $key.prop('checked', sObj).on('change', () => onChange());
                 } else {
                     // do not call onChange direct, because onChange could expect some arguments
                     $key.val(sObj)
                         .on('change', () => onChange())
-                        .on('keyup', () => onChange())
-                    ;
+                        .on('keyup', () => onChange());
                 }
             });
 
             //read devices from settings and show in table
             let countDevices = settings.devices.length;
+            console.log('countDevices: ' + countDevices);
             if (countDevices > 0) {
                 for (let i = 0; i < countDevices; i++) {
                     addDeviceRow(onChange, settings.devices[i].name, settings.devices[i].ip, settings.devices[i].mac);
@@ -386,9 +371,9 @@
             let arrDevices = [];
             if (countDevices > 0) {
                 for(let i = 0; i < countDevices; i++){
-                    let name = $('#devices > tr').eq(i).find('td').eq(1).find('input').val();
-                    let ip   = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
-                    let mac  = $('#devices > tr').eq(i).find('td').eq(3).find('input').val();
+                    let name = $('#devices > tr').eq(i).find('td').eq(0).find('input').val();
+                    let ip   = $('#devices > tr').eq(i).find('td').eq(1).find('input').val();
+                    let mac  = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
                     let json = {name: name, ip: ip, mac: mac};
                     arrDevices.push(json);
                 }
@@ -507,11 +492,10 @@
                 <table class="centered highlight">
                     <thead>
                     <tr>
-                        <th class="translate" id="index" style="display: none"></th>
                         <th class="translate" id="deviceName">name</th>
                         <th class="translate" id="deviceIP">ip</th>
                         <th class="translate" id="deviceMac">MAC</th>
-                        <th class="translate" id="deviceDelete"></th>
+                        <th class="translate" id="deviceDelete">&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody id="devices">
