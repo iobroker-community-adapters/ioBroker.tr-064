@@ -36,6 +36,16 @@
         .m.react-blue .card {
             background-color: #272727!important;
         }
+        /* hidden table column */
+        #devices td:nth-of-type(1) {
+            visibility: hidden !important;
+            display: none !important;
+        }
+        /* hidden table column */
+        #devices th:nth-of-type(1) {
+            visibility: hidden !important;
+            display: none !important;
+        }
     </style>
 
     <script type="text/javascript">
@@ -109,7 +119,7 @@
 
             $('.delete-device').on('click', function(){
                 $(this).parents('tr').remove();
-                reIndex();
+                //reIndex();
                 onChange();
             });
 
@@ -133,6 +143,7 @@
         }
 
         //give table rows new index number
+        /*
         function reIndex() {
             let count = $('#devices > tr').length;
             for (let i = 0; i < count; i++) {
@@ -140,6 +151,7 @@
                 $('#devices > tr').eq(i).find('p').replaceWith('<p>' + newIndex + '</p>');
             }
         }
+        */
 
         //look for devices on router
         function deviceLookup(onChange) {
@@ -495,7 +507,7 @@
                 <table class="centered highlight">
                     <thead>
                     <tr>
-                        <th class="translate" id="index"></th>
+                        <th class="translate" id="index" style="display: none"></th>
                         <th class="translate" id="deviceName">name</th>
                         <th class="translate" id="deviceIP">ip</th>
                         <th class="translate" id="deviceMac">MAC</th>
