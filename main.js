@@ -152,7 +152,7 @@ const CHANNEL_CALLLISTS = 'calllists';
 const CHANNEL_CALLMONITOR = 'callmonitor';
 
 let devStates;
-const allDevices = [];
+let allDevices = [];
 const ipActive = {};
 
 const states = {
@@ -250,7 +250,7 @@ function onMessage(obj) {
     let reread;
 
     switch (obj.command) {
-        case 'discovery':
+        case 'discovery': {
             if (typeof obj.message === 'object') {
                 onlyActive = obj.message.onlyActive;
                 reread = obj.message.reread;
@@ -262,13 +262,15 @@ function onMessage(obj) {
                 adapter.sendTo(obj.from, obj.command, JSON.stringify(allDevices), obj.callback);
                 return true;
             }
-            allDevices.onlyActive = onlyActive;
+
+            const newAllDevices = [];
+            newAllDevices.onlyActive = onlyActive;
 
             tr064Client.forEachHostEntry((err, device, cnt, all) => {
                 const active = !!(~~device.NewActive);
 
                 if (!onlyActive || active) {
-                    allDevices.push ({
+                    newAllDevices.push({
                         name: device.NewHostName,
                         ip: device.NewIPAddress,
                         mac: device.NewMACAddress,
@@ -276,11 +278,12 @@ function onMessage(obj) {
                     });
                 }
                 if (cnt + 1 >= all) {
-                    adapter.sendTo(obj.from, obj.command, JSON.stringify(allDevices), obj.callback);
+                    allDevices = newAllDevices;
+                    adapter.sendTo(obj.from, obj.command, JSON.stringify(newAllDevices), obj.callback);
                 }
             });
             return true;
-
+        }
         default:
             adapter.log.warn('Unknown command: ' + obj.command);
             break;
@@ -1087,7 +1090,7 @@ function createConfiguredDevices(callback) {
         }
         dev.setChannelEx(device.NewHostName, { common: { name: device.NewHostName + ' (' + device.NewIPAddress + ')', role: 'channel' }, native: { mac: device.NewMACAddress }} );
         setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
-        arr.push( { active: !!device.NewActive, ip: device.NewIPAddress, name: device.NewHostName, mac: device.NewMACAddress } );
+        arr.push( { active: !!(~~device.NewActive), ip: device.NewIPAddress, name: device.NewHostName, mac: device.NewMACAddress } );
     });
 }
 
@@ -1110,7 +1113,7 @@ function updateDevices(callback) {
         dev.setChannelEx(device.NewHostName);
         setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
         if (adapter.config.jsonDeviceList) {
-            arr.push( { active: !!device.NewActive, ip: device.NewIPAddress, name: device.NewHostName, mac: device.NewMACAddress } );
+            arr.push( { active: !!(~~device.NewActive), ip: device.NewIPAddress, name: device.NewHostName, mac: device.NewMACAddress } );
         }
     });
 }
