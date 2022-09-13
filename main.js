@@ -259,12 +259,14 @@ function onMessage(obj) {
                 return false;
             }
             if (!reread && allDevices.length > 0 && allDevices.onlyActive === onlyActive) {
+                adapter.log.debug('Discovery result: ' + JSON.stringify(allDevices));
                 adapter.sendTo(obj.from, obj.command, JSON.stringify(allDevices), obj.callback);
                 return true;
             }
 
             const newAllDevices = [];
             newAllDevices.onlyActive = onlyActive;
+            let responseSent = false;
 
             tr064Client.forEachHostEntry((err, device, cnt, all) => {
                 const active = !!(~~device.NewActive);
@@ -277,8 +279,11 @@ function onMessage(obj) {
                         active: active
                     });
                 }
-                if (cnt + 1 >= all) {
+                adapter.log.debug('Discovery Add (' + cnt + '/' + all + '): ' + device.NewHostName + ' ' + device.NewIPAddress + ' ' + device.NewMACAddress + ' ' + device.NewActive);
+                if (cnt + 1 >= all && !responseSent) {
+                    responseSent = true;
                     allDevices = newAllDevices;
+                    adapter.log.debug('Discovery result: ' + JSON.stringify(allDevices));
                     adapter.sendTo(obj.from, obj.command, JSON.stringify(newAllDevices), obj.callback);
                 }
             });
