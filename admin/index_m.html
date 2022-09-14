@@ -142,10 +142,12 @@
         //look for devices on router
         function deviceLookup(onChange) {
             $('.load-wait').show();
-            $('#chooseDevice').empty();
+            console.log('deviceLookup started');
             sendTo('tr-064.' + instance, 'discovery', {onlyActive: true, reread: false}, function (result) {
+                $('#chooseDevice').empty();
                 $('.load-wait').hide();
                 let arr = JSON.parse(result);
+                console.log('Got ' + arr.length + ' devices');
 
                 for (let i = 0; i < arr.length; i++) {
                     let newRow = '<tr>\n' +
@@ -231,12 +233,15 @@
 
         // the function loadSettings has to exist ...
         function load(settings, onChange) {
+            console.log('load started');
             if (systemConfig) {
                 secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
+                console.log('load started: system config existing');
                 loadHelper(settings, onChange);
                 return;
             }
             socket.emit('getObject', 'system.config', function (err, obj) {
+                console.log('load started: system config loaded');
                 secret = (obj.native ? obj.native.secret : '') || 'Zgfr56gFe87jJOM';
                 loadHelper(settings, onChange);
             });
@@ -307,6 +312,7 @@
                 }
             });
 
+            $('#devices').empty();
             //read devices from settings and show in table
             let countDevices = settings.devices.length;
             console.log('countDevices: ' + countDevices);

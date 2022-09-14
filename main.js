@@ -249,6 +249,7 @@ function onMessage(obj) {
     let onlyActive;
     let reread;
 
+    adapter.log.debug('onMessage: ' + JSON.stringify(obj));
     switch (obj.command) {
         case 'discovery': {
             if (typeof obj.message === 'object') {
