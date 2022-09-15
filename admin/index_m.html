@@ -84,10 +84,14 @@
         //Add new row to table for device
         function addDeviceRow(onChange, name, ip, mac){
             let countRows = $('#devices > tr').length;
+            let newIndex = countRows + 1;
 
             let newRow = '<tr>\n' +
                 '                        <td>\n' +
-                '                                <input type="text" class="validate">\n' +
+                '                            <p>'+ newIndex +'</p>\n' +
+                '                        </td>\n' +
+                '                        <td>\n' +
+                '                            <input type="text" class="validate">\n' +
                 '                        </td>\n' +
                 '                        <td>\n' +
                 '                            <input type="text" class="validate">\n' +
@@ -105,20 +109,20 @@
 
             $('.delete-device').on('click', function(){
                 $(this).parents('tr').remove();
-                //reIndex();
+                reIndex();
                 onChange();
             });
 
             if (name && ip && mac) {
-                $('#devices > tr').eq(countRows).find('td').eq(0).find('input').val(name)
+                $('#devices > tr').eq(countRows).find('td').eq(1).find('input').val(name)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
 
-                $('#devices > tr').eq(countRows).find('td').eq(1).find('input').val(ip)
+                $('#devices > tr').eq(countRows).find('td').eq(2).find('input').val(ip)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
 
-                $('#devices > tr').eq(countRows).find('td').eq(2).find('input').val(mac)
+                $('#devices > tr').eq(countRows).find('td').eq(3).find('input').val(mac)
                     .on('change', () => onChange())
                     .on('keyup', () => onChange());
             }
@@ -129,7 +133,6 @@
         }
 
         //give table rows new index number
-        /*
         function reIndex() {
             let count = $('#devices > tr').length;
             for (let i = 0; i < count; i++) {
@@ -137,7 +140,6 @@
                 $('#devices > tr').eq(i).find('p').replaceWith('<p>' + newIndex + '</p>');
             }
         }
-        */
 
         //look for devices on router
         function deviceLookup(onChange) {
@@ -377,9 +379,9 @@
             let arrDevices = [];
             if (countDevices > 0) {
                 for(let i = 0; i < countDevices; i++){
-                    let name = $('#devices > tr').eq(i).find('td').eq(0).find('input').val();
-                    let ip   = $('#devices > tr').eq(i).find('td').eq(1).find('input').val();
-                    let mac  = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
+                    let name = $('#devices > tr').eq(i).find('td').eq(1).find('input').val();
+                    let ip   = $('#devices > tr').eq(i).find('td').eq(2).find('input').val();
+                    let mac  = $('#devices > tr').eq(i).find('td').eq(3).find('input').val();
                     let json = {name: name, ip: ip, mac: mac};
                     arrDevices.push(json);
                 }
@@ -498,6 +500,7 @@
                 <table class="centered highlight">
                     <thead>
                     <tr>
+                        <th class="translate" id="index"></th>
                         <th class="translate" id="deviceName">name</th>
                         <th class="translate" id="deviceIP">ip</th>
                         <th class="translate" id="deviceMac">MAC</th>
