@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "4.2.16",
+    "version": "4.2.17",
     "news": {
+      "4.2.17": {
+        "en": "Prevent duplication of entries in configuration\nMake sure active status of devices in jsonDeviceList is correct",
+        "de": "Verhindern Sie die Vervielfältigung von Einträgen in der Konfiguration\nStellen Sie sicher, dass der aktive Status von Geräten in json Gerät Liste ist korrekt",
+        "ru": "Предотвратить дублирование записей в конфигурации\nУбедитесь, что активный статус устройств в json Устройства Список правильный",
+        "pt": "Impedir a duplicação de entradas na configuração\nCertifique-se de status ativo de dispositivos em json Dispositivo A lista é correta",
+        "nl": "Vertaling:\nZorg voor actieve status van apparaten in Json Vernietiging. List is correct",
+        "fr": "Prévenir les doubles emplois dans la configuration\nAssurez-vous de l'état actif des appareils en json Dispositif La liste est correcte",
+        "it": "Prevenire la duplicazione delle voci nella configurazione\nAssicurarsi lo stato attivo dei dispositivi in json Dispositivo La lista è corretta",
+        "es": "Prevenir la duplicación de entradas en configuración\nAsegúrese de que el estado activo de los dispositivos en json Dispositivo La lista es correcta",
+        "pl": "Wynalezienie wpisów w konfiguracji\nUmożliwić czynny status urządzeń w jsonie. Device Lista jest prawidłowa",
+        "zh-cn": "B. 组合中物品的预防重复\nB. 确保在丛金中确保装置的积极参与 证人 名单正确"
+      },
       "4.2.16": {
         "en": "Fix info logs on callee/caller\nAdd special handling for potential broken external image links in phonebook\nPrevent some crash cases reported by Sentry",
         "de": "Korrigieren Sie Info-Protokolle auf Angerufenem/Anrufer\nFügen Sie eine spezielle Behandlung für potenziell defekte externe Bildlinks im Telefonbuch hinzu\nVerhindern Sie einige von Sentry gemeldete Absturzfälle",
@@ -74,18 +86,6 @@
         "es": "corregir la detección de reinicio de identificación para llamadas individuales",
         "pl": "naprawiono wykrywanie resetowania identyfikatora dla pojedynczych połączeń",
         "zh-cn": "修复单个呼叫的ID重置检测"
-      },
-      "4.2.10": {
-        "en": "better handle caller id resets by reboots/FW updates to also update list specific counter and log when this happened",
-        "de": "Besseres Behandeln des Zurücksetzens der Anrufer-ID durch Neustarts / FW-Aktualisierungen, um auch den listenspezifischen Zähler zu aktualisieren und zu protokollieren, wenn dies passiert ist",
-        "ru": "лучше обрабатывать сброс идентификатора вызывающего абонента при перезагрузке / обновлении прошивки, чтобы также обновлять счетчик конкретного списка и регистрировать, когда это произошло",
-        "pt": "lidar melhor com redefinições de identificador de chamadas por reinicializações / atualizações de FW para também atualizar o contador específico da lista e registrar quando isso aconteceu",
-        "nl": "Beller-ID-resets beter afhandelen door reboots / FW-updates om ook de lijstspecifieke teller en het logboek bij te werken wanneer dit gebeurde",
-        "fr": "mieux gérer les réinitialisations de l'identifiant de l'appelant par des redémarrages / mises à jour du micrologiciel pour également mettre à jour le compteur spécifique de la liste et le journal lorsque cela s'est produit",
-        "it": "gestire meglio i ripristini dell'ID chiamante tramite riavvio / aggiornamenti FW per aggiornare anche il contatore specifico dell'elenco e il registro quando ciò è accaduto",
-        "es": "manejar mejor los reinicios del identificador de llamadas mediante reinicios / actualizaciones de FW para actualizar también el contador específico de la lista y el registro cuando esto sucedió",
-        "pl": "Lepsza obsługa resetowania identyfikatora dzwoniącego przez ponowne uruchomienie / aktualizacje FW, aby również zaktualizować określony licznik listy i dziennik, kiedy to się stało",
-        "zh-cn": "通过重新启动/固件更新更好地处理呼叫者ID重置，以便还更新列表特定计数器并在发生这种情况时进行记录"
       }
     },
     "title": "TR-064",
