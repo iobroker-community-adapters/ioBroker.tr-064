@@ -20,8 +20,10 @@ Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
 
 ## Needed Settings in your Fritzbox:
 * You need to change the Login to "Use Username and password"
+  * The maximum relevant password length for FritzBox is 32 characters! FritzBox cuts the password silently in the UI. Please make sure to enter only the 32 relevant characters in the adapter configuration
 * Create a user and allow him to "control the Fritzbox and settings"
 * Enable Application Access (on Network tab). Click flow in german: Netzwerk ->Heimnetzfreigaben -> Zugriff für Anwendungen -> aktiviert
+* If you want to use the "ring" function you need to set additional settings (see below)
 
 ## Initial Creation
 This adapter was initially created by @soef at https://github.com/soef/ioBroker.tr-064 but not maintained any more, so we moved it to iobroker-community so that bugs could be fixed. thanks @soef for his work.
@@ -52,7 +54,7 @@ If you move from tr-064-community adapters you can easily copy whole device list
 - When using an external number, the ring state will connect you to the external number.
  The Fritz!Box will call the external number and your default phone will ring, when the called phone is picked up.
  The default phone can be configured in the Fritz!Box under:
- Telefonie/Anrufe/[Tab]Wahlhilfe/Wählhilfe verwenden
+ Telefonie/Anrufe/[Tab]Wahlhilfe/Wählhilfe verwenden . Please also make sure to choose "Verbindung mit dem Telefon ISDN- und Schnurlostelefone"
 
 ### toPauseState
 - Values: ring, connect, end
@@ -133,6 +135,9 @@ To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (Apollon77) Prepare for future js-controller verisons
+
 ### 4.2.17 (2022-09-16)
 * (simatec/Apollon77) Prevent duplication of entries in configuration
 * (Apollon77) Make sure active status of devices in jsonDeviceList is correct
@@ -264,7 +269,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2015-2022 soef <soef@gmx.net>, ioBroker-Community-Developers
+Copyright (c) 2015-2023 soef <soef@gmx.net>, ioBroker-Community-Developers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

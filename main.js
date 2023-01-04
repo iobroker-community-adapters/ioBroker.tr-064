@@ -4,7 +4,6 @@
 
 'use strict';
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
-const tools       = require(`${utils.controllerDir}/lib/tools`);
 const adapterName = require('./package.json').name.split('.').pop();
 const phonebook   = require('./lib/phonebook');
 const CallMonitor = require('./lib/callmonitor');
@@ -116,7 +115,7 @@ function startAdapter(options) {
         devices = new Devices(adapter);
         adapter.getForeignObject('system.config', (err, systemConfig) => {
             if (adapter.config.password && (!adapter.supportsFeature || !adapter.supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE'))) {
-                adapter.config.password = tools.decrypt((systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', adapter.config.password);
+                adapter.config.password = adapter.decrypt((systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', adapter.config.password);
             }
             // eslint-disable-next-line no-control-regex
             if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(adapter.config.password)) {
