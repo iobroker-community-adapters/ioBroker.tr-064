@@ -41,7 +41,7 @@
     "@iobroker/dev-server": "^0.6.0",
     "@iobroker/testing": "^4.1.0",
     "mocha": "^10.2.0",
-    "chai": "^4.3.7",
+    "chai": "^4.3.8",
     "eslint": "^8.48.0"
   },
   "main": "main.js",
