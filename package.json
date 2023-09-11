@@ -27,6 +27,9 @@
     "type": "git",
     "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064"
   },
+  "engines": {
+    "node": ">=16"
+  },
   "dependencies": {
     "mdns-discovery": "^0.2.6",
     "tr-O64": "^0.2.4",
