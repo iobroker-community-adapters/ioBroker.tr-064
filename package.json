@@ -45,7 +45,7 @@
     "@iobroker/testing": "^4.1.0",
     "mocha": "^10.2.0",
     "chai": "^4.3.10",
-    "eslint": "^8.51.0"
+    "eslint": "^8.52.0"
   },
   "main": "main.js",
   "scripts": {
