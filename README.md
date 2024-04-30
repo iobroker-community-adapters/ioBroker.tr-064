@@ -10,8 +10,6 @@
 [![Downloads](https://img.shields.io/npm/dm/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 
 
-***This adapter requires at least Node 8.x***
-
 **This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
 ## Info
@@ -135,6 +133,14 @@ To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
 To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
 
 ## Changelog
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
+* (mcm1957) Adapter requires node.js >= 18 and js-controller >= 5 now
+* (mcm1957) Dependencies have been updated
+
 ### 4.2.18 (2023-01-04)
 * (Apollon77) Prepare for future js-controller verisons
 
@@ -269,6 +275,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 ## License
 The MIT License (MIT)
 
+Copyright (c) 2023-2024 ioBroker Community Developers <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2015-2023 soef <soef@gmx.net>, ioBroker-Community-Developers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

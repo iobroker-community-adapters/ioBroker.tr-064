@@ -1,9 +1,12 @@
 {
+    "root": true,
     "env": {
         "es6": true,
-        "node": true
+        "node": true,
+        "mocha": true
     },
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended"],
+    "plugins": [],
     "rules": {
         "indent": [
             "error",
@@ -12,18 +15,17 @@
                 "SwitchCase": 1
             }
         ],
-        "curly": "error",
-        "brace-style": "error",
-        "arrow-parens": ["error", "as-needed"],
         "no-console": "off",
-        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-        "no-useless-escape": "warn",
-        "no-constant-condition": "off",
-        "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
+        "no-unused-vars": [
+            "error",
+            {
+                "ignoreRestSiblings": true,
+                "argsIgnorePattern": "^_"
+            }
+        ],
         "no-var": "error",
+        "no-trailing-spaces": "error",
         "prefer-const": "error",
-        "no-throw-literal": "error",
-        "prefer-promise-reject-errors": "error",
         "quotes": [
             "error",
             "single",
@@ -32,20 +34,9 @@
                 "allowTemplateLiterals": true
             }
         ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "comma-dangle": ["error", {
-            "arrays": "never",
-            "objects": "never",
-            "imports": "never",
-            "exports": "never",
-            "functions": "ignore"
-        }],
-        "no-trailing-spaces": "error"
+        "semi": ["error", "always"]
     },
     "parserOptions": {
-        "ecmaVersion": 2019
+        "ecmaVersion": 2020
     }
 }
