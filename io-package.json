@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "4.2.18",
+    "version": "4.3.0",
     "news": {
+      "4.3.0": {
+        "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
+        "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
+        "ru": "Адаптер требует node.js >= 18 и js-контроллер >= 5 сейчас\nЗависимость обновлена",
+        "pt": "Adapter requer node.js >= 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
+        "nl": "Voor adaptor zijn node.js < 18 en js-controller > Nu 5\nAfhankelijkheden zijn bijgewerkt",
+        "fr": "L'adaptateur nécessite node.js >= 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
+        "it": "Adattatore richiede node.js >= 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
+        "es": "Adaptador requiere node.js √≥= 18 y js-controller 5 ahora\nSe han actualizado las dependencias",
+        "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
+        "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
+        "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
+      },
       "4.2.18": {
         "en": "Prepare for future js-controller verisons",
         "de": "Vorbereitung auf zukünftige js-controller verisons",
@@ -80,19 +93,6 @@
         "pl": "Optymalizuj pod kątem js-controller 3.3 i zapobiegaj ostrzeżeniom (pot. musisz usunąć punkty danych, jeśli nadal widzisz błędy, zostaną one odtworzone)",
         "zh-cn": "针对 js-controller 3.3 进行优化并防止警告（您可能会。如果您仍然看到错误，则需要删除数据点，它们将被重新创建）",
         "uk": "Оптимізуйте для js-controller 3.3 і запобігайте попередженням (вам потрібно видалити точки даних, якщо ви все ще бачите помилки, їх буде створено повторно)"
-      },
-      "4.2.12": {
-        "en": "prevent html template for calllists to be overwritten by default one\nfix crash case (Sentry IOBROKER-TR-064-2M)",
-        "de": "Verhindern Sie, dass die HTML-Vorlage für Anruflisten standardmäßig überschrieben wird\nAbsturzfall beheben (Sentry IOBROKER-TR-064-2M)",
-        "ru": "предотвратить перезапись шаблона html для списков вызовов по умолчанию\nисправить случай сбоя (Sentry IOBROKER-TR-064-2M)",
-        "pt": "evita que o modelo html para listas de chamadas seja substituído por um padrão\ncorrigir caso de falha (Sentry IOBROKER-TR-064-2M)",
-        "nl": "voorkomen dat html-sjabloon voor oproeplijsten standaard wordt overschreven\ncrash case repareren (Sentry IOBROKER-TR-064-2M)",
-        "fr": "empêcher le modèle html pour les listes d'appels d'être écrasé par défaut\ncorrection du cas de crash (Sentry IOBROKER-TR-064-2M)",
-        "it": "impedisce che il modello html per le liste di chiamata venga sovrascritto per impostazione predefinita\ncorrezione del crash case (Sentry IOBROKER-TR-064-2M)",
-        "es": "evitar que la plantilla html para listas de llamadas se sobrescriba por defecto\nreparar caso de bloqueo (Sentry IOBROKER-TR-064-2M)",
-        "pl": "zapobiegaj domyślnemu nadpisywaniu szablonu html dla list wywołań\nnaprawa awarii (Sentry IOBROKER-TR-064-2M)",
-        "zh-cn": "防止默认情况下覆盖用于呼叫列表的html模板\n修复崩溃案例（Sentry IOBROKER-TR-064-2M）",
-        "uk": "запобігти перезапису шаблону html для списків викликів за замовчуванням\nвиправити випадок збою (Sentry IOBROKER-TR-064-2M)"
       }
     },
     "titleLang": {
