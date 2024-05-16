@@ -27,7 +27,7 @@
     "type": "git",
     "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064"
   },
-  "engine": {
+  "engines": {
     "node": ">=18"
   },
   "dependencies": {
