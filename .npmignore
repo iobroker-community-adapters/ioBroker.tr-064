@@ -8,7 +8,6 @@ appveyor.yml
 node_modules
 .ba
 .idea
-admin/i18n
 iob_npm.done
 .eslintrc.json
 .idea
@@ -17,4 +16,3 @@ gulpfile.js
 .github
 package-lock.json
 .gitattributes
-admin/i18n

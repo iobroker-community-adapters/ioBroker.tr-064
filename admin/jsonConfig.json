@@ -1,0 +1,278 @@
+{
+  "i18n": true,
+  "type": "tabs",
+  "items": {
+    "options": {
+      "type": "panel",
+      "label": "Options",
+      "items": {
+        "iporhost": {
+          "type": "text",
+          "label": "IP",
+          "maxLength": 25,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "pollingInterval": {
+          "type": "number",
+          "label": "Polling interval (sec)",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "user": {
+          "type": "text",
+          "label": "User",
+          "maxLength": 25,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4,
+          "newLine": true
+        },
+        "password": {
+          "type": "password",
+          "label": "Password",
+          "maxLength": 55,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "useCallMonitor": {
+          "type": "checkbox",
+          "label": "Use CallMonitor",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 3,
+          "xl": 3,
+          "newLine": true
+        },
+        "usePhonebook": {
+          "type": "checkbox",
+          "label": "Use phonebook",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 3,
+          "xl": 3
+        },
+        "useDeflectionOptions": {
+          "type": "checkbox",
+          "label": "Use call forwarding options",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 3,
+          "xl": 3
+        },
+        "useDevices": {
+          "type": "checkbox",
+          "label": "Watch devices",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 3,
+          "xl": 3,
+          "newLine": true
+        },
+        "useMDNS": {
+          "type": "checkbox",
+          "label": "Use MDNS",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 3,
+          "xl": 3
+        },
+        "jsonDeviceList": {
+          "type": "checkbox",
+          "label": "Create Json device list",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 3,
+          "xl": 3
+        }
+      }
+    },
+    "devices": {
+      "type": "panel",
+      "label": "Devices",
+      "items": {
+        "devices": {
+          "type": "table",
+          "items": [
+            {
+              "type": "text",
+              "label": "Name",
+              "attr": "name"
+            },
+            {
+              "type": "text",
+              "label": "IP",
+              "attr": "ip"
+            },
+            {
+              "type": "text",
+              "label": "MAC",
+              "attr": "mac"
+            }
+          ]
+        }
+      }
+    },
+    "calllists": {
+      "type": "panel",
+      "label": "Calllists",
+      "items": {
+        "_headerAllCalls": {
+          "type": "header",
+          "text": "All calls",
+          "size": 2
+        },
+        "calllists.all.generateJSON": {
+            "type": "checkbox",
+            "label": "Generate JSON",
+            "xs": 12,
+            "sm": 6,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+          },
+        "calllists.all.generateHTML": {
+            "type": "checkbox",
+            "label": "Generate HTML",
+            "xs": 12,
+            "sm": 6,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+          },
+        "calllists.all.maxEntries": {
+            "type": "number",
+            "label": "Max Entries",
+            "min": 1,
+            "max": 999,
+            "xs": 12,
+            "sm": 6,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
+          },
+        "_headerMissedCalls": {
+          "type": "header",
+          "text": "Missed calls",
+          "size": 2
+        },
+        "calllists.missed.generateJSON": {
+          "type": "checkbox",
+          "label": "Generate JSON",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4,
+          "newLine": true
+        },
+        "calllists.missed.generateHTML": {
+          "type": "checkbox",
+          "label": "Generate HTML",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "calllists.missed.maxEntries": {
+          "type": "number",
+          "label": "Max Entries",
+          "min": 1,
+          "max": 999,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "_headerOutboundCalls":{
+          "type": "header",
+          "text": "Outbound",
+          "size": 2
+        },
+        "calllists.outbound.generateJSON": {
+          "type": "checkbox",
+          "label": "Generate JSON",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4,
+          "newLine": true
+        },
+        "calllists.outbound.generateHTML": {
+          "type": "checkbox",
+          "label": "Generate HTML",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "calllists.outbound.maxEntries": {
+          "type": "number",
+          "label": "Max Entries",
+          "min": 1,
+          "max": 999,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "_headerInboundCalls": {
+          "type": "header",
+          "text": "Inbound",
+          "size": 2
+        },
+        "calllists.inbound.generateJSON": {
+          "type": "checkbox",
+          "label": "Generate JSON",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "calllists.inbound.generateHTML": {
+          "type": "checkbox",
+          "label": "Generate HTML",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        },
+        "calllists.inbound.maxEntries": {
+          "type": "number",
+          "label": "Max Entries",
+          "min": 1,
+          "max": 999,
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 4,
+          "xl": 4
+        }
+      }
+    }
+  }
+}

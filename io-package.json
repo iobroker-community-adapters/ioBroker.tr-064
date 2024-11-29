@@ -141,7 +141,9 @@
     "type": "infrastructure",
     "enabled": true,
     "messagebox": true,
-    "materialize": true,
+    "adminUI": {
+      "config": "json"
+    },
     "compact": true,
     "authors": [
       {
