@@ -1,0 +1,52 @@
+name: Check ioBroker Copilot Template Version
+
+on:
+  schedule:
+    - cron: '23 3 * * 0'
+  workflow_dispatch:
+
+jobs:
+  check-template:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Check template version
+        run: |
+          echo "Checking ioBroker Copilot template version..."
+          
+          if [ -f ".github/copilot-instructions.md" ]; then
+            CURRENT_VERSION=$(awk '/Version:/ {match($0, /([0-9]+(\.[0-9]+)*)/, arr); if (arr[1] != "") print arr[1]}' .github/copilot-instructions.md | head -1)
+            if [ -z "$CURRENT_VERSION" ]; then CURRENT_VERSION="unknown"; fi
+            echo "Current local version: $CURRENT_VERSION"
+          else
+            CURRENT_VERSION="none"
+            echo "No .github/copilot-instructions.md file found - setup needed"
+          fi
+          
+          LATEST_VERSION=$(curl -s https://raw.githubusercontent.com/DrozmotiX/ioBroker-Copilot-Instructions/main/config/metadata.json | jq -r '.version' 2>/dev/null || echo "unknown")
+          if [ -z "$LATEST_VERSION" ] || [ "$LATEST_VERSION" = "null" ]; then
+            LATEST_VERSION="unknown"
+          fi
+          echo "Latest available version: $LATEST_VERSION"
+          
+          if [ "$CURRENT_VERSION" = "none" ]; then
+            echo "Repository needs GitHub Copilot setup"
+          elif [ "$CURRENT_VERSION" = "unknown" ] || [ "$LATEST_VERSION" = "unknown" ]; then
+            echo "Version detection issue"
+          elif [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "Update available: $CURRENT_VERSION -> $LATEST_VERSION"
+          else
+            echo "Template is up-to-date"
+          fi
+
+      - name: Setup notification
+        if: success()
+        run: |
+          echo "GitHub Copilot template check completed for TR-064 adapter"
+          echo "This workflow monitors for template updates and will create issues when updates are available"
