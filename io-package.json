@@ -144,19 +144,17 @@
     "materialize": true,
     "compact": true,
     "authors": [
-      {
-        "name": "soef",
-        "email": "soef@gmx.net"
-      }
+      "soef <soef@gmx.net>",
+      "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
     ],
     "dependencies": [
       {
-        "js-controller": ">=5.0.19"
+        "js-controller": ">=6.0.11"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=6.13.16"
+        "admin": ">=7.6.17"
       }
     ],
     "connectionType": "local",
