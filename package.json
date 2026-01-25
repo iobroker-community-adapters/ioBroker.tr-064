@@ -11,6 +11,7 @@
   "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064",
   "license": "MIT",
   "keywords": [
+    "ioBroker",
     "tr-064",
     "fritz.box",
     "avm"
