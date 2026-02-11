@@ -14,7 +14,7 @@
 
 ## Info
 This adapter reads main information from AVM Fritz!Box, like call list or number of messages on answering machine.
-Based on this [AVM documentations](https://avm.de/service/schnittstellen/)
+Based on this [FRITZ! documentations](https://fritz.com/pages/schnittstellen/)
 
 ## Needed Settings in your Fritzbox:
 * You need to change the Login to "Use Username and password"
