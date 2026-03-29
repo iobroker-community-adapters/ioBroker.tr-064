@@ -774,7 +774,7 @@ TR064.prototype.dumpServices = function (ar) {
                 break;
 
             case 'fs':
-                fs = require('fs');
+                fs = require('node:fs');
                 break;
         }
     }
