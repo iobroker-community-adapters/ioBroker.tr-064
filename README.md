@@ -162,6 +162,8 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 ### 4.2.15 (2021-12-08)
 * (bluefox) fix crash case (Sentry IOBROKER-TR-064-35)
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 The MIT License (MIT)
 
