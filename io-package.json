@@ -141,7 +141,6 @@
     "type": "infrastructure",
     "enabled": true,
     "messagebox": true,
-    "materialize": true,
     "compact": true,
     "authors": [
       "soef <soef@gmx.net>",
@@ -164,6 +163,9 @@
       "sentry": {
         "dsn": "https://5423236b998b415bb9118690986763ea@sentry.iobroker.net/13"
       }
+    },
+    "adminUI": {
+      "config": "materialize"
     }
   },
   "encryptedNative": [
