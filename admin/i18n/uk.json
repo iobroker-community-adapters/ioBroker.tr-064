@@ -16,7 +16,6 @@
   "Outbound": "Список вихідних дзвінків",
   "Password": "Пароль",
   "Polling interval (sec)": "Інтервал опитування даних (с)",
-  "tooltip_ip": "IP-адреса Fritz!Box",
   "tooltip_useMDNS": "Багатоадресна система доменних імен (mDNS) перетворює імена хостів на IP-адреси в невеликих мережах, які не включають локальний сервер імен",
   "Use call forwarding options": "Увімкніть параметри переадресації",
   "Use CallMonitor": "Активуйте Callmonitor",

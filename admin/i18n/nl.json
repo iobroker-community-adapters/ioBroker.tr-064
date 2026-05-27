@@ -16,7 +16,6 @@
   "Outbound": "Lijst voor uitgaande oproepen",
   "Password": "Wachtwoord",
   "Polling interval (sec)": "Polling-interval (sec)",
-  "tooltip_ip": "Fritz!Box IP-adres",
   "tooltip_useMDNS": "multicast Domain Name System (mDNS) lost hostnamen op IP-adressen op in kleine netwerken die geen lokale naamserver bevatten",
   "Use call forwarding options": "Gebruik opties voor doorschakelen",
   "Use CallMonitor": "Gebruik CallMonitor",

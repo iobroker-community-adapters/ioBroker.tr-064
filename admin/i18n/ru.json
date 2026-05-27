@@ -16,7 +16,6 @@
   "Outbound": "Список исходящих звонков",
   "Password": "Пароль",
   "Polling interval (sec)": "Интервал опроса (сек)",
-  "tooltip_ip": "IP Адрес Fritz!Box",
   "tooltip_useMDNS": "позволяет устройству выбрать имя в зоне .local",
   "Use call forwarding options": "Используйте параметры переадресации",
   "Use CallMonitor": "Монитор звонков",

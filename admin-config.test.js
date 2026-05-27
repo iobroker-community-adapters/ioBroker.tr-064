@@ -36,7 +36,7 @@ describe('admin jsonConfig migration', () => {
         expect(fs.existsSync(path.join(adminDir, 'words.js'))).to.equal(false);
     });
 
-    it('keeps the expected native configuration keys in jsonConfig', () => {
+    it('defines all expected configuration fields in jsonConfig', () => {
         expect(jsonConfig.type).to.equal('tabs');
         expect(jsonConfig.i18n).to.equal(true);
         expect(jsonConfig.items.optionsTab.items).to.include.all.keys(

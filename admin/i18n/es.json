@@ -16,7 +16,6 @@
   "Outbound": "Lista para llamadas salientes",
   "Password": "Contraseña",
   "Polling interval (sec)": "Intervalo de sondeo (seg.)",
-  "tooltip_ip": "Dirección IP de Fritz!Box",
   "tooltip_useMDNS": "el sistema de nombres de dominio de multidifusión (mDNS) resuelve los nombres de host a direcciones IP dentro de redes pequeñas que no incluyen un servidor de nombres local",
   "Use call forwarding options": "Utilice las opciones de desvío de llamadas",
   "Use CallMonitor": "Use CallMonitor",
