@@ -34,6 +34,9 @@ describe('admin jsonConfig migration', () => {
         expect(ioPackage.common.adminUI).to.deep.equal({ config: 'json' });
         expect(fs.existsSync(path.join(adminDir, 'index_m.html'))).to.equal(false);
         expect(fs.existsSync(path.join(adminDir, 'words.js'))).to.equal(false);
+        expect(ioPackage.native.useDeflectionOptions).to.equal(true);
+        expect(ioPackage.native.useMDNS).to.equal(true);
+        expect(ioPackage.native.jsonDeviceList).to.equal(false);
     });
 
     it('defines all expected configuration fields in jsonConfig', () => {
@@ -51,9 +54,6 @@ describe('admin jsonConfig migration', () => {
             'useMDNS',
             'jsonDeviceList'
         );
-        expect(jsonConfig.items.optionsTab.items.useDeflectionOptions.default).to.equal(true);
-        expect(jsonConfig.items.optionsTab.items.useMDNS.default).to.equal(true);
-        expect(jsonConfig.items.optionsTab.items.jsonDeviceList.default).to.equal(false);
         expect(jsonConfig.items.devicesTab.items.devices.type).to.equal('table');
         expect(jsonConfig.items.calllistsTab.items).to.include.all.keys(
             'calllists.all.generateJSON',

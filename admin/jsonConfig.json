@@ -67,7 +67,6 @@
         "useDeflectionOptions": {
           "type": "checkbox",
           "label": "Use call forwarding options",
-          "default": true,
           "xs": 12,
           "sm": 6,
           "md": 4,
@@ -87,8 +86,7 @@
         "useMDNS": {
           "type": "checkbox",
           "label": "Use MDNS",
-          "help": "tooltip_useMDNS",
-          "default": true,
+          "help": "Multicast Domain Name System (mDNS) resolves host names to IP addresses within small networks that do not include a local name server",
           "xs": 12,
           "sm": 6,
           "md": 4,
@@ -98,7 +96,6 @@
         "jsonDeviceList": {
           "type": "checkbox",
           "label": "Create Json device list",
-          "default": false,
           "xs": 12,
           "sm": 6,
           "md": 4,

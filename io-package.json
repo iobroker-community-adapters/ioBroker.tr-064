@@ -204,7 +204,10 @@
         "generateHTML": true,
         "maxEntries": 10
       }
-    }
+    },
+    "useDeflectionOptions": true,
+    "useMDNS": true,
+    "jsonDeviceList": false
   },
   "objects": []
 }

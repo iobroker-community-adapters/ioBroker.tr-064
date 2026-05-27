@@ -141,7 +141,7 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires admin >= 7.7.22 now
 - (copilot) Adapter requires js-controller >= 6.0.11 now
-- (copilot) Migrated the admin UI to jsonConfig with short-form translations
+- (copilot) Migrated the admin UI from materialize to jsonConfig with short-form translations and preserved existing settings
 
 ### 4.3.0 (2024-04-30)
 * (mcm1957) Adapter requires node.js >= 18 and js-controller >= 5 now
