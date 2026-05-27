@@ -51,6 +51,9 @@ describe('admin jsonConfig migration', () => {
             'useMDNS',
             'jsonDeviceList'
         );
+        expect(jsonConfig.items.optionsTab.items.useDeflectionOptions.default).to.equal(true);
+        expect(jsonConfig.items.optionsTab.items.useMDNS.default).to.equal(true);
+        expect(jsonConfig.items.optionsTab.items.jsonDeviceList.default).to.equal(false);
         expect(jsonConfig.items.devicesTab.items.devices.type).to.equal('table');
         expect(jsonConfig.items.calllistsTab.items).to.include.all.keys(
             'calllists.all.generateJSON',

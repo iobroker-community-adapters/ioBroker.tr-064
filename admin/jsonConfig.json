@@ -67,6 +67,7 @@
         "useDeflectionOptions": {
           "type": "checkbox",
           "label": "Use call forwarding options",
+          "default": true,
           "xs": 12,
           "sm": 6,
           "md": 4,
@@ -87,6 +88,7 @@
           "type": "checkbox",
           "label": "Use MDNS",
           "help": "tooltip_useMDNS",
+          "default": true,
           "xs": 12,
           "sm": 6,
           "md": 4,
@@ -96,6 +98,7 @@
         "jsonDeviceList": {
           "type": "checkbox",
           "label": "Create Json device list",
+          "default": false,
           "xs": 12,
           "sm": 6,
           "md": 4,
@@ -111,7 +114,6 @@
         "devices": {
           "newLine": true,
           "type": "table",
-          "label": "",
           "compact": true,
           "showSecondAddAt": 5,
           "useCardFor": [
