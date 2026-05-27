@@ -1,5 +1,4 @@
 {
-  "AddDevice": "Para agregar un dispositivo manualmente, presione + -Botón",
   "All calls": "Lista para todas las llamadas",
   "Calllists": "Calistas",
   "Create Json device list": "Crear lista de dispositivos JSON",
@@ -18,7 +17,6 @@
   "Password": "Contraseña",
   "Polling interval (sec)": "Intervalo de sondeo (seg.)",
   "tooltip_ip": "Dirección IP de Fritz!Box",
-  "tooltip_pollingInterval": "Encuesta Intervalo de ??? ",
   "tooltip_useMDNS": "el sistema de nombres de dominio de multidifusión (mDNS) resuelve los nombres de host a direcciones IP dentro de redes pequeñas que no incluyen un servidor de nombres local",
   "Use call forwarding options": "Utilice las opciones de desvío de llamadas",
   "Use CallMonitor": "Use CallMonitor",

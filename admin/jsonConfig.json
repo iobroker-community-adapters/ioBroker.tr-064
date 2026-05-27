@@ -19,7 +19,6 @@
         "pollingInterval": {
           "type": "number",
           "label": "Polling interval (sec)",
-          "help": "tooltip_pollingInterval",
           "min": 0,
           "step": 1,
           "xs": 12,
@@ -110,15 +109,6 @@
       "type": "panel",
       "label": "Devices",
       "items": {
-        "devicesInfo": {
-          "type": "staticText",
-          "text": "AddDevice",
-          "xs": 12,
-          "sm": 12,
-          "md": 12,
-          "lg": 12,
-          "xl": 12
-        },
         "devices": {
           "newLine": true,
           "type": "table",

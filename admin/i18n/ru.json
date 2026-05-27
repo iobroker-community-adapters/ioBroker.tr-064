@@ -1,5 +1,4 @@
 {
-  "AddDevice": "Чтобы добавить прибор вручную, нажмите кнопку +",
   "All calls": "Список всех звонков",
   "Calllists": "Calllists",
   "Create Json device list": "Создать список устройств JSON",
@@ -18,7 +17,6 @@
   "Password": "Пароль",
   "Polling interval (sec)": "Интервал опроса (сек)",
   "tooltip_ip": "IP Адрес Fritz!Box",
-  "tooltip_pollingInterval": "Интервал опроса ??? в секундах",
   "tooltip_useMDNS": "позволяет устройству выбрать имя в зоне .local",
   "Use call forwarding options": "Используйте параметры переадресации",
   "Use CallMonitor": "Монитор звонков",

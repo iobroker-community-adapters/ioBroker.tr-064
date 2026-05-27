@@ -1,5 +1,4 @@
 {
-  "AddDevice": "To add a device manually, press +-Button",
   "All calls": "List of all calls",
   "Calllists": "Calllists",
   "Create Json device list": "Create JSON device list",
@@ -18,7 +17,6 @@
   "Password": "Password",
   "Polling interval (sec)": "Data polling interval (sec)",
   "tooltip_ip": "Fritz!Box IP address",
-  "tooltip_pollingInterval": "Data polling intervall of ??? in seconds",
   "tooltip_useMDNS": "Multicast Domain Name System (mDNS) resolves host names to IP addresses within small networks that do not include a local name server",
   "Use call forwarding options": "Activate call forwarding options",
   "Use CallMonitor": "Activate Callmonitor",
