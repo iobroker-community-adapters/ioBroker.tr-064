@@ -1,71 +1,71 @@
 {
-    "name": "iobroker.tr-064",
-    "version": "4.3.0",
-    "description": "ioBroker tr-064 Adapter",
-    "author": "soef <soef@gmx.net>",
-    "contributors": [
-        "soef <soef@gmx.net>",
-        "Apollon77 <iobroker@fischer-ka.de>",
-        "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
-    ],
-    "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064",
-    "license": "MIT",
-    "keywords": [
-        "ioBroker",
-        "tr-064",
-        "fritz.box",
-        "avm"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064"
-    },
-    "engines": {
-        "node": ">=22.19.0"
-    },
-    "dependencies": {
-        "@iobroker/adapter-core": "^3.4.3",
-        "mdns-discovery": "^0.2.6",
-        "tr-O64": "^0.2.4",
-        "xml2js": "^0.6.2"
-    },
-    "devDependencies": {
-        "@alcalzone/release-script": "^5.2.1",
-        "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
-        "@alcalzone/release-script-plugin-license": "^5.2.2",
-        "@iobroker/adapter-dev": "^1.5.0",
-        "@iobroker/eslint-config": "^2.3.4",
-        "@iobroker/testing": "^6.1.0",
-        "@iobroker/types": "^7.2.2",
-        "@tsconfig/node22": "^22.0.6",
-        "@types/node": "^22.20.1",
-        "@types/xml2js": "^0.4.14",
-        "typescript": "~6.0.3"
-    },
-    "main": "build/main.js",
-    "files": [
-        "build/",
-        "admin/",
-        "io-package.json",
-        "LICENSE"
-    ],
-    "scripts": {
-        "build": "tsc -p tsconfig.build.json",
-        "watch": "tsc -p tsconfig.build.json --watch",
-        "check": "tsc -p tsconfig.json --noEmit",
-        "lint": "eslint -c eslint.config.mjs",
-        "test:package": "mocha test/packageFiles --exit",
-        "test:integration": "mocha test/integrationAdapter --exit",
-        "test": "npm run test:package",
-        "translate": "translate-adapter -b admin/i18n/en.json",
-        "release": "release-script --noPush -y",
-        "release-patch": "release-script patch --yes",
-        "release-minor": "release-script minor --yes",
-        "release-major": "release-script major --yes",
-        "update-packages": "npx npm-check-updates --upgrade"
-    },
-    "bugs": {
-        "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues"
-    },
-    "readmeFilename": "README.md"
+  "name": "iobroker.tr-064",
+  "version": "5.0.0",
+  "description": "ioBroker tr-064 Adapter",
+  "author": "soef <soef@gmx.net>",
+  "contributors": [
+    "soef <soef@gmx.net>",
+    "Apollon77 <iobroker@fischer-ka.de>",
+    "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
+  ],
+  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "tr-064",
+    "fritz.box",
+    "avm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^3.4.3",
+    "mdns-discovery": "^0.2.6",
+    "tr-O64": "^0.2.4",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@alcalzone/release-script": "^5.2.1",
+    "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
+    "@alcalzone/release-script-plugin-license": "^5.2.2",
+    "@iobroker/adapter-dev": "^1.5.0",
+    "@iobroker/eslint-config": "^2.3.4",
+    "@iobroker/testing": "^6.1.0",
+    "@iobroker/types": "^7.2.2",
+    "@tsconfig/node22": "^22.0.6",
+    "@types/node": "^22.20.1",
+    "@types/xml2js": "^0.4.14",
+    "typescript": "~6.0.3"
+  },
+  "main": "build/main.js",
+  "files": [
+    "build/",
+    "admin/",
+    "io-package.json",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "watch": "tsc -p tsconfig.build.json --watch",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint -c eslint.config.mjs",
+    "test:package": "mocha test/packageFiles --exit",
+    "test:integration": "mocha test/integrationAdapter --exit",
+    "test": "npm run test:package",
+    "translate": "translate-adapter -b admin/i18n/en.json",
+    "release": "release-script --noPush -y",
+    "release-patch": "release-script patch --yes",
+    "release-minor": "release-script minor --yes",
+    "release-major": "release-script major --yes",
+    "update-packages": "npx npm-check-updates --upgrade"
+  },
+  "bugs": {
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues"
+  },
+  "readmeFilename": "README.md"
 }

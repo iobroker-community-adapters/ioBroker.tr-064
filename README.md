@@ -163,8 +163,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 5.0.0 (2026-09-09)
 - (@GermanBluefox) The adapter does not stop any more if the Fritz!Box cannot be reached. The connection is retried every 30 seconds, and the new state `info.connection` shows whether the box answers
 - (@justr1) Expected disconnects of the call monitor (`ETIMEDOUT`, `ECONNRESET`, `EPIPE`) are logged as info now, because the adapter reconnects on its own
 - (@GermanBluefox) The mDNS socket is closed when the adapter stops, so a restart does not leave a listener behind
@@ -194,9 +193,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 * (Apollon77) Fix info logs on callee/caller
 * (Apollon77) Add special handling for potential broken external image links in a phonebook
 * (Apollon77) Prevent some crash cases reported by Sentry
-
-### 4.2.15 (2021-12-08)
-* (bluefox) fix crash case (Sentry IOBROKER-TR-064-35)
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

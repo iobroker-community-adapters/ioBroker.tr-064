@@ -1,4 +1,7 @@
 # Older changes
+## 4.2.15 (2021-12-08)
+* (bluefox) fix crash case (Sentry IOBROKER-TR-064-35)
+
 ## 4.2.14 (2021-07-21)
 * (Apollon77) Further optimizations for js-controller 3.3
 
