@@ -131,15 +131,6 @@ You find a detailed description of the actions and of the parameters for TAM her
 
 Before you can use the call monitor, you must switch it on in the AVM Fritz!Box. To switch the call monitor on, dial `#96*5*` on a connected telephone. The Fritz!Box then opens the TCP/IP port 1012. To close the port, dial `#96*4*`.
 
-## Pre-release versions
-
-Pre-release versions are available on npm with the tag `dev`. You can install them from the root directory of ioBroker with the following commands:
-
-```bash
-npm install iobroker.tr-064@dev
-iobroker upload tr-064
-```
-
 ## Initial creation
 
 @soef created this adapter at https://github.com/soef/ioBroker.tr-064. The adapter is not maintained there anymore. Therefore it was moved to iobroker-community, so that errors can be corrected. Thanks to @soef for his work.
