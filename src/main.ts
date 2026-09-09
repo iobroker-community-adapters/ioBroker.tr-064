@@ -35,6 +35,9 @@ import type { DeviceConfigEntry, DiscoveredDevice, HostEntry } from './lib/types
 /** Default secret of `system.config` if the host has none */
 const DEFAULT_SECRET = 'Zgfr56gFe87jJOM';
 
+/** Milliseconds between two attempts to connect to the Fritz!Box */
+const RECONNECT_INTERVAL = 30_000;
+
 /** Method of `TR064Client` which is called when a state below `states` is written */
 type StateFunction = (val: ioBroker.StateValue, callback?: () => void) => boolean | void;
 
@@ -69,6 +72,11 @@ export class Tr064Adapter extends utils.Adapter {
     private readonly ipActive: Record<string, boolean> = {};
 
     private initError: TR064Error | string | null | undefined = null;
+    /** Last value written into `info.connection` - `connected` is taken by the base class */
+    private boxConnected: boolean | undefined = undefined;
+    /** Number of connection attempts which failed in a row */
+    private connectAttempts = 0;
+    private connectTimer: ioBroker.Timeout | null = null;
     private pollingTimer: ioBroker.Timeout | null = null;
     private refreshCalllistTimeout: ioBroker.Timeout | null = null;
 
@@ -117,6 +125,10 @@ export class Tr064Adapter extends utils.Adapter {
                 this.clearTimeout(this.refreshCalllistTimeout);
                 this.refreshCalllistTimeout = null;
             }
+            if (this.connectTimer) {
+                this.clearTimeout(this.connectTimer);
+                this.connectTimer = null;
+            }
             this.tr064Client?.clearRingTimeout();
             this.callbackTimers.clearAll();
             this.callMonitor?.close();
@@ -135,8 +147,7 @@ export class Tr064Adapter extends utils.Adapter {
         }
 
         if (this.initError) {
-            this.log.error('tr-064 adapter not connected to a FritzBox. Terminating');
-            this.terminate('tr-064 adapter not connected to a FritzBox. Terminating', 1);
+            this.log.warn('tr-064 adapter is not connected to a FritzBox, the command is ignored');
             return;
         }
 
@@ -565,9 +576,12 @@ export class Tr064Adapter extends utils.Adapter {
             { func: 'getWLANGuest', state: STATES.wlanGuest.name, result: 'NewEnable', format: val => !!~~Number(val) },
         ];
         let i = 0;
+        let anySuccess = false;
 
         const doIt = (): void => {
             if (i >= names.length) {
+                // the box is only counted as connected while it really answers
+                void this.setConnected(anySuccess);
                 this.devStates.set('reboot', false);
                 this.devices.update(err => {
                     if (err && err !== -1) {
@@ -607,6 +621,7 @@ export class Tr064Adapter extends utils.Adapter {
             read(
                 this.callbackTimers.wrap<ActionResult>(3000, (err, res) => {
                     if (!err && res) {
+                        anySuccess = true;
                         this.devStates.set(name.state, name.format(res[name.result]));
                     }
                     this.setTimeout(doIt, 10);
@@ -690,6 +705,20 @@ export class Tr064Adapter extends utils.Adapter {
         this.phonebook = new Phonebook(this);
         await this.systemData.load();
 
+        await this.setObjectNotExistsAsync('info.connection', {
+            type: 'state',
+            common: {
+                name: 'Connected to the Fritz!Box',
+                type: 'boolean',
+                role: 'indicator.connected',
+                read: true,
+                write: false,
+                def: false,
+            },
+            native: {},
+        });
+        await this.setConnected(false);
+
         this.tr064Client = new TR064Client(
             this,
             this.config.user,
@@ -698,17 +727,27 @@ export class Tr064Adapter extends utils.Adapter {
             this.config.port,
         );
 
+        this.connect();
+    }
+
+    /**
+     * Connects to the Fritz!Box.
+     *
+     * A box which cannot be reached is not a reason to stop: it may be rebooting or the network
+     * may not be up yet. The attempt is therefore repeated until it works; only then the objects
+     * are created and the polling starts.
+     */
+    private connect(): void {
         this.tr064Client.init(err => {
             this.initError = err;
+
             if (err) {
-                this.log.error(`${err as string} - ${JSON.stringify(err)}`);
-                this.log.error('~');
-                this.log.error('~~ Fatal error. Can not connect to your FritzBox.');
-                this.log.error('~~ If configuration, network, IP address, etc. ok, try to restart your FritzBox');
-                this.log.error('~');
-                this.terminate('Fatal error. Can not connect to your FritzBox.', 1);
+                this.onConnectionFailed(err);
                 return;
             }
+
+            void this.setConnected(true);
+            this.connectAttempts = 0;
 
             this.tr064Client.refreshCalllist();
             this.createObjects();
@@ -737,6 +776,42 @@ export class Tr064Adapter extends utils.Adapter {
                 this.deflections = new Deflections(this.tr064Client.sslDevice, this, this.devices);
             }
         });
+    }
+
+    /** Logs a failed connection attempt and schedules the next one */
+    private onConnectionFailed(err: TR064Error | string): void {
+        void this.setConnected(false);
+
+        if (!this.connectAttempts) {
+            // explain the problem once, the repeated attempts must not fill up the log
+            this.log.error(`${err as string} - ${JSON.stringify(err)}`);
+            this.log.error('~');
+            this.log.error('~~ Cannot connect to your FritzBox.');
+            this.log.error('~~ If configuration, network, IP address, etc. ok, try to restart your FritzBox');
+            this.log.error(`~~ The connection is retried every ${RECONNECT_INTERVAL / 1000} seconds`);
+            this.log.error('~');
+        } else {
+            this.log.debug(`Attempt ${this.connectAttempts + 1} to connect to the FritzBox failed: ${err as string}`);
+        }
+        this.connectAttempts++;
+
+        if (this.connectTimer) {
+            this.clearTimeout(this.connectTimer);
+        }
+        this.connectTimer =
+            this.setTimeout(() => {
+                this.connectTimer = null;
+                this.connect();
+            }, RECONNECT_INTERVAL) ?? null;
+    }
+
+    /** Writes `info.connection` if the state changed */
+    private async setConnected(connected: boolean): Promise<void> {
+        if (this.boxConnected === connected) {
+            return;
+        }
+        this.boxConnected = connected;
+        await this.setState('info.connection', connected, true);
     }
 }
 

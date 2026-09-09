@@ -165,6 +165,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 -->
 
 ### **WORK IN PROGRESS**
+- (@GermanBluefox) The adapter does not stop any more if the Fritz!Box cannot be reached. The connection is retried every 30 seconds, and the new state `info.connection` shows whether the box answers
 - (@justr1) Expected disconnects of the call monitor (`ETIMEDOUT`, `ECONNRESET`, `EPIPE`) are logged as info now, because the adapter reconnects on its own
 - (@GermanBluefox) The mDNS socket is closed when the adapter stops, so a restart does not leave a listener behind
 - (@GermanBluefox) A phone book with only one contact is read now

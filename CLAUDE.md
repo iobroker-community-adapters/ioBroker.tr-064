@@ -82,10 +82,25 @@ Everything which must **not** end up in the database is a `#` private field (`#a
 
 `admin/jsonConfig.json` with `i18n: true`; the keys of `admin/i18n/<lang>.json` are the **English labels**. The button "Find a device" sends the message `discovery` with `native: true` and gets the device list back as `{ native: { devices } }` (`useNative`). Without `native: true` the same command answers with a JSON string, like all versions before — user scripts rely on that.
 
+### Connection to the box
+
+`connect()` in `src/main.ts` calls `TR064Client.init()`. A box which does not answer is **not** a
+reason to stop the adapter: the attempt is repeated every `RECONNECT_INTERVAL` (30 s) until it
+works, and only then the objects are created, the polling starts and `subscribeStates()` runs. The
+detailed error block is logged once, the following attempts only at debug level.
+
+`info.connection` shows whether the box answers. It is written by `setConnected()`, which is called
+on a failed connection, on the first successful one and after every poll cycle in `updateAll()` -
+so a box which disappears later also switches the state to `false`.
+
+Because of that the adapter never calls `terminate()` any more. That also keeps the integration
+test deterministic: before, the adapter exited with code 1 on the CI runners (where `fritz.box`
+resolves to a public address) and the test "The adapter starts" failed or passed depending on
+whether the TCP connect gave up within the 5 second observation window of the test harness.
+
 ### Misc conventions
 
 - Use `this.setTimeout()`/`this.clearTimeout()` of adapter-core, never the global ones, so that the timers are stopped on unload.
-- The adapter terminates itself (`this.terminate()`) if it cannot reach the box; a state change afterwards terminates it again.
 - `main.ts` ends with the compact mode export (`require.main !== module`) - do not remove it.
 
 ## Release flow
