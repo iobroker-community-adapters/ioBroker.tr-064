@@ -26,21 +26,21 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: ioBroker/testing-action-check@v1
+            - uses: ioBroker/testing-action-check@v2
               with:
-                  node-version: '20.x'
-                  # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-                  # install-command: 'npm install'
-                  lint: false
+                  node-version: 24.x
+                  type-checking: true
+                  lint: true
 
     # Runs adapter tests on all supported node versions and OSes
     adapter-tests:
+        needs: [check-and-lint]
         if: contains(github.event.head_commit.message, '[skip ci]') == false
 
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                node-version: [18.x, 20.x, 22.x]
+                node-version: [22.x, 24.x, 26.x]
                 os: [ubuntu-latest, windows-latest, macos-latest]
 
         steps:
@@ -48,12 +48,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   os: ${{ matrix.os }}
-                  # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-                  # install-command: 'npm install'
-
-    # TODO: To enable automatic npm releases, create a token on npmjs.org
-    # Enter this token as a GitHub secret (with name NPM_TOKEN) in the repository options
-    # Then uncomment the following block:
+                  build: true
 
     # Deploys the final package to NPM
     deploy:
@@ -67,7 +62,8 @@ jobs:
 
         runs-on: ubuntu-latest
 
-        # Write permissions are required to create Github releases
+        # Write permissions are required to create GitHub releases,
+        # id-token is required for npm trusted publishing
         permissions:
             contents: write
             id-token: write
@@ -75,19 +71,15 @@ jobs:
         steps:
             - uses: ioBroker/testing-action-deploy@v1
               with:
-                  node-version: '20.x'
-                  # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-                  # install-command: 'npm install'
-                  # npm-token: ${{ secrets.NPM_TOKEN }}  # Commented out for migration to Trusted Publishing
+                  node-version: '24.x'
+                  build: true
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 
                   # When using Sentry for error reporting, Sentry can be informed about new releases
                   # To enable create a API-Token in Sentry (User settings, API keys)
                   # Enter this token as a GitHub secret (with name SENTRY_AUTH_TOKEN) in the repository options
-                  # Then uncomment and customize the following block:
-#          sentry: true
-#          sentry-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
-#          sentry-project: "iobroker-pid"
-#          sentry-version-prefix: "iobroker.pid"
-#          # If your sentry project is linked to a GitHub repository, you can enable the following option
-#          # sentry-github-integration: true
+                  # Then uncomment the following block:
+                  # sentry: true
+                  # sentry-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+                  # sentry-project: 'iobroker-tr-064'
+                  # sentry-version-prefix: 'iobroker.tr-064'

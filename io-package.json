@@ -136,6 +136,10 @@
       "avm"
     ],
     "mode": "daemon",
+    "adminUI": {
+      "config": "json"
+    },
+    "nogit": true,
     "icon": "tr-064.svg",
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tr-064/master/admin/tr-064.svg",
     "readme": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/blob/master/README.md",
@@ -144,7 +148,6 @@
     "type": "infrastructure",
     "enabled": true,
     "messagebox": true,
-    "materialize": true,
     "compact": true,
     "authors": [
       "soef <soef@gmx.net>",
@@ -182,27 +185,30 @@
     "pollingInterval": 10,
     "useCallMonitor": true,
     "usePhonebook": true,
+    "useDeflectionOptions": true,
     "useDevices": true,
+    "useMDNS": true,
+    "jsonDeviceList": false,
     "devices": [],
     "calllists": {
       "missed": {
-        "generateJSON": true,
-        "generateHTML": true,
+        "generateJson": true,
+        "generateHtml": true,
         "maxEntries": 10
       },
       "all": {
-        "generateJSON": true,
-        "generateHTML": true,
+        "generateJson": true,
+        "generateHtml": true,
         "maxEntries": 10
       },
       "inbound": {
-        "generateJSON": true,
-        "generateHTML": true,
+        "generateJson": true,
+        "generateHtml": true,
         "maxEntries": 10
       },
       "outbound": {
-        "generateJSON": true,
-        "generateHTML": true,
+        "generateJson": true,
+        "generateHtml": true,
         "maxEntries": 10
       }
     }

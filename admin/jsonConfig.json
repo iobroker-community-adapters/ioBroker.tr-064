@@ -1,0 +1,303 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_options": {
+            "type": "panel",
+            "label": "Options",
+            "items": {
+                "_logo": {
+                    "type": "staticImage",
+                    "src": "tr-064.svg",
+                    "style": {
+                        "width": "64px"
+                    },
+                    "sm": 12,
+                    "md": 2,
+                    "lg": 1
+                },
+                "iporhost": {
+                    "type": "text",
+                    "label": "IP",
+                    "help": "tooltip_ip",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "pollingInterval": {
+                    "type": "number",
+                    "label": "Polling interval (sec)",
+                    "min": 0,
+                    "max": 3600,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 2
+                },
+                "user": {
+                    "type": "text",
+                    "label": "User",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "password": {
+                    "type": "password",
+                    "label": "Password",
+                    "encrypted": true,
+                    "visible": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "useCallMonitor": {
+                    "type": "checkbox",
+                    "label": "Use CallMonitor",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "usePhonebook": {
+                    "type": "checkbox",
+                    "label": "Use phonebook",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "useDeflectionOptions": {
+                    "type": "checkbox",
+                    "label": "Use call forwarding options",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "useDevices": {
+                    "type": "checkbox",
+                    "label": "Watch devices",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "useMDNS": {
+                    "type": "checkbox",
+                    "label": "Use MDNS",
+                    "help": "tooltip_useMDNS",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "jsonDeviceList": {
+                    "type": "checkbox",
+                    "label": "Create Json device list",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                }
+            }
+        },
+        "_devices": {
+            "type": "panel",
+            "label": "Devices",
+            "items": {
+                "_find": {
+                    "type": "sendTo",
+                    "command": "discovery",
+                    "jsonData": "{\"onlyActive\": true, \"reread\": true, \"native\": true, \"devices\": ${JSON.stringify(data.devices || [])}}",
+                    "useNative": true,
+                    "showProcess": true,
+                    "timeout": 20000,
+                    "icon": "search",
+                    "variant": "outlined",
+                    "label": "Find a device",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4
+                },
+                "devices": {
+                    "type": "table",
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "uniqueColumns": ["mac"],
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "name",
+                            "width": "34%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "ip",
+                            "title": "ip",
+                            "width": "33%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "mac",
+                            "title": "MAC",
+                            "width": "33%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "_calllists": {
+            "type": "panel",
+            "label": "Calllists",
+            "items": {
+                "_headerAll": {
+                    "type": "header",
+                    "text": "All calls",
+                    "size": 5,
+                    "sm": 12
+                },
+                "calllists.all.generateJson": {
+                    "type": "checkbox",
+                    "label": "Generate JSON",
+                    "default": true,
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.all.generateHtml": {
+                    "type": "checkbox",
+                    "label": "Generate HTML",
+                    "default": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.all.maxEntries": {
+                    "type": "number",
+                    "label": "max Entries",
+                    "min": 0,
+                    "max": 999,
+                    "default": 10,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+
+                "_headerMissed": {
+                    "type": "header",
+                    "text": "Missed calls",
+                    "size": 5,
+                    "newLine": true,
+                    "sm": 12
+                },
+                "calllists.missed.generateJson": {
+                    "type": "checkbox",
+                    "label": "Generate JSON",
+                    "default": true,
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.missed.generateHtml": {
+                    "type": "checkbox",
+                    "label": "Generate HTML",
+                    "default": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.missed.maxEntries": {
+                    "type": "number",
+                    "label": "max Entries",
+                    "min": 0,
+                    "max": 999,
+                    "default": 10,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+
+                "_headerInbound": {
+                    "type": "header",
+                    "text": "Inbound",
+                    "size": 5,
+                    "newLine": true,
+                    "sm": 12
+                },
+                "calllists.inbound.generateJson": {
+                    "type": "checkbox",
+                    "label": "Generate JSON",
+                    "default": true,
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.inbound.generateHtml": {
+                    "type": "checkbox",
+                    "label": "Generate HTML",
+                    "default": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.inbound.maxEntries": {
+                    "type": "number",
+                    "label": "max Entries",
+                    "min": 0,
+                    "max": 999,
+                    "default": 10,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+
+                "_headerOutbound": {
+                    "type": "header",
+                    "text": "Outbound",
+                    "size": 5,
+                    "newLine": true,
+                    "sm": 12
+                },
+                "calllists.outbound.generateJson": {
+                    "type": "checkbox",
+                    "label": "Generate JSON",
+                    "default": true,
+                    "newLine": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.outbound.generateHtml": {
+                    "type": "checkbox",
+                    "label": "Generate HTML",
+                    "default": true,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                },
+                "calllists.outbound.maxEntries": {
+                    "type": "number",
+                    "label": "max Entries",
+                    "min": 0,
+                    "max": 999,
+                    "default": 10,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 3
+                }
+            }
+        }
+    }
+}
