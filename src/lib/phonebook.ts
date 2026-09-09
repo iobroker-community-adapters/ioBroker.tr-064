@@ -8,6 +8,28 @@ import { normalizeName, normalizeNumber } from './utils';
 import type { PhonebookContact, PhonebookEntry, PhonebookXml } from './types';
 import type { Tr064Adapter } from '../main';
 
+/**
+ * Collects all contacts of the phone book XML.
+ *
+ * `xml2js` only creates an array if there is more than one element, so a phone book with a
+ * single contact - or a file with a single phone book - arrives as a plain object.
+ */
+function collectContacts(json?: PhonebookXml): PhonebookContact[] {
+    const books = json?.phonebooks?.phonebook;
+    if (!books) {
+        return [];
+    }
+
+    const contacts: PhonebookContact[] = [];
+    for (const book of Array.isArray(books) ? books : [books]) {
+        if (book?.contact) {
+            contacts.push(...(Array.isArray(book.contact) ? book.contact : [book.contact]));
+        }
+    }
+
+    return contacts;
+}
+
 export interface PhonebookStartOptions {
     /** If true, the phone book is not read at all (option "Use phonebook" is switched off) */
     return?: boolean;
@@ -145,14 +167,12 @@ export class Phonebook {
                             result.on('data', chunk => (data += chunk));
                             result.on('end', () => {
                                 this.parser.parseString(data, (err: Error | null, json: PhonebookXml) => {
-                                    const contacts = json?.phonebooks?.phonebook?.contact;
-                                    if (err || !contacts) {
+                                    const contacts = collectContacts(json);
+                                    if (err || !contacts.length) {
                                         cb?.(err);
                                         return;
                                     }
 
-                                    // A phone book with exactly one contact is not an array and was
-                                    // never evaluated - kept like this on purpose.
                                     for (let i = 0; i < contacts.length; i++) {
                                         this.addContact(contacts[i], phonebookId);
                                     }

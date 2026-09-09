@@ -165,6 +165,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 -->
 
 ### **WORK IN PROGRESS**
+- (bluefox) A phone book with only one contact is read now
 - (bluefox) The hint how to open port 1012 is shown again if the call monitor is refused by the Fritz!Box
 - (bluefox) The adapter was refactored to TypeScript. The sources are in `src/`, the adapter runs from `build/`
 - (bluefox) The configuration dialog was rewritten as JsonConfig. Admin 7.7.22 or newer is required for it

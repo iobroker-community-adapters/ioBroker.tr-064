@@ -108,10 +108,13 @@ export interface PhonebookEntry {
 /** Phone book XML converted to JSON */
 export interface PhonebookXml {
     phonebooks?: {
-        phonebook?: {
-            contact?: PhonebookContact[];
-        };
+        /** A single phone book is not an array, and neither is a single contact in it */
+        phonebook?: PhonebookXmlBook | PhonebookXmlBook[];
     };
+}
+
+export interface PhonebookXmlBook {
+    contact?: PhonebookContact | PhonebookContact[];
 }
 
 export interface PhonebookContact {
