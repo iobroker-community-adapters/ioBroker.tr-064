@@ -1,4 +1,5 @@
-![Logo](admin/tr-064.png)
+<img src="admin/tr-064.svg" width="128" height="128">
+
 # ioBroker.tr-064
 
 ![Number of Installations](http://iobroker.live/badges/tr-064-installed.svg)
@@ -9,98 +10,97 @@
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/tr-064/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.tr-064.svg)](https://www.npmjs.com/package/iobroker.tr-064)
 
-
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+**This adapter uses the Sentry libraries. These libraries report exceptions and code errors automatically to the developers.** For more details, and for information about how to switch off the error reporting, see the [documentation of the Sentry plugin](https://github.com/ioBroker/plugin-sentry#plugin-sentry). The Sentry reporting is used from js-controller 3.0 on.
 
 ## Info
-This adapter reads main information from AVM Fritz!Box, like call list or number of messages on answering machine.
-Based on this [FRITZ! documentations](https://fritz.com/pages/schnittstellen/)
 
-## Needed Settings in your Fritzbox:
-* You need to change the Login to "Use Username and password"
-  * The maximum relevant password length for FritzBox is 32 characters! FritzBox cuts the password silently in the UI. Please make sure to enter only the 32 relevant characters in the adapter configuration
-* Create a user and allow him to "control the Fritzbox and settings"
-* Enable Application Access (on Network tab). Click flow in german: Netzwerk ->Heimnetzfreigaben -> Zugriff für Anwendungen -> aktiviert
-* If you want to use the "ring" function you need to set additional settings (see below)
+This adapter reads the most important information from an AVM Fritz!Box. Examples are the call list and the number of messages on the answering machine.
 
-## Initial Creation
-This adapter was initially created by @soef at https://github.com/soef/ioBroker.tr-064 but not maintained any more, so we moved it to iobroker-community so that bugs could be fixed. thanks @soef for his work.
+The adapter is based on the [FRITZ! interface documentation](https://fritz.com/pages/schnittstellen/).
 
-## How to migrate from tr-064-community (intermediate version and name)
-If you move from tr-064-community adapters you can easily copy whole device list or settings by:
-* Go in admin to objects and enable expert mode
-* Look for an object tree which is called system.adapter.tr-064-community.0 (where 0 is the instance, if you had multiple instances select the right one)
-* On the very right of this line is a button with a pencil, click on it
-* On the window you get select "raw (experts only)" and there copy the NATIVE part of the json
-* then open system.adapter.tr-064.0 (where 0 is the instance, if you had multiple instances select the right one)
-* paste the copied native part in there in native
-* save the changes
-* start the adapter
-* check configuration if anything was restored correctly
+## Required settings in your Fritz!Box
+
+- Change the login method to "Use user name and password".
+- The Fritz!Box uses a maximum of 32 characters of the password. The Fritz!Box shortens longer passwords in its own user interface without a warning. Therefore, enter only these 32 characters in the configuration of the adapter.
+- Create a user and give this user the permission to control the Fritz!Box and its settings.
+- Switch on the access for applications on the "Network" tab. In the German user interface, the path is: `Netzwerk` -> `Heimnetzfreigaben` -> `Zugriff für Anwendungen` -> `aktiviert`.
+- If you want to use the `ring` function, you must configure additional settings. See the section [ring (dial a number)](#ring-dial-a-number).
 
 ## Features
+
 ### Simple states and functions
-- turn on/off wifi for 2.4GHz and 5GHz,
-- turn on/off guest wifi,
-- reboot Fritz!Box,
-- start WPS process,
-- reconnect Internet
-- external ip address
+
+- Switch the Wi-Fi for 2.4 GHz and 5 GHz on and off
+- Switch the guest Wi-Fi on and off
+- Restart the Fritz!Box
+- Start the WPS process
+- Reconnect the internet connection
+- Read the external IP address
 
 ### ring (dial a number)
-- When using an internal number (like **610) the ring state will let ring that internal phone. E.g.: **610[,timeout]
-- When using an external number, the ring state will connect you to the external number.
- The Fritz!Box will call the external number and your default phone will ring, when the called phone is picked up.
- The default phone can be configured in the Fritz!Box under:
- Telefonie/Anrufe/[Tab]Wahlhilfe/Wählhilfe verwenden . Please also make sure to choose "Verbindung mit dem Telefon ISDN- und Schnurlostelefone"
+
+- If you use an internal number, for example `**610`, the state `ring` lets this internal telephone ring. Example: `**610[,timeout]`
+- If you use an external number, the state `ring` connects you with this external number. The Fritz!Box calls the external number, and your default telephone rings as soon as the called person picks up the telephone.
+
+You can configure the default telephone in the Fritz!Box. In the German user interface, the path is: `Telefonie` -> `Anrufe` -> `Wahlhilfe` -> `Wählhilfe verwenden`. Select there also the option `Verbindung mit dem Telefon ISDN- und Schnurlostelefone`.
 
 ### toPauseState
-- Values: ring, connect, end
-- Can be used to pause a video player on an incoming call (ring), or on pick up the phone (connect).
-- Resume can be done on the end value.
+
+- Possible values: `ring`, `connect`, `end`
+- You can use this state to pause a video player on an incoming call (`ring`), or when somebody picks up the telephone (`connect`).
+- You can continue the playback on the value `end`.
 
 ### Presence
-To monitor the presence of persons in your home, so to control once anyone of your family/roommate is leaving or arriving, you can use this adapter as follows: 
-- Enter the Adapter options and switch to the 'Devices' tab
-- Add all devices (like smart phones) of your family/roommate members accordingly, and confirm with 'Save'.
-- For each device, the adapter will now create a folder structure under the ioBroker Objects of the adapter, typically in the folder "tr-064.0.devices"
-- Now once anyone is arriving or leaving, this adapter will get the information accordingly. For example, the state "tr-064.0.devices.xxx.active", where xxx is the device name, will indicate if the specific device is available or not, so if the person is present or not. User feedback is that this works reliable for iOS devices as well, like with iPhones. For iPhones, user feedback is that it takes up to 10 minutes until the Fritz!Box notices that a person left and is no longer connected with WiFi, and it takes up to 1 minute until the Fritz!Box will notice the presence again.
 
-Also, a script was published by the ioBroker community which uses this adapter information to trigger actions (e.g. everyone left home, so turn off everything automatically, see number of persons currently being present, or person status in general, via VIS, etc.). See [ioBroker forum thread](https://forum.iobroker.net/topic/4538/anwesenheitscontrol-basierend-auf-tr64-adapter-script) (in German)
+You can use this adapter to monitor the presence of persons in your home. In this way you see when a member of your family or a roommate leaves the home or comes back:
 
-### AB - `Anrufbeantworter` (answering machine)
-Can be switched on/off.
-The state cbIndex can be set, to address # of the answering machine.
+- Open the settings of the adapter and switch to the tab "Devices".
+- Add all devices of your family members or roommates, for example, their smartphones, and confirm with "Save".
+- For every device, the adapter creates a folder structure in the objects of the adapter. Normally this is the folder `tr-064.0.devices`.
+- As soon as somebody arrives or leaves, the adapter gets this information. The state `tr-064.0.devices.xxx.active`, where `xxx` is the name of the device, shows whether this device is available, and therefore whether the person is at home.
+
+You can also switch on the option "Use mDNS to discover new devices". If mDNS is used, the adapter does not need to poll the Fritz!Box, and it detects changes faster.
+
+Users report that the detection also works reliably for iOS devices, for example, for iPhones. For iPhones, users report that the Fritz!Box needs up to 10 minutes to detect that a person has left and is no longer connected with the Wi-Fi. The Fritz!Box needs up to 1 minute to detect the presence again.
+
+The ioBroker community has published a script that uses this information of the adapter to trigger actions. Examples are: switch off everything automatically after all persons have left the home, show the number of persons that are at home, or show the status of a person in VIS. See the [thread in the ioBroker forum](https://forum.iobroker.net/topic/4538/anwesenheitscontrol-basierend-auf-tr64-adapter-script) (in German).
+
+### Answering machine (in German: `Anrufbeantworter`)
+
+You can switch the answering machine on and off. With the state `cbIndex` you select the number of the answering machine.
 
 ### Call monitor
-The call monitor will create realtime states for every inbound and outbound call.
-If the phone book is enabled (default), numbers will be resolved to Names
-There ist also a state indicating a ringing phone.
+
+The call monitor creates states in real time for every incoming and outgoing call. If the phone book is switched on, which is the default setting, the adapter resolves the numbers into names. There is also a state that shows a ringing telephone.
 
 ### Phone book
-- The phone book, if enabled, will be used to get the name of callers phone number.
-- Further there are three states to resolve a number or a name. If available you will also get the image URL of the contact.
-  e.g.: if you set the state `phonebook.number` all 3 states, name, number and image will be set to the found contact. Note, searches by name will first compare the complete name, if not found, part of is used.
+
+- If the phone book is switched on, the adapter uses it to find the name for the number of the caller.
+- There are three more states to resolve a number or a name. If a picture is available, you also get the URL of the picture of the contact.
+
+Example: if you set the state `phonebook.number`, the adapter sets all 3 states, `name`, `number` and `image`, to the values of the contact that was found. Note: for a search by name, the adapter first compares the complete name. If no contact is found, the adapter searches for a part of the name.
 
 ### Call lists
+
 Output formats:
+
 - `json`
 - `html`
 
-Call lists are:
+The following call lists exist:
+
 - all calls
 - missed calls
-- inbound calls
-- outbound calls
+- incoming calls
+- outgoing calls
 
-Call count:
-The call count can be set to 0. The next call will increment 1.
+Call counter: you can set the call counter to 0. The next call increases the counter by 1.
 
-The html output can be configured by a template.
+You can configure the HTML output with a template.
 
-### command & commandResult state
-With the command state you can call every tr-064 command from this [documentation](https://avm.de/service/schnittstellen/).
-e.g.
+### The states command and commandResult
+
+With the state `command` you can call every tr-064 command from this [documentation](https://avm.de/service/schnittstellen/). Example:
 
 ```javascript
 command = {
@@ -113,24 +113,50 @@ command = {
 };
 ```
 
-The command state should be set to a JSON of the above Lines. So { ... } (without command = and line breaks)
-The callback of the call will set the commandResult state.
+Set the state `command` to the JSON of the lines above, this means to `{ ... }`, without `command =` and without line breaks. The answer of the call is written into the state `commandResult`.
 
+The following example shows how to switch the answering machine of the Fritz!Box on and off with the state `command`. For a test you can copy the text and paste it into the state `tr-064.0.states.command`.
 
-Here you will find an example how to switch the answering machine in the Fritzbox on and off by using the command state. For testing you can just copy & paste the string into the state tr-064.0.states.command
+Switch the answering machine on:
 
-Switch the answering machine on: 
 `{"service": "urn:dslforum-org:service:X_AVM-DE_TAM:1","action": "SetEnable", "params": {"NewIndex": "0","NewEnable": "1"}}`
 
-Switch the answering machine off: 
+Switch the answering machine off:
+
 `{"service": "urn:dslforum-org:service:X_AVM-DE_TAM:1","action": "SetEnable", "params": {"NewIndex": "0","NewEnable": "0"}}`
 
-A detailed description of the actions and parameters for TAM you can find here https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_tam.pdf (link is contained in the AVM documentation above).
+You find a detailed description of the actions and of the parameters for TAM here: [x_tam.pdf](https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_tam.pdf). This link is also contained in the AVM documentation above.
 
+### Switch on the call monitor
 
-### Enable call monitor
-To use the call monitor feature it must be first enabled in the AVM Fritz!Box.
-To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be opened. To close the port dial ```#96*4*```.
+Before you can use the call monitor, you must switch it on in the AVM Fritz!Box. To switch the call monitor on, dial `#96*5*` on a connected telephone. The Fritz!Box then opens the TCP/IP port 1012. To close the port, dial `#96*4*`.
+
+## Pre-release versions
+
+Pre-release versions are available on npm with the tag `dev`. You can install them from the root directory of ioBroker with the following commands:
+
+```bash
+npm install iobroker.tr-064@dev
+iobroker upload tr-064
+```
+
+## Initial creation
+
+@soef created this adapter at https://github.com/soef/ioBroker.tr-064. The adapter is not maintained there anymore. Therefore it was moved to iobroker-community, so that errors can be corrected. Thanks to @soef for his work.
+
+## How to migrate from tr-064-community (intermediate version and name)
+
+If you switch from the adapter tr-064-community, you can copy the complete device list and all settings:
+
+- Open the objects in the admin and switch on the expert mode.
+- Search for the object tree `system.adapter.tr-064-community.0`, where `0` is the number of the instance. If you had several instances, select the correct one.
+- Click the button with the pencil on the right side of this line.
+- In the window, select "raw (experts only)", and copy the part `native` of the JSON.
+- Open `system.adapter.tr-064.0`, where `0` is the number of the instance. If you had several instances, select the correct one.
+- Paste the copied content into the part `native`.
+- Save the changes.
+- Start the adapter.
+- Check the configuration and control whether everything was restored correctly.
 
 ## Changelog
 <!--
@@ -152,11 +178,11 @@ To enable the call monitor dial ```#96*5*```  and the TCP/IP Port 1012 will be o
 
 ### 4.2.17 (2022-09-16)
 * (simatec/Apollon77) Prevent duplication of entries in configuration
-* (Apollon77) Make sure active status of devices in jsonDeviceList is correct
+* (Apollon77) Make sure the active status of devices in jsonDeviceList is correct
 
 ### 4.2.16 (2022-03-21)
 * (Apollon77) Fix info logs on callee/caller
-* (Apollon77) Add special handling for potential broken external image links in phonebook
+* (Apollon77) Add special handling for potential broken external image links in a phonebook
 * (Apollon77) Prevent some crash cases reported by Sentry
 
 ### 4.2.15 (2021-12-08)
