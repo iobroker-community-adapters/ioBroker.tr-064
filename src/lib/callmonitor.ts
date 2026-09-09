@@ -57,9 +57,9 @@ export class CallMonitor {
         client.on('connect', () => this.adapter.log.debug('callmonitor connected'));
 
         client.on('error', err => {
-            // `errno` is a number since Node 6, so this never matches any more. Kept unchanged
-            // on purpose - with a check on `code` the call monitor would stop reconnecting.
-            if ((err as unknown as { errno?: string }).errno === 'ECONNREFUSED') {
+            // The box answers with ECONNREFUSED as long as port 1012 is not opened. Reconnecting
+            // does not help in that case, so the call monitor stops until the adapter is restarted.
+            if ((err as NodeJS.ErrnoException).code === 'ECONNREFUSED') {
                 this.adapter.log.error(ENABLE_CONNECT_1012);
                 this.close();
             }
