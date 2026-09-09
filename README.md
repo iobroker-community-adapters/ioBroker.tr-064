@@ -174,7 +174,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 * (mcm1957) Dependencies have been updated
 
 ### 4.2.18 (2023-01-04)
-* (Apollon77) Prepare for future js-controller verisons
+* (Apollon77) Prepare for future js-controller versions
 
 ### 4.2.17 (2022-09-16)
 * (simatec/Apollon77) Prevent duplication of entries in configuration
