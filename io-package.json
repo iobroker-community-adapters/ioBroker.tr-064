@@ -1,5 +1,9 @@
 {
   "common": {
+    "docs": {
+      "en": "docs/en/README.md",
+      "de": "docs/de/README.md"
+    },
     "name": "tr-064",
     "version": "4.3.0",
     "news": {
