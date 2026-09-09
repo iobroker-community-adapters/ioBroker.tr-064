@@ -60,6 +60,7 @@ export class Tr064Adapter extends utils.Adapter {
     private tr064Client!: TR064Client;
     private deflections: Deflections | null = null;
     private callMonitor: CallMonitor | null = null;
+    private mdns: ReturnType<typeof MulticastDns> | null = null;
 
     /** Result of the last discovery for the admin */
     private allDevices: DiscoveredDevice[] = [];
@@ -120,6 +121,8 @@ export class Tr064Adapter extends utils.Adapter {
             this.callbackTimers.clearAll();
             this.callMonitor?.close();
             this.callMonitor = null;
+            this.mdns?.close();
+            this.mdns = null;
             callback();
         } catch {
             callback();
@@ -628,6 +631,7 @@ export class Tr064Adapter extends utils.Adapter {
 
         const dev = new CDevice(this.devices, CHANNEL_DEVICES, '');
         const mdns = MulticastDns();
+        this.mdns = mdns;
 
         mdns.on('message', (message, rinfo) => {
             if (!message || !rinfo) {
@@ -645,7 +649,11 @@ export class Tr064Adapter extends utils.Adapter {
                 this.devices.update();
                 this.log.debug(`mDNS: ${rinfo.address} is active again`);
             }
-        }).run();
+        });
+
+        // The library keeps its sockets open (`setOptions()` forces a timeout of 0 without
+        // `find`), so they have to be closed in `onUnload()`.
+        mdns.run();
     }
 
     /** Brings the configuration into the form which the adapter expects */
