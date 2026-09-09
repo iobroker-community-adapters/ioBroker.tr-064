@@ -196,6 +196,8 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 ### 4.2.15 (2021-12-08)
 * (bluefox) fix crash case (Sentry IOBROKER-TR-064-35)
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 The MIT License (MIT)
 
