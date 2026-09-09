@@ -165,18 +165,17 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 -->
 
 ### **WORK IN PROGRESS**
-- (bluefox) The mDNS socket is closed when the adapter stops, so a restart does not leave a listener behind
-- (bluefox) A phone book with only one contact is read now
-- (bluefox) The hint how to open port 1012 is shown again if the call monitor is refused by the Fritz!Box
-- (bluefox) The adapter was refactored to TypeScript. The sources are in `src/`, the adapter runs from `build/`
-- (bluefox) The configuration dialog was rewritten as JsonConfig. Admin 7.7.22 or newer is required for it
-- (bluefox) **Breaking change:** the adapter requires node.js >= 22 now
-- (bluefox) The adapter can only be installed from npm now, no longer directly from GitHub (`common.nogit`)
-- (bluefox) The options "Use call forwarding options", "Use mDNS" and "Create JSON device list" have a default value in `io-package.json` now
-- (bluefox) The command `dumpservices.fs` writes the file again instead of stopping the adapter
-- (copilot) Adapter requires admin >= 7.7.22 now
-- (copilot) Adapter requires js-controller >= 6.0.11 now
-- (copilot) Adapter requires admin >= 7.6.17 now
+- (@GermanBluefox) The mDNS socket is closed when the adapter stops, so a restart does not leave a listener behind
+- (@GermanBluefox) A phone book with only one contact is read now
+- (@GermanBluefox) The hint how to open port 1012 is shown again if the call monitor is refused by the Fritz!Box
+- (@GermanBluefox) The adapter was refactored to TypeScript. The sources are in `src/`, the adapter runs from `build/`
+- (@GermanBluefox) The configuration dialog was rewritten as JsonConfig. Admin 7.7.22 or newer is required for it
+- (@GermanBluefox) **Breaking change:** the adapter requires node.js >= 22 now
+- (@GermanBluefox) The adapter can only be installed from npm now, no longer directly from GitHub (`common.nogit`)
+- (@GermanBluefox) The options "Use call forwarding options", "Use mDNS" and "Create JSON device list" have a default value in `io-package.json` now
+- (@GermanBluefox) The command `dumpservices.fs` writes the file again instead of stopping the adapter
+- (@GermanBluefox) Adapter requires admin >= 7.7.22 now
+- (@GermanBluefox) Adapter requires js-controller >= 6.0.11 now
 
 ### 4.3.0 (2024-04-30)
 * (mcm1957) Adapter requires node.js >= 18 and js-controller >= 5 now
