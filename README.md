@@ -154,7 +154,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.0.1 (2026-09-09)
 - (@GermanBluefox) **Breaking change:** the adapter requires node.js >= 22 now
 - (@GermanBluefox) Adapter requires admin >= 7.7.22 now
 - (@GermanBluefox) Adapter requires js-controller >= 6.0.11 now
@@ -184,6 +184,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 * (Apollon77) Fix info logs on callee/caller
 * (Apollon77) Add special handling for potential broken external image links in a phonebook
 * (Apollon77) Prevent some crash cases reported by Sentry
+
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
