@@ -154,7 +154,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 5.0.0 (2026-09-09)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) **Breaking change:** the adapter requires node.js >= 22 now
 - (@GermanBluefox) Adapter requires admin >= 7.7.22 now
 - (@GermanBluefox) Adapter requires js-controller >= 6.0.11 now
