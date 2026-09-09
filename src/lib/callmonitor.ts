@@ -85,7 +85,16 @@ export class CallMonitor {
                 host: this.adapter.config.ip || this.adapter.config.iporhost,
                 port: 1012,
             })
-            .on('error', error => this.adapter.log.error(`Cannot start ${CALLMONITOR_NAME}: ${error.message}`));
+            .on('error', err => {
+                // FRITZ!OS 8.x closes the connection after a longer idle time. The `close` handler
+                // reconnects, so those codes are not an error of the adapter.
+                const code = (err as NodeJS.ErrnoException).code;
+                if (code === 'ETIMEDOUT' || code === 'ECONNRESET' || code === 'EPIPE') {
+                    this.adapter.log.info(`${CALLMONITOR_NAME} connection dropped (${code}); will reconnect`);
+                } else {
+                    this.adapter.log.error(`Cannot start ${CALLMONITOR_NAME}: ${err.message}`);
+                }
+            });
     }
 
     private onData(data: Buffer): void {

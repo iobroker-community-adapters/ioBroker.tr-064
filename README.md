@@ -165,6 +165,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 -->
 
 ### **WORK IN PROGRESS**
+- (@justr1) Expected disconnects of the call monitor (`ETIMEDOUT`, `ECONNRESET`, `EPIPE`) are logged as info now, because the adapter reconnects on its own
 - (@GermanBluefox) The mDNS socket is closed when the adapter stops, so a restart does not leave a listener behind
 - (@GermanBluefox) A phone book with only one contact is read now
 - (@GermanBluefox) The hint how to open port 1012 is shown again if the call monitor is refused by the Fritz!Box
