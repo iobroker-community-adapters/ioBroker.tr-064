@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "5.0.1",
+    "version": "5.0.2",
     "news": {
+      "5.0.2": {
+        "en": "Fixed the crash `Cannot read properties of undefined (reading 'safe')` in `getWLAN` right after the start: the WLAN states are read again in every poll cycle\nA box without a separate 5 GHz configuration does not delay the polling by 3 seconds any more",
+        "de": "Absturz `Cannot read of undefined (reading 'safe') `in `getWLAN` gleich nach dem Start behoben: Die WLAN-Status werden bei jedem Abfragezyklus neu gelesen\nEine Box ohne separate 5-GHz-Konfiguration verzögert die Abfrage nicht mehr um 3 Sekunden",
+        "ru": "Исправлен сбой «Невозможно прочитать свойства неопределенного (чтение «безопасно») в «GetLan» сразу после запуска: состояния WLAN снова считываются в каждом цикле опроса\nБлок без отдельной конфигурации с частотой 5 ГГц больше не задерживает опрос на 3 секунды",
+        "pt": "Corrigido o erro `Não lê propriedades de indefinido (lendo 'seguro') `em `getWLAN` logo após o início: os estados da WLAN são lidos novamente\nUma caixa sem configuração separada de 5 GHz não atrasa mais a pesquisa em 3 segundos",
+        "nl": "De crash 'Kan eigenschappen van undefined niet lezen (lees 'safe') `in `GetWLAN` direct na de start is opgelost: de WLAN-statussen worden bij elke peilcyclus opnieuw gelezen\nEen box zonder aparte 5 GHz-configuratie vertraagt de peiling niet meer met 3 seconden",
+        "fr": "Correction du crash « Impossible de lire les propriétés d'undefined (lecture « sûre ») dans « GetWLAN » juste après le démarrage : l'état du WLAN est relu à chaque cycle de sondage\nUn boîtier sans configuration 5 GHz distincte ne retarde plus le sondage de 3 secondes",
+        "it": "Risolto il crash `Cannot read properties of undefined (reading 'safe') `in `getWLAN` subito dopo l'avvio: gli stati WLAN vengono letti di nuovo\nUn box senza configurazione a 5 GHz separata non ritarda più il polling di 3 secondi",
+        "es": "Se ha corregido el fallo `No puede leer las propiedades de lo indefinido (es decir, seguro) `en `GetWLAN` justo después del principio: los estados de la WLAN se vuelven a leer en cada ciclo de sondeo\nUna caja sin una configuración independiente de 5 GHz ya no retrasa el sondeo 3 segundos",
+        "pl": "Naprawiono awarię `Nie można odczytać właściwości niezdefiniowanych (odczyt 'bezpieczny') `w `GetWlan` zaraz po starcie: stany WLAN są odczytywane ponownie w każdym cyklu ankiety\nPudełko bez oddzielnej konfiguracji 5 GHz nie opóźnia już głosowania o 3 sekundy",
+        "uk": "Виправлено помилку `Неможливо прочитати властивості невизначеного (читання «безпечно») `у `GetWLAN` відразу після початку: стани WLAN читаються знову в кожному циклі опитування\nКоробка без окремої конфігурації 5 ГГц більше не затримує опитування на 3 секунди",
+        "zh-cn": "修复了启动后立即在 `getWLAN`中无法读取未定义（读取'安全 '）属性的崩溃问题：在每个轮询周期中都会再次读取WLAN状态\n没有单独的 5 GHz 配置的盒子不会再将轮询延迟 3 秒"
+      },
       "5.0.1": {
         "en": "**Breaking change:** the adapter requires node.js >= 22 now\nAdapter requires admin >= 7.7.22 now\nAdapter requires js-controller >= 6.0.11 now\nThe adapter does not stop any more if the Fritz!Box cannot be reached. The connection is retried every 30 seconds, and the new state `info.connection` shows whether the box answers\nExpected disconnects of the call monitor (`ETIMEDOUT`, `ECONNRESET`, `EPIPE`) are logged as info now, because the adapter reconnects on its own\nThe mDNS socket is closed when the adapter stops, so a restart does not leave a listener behind\nA phone book with only one contact is read now\nThe hint how to open port 1012 is shown again if the call monitor is refused by the Fritz!Box\nThe adapter was refactored to TypeScript. The sources are in `src/`, the adapter runs from `build/`\nThe configuration dialog was rewritten as JsonConfig. Admin 7.7.22 or newer is required for it\nThe adapter can only be installed from npm now, no longer directly from GitHub (`common.nogit`)\nThe options \"Use call forwarding options\", \"Use mDNS\" and \"Create JSON device list\" have a default value in `io-package.json` now\nThe command `dumpservices.fs` writes the file again instead of stopping the adapter",
         "de": "**Wichtige Änderung: ** Der Adapter benötigt jetzt node.js >= 22\nAdapter benötigt jetzt admin >= 7.7.22\nAdapter benötigt jetzt JS-Controller >= 6.0.11\nDer Adapter stoppt nicht mehr, wenn Fritz! Box nicht erreichbar. Der Verbindungsversuch erfolgt alle 30 Sekunden und der Status `info.connection` zeigt an, ob das Feld antwortet\nErwartete Unterbrechungen des Anrufmonitors (`ETIMEDOUT`, `ECONNRESET`, `EPIPE`) werden nun als Info protokolliert, da der Adapter sich selbst neu verbindet\nDer mDNS-Socket ist zu, wenn der Adapter stoppt, also kein Neustart\nEin Telefonbuch mit nur einem Kontakt wird gelesen\nDer Hinweis zum Öffnen von Port 1012 erscheint erneut, wenn Fritz den Call Monitor ablehnt! Kiste\nDer Adapter wurde auf TypeScript umgestellt. Die Quellen sind in `src/“, der Adapter läuft von `build/`\nDer Konfigurationsdialog heißt jetzt JSONConfig. Admin 7.7.22 oder neuer ist nötig\nDer Adapter kann nur noch von npm installiert werden, nicht mehr direkt von GitHub (`common.nogit`)\nDie Optionen „Use Call Forwarding“, „Use mDNS“ und „Create JSON device list“ haben jetzt einen Standardwert in `io-package.json`\nDer Befehl `dumpservices.fs` schreibt die Datei erneut, statt den Adapter zu stoppen",
@@ -80,19 +93,6 @@
         "pl": "napraw przypadek awarii (Sentry IOBROKER-TR-064-35)",
         "zh-cn": "修复崩溃案例 (Sentry IOBROKER-TR-064-35)",
         "uk": "виправити випадок збою (Sentry IOBROKER-TR-064-35)"
-      },
-      "4.2.14": {
-        "en": "Further optimizations for js-controller 3.3",
-        "de": "Weitere Optimierungen für js-controller 3.3",
-        "ru": "Дальнейшие оптимизации для js-controller 3.3",
-        "pt": "Otimizações adicionais para js-controller 3.3",
-        "nl": "Verdere optimalisaties voor js-controller 3.3",
-        "fr": "Autres optimisations pour js-controller 3.3",
-        "it": "Ulteriori ottimizzazioni per js-controller 3.3",
-        "es": "Más optimizaciones para js-controller 3.3",
-        "pl": "Dalsze optymalizacje dla kontrolera js 3.3",
-        "zh-cn": "js-controller 3.3 进一步优化",
-        "uk": "Подальша оптимізація для js-контролера 3.3"
       }
     },
     "titleLang": {

@@ -1,4 +1,9 @@
 # Older changes
+## 4.2.16 (2022-03-21)
+* (Apollon77) Fix info logs on callee/caller
+* (Apollon77) Add special handling for potential broken external image links in a phonebook
+* (Apollon77) Prevent some crash cases reported by Sentry
+
 ## 4.2.15 (2021-12-08)
 * (bluefox) fix crash case (Sentry IOBROKER-TR-064-35)
 
