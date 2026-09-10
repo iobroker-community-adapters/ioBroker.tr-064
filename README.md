@@ -154,6 +154,10 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Fixed the crash `Cannot read properties of undefined (reading 'safe')` in `getWLAN` right after the start: the WLAN states are read again in every poll cycle
+- (@GermanBluefox) A box without a separate 5 GHz configuration does not delay the polling by 3 seconds any more
+
 ### 5.0.1 (2026-09-09)
 - (@GermanBluefox) **Breaking change:** the adapter requires node.js >= 22 now
 - (@GermanBluefox) Adapter requires admin >= 7.7.22 now

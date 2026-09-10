@@ -618,7 +618,9 @@ export class Tr064Adapter extends utils.Adapter {
                 return;
             }
 
-            read(
+            // the methods of the client use `this`, so they must not be called detached
+            read.call(
+                this.tr064Client,
                 this.callbackTimers.wrap<ActionResult>(3000, (err, res) => {
                     if (!err && res) {
                         anySuccess = true;

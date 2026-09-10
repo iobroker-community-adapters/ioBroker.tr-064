@@ -597,6 +597,8 @@ export class TR064Client extends TR064 {
 
     public getWLAN5(callback: (err: TR064Error | null, result: ActionResult) => void): void {
         if (!this.wlan50?.getInfo) {
+            // the caller must be answered, otherwise it waits for its own timeout
+            callback(new Error('no 5 GHz WLAN configuration'), {});
             return;
         }
         this.safe(this.wlan50, 'getInfo', true)(callback);
