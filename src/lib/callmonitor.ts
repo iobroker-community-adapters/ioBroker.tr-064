@@ -12,6 +12,8 @@ import type { Phonebook } from './phonebook';
 import type { Tr064Adapter } from '../main';
 
 const CALLMONITOR_NAME = 'callmonitor';
+/** Idle milliseconds after which TCP keepalive probes check whether the box is still there */
+const KEEPALIVE_DELAY = 60_000;
 const ENABLE_CONNECT_1012 =
     '--- To use the callmonitor, enable connects to port 1012 on FritzBox by dialing #96*5* with a directly connected phone (line/dect) and restart this adapter';
 
@@ -53,6 +55,9 @@ export class CallMonitor {
     private init(): void {
         const client = new Socket();
         this.client = client;
+        // The call monitor is idle for hours. Without keepalive a connection which the box dropped
+        // silently (e.g. by a reboot) is never detected: no `close`, no reconnect, no events.
+        client.setKeepAlive(true, KEEPALIVE_DELAY);
 
         client.on('connect', () => this.adapter.log.debug('callmonitor connected'));
 

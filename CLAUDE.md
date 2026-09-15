@@ -100,6 +100,14 @@ test deterministic: before, the adapter exited with code 1 on the CI runners (wh
 resolves to a public address) and the test "The adapter starts" failed or passed depending on
 whether the TCP connect gave up within the 5 second observation window of the test harness.
 
+### Call lists and answering machine
+
+- The call lists and `states.abNewMessages` are refreshed by `refreshCalls()` in `src/main.ts`: on connect, 100 ms after the call monitor wrote `callmonitor.lastCall.timestamp`, and from `updateAll()` at most every `CALLS_REFRESH_INTERVAL` (60 s). The poll path is the only one for an instance without call monitor.
+- The call monitor socket uses TCP keepalive. Without it a connection which the box dropped silently (reboot) never emits `close`, is never reconnected, and the call lists freeze (issue #690).
+- `abNewMessages` counts the messages with `<New>1</New>` of `GetMessageList` over all answering machines with `Display` = 1 of `GetList`. **`New` = 1 means not listened yet** - the AVM document TR-064_TAM.pdf describes it the other way round, the boxes and other projects use 1 = new.
+- XML files of the box are read with `getXml()`/`parseXml()` of `src/lib/utils.ts`: 10 s timeout, the callback is called exactly once, tag names are lower case and a single element is an object, not an array. Only `http` URLs are read.
+- There is no TR-064 action for the "new missed calls" counter of a FRITZ!Fon; the call list XML has no seen/unseen flag.
+
 ### Misc conventions
 
 - Use `this.setTimeout()`/`this.clearTimeout()` of adapter-core, never the global ones, so that the timers are stopped on unload.

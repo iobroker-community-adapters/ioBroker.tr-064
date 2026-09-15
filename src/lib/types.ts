@@ -95,6 +95,40 @@ export interface CallListXml {
     };
 }
 
+/** One answering machine of `X_AVM-DE_TAM:GetList` */
+export interface TamListItem {
+    index: string;
+    /** `1` if the answering machine is shown in the web interface */
+    display: string;
+    enable: string;
+    name: string;
+}
+
+/** `NewTAMList` of `X_AVM-DE_TAM:GetList` converted to JSON */
+export interface TamListXml {
+    list?: {
+        item?: TamListItem | TamListItem[];
+    };
+}
+
+/** One message of the message list of an answering machine */
+export interface TamMessage {
+    index: string;
+    tam: string;
+    number: string;
+    name: string;
+    date: string;
+    /** `1` if the message has not been listened to yet - contrary to the AVM documentation */
+    new: string;
+}
+
+/** Message list of `X_AVM-DE_TAM:GetMessageList` converted to JSON - `root` is `''` without messages */
+export interface TamMessageListXml {
+    root?: {
+        message?: TamMessage | TamMessage[];
+    };
+}
+
 /** One entry of the phone book */
 export interface PhonebookEntry {
     name: string;

@@ -38,6 +38,14 @@ const DEFAULT_SECRET = 'Zgfr56gFe87jJOM';
 /** Milliseconds between two attempts to connect to the Fritz!Box */
 const RECONNECT_INTERVAL = 30_000;
 
+/**
+ * Minimum milliseconds between two refreshes of the call lists and the answering machine messages
+ * by the poll cycle. The call monitor refreshes right after every call; the poll cycle is the
+ * fallback for an instance without call monitor or with a call monitor connection which was lost,
+ * and it notices messages which were listened to in the meantime.
+ */
+const CALLS_REFRESH_INTERVAL = 60_000;
+
 /** Method of `TR064Client` which is called when a state below `states` is written */
 type StateFunction = (val: ioBroker.StateValue, callback?: () => void) => boolean | void;
 
@@ -79,6 +87,8 @@ export class Tr064Adapter extends utils.Adapter {
     private connectTimer: ioBroker.Timeout | null = null;
     private pollingTimer: ioBroker.Timeout | null = null;
     private refreshCalllistTimeout: ioBroker.Timeout | null = null;
+    /** `Date.now()` of the last refresh of the call lists and messages */
+    private lastCallsRefresh = 0;
 
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({ ...options, name: 'tr-064' });
@@ -155,7 +165,7 @@ export class Tr064Adapter extends utils.Adapter {
 
         if (!state.ack) {
             this.onCommandState(id, state);
-        } else if (this.config.calllists.use && id.includes('callmonitor.lastCall.timestamp')) {
+        } else if (id.includes('callmonitor.lastCall.timestamp')) {
             // If multiple updates come we wait for 100ms stability
             if (this.refreshCalllistTimeout) {
                 this.clearTimeout(this.refreshCalllistTimeout);
@@ -163,7 +173,7 @@ export class Tr064Adapter extends utils.Adapter {
             this.refreshCalllistTimeout =
                 this.setTimeout(() => {
                     this.refreshCalllistTimeout = null;
-                    this.tr064Client.refreshCalllist();
+                    this.refreshCalls();
                 }, 100) ?? null;
         }
     }
@@ -552,9 +562,20 @@ export class Tr064Adapter extends utils.Adapter {
         }
     }
 
+    /** Reads the call lists and the number of new answering machine messages, and remembers when */
+    private refreshCalls(): void {
+        this.lastCallsRefresh = Date.now();
+        this.tr064Client.refreshCalllist();
+        this.tr064Client.refreshTAMMessages();
+    }
+
     /** Reads everything from the box which is polled cyclically */
     private updateAll(): void {
         this.log.debug('in updateAll');
+
+        if (Date.now() - this.lastCallsRefresh >= CALLS_REFRESH_INTERVAL) {
+            this.refreshCalls();
+        }
 
         const names: PollEntry[] = [
             {
@@ -756,8 +777,9 @@ export class Tr064Adapter extends utils.Adapter {
             void this.setConnected(true);
             this.connectAttempts = 0;
 
-            this.tr064Client.refreshCalllist();
+            // the objects first, so that the refresh writes into objects with their full definition
             this.createObjects();
+            this.refreshCalls();
 
             this.createConfiguredDevices(() => {
                 this.phonebook.start(this.tr064Client.sslDevice, { return: !this.config.usePhonebook }, () => {

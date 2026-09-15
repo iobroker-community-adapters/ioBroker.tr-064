@@ -11,9 +11,9 @@ import { TR064 } from 'tr-O64';
 import type { Action, ActionArguments, ActionResult, Device, Service, TR064Error } from 'tr-O64';
 
 import { refresh, ROOT as CALLLIST_ROOT } from './calllist';
-import { safeFunction } from './utils';
+import { getXml, parseXml, safeFunction } from './utils';
 import { CHANNEL_STATES, STATES } from './states';
-import type { HostEntry } from './types';
+import type { HostEntry, TamListXml, TamMessageListXml } from './types';
 import type { Tr064Adapter } from '../main';
 
 /** The actions of one WLAN configuration service */
@@ -64,6 +64,10 @@ export class TR064Client extends TR064 {
     private GetCallList!: Action;
     private getABInfo!: Action;
     private setEnableAB!: Action;
+    private getTAMList!: Action;
+    private getTAMMessageList!: Action;
+    /** Set while `refreshTAMMessages()` runs, so that two refreshes do not overlap */
+    private tamRefreshRunning = false;
     private getSpecificHostEntry!: Action;
     private getGenericHostEntry!: Action;
     private GetSpecificHostEntryExt!: Action;
@@ -157,6 +161,11 @@ export class TR064Client extends TR064 {
 
             this.getABInfo = this.safe(device, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetInfo');
             this.setEnableAB = this.safe(device, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.SetEnable');
+            this.getTAMList = this.safe(device, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetList');
+            this.getTAMMessageList = this.safe(
+                device,
+                'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetMessageList',
+            );
 
             this.initWLANs(device);
 
@@ -222,6 +231,97 @@ export class TR064Client extends TR064 {
                 },
             );
         });
+    }
+
+    /**
+     * Counts the new messages of all answering machines and writes `states.abNewMessages`.
+     *
+     * A message with `<New>1</New>` has not been listened to yet. The box clears the flag when the
+     * message is played (e.g. on a FRITZ!Fon), so the number goes down again with the next refresh.
+     * The AVM documentation describes `New` the other way round, which does not match the boxes.
+     * The state is only written if at least one message list could be read.
+     */
+    public refreshTAMMessages(done?: () => void): void {
+        if (this.tamRefreshRunning) {
+            done?.();
+            return;
+        }
+        this.tamRefreshRunning = true;
+
+        this.getTAMList(
+            this.adapter.callbackTimers.wrap<ActionResult>(3000, (err, data) => {
+                this.getTAMIndexes(err ? undefined : data?.NewTAMList, indexes => {
+                    let count = 0;
+                    let readable = 0;
+
+                    const next = (): void => {
+                        const index = indexes.shift();
+                        if (index === undefined) {
+                            this.tamRefreshRunning = false;
+                            if (!readable) {
+                                done?.();
+                                return;
+                            }
+                            this.adapter.devStates.setAndUpdate(STATES.abNewMessages.name, count, () => done?.());
+                            return;
+                        }
+
+                        this.countNewTAMMessages(index, newMessages => {
+                            if (newMessages !== undefined) {
+                                readable++;
+                                count += newMessages;
+                            }
+                            next();
+                        });
+                    };
+
+                    next();
+                });
+            }),
+        );
+    }
+
+    /** Indexes of the answering machines which are shown in the web interface, out of `GetList` */
+    private getTAMIndexes(tamList: string | undefined, cb: (indexes: number[]) => void): void {
+        if (!tamList) {
+            // a firmware without `GetList` (added 2016) has only the first answering machine
+            cb([0]);
+            return;
+        }
+
+        parseXml<TamListXml>(tamList, (_err, json) => {
+            const items = json?.list?.item;
+            const list = Array.isArray(items) ? items : items ? [items] : [];
+            cb(list.filter(item => item.display === '1').map(item => ~~Number(item.index)));
+        });
+    }
+
+    /** Counts the new messages of one answering machine - `undefined` if its list cannot be read */
+    private countNewTAMMessages(index: number, cb: (count: number | undefined) => void): void {
+        this.getTAMMessageList(
+            { NewIndex: index },
+            this.adapter.callbackTimers.wrap<ActionResult>(3000, (err, data) => {
+                const url = data?.NewURL;
+                // like the call list, the message list is only read by http
+                if (err || !url || url.startsWith('https:')) {
+                    cb(undefined);
+                    return;
+                }
+
+                getXml<TamMessageListXml>(url, (httpErr, json) => {
+                    if (httpErr) {
+                        this.adapter.log.debug(
+                            `Cannot read the messages of answering machine ${index}: ${httpErr.message}`,
+                        );
+                        cb(undefined);
+                        return;
+                    }
+                    const messages = json?.root?.message;
+                    const list = Array.isArray(messages) ? messages : messages ? [messages] : [];
+                    cb(list.filter(message => message.new === '1').length);
+                });
+            }),
+        );
     }
 
     /** Reads the state of the answering machine with the index `val` */

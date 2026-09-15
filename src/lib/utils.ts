@@ -1,5 +1,10 @@
 /** Helper functions which were spread over `main.js`, `lib/devices.js` and `lib/deflections.js` */
+import { get as httpGet } from 'node:http';
+import { Parser } from 'xml2js';
 import type { Action, ActionCallback, TR064Error } from 'tr-O64';
+
+/** Milliseconds until the download of an XML file of the box is given up */
+const HTTP_TIMEOUT = 10_000;
 
 /** Result of `getLastValidPropEx()` */
 export interface InvalidPropInfo {
@@ -271,4 +276,38 @@ export function forEachObjSync<T>(
     }
 
     doIt(-1);
+}
+
+/**
+ * Converts an XML document of the box into JSON. Tags are lower case, attributes are ignored and
+ * an element which occurs only once is an object, not an array.
+ */
+export function parseXml<T>(xml: string, cb: (err: Error | null, json?: T) => void): void {
+    const parser = new Parser({
+        explicitArray: false,
+        mergeAttrs: true,
+        normalizeTags: true,
+        ignoreAttrs: true,
+    });
+    parser.parseString(xml, (err: Error | null, json: T) => cb(err, json));
+}
+
+/** Reads an XML file of the box by `http` and converts it into JSON. `cb` is called exactly once */
+export function getXml<T>(url: string, cb: (err: Error | null, json?: T) => void): void {
+    let finished = false;
+    const finish = (err: Error | null, json?: T): void => {
+        if (!finished) {
+            finished = true;
+            cb(err, json);
+        }
+    };
+
+    const request = httpGet(url, response => {
+        let data = '';
+        response.on('data', d => (data += d));
+        response.on('end', () => parseXml<T>(data, finish));
+    });
+    request.setTimeout(HTTP_TIMEOUT, () => request.destroy(new Error(`no answer within ${HTTP_TIMEOUT} ms`)));
+    request.on('error', err => finish(err));
+    request.end();
 }

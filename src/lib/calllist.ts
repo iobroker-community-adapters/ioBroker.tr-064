@@ -5,10 +5,9 @@
  * converted to JSON. The lists themselves are kept in the `meta` object of the adapter, so that
  * the counters survive a restart.
  */
-import { get as httpGet } from 'node:http';
-import { Parser } from 'xml2js';
 import type { ActionResult, TR064Error } from 'tr-O64';
 
+import { getXml } from './utils';
 import type { CallEntry, CallListName, CallListsConfig, CallListTypeConfig, CallListXml } from './types';
 import type { Tr064Adapter } from '../main';
 import type { SystemData } from './systemdata';
@@ -308,24 +307,6 @@ export class CallLists {
     }
 }
 
-/** Reads a URL of the Fritz!Box and converts the XML into JSON */
-function getHttpData(url: string, cb: (err: Error | number | null, json?: CallListXml) => void): void {
-    const parser = new Parser({
-        explicitArray: false,
-        mergeAttrs: true,
-        normalizeTags: true,
-        ignoreAttrs: true,
-    });
-
-    const request = httpGet(url, response => {
-        let data = '';
-        response.on('data', d => (data += d));
-        response.on('end', () => parser.parseString(data, (err: Error | null, json: CallListXml) => cb(err, json)));
-    });
-    request.on('error', e => console.error(e));
-    request.end();
-}
-
 /**
  * Reads the call list of the box and adds the new calls to the lists.
  *
@@ -366,7 +347,12 @@ export function refresh(
     }
 
     adapter.log.debug(`Request Calllist JSON: url = ${url}`);
-    getHttpData(url, (_err, json) => {
+    getXml<CallListXml>(url, (httpErr, json) => {
+        if (httpErr) {
+            adapter.log.warn(`Cannot read the call list: ${httpErr.message}`);
+            done?.();
+            return;
+        }
         adapter.log.debug(`Result Calllist JSON: ${JSON.stringify(json)}`);
 
         if (json?.root) {

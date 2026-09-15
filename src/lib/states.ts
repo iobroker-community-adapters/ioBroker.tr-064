@@ -51,6 +51,11 @@ export const STATES: Record<string, StateDefinition> = {
     },
     abIndex: { name: 'abIndex', val: 0, common: {}, native: { func: 'setABIndex' } },
     ab: { name: 'ab', val: false, common: { desc: 'parameter: index, state' }, native: { func: 'setAB' } },
+    abNewMessages: {
+        name: 'abNewMessages',
+        val: 0,
+        common: { role: 'value', write: false, desc: 'Number of new messages on all answering machines' },
+    },
     ring: {
         name: 'ring',
         val: '**610',
