@@ -165,6 +165,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 - (@GermanBluefox) A configured device which the box does not know (or which is offline since the start) is logged once with a hint to check its MAC address and listed as inactive in `jsonDeviceList`, instead of silently being left out
 - (@GermanBluefox) A device request which the box does not answer does not stop the presence detection and the polling any more
 - (@GermanBluefox) An info message tells when "Create JSON device list" is switched on, but no devices are configured
+- (@GermanBluefox) The adapter does not hang silently any more when the FRITZ!Box does not deliver the description of a service (e.g. `x_speedtestSCPD.xml` with FRITZ!OS 8.24 Labor): after 10 seconds the service is skipped with a warning, and the connection is limited to 60 seconds and retried
 
 ### 5.0.2 (2026-09-10)
 - (@GermanBluefox) Fixed the crash `Cannot read properties of undefined (reading 'safe')` in `getWLAN` right after the start: the WLAN states are read again in every poll cycle

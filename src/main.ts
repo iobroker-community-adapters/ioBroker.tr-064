@@ -38,6 +38,9 @@ const DEFAULT_SECRET = 'Zgfr56gFe87jJOM';
 /** Milliseconds between two attempts to connect to the Fritz!Box */
 const RECONNECT_INTERVAL = 30_000;
 
+/** Milliseconds within which the connection (device and service descriptions) has to be set up */
+const INIT_TIMEOUT = 60_000;
+
 /**
  * Minimum milliseconds between two refreshes of the call lists and the answering machine messages
  * by the poll cycle. The call monitor refreshes right after every call; the poll cycle is the
@@ -788,11 +791,14 @@ export class Tr064Adapter extends utils.Adapter {
      * are created and the polling starts.
      */
     private connect(): void {
-        this.tr064Client.init(err => {
-            this.initError = err;
+        // without a limit, a description which the box never delivers would stop the adapter silently
+        const initialized = this.callbackTimers.wrap<null>(INIT_TIMEOUT, err => {
+            const error =
+                err === 'timeout' ? `no complete answer from the FritzBox within ${INIT_TIMEOUT / 1000} seconds` : err;
+            this.initError = error;
 
-            if (err) {
-                this.onConnectionFailed(err);
+            if (error) {
+                this.onConnectionFailed(error);
                 return;
             }
 
@@ -827,6 +833,8 @@ export class Tr064Adapter extends utils.Adapter {
                 this.deflections = new Deflections(this.tr064Client.sslDevice, this, this.devices);
             }
         });
+
+        this.tr064Client.init(err => initialized(err ?? null, null));
     }
 
     /** Logs a failed connection attempt and schedules the next one */

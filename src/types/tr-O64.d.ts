@@ -34,6 +34,8 @@ declare module 'tr-O64' {
             controlURL: string;
             eventSubURL: string;
             SCPDURL: string;
+            /** Set by the adapter: the box did not deliver the description, the service has no actions */
+            unavailable?: boolean;
         };
         actions: Record<string, Action>;
         stateVariables: Record<string, unknown>;
@@ -61,5 +63,24 @@ declare module 'tr-O64' {
         initPMRDevice(host: string, port: number, callback: DeviceCallback): void;
         startEventServer(port: number): void;
         stopEventServer(): void;
+    }
+}
+
+/** The device class of `tr-O64` - only needed to guard the reading of the service descriptions */
+declare module 'tr-O64/lib/Device' {
+    import type { Service } from 'tr-O64';
+
+    /** One service as it is listed in `tr64desc.xml` */
+    export interface ServiceInfo {
+        serviceType: string;
+        serviceId: string;
+        controlURL: string;
+        eventSubURL: string;
+        SCPDURL: string;
+    }
+
+    export class Device {
+        /** Reads the description (SCPD) of one service. `callback` is only called if it could be read */
+        _addService(serviceData: ServiceInfo, callback: (err: Error | null, service: Service) => void): void;
     }
 }

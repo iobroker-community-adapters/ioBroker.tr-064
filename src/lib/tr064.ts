@@ -9,12 +9,56 @@ import { join } from 'node:path';
 import { getAbsoluteDefaultDataDir } from '@iobroker/adapter-core';
 import { TR064 } from 'tr-O64';
 import type { Action, ActionArguments, ActionResult, Device, Service, TR064Error } from 'tr-O64';
+import { Device as TR064DeviceClass } from 'tr-O64/lib/Device';
 
 import { refresh, ROOT as CALLLIST_ROOT } from './calllist';
 import { getXml, normalizeMac, parseXml, safeFunction } from './utils';
 import { CHANNEL_STATES, STATES } from './states';
 import type { DeviceConfigEntry, HostEntry, TamListXml, TamMessageListXml } from './types';
 import type { Tr064Adapter } from '../main';
+
+/** Milliseconds within which the box has to deliver the description (SCPD) of one service */
+const SCPD_TIMEOUT = 10_000;
+
+/**
+ * `tr-O64` reads the description (SCPD) of every service of the box and calls back only when all
+ * of them arrived. For a description which the box does not deliver - e.g. `x_speedtestSCPD.xml`
+ * of several FRITZ!OS 8.24 Labor versions - the library neither calls back nor reports an error,
+ * so the adapter would wait forever without any log. After `SCPD_TIMEOUT` such a service is
+ * replaced by an empty one with `meta.unavailable`; `safeFunction()` handles its missing actions.
+ *
+ * The global timer is used on purpose: this is library level without an adapter instance, and the
+ * timer is `unref()`ed, so it never keeps the process alive.
+ */
+function guardServiceDescriptions(): void {
+    const proto = TR064DeviceClass.prototype as TR064DeviceClass & { scpdGuarded?: boolean };
+    if (proto.scpdGuarded) {
+        return;
+    }
+    proto.scpdGuarded = true;
+
+    const addService = proto._addService;
+    proto._addService = function (serviceData, callback): void {
+        // one holder for both, because the timer and `finish()` refer to each other
+        const guard: { finished: boolean; timer?: NodeJS.Timeout } = { finished: false };
+        const finish = (err: Error | null, service: Service): void => {
+            if (!guard.finished) {
+                guard.finished = true;
+                clearTimeout(guard.timer);
+                callback(err, service);
+            }
+        };
+        guard.timer = setTimeout(() => {
+            const service = { meta: { ...serviceData, unavailable: true }, actions: {}, stateVariables: {} };
+            finish(null, service);
+        }, SCPD_TIMEOUT);
+        guard.timer.unref();
+
+        addService.call(this, serviceData, finish);
+    };
+}
+
+guardServiceDescriptions();
 
 /** The actions of one WLAN configuration service */
 interface WlanFunctions {
@@ -110,6 +154,19 @@ export class TR064Client extends TR064 {
         return safeFunction(root, path, this.adapter.log, log);
     }
 
+    /** Logs the services whose description the box did not deliver (see `guardServiceDescriptions()`) */
+    private logUnavailableServices(device: Device): void {
+        const unavailable = Object.values(device.services)
+            .filter(service => service?.meta?.unavailable)
+            .map(service => service.meta.serviceType);
+
+        if (unavailable.length) {
+            this.adapter.log.warn(
+                `The FRITZ!Box did not deliver the description of ${unavailable.join(', ')} within ${SCPD_TIMEOUT / 1000} seconds - the functions of ${unavailable.length > 1 ? 'these services' : 'this service'} are not available`,
+            );
+        }
+    }
+
     /**
      * Assigns the WLAN configurations of the box.
      *
@@ -192,12 +249,13 @@ export class TR064Client extends TR064 {
 
             device.login(this.user, this.password);
             this.sslDevice = device;
+            this.logUnavailableServices(device);
 
             this.hosts = device.services['urn:dslforum-org:service:Hosts:1'];
-            this.reboot = device.services['urn:dslforum-org:service:DeviceConfig:1'].actions.Reboot;
+            this.reboot = device.services['urn:dslforum-org:service:DeviceConfig:1']?.actions.Reboot;
             // in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             this.getConfigFile =
-                device.services['urn:dslforum-org:service:DeviceConfig:1'].actions['X_AVM-DE_GetConfigFile'];
+                device.services['urn:dslforum-org:service:DeviceConfig:1']?.actions['X_AVM-DE_GetConfigFile'];
 
             this.GetCallList = this.safe(
                 device,
@@ -233,8 +291,12 @@ export class TR064Client extends TR064 {
                 if (!device) {
                     return;
                 }
+                this.logUnavailableServices(device);
 
                 const wanIp = device.services['urn:schemas-upnp-org:service:WANIPConnection:1'];
+                if (!wanIp) {
+                    return;
+                }
                 this.getExternalIPAddress = wanIp.actions.GetExternalIPAddress;
                 this.getExternalIPv6Address = wanIp.actions.X_AVM_DE_GetExternalIPv6Address;
                 this.getExternalIPv6Prefix = wanIp.actions.X_AVM_DE_GetIPv6Prefix;
