@@ -476,7 +476,8 @@ export class TR064Client extends TR064 {
             return;
         }
 
-        this.adapter.log.debug(`Ring : ${JSON.stringify(ar)}`);
+        this.adapter.log.debug(`Ring${ar.length >= 2 ? ` for ${~~Number(ar[1].trim())} s` : ''}`);
+        this.adapter.log.silly(`Ring: ${JSON.stringify(ar)}`);
         this.safe(
             this.voip,
             'X_AVM-DE_DialNumber',
@@ -544,7 +545,7 @@ export class TR064Client extends TR064 {
                     }
 
                     const host = obj as unknown as HostEntry;
-                    this.adapter.log.debug(`forEachHostEntry cnt=${cnt} ${host.NewHostName}`);
+                    this.adapter.log.silly(`forEachHostEntry cnt=${cnt} ${host.NewHostName}`);
                     callback(err, host, cnt++, all);
                     this.adapter.setTimeout(doIt, 10);
                 });
@@ -591,7 +592,7 @@ export class TR064Client extends TR064 {
                     let device: HostEntry | null = result as unknown as HostEntry | null;
 
                     if (err === 'timeout') {
-                        this.adapter.log.warn(`GetSpecificHostEntry: no answer for "${dev.name}" (${mac})`);
+                        this.adapter.log.warn(`GetSpecificHostEntry: no answer for "${dev.name}"`);
                         device = dev.lastResult ?? null;
                     } else if (err && typeof err === 'object' && err.code === 500) {
                         if (dev.lastResult) {
@@ -601,7 +602,7 @@ export class TR064Client extends TR064 {
                             if (!dev.notFoundLogged) {
                                 dev.notFoundLogged = true;
                                 this.adapter.log.info(
-                                    `Device "${dev.name}" (${mac}) is unknown to the FRITZ!Box or offline since the adapter was started. If it is online, check its MAC address in the tab "Devices"`,
+                                    `Device "${dev.name}" is unknown to the FRITZ!Box or offline since the adapter was started. If it is online, check its MAC address in the tab "Devices"`,
                                 );
                             }
                             device = null;
@@ -609,7 +610,7 @@ export class TR064Client extends TR064 {
                         }
                     } else if (err) {
                         this.adapter.log.warn(
-                            `forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${mac}):${typeof err === 'string' ? err : err.message} - ${JSON.stringify(err)}`,
+                            `forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1} (${dev.name}): ${typeof err === 'string' ? err : err.message} - ${JSON.stringify(err)}`,
                         );
                         device = null;
                     } else if (device) {
@@ -619,7 +620,8 @@ export class TR064Client extends TR064 {
                     }
 
                     if (device) {
-                        this.adapter.log.debug(
+                        this.adapter.log.debug(`forEachConfiguredDevice: i=${i - 1} active=${device.NewActive}`);
+                        this.adapter.log.silly(
                             `forEachConfiguredDevice: i=${i - 1} ${device.NewHostName} active=${device.NewActive}`,
                         );
                         device.NewMACAddress = dev.mac;
@@ -710,7 +712,9 @@ export class TR064Client extends TR064 {
                 );
                 return;
             }
-            this.adapter.log.info(JSON.stringify(res));
+            // the result may contain passwords (e.g. `GetSecurityKeys`), it is in `commandResult` anyway
+            this.adapter.log.debug(`Command ${o.service}#${o.action} executed`);
+            this.adapter.log.silly(`Command ${o.service}#${o.action}: ${JSON.stringify(res)}`);
             void this.adapter.setState(
                 `${CHANNEL_STATES}.${STATES.commandResult.name}`,
                 JSON.stringify(res),

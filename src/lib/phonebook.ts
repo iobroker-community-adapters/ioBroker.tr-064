@@ -91,13 +91,15 @@ export class Phonebook {
         }
 
         this.getVoIPCommonCountryCode((err, res) => {
-            this.adapter.log.debug(`getVoIPCommonCountryCode: ${err ? err.message : res.NewVoIPCountryCode}`);
+            this.adapter.log.debug(`getVoIPCommonCountryCode: ${err ? err.message : 'ok'}`);
+            this.adapter.log.silly(`getVoIPCommonCountryCode: ${res?.NewVoIPCountryCode}`);
             if (!err && res) {
                 this.countryCode = res.NewVoIPCountryCode;
             }
 
             this.getVoIPCommonAreaCode!((err, res) => {
-                this.adapter.log.debug(`getVoIPCommonAreaCode: ${err ? err.message : res.NewVoIPAreaCode}`);
+                this.adapter.log.debug(`getVoIPCommonAreaCode: ${err ? err.message : 'ok'}`);
+                this.adapter.log.silly(`getVoIPCommonAreaCode: ${res?.NewVoIPAreaCode}`);
                 if (!err && res) {
                     this.areaCode = res.NewVoIPAreaCode;
                     this.countryAndAreaCode = this.countryCode + this.areaCode.substring(1);
@@ -140,7 +142,8 @@ export class Phonebook {
 
                 const phonebookId = books[no++];
                 this.getPhonebook!({ NewPhonebookID: phonebookId }, (err, res) => {
-                    this.adapter.log.debug(`Phonebook ${phonebookId}: ${JSON.stringify(res)} / err=${err}`);
+                    // the answer contains the URL with the session ID - it is not logged at all
+                    this.adapter.log.debug(`Phonebook ${phonebookId}: ${err ? err.message : 'URL received'}`);
                     if (err || !res) {
                         cb?.(err);
                         return;
@@ -176,6 +179,7 @@ export class Phonebook {
                                     for (let i = 0; i < contacts.length; i++) {
                                         this.addContact(contacts[i], phonebookId);
                                     }
+                                    this.adapter.log.debug(`Phonebook ${phonebookId}: ${contacts.length} contacts`);
 
                                     this.adapter.setTimeout(doIt, 10);
                                 });
@@ -215,7 +219,7 @@ export class Phonebook {
                 }
             }
 
-            this.adapter.log.debug(`Phonebook ${phonebookId} New Entry: ${JSON.stringify(newEntry)}`);
+            this.adapter.log.silly(`Phonebook ${phonebookId} New Entry: ${JSON.stringify(newEntry)}`);
             this.entries.push(newEntry);
         }
     }
@@ -247,7 +251,8 @@ export class Phonebook {
     public byNumber(number: string): PhonebookEntry | undefined {
         const completed = this.complete(number);
         const entry = this.entries.find(v => v.number === completed);
-        this.adapter.log.debug(`Search number ${completed} in phonebook: ${JSON.stringify(entry)}`);
+        this.adapter.log.debug(`Search number in phonebook: ${entry ? 'found' : 'not found'}`);
+        this.adapter.log.silly(`Search number ${completed} in phonebook: ${JSON.stringify(entry)}`);
 
         return entry;
     }
@@ -263,7 +268,8 @@ export class Phonebook {
             fallbackUsed = true;
         }
 
-        this.adapter.log.debug(
+        this.adapter.log.debug(`Search name in phonebook (Fallback=${fallbackUsed}): ${entry ? 'found' : 'not found'}`);
+        this.adapter.log.silly(
             `Search name ${normalized} in phonebook (Fallback=${fallbackUsed}): ${JSON.stringify(entry)}`,
         );
 

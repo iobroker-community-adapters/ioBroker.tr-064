@@ -104,12 +104,14 @@ export class CallMonitor {
 
     private onData(data: Buffer): void {
         const raw = data.toString();
-        this.adapter.log.debug(`Callmonitor Raw: ${raw}`);
-
         const array = raw.split(';');
         const type = array[1];
         const id = parseInt(array[2], 10);
         const timestamp = array[0];
+
+        // the raw line contains the phone numbers
+        this.adapter.log.debug(`Callmonitor event ${type} (id ${id})`);
+        this.adapter.log.silly(`Callmonitor Raw: ${raw}`);
         let message: CallMonitorMessage | undefined;
 
         switch (type) {
@@ -166,7 +168,7 @@ export class CallMonitor {
             this.updateTimer = null;
         }
 
-        this.adapter.log.debug(`New Call data ${name}: ${JSON.stringify(message)}`);
+        this.adapter.log.silly(`New Call data ${name}: ${JSON.stringify(message)}`);
         dev.setChannel('', '');
         dev.set('ringing', name === 'inbound');
 
@@ -233,7 +235,8 @@ export class CallMonitor {
             }
         }
 
-        this.adapter.log.debug(
+        this.adapter.log.debug(`callMonitor.set: type=${name}`);
+        this.adapter.log.silly(
             `callMonitor.set: type=${name} caller=${message.caller} callee=${message.callee}` +
                 `${message.callerName ? ` callerName=${message.callerName}` : ''}` +
                 `${message.calleeName ? ` calleeName=${message.calleeName}` : ''}`,

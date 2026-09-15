@@ -164,7 +164,9 @@ export class Tr064Adapter extends utils.Adapter {
             return;
         }
 
-        this.log.debug(`State changed: ${id} = ${JSON.stringify(state)}`);
+        // the value may be a password, a phone number or a name - it is only logged with level silly
+        this.log.debug(`State changed: ${id} (ack=${state.ack})`);
+        this.log.silly(`State changed: ${id} = ${JSON.stringify(state)}`);
 
         if (!state.ack) {
             this.onCommandState(id, state);
@@ -239,7 +241,8 @@ export class Tr064Adapter extends utils.Adapter {
             return;
         }
 
-        this.log.debug(`onMessage: ${JSON.stringify(obj)}`);
+        this.log.debug(`onMessage: ${obj.command} from ${obj.from}`);
+        this.log.silly(`onMessage: ${JSON.stringify(obj)}`);
 
         switch (obj.command) {
             case 'discovery': {
@@ -266,7 +269,8 @@ export class Tr064Adapter extends utils.Adapter {
                 }
 
                 if (!reread && this.allDevices.length > 0 && this.allDevicesOnlyActive === onlyActive) {
-                    this.log.debug(`Discovery result: ${JSON.stringify(this.allDevices)}`);
+                    this.log.debug(`Discovery result: ${this.allDevices.length} devices`);
+                    this.log.silly(`Discovery result: ${JSON.stringify(this.allDevices)}`);
                     this.sendDiscoveryResult(obj, this.allDevices, asNative, configured);
                     return;
                 }
@@ -285,7 +289,7 @@ export class Tr064Adapter extends utils.Adapter {
                             active,
                         });
                     }
-                    this.log.debug(
+                    this.log.silly(
                         `Discovery Add (${cnt}/${all}): ${device.NewHostName} ${device.NewIPAddress} ${device.NewMACAddress} ${device.NewActive}`,
                     );
 
@@ -293,7 +297,8 @@ export class Tr064Adapter extends utils.Adapter {
                         responseSent = true;
                         this.allDevices = newAllDevices;
                         this.allDevicesOnlyActive = onlyActive;
-                        this.log.debug(`Discovery result: ${JSON.stringify(this.allDevices)}`);
+                        this.log.debug(`Discovery result: ${this.allDevices.length} devices`);
+                        this.log.silly(`Discovery result: ${JSON.stringify(this.allDevices)}`);
                         this.sendDiscoveryResult(obj, newAllDevices, asNative, configured);
                     }
                 });
@@ -554,7 +559,7 @@ export class Tr064Adapter extends utils.Adapter {
                     return;
                 }
 
-                this.log.debug(`forEachConfiguredDevice: ${JSON.stringify(device)}`);
+                this.log.silly(`forEachConfiguredDevice: ${JSON.stringify(device)}`);
                 dev.setChannelEx(device.NewHostName);
                 this.setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
 
@@ -712,7 +717,8 @@ export class Tr064Adapter extends utils.Adapter {
                 dev.setChannelEx(d.name);
                 this.setActive(dev, true);
                 this.devices.update();
-                this.log.debug(`mDNS: ${rinfo.address} is active again`);
+                this.log.debug('mDNS: a configured device is active again');
+                this.log.silly(`mDNS: ${d.name} (${rinfo.address}) is active again`);
             }
         });
 

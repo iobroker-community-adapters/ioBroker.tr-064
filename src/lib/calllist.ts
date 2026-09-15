@@ -7,7 +7,7 @@
  */
 import type { ActionResult, TR064Error } from 'tr-O64';
 
-import { getXml } from './utils';
+import { getXml, redactUrl } from './utils';
 import type { CallEntry, CallListName, CallListsConfig, CallListTypeConfig, CallListXml } from './types';
 import type { Tr064Adapter } from '../main';
 import type { SystemData } from './systemdata';
@@ -346,14 +346,16 @@ export function refresh(
         return;
     }
 
-    adapter.log.debug(`Request Calllist JSON: url = ${url}`);
+    adapter.log.debug(`Request Calllist JSON: url = ${redactUrl(url)}`);
     getXml<CallListXml>(url, (httpErr, json) => {
         if (httpErr) {
             adapter.log.warn(`Cannot read the call list: ${httpErr.message}`);
             done?.();
             return;
         }
-        adapter.log.debug(`Result Calllist JSON: ${JSON.stringify(json)}`);
+        // the calls contain phone numbers and names
+        adapter.log.debug('Calllist received');
+        adapter.log.silly(`Result Calllist JSON: ${JSON.stringify(json)}`);
 
         if (json?.root) {
             const firstCall = Array.isArray(json.root.call) ? json.root.call[0] : json.root.call;

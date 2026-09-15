@@ -154,6 +154,14 @@ export function normalizeMac(mac: string): string {
     return hex.toUpperCase().match(/../g)!.join(':');
 }
 
+/**
+ * Replaces the session ID in a URL of the box (`sid=`, `tr064sid=`), so that the URL can be logged.
+ * A session ID is a credential - it must never end up in a log, not even with level silly.
+ */
+export function redactUrl(url: string): string {
+    return url.replace(/([?&](?:sid|tr064sid)=)[^&#\s"]*/gi, '$1***');
+}
+
 const UMLAUTS: Record<string, string> = {
     ä: 'ae',
     ü: 'ue',

@@ -119,6 +119,7 @@ whether the TCP connect gave up within the 5 second observation window of the te
 ### Misc conventions
 
 - Use `this.setTimeout()`/`this.clearTimeout()` of adapter-core, never the global ones, so that the timers are stopped on unload.
+- **Logging (issue #632):** the debug log must be shareable. Phone numbers, names, phone book and call data, host names, MAC and IP addresses, values of states and command results are logged only with `log.silly()` - a message without the data may stay at `debug`. URLs of the box are logged only through `redactUrl()`, a session ID (`sid=`) never. Warnings and infos name a configured device by its name, not by its MAC.
 - `main.ts` ends with the compact mode export (`require.main !== module`) - do not remove it.
 
 ## Release flow

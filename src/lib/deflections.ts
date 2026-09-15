@@ -246,7 +246,9 @@ export class Deflections {
                 val: entry.enable === '1',
                 common: { name, type: 'boolean', role: 'state' },
             });
-            this.adapter.log.debug(`setting ${entry.deflectionid} (${name}) enable=${entry.enable === '1'}`);
+            // the name contains the phone numbers of the deflection
+            this.adapter.log.debug(`setting ${entry.deflectionid} enable=${entry.enable === '1'}`);
+            this.adapter.log.silly(`setting ${entry.deflectionid} (${name}) enable=${entry.enable === '1'}`);
         }
 
         this.devices.update();
