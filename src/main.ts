@@ -497,31 +497,41 @@ export class Tr064Adapter extends utils.Adapter {
         const dev = new CDevice(this.devices, CHANNEL_DEVICES, '');
         const arr: DiscoveredDevice[] = [];
 
-        this.tr064Client.forEachConfiguredDevice((device: HostEntry | null) => {
-            if (!device) {
-                if (this.config.jsonDeviceList) {
-                    dev.setChannelEx();
-                    dev.set('jsonDeviceList', {
-                        common: { name: 'jsonDeviceList', type: 'json', role: 'state' },
-                        val: JSON.stringify(arr),
-                    });
-                }
-                this.devices.update(callback);
-                return;
-            }
+        if (this.config.jsonDeviceList && !this.config.devices.length) {
+            this.log.info(
+                '"Create JSON device list" is switched on, but no devices are configured in the tab "Devices" - the list stays empty',
+            );
+        }
 
-            dev.setChannelEx(device.NewHostName, {
-                common: { name: `${device.NewHostName} (${device.NewIPAddress})`, role: 'channel' },
-                native: { mac: device.NewMACAddress },
-            });
-            this.setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
-            arr.push({
-                active: !!~~Number(device.NewActive),
-                ip: device.NewIPAddress,
-                name: device.NewHostName,
-                mac: device.NewMACAddress,
-            });
-        });
+        this.tr064Client.forEachConfiguredDevice(
+            (device: HostEntry | null) => {
+                if (!device) {
+                    if (this.config.jsonDeviceList) {
+                        dev.setChannelEx();
+                        dev.set('jsonDeviceList', {
+                            common: { name: 'jsonDeviceList', type: 'json', role: 'state' },
+                            val: JSON.stringify(arr),
+                        });
+                    }
+                    this.devices.update(callback);
+                    return;
+                }
+
+                dev.setChannelEx(device.NewHostName, {
+                    common: { name: `${device.NewHostName} (${device.NewIPAddress})`, role: 'channel' },
+                    native: { mac: device.NewMACAddress },
+                });
+                this.setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
+                arr.push({
+                    active: !!~~Number(device.NewActive),
+                    ip: device.NewIPAddress,
+                    name: device.NewHostName,
+                    mac: device.NewMACAddress,
+                });
+            },
+            // a device which the box does not know is listed as inactive instead of being left out
+            entry => arr.push({ active: false, ip: entry.ip, name: entry.name, mac: entry.mac }),
+        );
     }
 
     /** Updates the presence states of all configured devices */
@@ -530,29 +540,36 @@ export class Tr064Adapter extends utils.Adapter {
         const dev = new CDevice(this.devices, CHANNEL_DEVICES, '');
         const arr: DiscoveredDevice[] = [];
 
-        this.tr064Client.forEachConfiguredDevice((device: HostEntry | null) => {
-            if (!device) {
-                if (this.config.jsonDeviceList) {
-                    dev.setChannelEx();
-                    dev.set('jsonDeviceList', JSON.stringify(arr));
+        this.tr064Client.forEachConfiguredDevice(
+            (device: HostEntry | null) => {
+                if (!device) {
+                    if (this.config.jsonDeviceList) {
+                        dev.setChannelEx();
+                        dev.set('jsonDeviceList', JSON.stringify(arr));
+                    }
+                    this.devices.update(callback);
+                    return;
                 }
-                this.devices.update(callback);
-                return;
-            }
 
-            this.log.debug(`forEachConfiguredDevice: ${JSON.stringify(device)}`);
-            dev.setChannelEx(device.NewHostName);
-            this.setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
+                this.log.debug(`forEachConfiguredDevice: ${JSON.stringify(device)}`);
+                dev.setChannelEx(device.NewHostName);
+                this.setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
 
-            if (this.config.jsonDeviceList) {
-                arr.push({
-                    active: !!~~Number(device.NewActive),
-                    ip: device.NewIPAddress,
-                    name: device.NewHostName,
-                    mac: device.NewMACAddress,
-                });
-            }
-        });
+                if (this.config.jsonDeviceList) {
+                    arr.push({
+                        active: !!~~Number(device.NewActive),
+                        ip: device.NewIPAddress,
+                        name: device.NewHostName,
+                        mac: device.NewMACAddress,
+                    });
+                }
+            },
+            entry => {
+                if (this.config.jsonDeviceList) {
+                    arr.push({ active: false, ip: entry.ip, name: entry.name, mac: entry.mac });
+                }
+            },
+        );
     }
 
     private updateDeflections(callback: () => void): void {
@@ -720,6 +737,9 @@ export class Tr064Adapter extends utils.Adapter {
         }
         if (this.config.useDeflectionOptions === undefined) {
             this.config.useDeflectionOptions = true;
+        }
+        if (!Array.isArray(this.config.devices)) {
+            this.config.devices = [];
         }
     }
 

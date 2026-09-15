@@ -11,9 +11,9 @@ import { TR064 } from 'tr-O64';
 import type { Action, ActionArguments, ActionResult, Device, Service, TR064Error } from 'tr-O64';
 
 import { refresh, ROOT as CALLLIST_ROOT } from './calllist';
-import { getXml, parseXml, safeFunction } from './utils';
+import { getXml, normalizeMac, parseXml, safeFunction } from './utils';
 import { CHANNEL_STATES, STATES } from './states';
-import type { HostEntry, TamListXml, TamMessageListXml } from './types';
+import type { DeviceConfigEntry, HostEntry, TamListXml, TamMessageListXml } from './types';
 import type { Tr064Adapter } from '../main';
 
 /** The actions of one WLAN configuration service */
@@ -492,8 +492,19 @@ export class TR064Client extends TR064 {
         });
     }
 
-    /** Calls `callback` for every device of the configuration, at the end with `null` */
-    public forEachConfiguredDevice(callback: (device: HostEntry | null) => void): void {
+    /**
+     * Calls `callback` for every device of the configuration which the box knows, at the end with `null`.
+     *
+     * The box answers every fault with HTTP 500 and the library drops the UPnP error code, so an
+     * unknown MAC address cannot be told apart from a device which is offline. A device which was
+     * seen before is then reported with its last entry as inactive; a device which was never seen
+     * is logged once and reported by `onUnknown`. Every request has a timeout, otherwise one lost
+     * answer would stop the presence detection and the poll cycle.
+     */
+    public forEachConfiguredDevice(
+        callback: (device: HostEntry | null) => void,
+        onUnknown?: (entry: DeviceConfigEntry) => void,
+    ): void {
         let i = 0;
         this.adapter.log.debug('forEachConfiguredDevice');
 
@@ -504,44 +515,57 @@ export class TR064Client extends TR064 {
             }
 
             const dev = this.adapter.config.devices[i++];
+            // the box writes MAC addresses as `AA:BB:CC:DD:EE:FF`, the configuration may not
+            const mac = normalizeMac(dev.mac || '');
 
-            if (!dev.mac || dev.mac === '') {
+            if (!mac) {
                 setImmediate(doIt);
                 return;
             }
 
-            this.safe(this, 'getSpecificHostEntry')({ NewMACAddress: dev.mac }, (err, result) => {
-                let device: HostEntry | null = result as unknown as HostEntry;
+            this.safe(this, 'getSpecificHostEntry')(
+                { NewMACAddress: mac },
+                this.adapter.callbackTimers.wrap<ActionResult>(3000, (err, result) => {
+                    let device: HostEntry | null = result as unknown as HostEntry | null;
 
-                if (err && err.code === 500) {
-                    if (dev.lastResult) {
-                        device = dev.lastResult;
-                        device.NewActive = false as unknown as string;
-                    } else {
-                        this.adapter.log.info(
-                            `forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${dev.mac}) device seems offline but we never saw it since adapter was started:${err.message} - ${JSON.stringify(err)}`,
+                    if (err === 'timeout') {
+                        this.adapter.log.warn(`GetSpecificHostEntry: no answer for "${dev.name}" (${mac})`);
+                        device = dev.lastResult ?? null;
+                    } else if (err && typeof err === 'object' && err.code === 500) {
+                        if (dev.lastResult) {
+                            device = dev.lastResult;
+                            device.NewActive = false as unknown as string;
+                        } else {
+                            if (!dev.notFoundLogged) {
+                                dev.notFoundLogged = true;
+                                this.adapter.log.info(
+                                    `Device "${dev.name}" (${mac}) is unknown to the FRITZ!Box or offline since the adapter was started. If it is online, check its MAC address in the tab "Devices"`,
+                                );
+                            }
+                            device = null;
+                            onUnknown?.(dev);
+                        }
+                    } else if (err) {
+                        this.adapter.log.warn(
+                            `forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${mac}):${typeof err === 'string' ? err : err.message} - ${JSON.stringify(err)}`,
                         );
                         device = null;
+                    } else if (device) {
+                        // store last result to reuse if device goes offline and error 500 is returned
+                        dev.lastResult = device;
+                        dev.notFoundLogged = false;
                     }
-                } else if (err) {
-                    this.adapter.log.warn(
-                        `forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1}(${dev.name}/${dev.mac}):${err.message} - ${JSON.stringify(err)}`,
-                    );
-                    device = null;
-                } else {
-                    // store last result to reuse if device goes offline and error 500 is returned
-                    dev.lastResult = device;
-                }
 
-                if (device) {
-                    this.adapter.log.debug(
-                        `forEachConfiguredDevice: i=${i - 1} ${device.NewHostName} active=${device.NewActive}`,
-                    );
-                    device.NewMACAddress = dev.mac;
-                    callback(device);
-                }
-                setImmediate(doIt);
-            });
+                    if (device) {
+                        this.adapter.log.debug(
+                            `forEachConfiguredDevice: i=${i - 1} ${device.NewHostName} active=${device.NewActive}`,
+                        );
+                        device.NewMACAddress = dev.mac;
+                        callback(device);
+                    }
+                    setImmediate(doIt);
+                }),
+            );
         };
 
         doIt();

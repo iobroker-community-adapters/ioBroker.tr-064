@@ -142,6 +142,18 @@ export function normalizeNumber(number: string): string {
     return number.replace(/\+/g, '00').replace(/[^0-9*]/g, '');
 }
 
+/**
+ * Brings a MAC address into the form which the box uses: `AA:BB:CC:DD:EE:FF`. Lower case, dashes,
+ * dots or no separators at all are accepted; a text which is no MAC address is only trimmed.
+ */
+export function normalizeMac(mac: string): string {
+    const hex = mac.replace(/[^0-9a-fA-F]/g, '');
+    if (hex.length !== 12 || /[^0-9a-fA-F:\-.\s]/.test(mac)) {
+        return mac.trim();
+    }
+    return hex.toUpperCase().match(/../g)!.join(':');
+}
+
 const UMLAUTS: Record<string, string> = {
     ä: 'ae',
     ü: 'ue',

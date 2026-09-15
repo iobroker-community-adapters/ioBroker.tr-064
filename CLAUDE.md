@@ -100,6 +100,13 @@ test deterministic: before, the adapter exited with code 1 on the CI runners (wh
 resolves to a public address) and the test "The adapter starts" failed or passed depending on
 whether the TCP connect gave up within the 5 second observation window of the test harness.
 
+### Presence and `jsonDeviceList`
+
+- Only the devices of the configuration (`config.devices`, tab "Devices") are watched and listed - not all devices of the box. The search in the admin only fills the table, it has to be saved.
+- `forEachConfiguredDevice()` sends the MAC as `AA:BB:CC:DD:EE:FF` (`normalizeMac()`), the MAC in states, `native.mac` and `jsonDeviceList` stays as configured, because `isKnownMac()` compares it with the configuration.
+- Every SOAP fault arrives as `err.code === 500` - `tr-O64` drops the UPnP error code - so an unknown MAC (714) and an offline device cannot be told apart. A device which was never seen is logged once and listed as inactive via `onUnknown`.
+- Every `GetSpecificHostEntry` is guarded by `callbackTimers.wrap()`. Without it one lost answer stops `updateAll()` for good (issue #660).
+
 ### Call lists and answering machine
 
 - The call lists and `states.abNewMessages` are refreshed by `refreshCalls()` in `src/main.ts`: on connect, 100 ms after the call monitor wrote `callmonitor.lastCall.timestamp`, and from `updateAll()` at most every `CALLS_REFRESH_INTERVAL` (60 s). The poll path is the only one for an instance without call monitor.

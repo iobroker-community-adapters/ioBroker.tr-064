@@ -38,6 +38,8 @@ export interface DeviceConfigEntry {
      * answers with error 500 because the device is not in the host list any more.
      */
     lastResult?: HostEntry;
+    /** Set when the "unknown device" hint was logged, so that it is logged only once */
+    notFoundLogged?: boolean;
 }
 
 /** Configuration of one call list (all, inbound, missed, outbound) */
