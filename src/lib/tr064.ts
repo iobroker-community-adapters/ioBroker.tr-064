@@ -24,8 +24,18 @@ interface WlanFunctions {
     setSecurityKeys?: Action;
 }
 
+/** A WLAN band which not every box has - also the name of the attribute of this class */
+type OptionalBand = 'wlan50' | 'wlan52' | 'wlan60';
+
 /** Name of a WLAN configuration - also the name of the attribute of this class */
-type WlanKind = 'wlan24' | 'wlan50' | 'wlan60' | 'wlanGuest';
+type WlanKind = 'wlan24' | OptionalBand | 'wlanGuest';
+
+/** Readable names of the optional bands for log messages */
+const BAND_NAMES: Record<OptionalBand, string> = {
+    wlan50: '5 GHz',
+    wlan52: 'second 5 GHz',
+    wlan60: '6 GHz',
+};
 
 /** Content of the state `command` */
 interface CommandRequest {
@@ -48,6 +58,8 @@ export class TR064Client extends TR064 {
     public wlan24: WlanFunctions = {};
     /** Undefined if the box has no separate 5 GHz configuration */
     public wlan50: WlanFunctions | undefined = {};
+    /** Undefined if the box has no second 5 GHz configuration (5 GHz high, e.g. FRITZ!Box 4060) */
+    public wlan52: WlanFunctions | undefined = undefined;
     /** Undefined if the box has no 6 GHz configuration */
     public wlan60: WlanFunctions | undefined = undefined;
     public wlanGuest: WlanFunctions = {};
@@ -101,11 +113,15 @@ export class TR064Client extends TR064 {
     /**
      * Assigns the WLAN configurations of the box.
      *
-     * AVM numbers them by band and always puts the guest WLAN last: `1` is 2.4 GHz, followed by
-     * 5 GHz and 6 GHz as far as the box has them. A box with one band has 1-2 (guest = 2), a 7590
-     * has 1-3 (guest = 3), a 5690 Pro has 1-4 (3 = 6 GHz, guest = 4).
+     * AVM lists one service per physical access point and one more for the guest WLAN, which is
+     * therefore always the last one: `1` is 2.4 GHz, `2` is 5 GHz, a third physical access point is
+     * a second 5 GHz (5 GHz high) or a 6 GHz one. A box with one band has 1-2 (guest = 2), a 7590
+     * has 1-3 (guest = 3), a 4060 and a 5690 Pro have 1-4 (guest = 4) - the 4060 with a second
+     * 5 GHz band, the 5690 Pro with 6 GHz. `GetInfo` of the third access point tells which.
+     *
+     * `done` is called when the bands are known, because the WLAN states are created afterwards.
      */
-    private initWLANs(device: Device): void {
+    private initWLANs(device: Device, done: () => void): void {
         const configs: Service[] = [];
         for (let i = 1; device.services[`urn:dslforum-org:service:WLANConfiguration:${i}`]; i++) {
             configs.push(device.services[`urn:dslforum-org:service:WLANConfiguration:${i}`]);
@@ -130,10 +146,39 @@ export class TR064Client extends TR064 {
         this.wlan24 = functions(configs[0]);
         this.wlanGuest = functions(configs.length > 1 ? configs[configs.length - 1] : undefined);
         this.wlan50 = bands[0] ? functions(bands[0]) : undefined;
-        this.wlan60 = bands[1] ? functions(bands[1]) : undefined;
+        this.wlan52 = undefined;
+        this.wlan60 = undefined;
 
-        this.adapter.log.debug(
-            `${configs.length} WLAN configurations: 5 GHz ${bands[0] ? 'yes' : 'no'}, 6 GHz ${bands[1] ? 'yes' : 'no'}, guest = ${configs.length > 1 ? configs.length : 'none'}`,
+        const finish = (): void => {
+            this.adapter.log.debug(
+                `${configs.length} WLAN configurations: 5 GHz ${this.wlan50 ? 'yes' : 'no'}, ${
+                    this.wlan52 ? 'second 5 GHz yes, ' : ''
+                }6 GHz ${this.wlan60 ? 'yes' : 'no'}, guest = ${configs.length > 1 ? configs.length : 'none'}`,
+            );
+            done();
+        };
+
+        const third = bands[1];
+        if (!third) {
+            finish();
+            return;
+        }
+        if (!third.actions?.GetInfo) {
+            this.wlan52 = functions(third);
+            finish();
+            return;
+        }
+
+        third.actions.GetInfo(
+            this.adapter.callbackTimers.wrap<ActionResult>(2000, (_err, info) => {
+                // `5000`, a firmware which does not report the band yet, and no answer: second 5 GHz
+                if (info?.['NewX_AVM-DE_FrequencyBand'] === '6000') {
+                    this.wlan60 = functions(third);
+                } else {
+                    this.wlan52 = functions(third);
+                }
+                finish();
+            }),
         );
     }
 
@@ -167,8 +212,6 @@ export class TR064Client extends TR064 {
                 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetMessageList',
             );
 
-            this.initWLANs(device);
-
             this.voip = this.sslDevice.services['urn:dslforum-org:service:X_VoIP:1']?.actions;
 
             this.getSpecificHostEntry = this.safe(this, 'hosts.actions.GetSpecificHostEntry');
@@ -198,7 +241,7 @@ export class TR064Client extends TR064 {
                 this.reconnectInternet = wanIp.actions.ForceTermination;
             });
 
-            this.getWLAN(this.adapter.callbackTimers.wrap(2000, callback));
+            this.initWLANs(device, () => this.getWLAN(this.adapter.callbackTimers.wrap(2000, callback)));
         });
     }
 
@@ -602,12 +645,16 @@ export class TR064Client extends TR064 {
         this.setWLANBand('wlan50', val);
     }
 
+    public setWLAN52(val: ioBroker.StateValue): void {
+        this.setWLANBand('wlan52', val);
+    }
+
     public setWLAN60(val: ioBroker.StateValue): void {
         this.setWLANBand('wlan60', val);
     }
 
     /** Switches a WLAN band which not every box has */
-    private setWLANBand(kind: 'wlan50' | 'wlan60', val: ioBroker.StateValue): void {
+    private setWLANBand(kind: OptionalBand, val: ioBroker.StateValue): void {
         const wlan = this[kind];
         if (!wlan?.setEnable) {
             return;
@@ -619,7 +666,7 @@ export class TR064Client extends TR064 {
             true,
         )({ NewEnable: val ? 1 : 0 }, err => {
             if (err) {
-                this.adapter.log.error(`${kind}: ${err.message} - ${JSON.stringify(err)}`);
+                this.adapter.log.error(`${BAND_NAMES[kind]} WLAN: ${err.message} - ${JSON.stringify(err)}`);
             }
         });
     }
@@ -651,6 +698,7 @@ export class TR064Client extends TR064 {
                     this.adapter.log.error(`setWLANGuest: ${err.message} - ${JSON.stringify(err)}`);
                 }
                 this.setWLAN50(val);
+                this.setWLAN52(val);
                 this.setWLAN60(val);
                 callback(null);
             });
@@ -680,6 +728,11 @@ export class TR064Client extends TR064 {
 
     public setWLAN50Password(val: ioBroker.StateValue): boolean {
         this.setWLANPassword('wlan50', val);
+        return true;
+    }
+
+    public setWLAN52Password(val: ioBroker.StateValue): boolean {
+        this.setWLANPassword('wlan52', val);
         return true;
     }
 
@@ -728,19 +781,20 @@ export class TR064Client extends TR064 {
         this.getWLANBand('wlan50', callback);
     }
 
+    public getWLAN52(callback: (err: TR064Error | null, result: ActionResult) => void): void {
+        this.getWLANBand('wlan52', callback);
+    }
+
     public getWLAN6(callback: (err: TR064Error | null, result: ActionResult) => void): void {
         this.getWLANBand('wlan60', callback);
     }
 
     /** Reads a WLAN band which not every box has */
-    private getWLANBand(
-        kind: 'wlan50' | 'wlan60',
-        callback: (err: TR064Error | null, result: ActionResult) => void,
-    ): void {
+    private getWLANBand(kind: OptionalBand, callback: (err: TR064Error | null, result: ActionResult) => void): void {
         const wlan = this[kind];
         if (!wlan?.getInfo) {
             // the caller must be answered, otherwise it waits for its own timeout
-            callback(new Error(`no ${kind === 'wlan50' ? 5 : 6} GHz WLAN configuration`), {});
+            callback(new Error(`no ${BAND_NAMES[kind]} WLAN configuration`), {});
             return;
         }
         this.safe(wlan, 'getInfo', true)(callback);
