@@ -14,8 +14,9 @@ import type { Tr064Adapter } from '../main';
 const CALLMONITOR_NAME = 'callmonitor';
 /** Idle milliseconds after which TCP keepalive probes check whether the box is still there */
 const KEEPALIVE_DELAY = 60_000;
-const ENABLE_CONNECT_1012 =
-    '--- To use the callmonitor, enable connects to port 1012 on FritzBox by dialing #96*5* with a directly connected phone (line/dect) and restart this adapter';
+/** Milliseconds between two attempts while the box refuses port 1012 (port not opened, or restarting) */
+const REFUSED_RETRY_INTERVAL = 60_000;
+const ENABLE_CONNECT_1012 = `--- To use the callmonitor, enable connects to port 1012 on FritzBox by dialing #96*5* with a directly connected phone (line/dect). The adapter retries every ${REFUSED_RETRY_INTERVAL / 1000} seconds`;
 
 /** Value of `toPauseState` per call state */
 const PAUSE_STATES: Record<string, string> = {
@@ -36,6 +37,12 @@ export class CallMonitor {
     private updateTimer: ioBroker.Timeout | null = null;
     private lastCaller: string | undefined;
     private lastCallee: string | undefined;
+    /** The call monitor was connected at least once - a refusal then means that the box restarts */
+    private connectedOnce = false;
+    /** The current attempt was refused by the box */
+    private refused = false;
+    /** The refusal was logged - it is logged once per outage */
+    private refusedLogged = false;
 
     public constructor(adapter: Tr064Adapter, devices: Devices, phonebook: Phonebook) {
         this.adapter = adapter;
@@ -58,20 +65,42 @@ export class CallMonitor {
         // The call monitor is idle for hours. Without keepalive a connection which the box dropped
         // silently (e.g. by a reboot) is never detected: no `close`, no reconnect, no events.
         client.setKeepAlive(true, KEEPALIVE_DELAY);
+        this.refused = false;
 
-        client.on('connect', () => this.adapter.log.debug('callmonitor connected'));
+        client.on('connect', () => {
+            if (this.refusedLogged) {
+                this.adapter.log.info(`${CALLMONITOR_NAME} connected`);
+            } else {
+                this.adapter.log.debug('callmonitor connected');
+            }
+            this.connectedOnce = true;
+            this.refusedLogged = false;
+        });
 
         client.on('error', err => {
-            // The box answers with ECONNREFUSED as long as port 1012 is not opened. Reconnecting
-            // does not help in that case, so the call monitor stops until the adapter is restarted.
-            if ((err as NodeJS.ErrnoException).code === 'ECONNREFUSED') {
+            // The box answers with ECONNREFUSED as long as port 1012 is not opened - and also for a
+            // while when it restarts. The call monitor must not stop then, it retries less often.
+            if ((err as NodeJS.ErrnoException).code !== 'ECONNREFUSED') {
+                return;
+            }
+            this.refused = true;
+            if (this.refusedLogged) {
+                this.adapter.log.debug(`callmonitor refused, retry in ${REFUSED_RETRY_INTERVAL / 1000} s`);
+                return;
+            }
+            this.refusedLogged = true;
+            if (this.connectedOnce) {
+                this.adapter.log.info(
+                    `${CALLMONITOR_NAME}: the FRITZ!Box refuses the connection, probably it restarts. Retrying every ${REFUSED_RETRY_INTERVAL / 1000} seconds`,
+                );
+            } else {
                 this.adapter.log.error(ENABLE_CONNECT_1012);
-                this.close();
             }
         });
 
         client.on('close', () => {
-            this.adapter.log.debug('callmonitor closed ... reconnect');
+            const delay = this.refused ? REFUSED_RETRY_INTERVAL : this.adapter.config.reconnectInterval || 5000;
+            this.adapter.log.debug(`callmonitor closed ... reconnect in ${delay / 1000} s`);
             if (this.timeout) {
                 this.adapter.clearTimeout(this.timeout);
             }
@@ -79,7 +108,7 @@ export class CallMonitor {
                 this.adapter.setTimeout(() => {
                     this.timeout = null;
                     this.init();
-                }, this.adapter.config.reconnectInterval || 5000) ?? null;
+                }, delay) ?? null;
         });
 
         client.on('data', data => this.onData(data));
@@ -94,7 +123,9 @@ export class CallMonitor {
                 // FRITZ!OS 8.x closes the connection after a longer idle time. The `close` handler
                 // reconnects, so those codes are not an error of the adapter.
                 const code = (err as NodeJS.ErrnoException).code;
-                if (code === 'ETIMEDOUT' || code === 'ECONNRESET' || code === 'EPIPE') {
+                if (code === 'ECONNREFUSED') {
+                    // handled above
+                } else if (code === 'ETIMEDOUT' || code === 'ECONNRESET' || code === 'EPIPE') {
                     this.adapter.log.info(`${CALLMONITOR_NAME} connection dropped (${code}); will reconnect`);
                 } else {
                     this.adapter.log.error(`Cannot start ${CALLMONITOR_NAME}: ${err.message}`);
