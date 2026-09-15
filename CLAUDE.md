@@ -71,6 +71,8 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 
 Everything which must **not** end up in the database is a `#` private field (`#adapter`, `#html`) — those are invisible to `JSON.stringify()`. Do not turn them into normal `private` fields: TypeScript compiles those into ordinary properties which would be serialized into the object.
 
+`load()` takes over **only** `native` of the stored object, and `save()` writes a new plain object `{ type, common, native }`. Do not go back to `Object.assign(this, obj)` or `setObject(namespace, this)`: adapter versions from 2017 to 2020 had the own functions `load`/`save` on that object, the objects database (`deep-clone`) stored them as `{}`, and old installations still carry `"save": {}`. Copied onto the instance it hides the method and the adapter crashes with `systemData.save is not a function` (issue #739).
+
 ### Configuration
 
 - `normalizeConfigVars()` in `src/main.ts` fixes up types and sets the defaults of options which older instances do not have (`useMDNS`, `useDeflectionOptions`).

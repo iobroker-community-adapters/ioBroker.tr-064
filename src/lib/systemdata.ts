@@ -33,8 +33,10 @@ export class SystemData {
         try {
             const obj = await this.#adapter.getObjectAsync(this.#adapter.namespace);
             if (obj?.native.loaded) {
-                delete (obj as Partial<ioBroker.Object>).acl;
-                Object.assign(this, obj);
+                // Only the data is taken over, not the whole object: adapter versions from 2017 to 2020
+                // had the own functions `load` and `save`, which the objects database stored as `{}`.
+                // Copied onto this instance they would hide the methods of this class.
+                this.native = obj.native as SystemDataNative;
             }
         } catch {
             // ignore - the object is created below
@@ -64,6 +66,8 @@ export class SystemData {
 
     /** Writes the object back into the database */
     public save(): void {
-        void this.#adapter.setObject(this.#adapter.namespace, this as unknown as ioBroker.SettableObject);
+        // a new object, so that outdated attributes of the stored object are removed from the database
+        const obj = { type: this.type, common: this.common, native: this.native };
+        void this.#adapter.setObject(this.#adapter.namespace, obj as unknown as ioBroker.SettableObject);
     }
 }
