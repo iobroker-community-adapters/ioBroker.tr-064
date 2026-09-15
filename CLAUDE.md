@@ -53,7 +53,7 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 `TR064Client extends TR064` of the npm package `tr-O64` (note the capital `O`, it is a fork of `tr-064`). The package has no typings; `src/types/tr-O64.d.ts` declares the part which is used here.
 
 - `init()` fetches all actions once and stores them as fields. Which services a box offers depends on model and firmware, therefore **every** action is fetched through `safeFunction()`: a missing action becomes a function which only calls the callback. Never call an action directly without that guard.
-- A box without a third WLAN configuration uses the second one for the guest WLAN — in that case `wlan50` is set to `undefined` and the states `wlan50*` are not created.
+- `initWLANs()` maps the `WLANConfiguration:<n>` services: `1` is 2.4 GHz, the **last** one is always the guest WLAN, the ones in between are 5 GHz and 6 GHz (one band: 1-2, 7590: 1-3, 5690 Pro: 1-4 with 3 = 6 GHz). A band the box does not have is `undefined` (`wlan50`/`wlan60`) and its states `wlan50*`/`wlan60*` are not created. Never hard-code `:3` as guest WLAN (issue #726).
 - The external IP addresses come from a second device (`initIGDDevice`), which is initialized asynchronously. Directly after `init()` those actions may still be missing.
 - The library works with callbacks, not promises. Answers which never arrive are caught by `CallbackTimers.wrap()` (`src/lib/utils.ts`); the timers are stopped on unload.
 

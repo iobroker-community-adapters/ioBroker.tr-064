@@ -23,6 +23,7 @@ export const STATES: Record<string, StateDefinition> = {
     wlan: { name: 'wlan', val: false, common: { desc: 'All WLANs' }, native: { func: 'setWLAN' } },
     wlan24: { name: 'wlan24', val: true, common: { desc: '2.4 GHz WLAN' }, native: { func: 'setWLAN24' } },
     wlan50: { name: 'wlan50', val: true, common: { desc: '5.0 GHz WLAN' }, native: { func: 'setWLAN50' } },
+    wlan60: { name: 'wlan60', val: true, common: { desc: '6.0 GHz WLAN' }, native: { func: 'setWLAN60' } },
     wlanGuest: { name: 'wlanGuest', val: true, common: { desc: 'Guest WLAN' }, native: { func: 'setWLANGuest' } },
     wlan24Password: {
         name: 'wlan24Password',
@@ -35,6 +36,12 @@ export const STATES: Record<string, StateDefinition> = {
         val: '',
         common: { desc: 'Passphrase for 5.0 GHz WLAN' },
         native: { func: 'setWLAN50Password' },
+    },
+    wlan60Password: {
+        name: 'wlan60Password',
+        val: '',
+        common: { desc: 'Passphrase for 6.0 GHz WLAN' },
+        native: { func: 'setWLAN60Password' },
     },
     wlanGuestPassword: {
         name: 'wlanGuestPassword',

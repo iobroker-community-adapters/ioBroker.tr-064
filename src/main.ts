@@ -381,7 +381,11 @@ export class Tr064Adapter extends utils.Adapter {
         });
 
         for (const i in STATES) {
-            if (i.startsWith('wlan50') && !this.tr064Client.wlan50 && this.tr064Client.wlanGuest) {
+            // the states of a band which the box does not have are not created
+            if (
+                (i.startsWith('wlan50') && !this.tr064Client.wlan50) ||
+                (i.startsWith('wlan60') && !this.tr064Client.wlan60)
+            ) {
                 continue;
             }
             const st = { ...STATES[i] };
@@ -573,6 +577,7 @@ export class Tr064Adapter extends utils.Adapter {
             },
             { func: 'getWLAN', state: STATES.wlan24.name, result: 'NewEnable', format: val => !!~~Number(val) },
             { func: 'getWLAN5', state: STATES.wlan50.name, result: 'NewEnable', format: val => !!~~Number(val) },
+            { func: 'getWLAN6', state: STATES.wlan60.name, result: 'NewEnable', format: val => !!~~Number(val) },
             { func: 'getWLANGuest', state: STATES.wlanGuest.name, result: 'NewEnable', format: val => !!~~Number(val) },
         ];
         let i = 0;

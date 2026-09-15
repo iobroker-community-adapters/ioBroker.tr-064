@@ -25,7 +25,7 @@ interface WlanFunctions {
 }
 
 /** Name of a WLAN configuration - also the name of the attribute of this class */
-type WlanKind = 'wlan24' | 'wlan50' | 'wlanGuest';
+type WlanKind = 'wlan24' | 'wlan50' | 'wlan60' | 'wlanGuest';
 
 /** Content of the state `command` */
 interface CommandRequest {
@@ -48,14 +48,14 @@ export class TR064Client extends TR064 {
     public wlan24: WlanFunctions = {};
     /** Undefined if the box has no separate 5 GHz configuration */
     public wlan50: WlanFunctions | undefined = {};
+    /** Undefined if the box has no 6 GHz configuration */
+    public wlan60: WlanFunctions | undefined = undefined;
     public wlanGuest: WlanFunctions = {};
 
     private readonly adapter: Tr064Adapter;
 
     private hosts: Service | undefined;
     private getWLANConfiguration: Service | undefined;
-    private getWLANConfiguration2: Service | undefined;
-    private getWLANConfiguration3: Service | undefined;
     private voip: Record<string, Action> | undefined;
     private stateVariables: Record<string, unknown> = {};
     private ringTimeout: ioBroker.Timeout | null = null;
@@ -94,6 +94,45 @@ export class TR064Client extends TR064 {
         return safeFunction(root, path, this.adapter.log, log);
     }
 
+    /**
+     * Assigns the WLAN configurations of the box.
+     *
+     * AVM numbers them by band and always puts the guest WLAN last: `1` is 2.4 GHz, followed by
+     * 5 GHz and 6 GHz as far as the box has them. A box with one band has 1-2 (guest = 2), a 7590
+     * has 1-3 (guest = 3), a 5690 Pro has 1-4 (3 = 6 GHz, guest = 4).
+     */
+    private initWLANs(device: Device): void {
+        const configs: Service[] = [];
+        for (let i = 1; device.services[`urn:dslforum-org:service:WLANConfiguration:${i}`]; i++) {
+            configs.push(device.services[`urn:dslforum-org:service:WLANConfiguration:${i}`]);
+        }
+        // a configuration which cannot be read or switched is not used as the guest WLAN
+        while (
+            configs.length > 1 &&
+            !(configs[configs.length - 1].actions?.GetInfo && configs[configs.length - 1].actions?.SetEnable)
+        ) {
+            configs.pop();
+        }
+
+        const functions = (service: Service | undefined): WlanFunctions => ({
+            setEnable: service?.actions?.SetEnable,
+            getInfo: service?.actions?.GetInfo,
+            getSecurityKeys: service?.actions?.GetSecurityKeys,
+            setSecurityKeys: service?.actions?.SetSecurityKeys,
+        });
+        const bands = configs.slice(1, -1);
+
+        this.getWLANConfiguration = configs[0];
+        this.wlan24 = functions(configs[0]);
+        this.wlanGuest = functions(configs.length > 1 ? configs[configs.length - 1] : undefined);
+        this.wlan50 = bands[0] ? functions(bands[0]) : undefined;
+        this.wlan60 = bands[1] ? functions(bands[1]) : undefined;
+
+        this.adapter.log.debug(
+            `${configs.length} WLAN configurations: 5 GHz ${bands[0] ? 'yes' : 'no'}, 6 GHz ${bands[1] ? 'yes' : 'no'}, guest = ${configs.length > 1 ? configs.length : 'none'}`,
+        );
+    }
+
     /** Connects to the box and collects all actions which the adapter uses */
     public init(callback: (err?: TR064Error | string | null) => void): void {
         this.initTR064Device(this.ip, this.port, (err, device) => {
@@ -106,9 +145,6 @@ export class TR064Client extends TR064 {
             this.sslDevice = device;
 
             this.hosts = device.services['urn:dslforum-org:service:Hosts:1'];
-            this.getWLANConfiguration = device.services['urn:dslforum-org:service:WLANConfiguration:1'];
-            this.getWLANConfiguration2 = device.services['urn:dslforum-org:service:WLANConfiguration:2'];
-            this.getWLANConfiguration3 = device.services['urn:dslforum-org:service:WLANConfiguration:3'];
             this.reboot = device.services['urn:dslforum-org:service:DeviceConfig:1'].actions.Reboot;
             // in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             this.getConfigFile =
@@ -122,30 +158,7 @@ export class TR064Client extends TR064 {
             this.getABInfo = this.safe(device, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.GetInfo');
             this.setEnableAB = this.safe(device, 'services.urn:dslforum-org:service:X_AVM-DE_TAM:1.actions.SetEnable');
 
-            this.wlan24 = {
-                setEnable: this.getWLANConfiguration?.actions.SetEnable,
-                getInfo: this.getWLANConfiguration?.actions.GetInfo,
-                getSecurityKeys: this.getWLANConfiguration?.actions.GetSecurityKeys,
-                setSecurityKeys: this.getWLANConfiguration?.actions.SetSecurityKeys,
-            };
-            this.wlan50 = {
-                setEnable: this.getWLANConfiguration2?.actions.SetEnable,
-                getInfo: this.getWLANConfiguration2?.actions.GetInfo,
-                getSecurityKeys: this.getWLANConfiguration2?.actions.GetSecurityKeys,
-                setSecurityKeys: this.getWLANConfiguration2?.actions.SetSecurityKeys,
-            };
-            this.wlanGuest = {
-                setEnable: this.getWLANConfiguration3?.actions.SetEnable,
-                getInfo: this.getWLANConfiguration3?.actions.GetInfo,
-                getSecurityKeys: this.getWLANConfiguration3?.actions.GetSecurityKeys,
-                setSecurityKeys: this.getWLANConfiguration3?.actions.SetSecurityKeys,
-            };
-
-            // A box without a third WLAN configuration uses the second one for the guest WLAN
-            if (!this.getWLANConfiguration3 || !this.wlanGuest.getInfo || !this.wlanGuest.setEnable) {
-                this.wlanGuest = { ...this.wlan50 };
-                this.wlan50 = undefined;
-            }
+            this.initWLANs(device);
 
             this.voip = this.sslDevice.services['urn:dslforum-org:service:X_VoIP:1']?.actions;
 
@@ -486,17 +499,27 @@ export class TR064Client extends TR064 {
     }
 
     public setWLAN50(val: ioBroker.StateValue): void {
-        if (!this.wlan50?.setEnable) {
+        this.setWLANBand('wlan50', val);
+    }
+
+    public setWLAN60(val: ioBroker.StateValue): void {
+        this.setWLANBand('wlan60', val);
+    }
+
+    /** Switches a WLAN band which not every box has */
+    private setWLANBand(kind: 'wlan50' | 'wlan60', val: ioBroker.StateValue): void {
+        const wlan = this[kind];
+        if (!wlan?.setEnable) {
             return;
         }
 
         this.safe(
-            this.wlan50,
+            wlan,
             'setEnable',
             true,
         )({ NewEnable: val ? 1 : 0 }, err => {
             if (err) {
-                this.adapter.log.error(`getWLANConfiguration2: ${err.message} - ${JSON.stringify(err)}`);
+                this.adapter.log.error(`${kind}: ${err.message} - ${JSON.stringify(err)}`);
             }
         });
     }
@@ -528,6 +551,7 @@ export class TR064Client extends TR064 {
                     this.adapter.log.error(`setWLANGuest: ${err.message} - ${JSON.stringify(err)}`);
                 }
                 this.setWLAN50(val);
+                this.setWLAN60(val);
                 callback(null);
             });
         });
@@ -556,6 +580,11 @@ export class TR064Client extends TR064 {
 
     public setWLAN50Password(val: ioBroker.StateValue): boolean {
         this.setWLANPassword('wlan50', val);
+        return true;
+    }
+
+    public setWLAN60Password(val: ioBroker.StateValue): boolean {
+        this.setWLANPassword('wlan60', val);
         return true;
     }
 
@@ -596,12 +625,25 @@ export class TR064Client extends TR064 {
     }
 
     public getWLAN5(callback: (err: TR064Error | null, result: ActionResult) => void): void {
-        if (!this.wlan50?.getInfo) {
+        this.getWLANBand('wlan50', callback);
+    }
+
+    public getWLAN6(callback: (err: TR064Error | null, result: ActionResult) => void): void {
+        this.getWLANBand('wlan60', callback);
+    }
+
+    /** Reads a WLAN band which not every box has */
+    private getWLANBand(
+        kind: 'wlan50' | 'wlan60',
+        callback: (err: TR064Error | null, result: ActionResult) => void,
+    ): void {
+        const wlan = this[kind];
+        if (!wlan?.getInfo) {
             // the caller must be answered, otherwise it waits for its own timeout
-            callback(new Error('no 5 GHz WLAN configuration'), {});
+            callback(new Error(`no ${kind === 'wlan50' ? 5 : 6} GHz WLAN configuration`), {});
             return;
         }
-        this.safe(this.wlan50, 'getInfo', true)(callback);
+        this.safe(wlan, 'getInfo', true)(callback);
     }
 
     public getWLANGuest(callback: (err: TR064Error | null, result: ActionResult) => void): void {
