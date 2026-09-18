@@ -47,6 +47,11 @@ export interface GetFunctionsOptions {
     expected?: string | string[];
 }
 
+/** Whether a value of an answer is an XML list (`<List>`), also with XML declaration or an empty list */
+function isXmlList(value: unknown): value is string {
+    return typeof value === 'string' && /^\s*(<\?xml[^>]*\?>\s*)?<List[\s>/]/.test(value);
+}
+
 /**
  * Creates the wrapped actions of one service in `dest`.
  *
@@ -88,13 +93,18 @@ function getFunctions(
 
                     const keys = Object.keys(data);
 
-                    if (keys.length === 1 && data[keys[0]].startsWith('<List><Item>')) {
+                    if (keys.length === 1 && isXmlList(data[keys[0]])) {
                         parser.parseString(data[keys[0]], (err: Error | null, json: DeflectionList) => {
-                            if (err || !json?.list?.item) {
+                            if (err) {
                                 return;
                             }
 
-                            const ar = json.list.item as DeflectionEntry[] & { returnedName?: string };
+                            // xml2js returns a single item as object and an empty list without item:
+                            // with one call forwarding nothing was created (issue #480)
+                            const item = typeof json?.list === 'object' ? json.list.item : undefined;
+                            const ar = (item ? (Array.isArray(item) ? item : [item]) : []) as DeflectionEntry[] & {
+                                returnedName?: string;
+                            };
                             ar.returnedName = keys[0];
 
                             if (cb.length >= 2) {

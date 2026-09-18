@@ -125,6 +125,7 @@ whether the TCP connect gave up within the 5 second observation window of the te
 - A refused connection (`ECONNREFUSED`) must not stop the call monitor: a box which restarts refuses port 1012 for a while. It retries every `REFUSED_RETRY_INTERVAL` (60 s); the `#96*5*` hint is only logged if it was never connected (issue #622). Check `err.code`, not `err.errno` - `errno` is a number.
 - `abNewMessages` counts the messages with `<New>1</New>` of `GetMessageList` over all answering machines with `Display` = 1 of `GetList`. **`New` = 1 means not listened yet** - the AVM document TR-064_TAM.pdf describes it the other way round, the boxes and other projects use 1 = new.
 - XML files of the box are read with `getXml()`/`parseXml()` of `src/lib/utils.ts`: 10 s timeout, the callback is called exactly once, tag names are lower case and a single element is an object, not an array. Only `http` URLs are read.
+- Actions which answer with an XML list in a string (`<List><Item>`, e.g. `GetDeflections`, `X_AVM-DE_GetNumbers`) are unpacked by the wrapper of `getFunctions()` in `src/lib/deflections.ts`: the callback always gets an array, `[]` for an empty list. It once passed the single item as object, so one call forwarding created no state (issue #480).
 - There is no TR-064 action for the "new missed calls" counter of a FRITZ!Fon; the call list XML has no seen/unseen flag.
 
 ### Misc conventions
