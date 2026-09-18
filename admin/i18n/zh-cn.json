@@ -18,11 +18,14 @@
     "Use MDNS": "使用MDN触发装置列表刷新",
     "Use call forwarding options": "使用呼叫转送的选项",
     "Use phonebook": "使用电话簿(名称号决议)",
+    "Use the names of this table for the objects": "按此表格命名对象",
     "User": "用户",
     "Watch devices": "看连接设备(存在)",
+    "hint_severalMacs": "具有多个 MAC 地址的设备（例如使用私有 Wi-Fi 地址的智能手机，每个 Wi-Fi 网络的地址不同）：输入所有地址，用逗号分隔。只要其中一个地址处于活动状态，设备即视为在场",
     "ip": "IP",
     "max Entries": "max项",
     "name": "名称",
     "tooltip_ip": "Firtz的。箱IP地址",
+    "tooltip_useConfiguredNames": "\"devices\" 下的对象使用此表格中的名称，而不是 FRITZ!Box 中的名称。使用 FRITZ!Box 中的名称创建的对象将在适配器启动时被删除",
     "tooltip_useMDNS": "播域名系统(mdn)解决主机名的IP地址内的小型网络，其中不包括当地的服务器名称"
 }

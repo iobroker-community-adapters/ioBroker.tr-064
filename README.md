@@ -59,6 +59,10 @@ You can use this adapter to monitor the presence of persons in your home. In thi
 - For every device, the adapter creates a folder structure in the objects of the adapter. Normally this is the folder `tr-064.0.devices`.
 - As soon as somebody arrives or leaves, the adapter gets this information. The state `tr-064.0.devices.xxx.active`, where `xxx` is the name of the device, shows whether this device is available, and therefore whether the person is at home.
 
+By default `xxx` is the name of the device in the Fritz!Box, not the name in the table. Switch on "Name the objects after this table" in the tab "Devices" to get the names of the table. Then two devices with the same name in the Fritz!Box get separate objects, and the objects do not move when a device is renamed in the Fritz!Box. When you switch the option on, the objects which were created with the name of the Fritz!Box are deleted on the next start, so scripts, aliases or VIS views which use them have to be adjusted. A name which occurs twice in the table gets a number at the end (`Guest`, `Guest_2`).
+
+A smartphone with a private Wi-Fi address has another MAC address in every Wi-Fi, e.g. in the guest Wi-Fi. Enter all its addresses in the column MAC, separated by commas: the device is present as soon as one of them is active, and `lastMAC-address` shows which one. A rotating private address (iOS 18: "Rotating") changes regularly and cannot be watched this way.
+
 You can also switch on the option "Use mDNS to discover new devices". If mDNS is used, the adapter does not need to poll the Fritz!Box, and it detects changes faster.
 
 Users report that the detection also works reliably for iOS devices, for example, for iPhones. For iPhones, users report that the Fritz!Box needs up to 10 minutes to detect that a person has left and is no longer connected with the Wi-Fi. The Fritz!Box needs up to 1 minute to detect the presence again.
@@ -164,6 +168,8 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 - (@GermanBluefox) New state `states.abNewMessages`: number of new (not yet listened) messages on the answering machines
 - (@GermanBluefox) The MAC addresses of the configured devices are sent to the box in its own format `AA:BB:CC:DD:EE:FF`, so addresses entered in lower case, with dashes or without separators are found
 - (@GermanBluefox) A configured device which the box does not know (or which is offline since the start) is logged once with a hint to check its MAC address and listed as inactive in `jsonDeviceList`, instead of silently being left out
+- (@GermanBluefox) New option "Name the objects after this table" in the tab "Devices": the objects below `devices` get the names of the table instead of the names in the Fritz!Box, so two devices with the same name in the box are not mixed up any more. When the option is switched on, the objects which were created with the name of the box are deleted. mDNS writes into the same objects as the poll now - before it created additional objects with the name of the table
+- (@GermanBluefox) A device can have several MAC addresses, separated by commas (e.g. a smartphone with a private Wi-Fi address in the home and the guest Wi-Fi): it is present if one of them is active. Changing the spelling of a MAC address does not delete the objects of the device any more, and "Search for devices" does not add a device of the table a second time
 - (@GermanBluefox) A device request which the box does not answer does not stop the presence detection and the polling any more
 - (@GermanBluefox) An info message tells when "Create JSON device list" is switched on, but no devices are configured
 - (@GermanBluefox) The adapter does not hang silently any more when the FRITZ!Box does not deliver the description of a service (e.g. `x_speedtestSCPD.xml` with FRITZ!OS 8.24 Labor): after 10 seconds the service is skipped with a warning, and the connection is limited to 60 seconds and retried

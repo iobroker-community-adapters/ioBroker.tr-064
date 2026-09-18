@@ -18,11 +18,14 @@
     "Use MDNS": "Użyj MDNS, aby uruchomić odświeżanie listy urządzeń",
     "Use call forwarding options": "Użyj opcji przekazywania połączeń",
     "Use phonebook": "Użyj książki telefonicznej (rozpoznawanie nazw)",
+    "Use the names of this table for the objects": "Nazywaj obiekty według tej tabeli",
     "User": "Użytkownik",
     "Watch devices": "Oglądaj podłączone urządzenia (obecność)",
+    "hint_severalMacs": "Urządzenie z kilkoma adresami MAC (np. smartfon z prywatnym adresem Wi-Fi, innym dla każdej sieci Wi-Fi): wpisz wszystkie adresy oddzielone przecinkami. Urządzenie jest obecne, jeśli jeden z nich jest aktywny",
     "ip": "IP",
     "max Entries": "max Wpisy",
     "name": "Imię",
     "tooltip_ip": "Adres IP Fritz!Box",
+    "tooltip_useConfiguredNames": "Obiekty w \"devices\" otrzymują nazwy z tej tabeli zamiast nazw z FRITZ!Box. Obiekty utworzone z nazwą z FRITZ!Box są usuwane przy starcie adaptera",
     "tooltip_useMDNS": "multicast Domain Name System (mDNS) rozwiązuje nazwy hostów na adresy IP w małych sieciach, które nie zawierają lokalnego serwera nazw"
 }

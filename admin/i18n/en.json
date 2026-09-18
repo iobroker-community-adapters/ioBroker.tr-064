@@ -18,11 +18,14 @@
     "Use MDNS": "Use mDNS to discover new devices",
     "Use call forwarding options": "Activate call forwarding options",
     "Use phonebook": "Activate phonebook (name resolution)",
+    "Use the names of this table for the objects": "Name the objects after this table",
     "User": "User",
     "Watch devices": "Monitor connected devices (Presence)",
+    "hint_severalMacs": "A device with several MAC addresses (e.g. a smartphone with a private Wi-Fi address, which differs from Wi-Fi to Wi-Fi): enter all addresses separated by commas. The device is present if one of them is active",
     "ip": "IP",
     "max Entries": "Maximum number of entries",
     "name": "Name",
     "tooltip_ip": "Fritz!Box IP address",
+    "tooltip_useConfiguredNames": "The objects below \"devices\" get the names of this table instead of the names in the FRITZ!Box. Objects which were created with the name in the FRITZ!Box are deleted when the adapter starts",
     "tooltip_useMDNS": "Multicast Domain Name System (mDNS) resolves host names to IP addresses within small networks that do not include a local name server"
 }

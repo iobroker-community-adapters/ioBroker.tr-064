@@ -140,6 +140,26 @@
                     "lg": 4,
                     "xl": 4
                 },
+                "useConfiguredNames": {
+                    "type": "checkbox",
+                    "label": "Use the names of this table for the objects",
+                    "help": "tooltip_useConfiguredNames",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "_severalMacs": {
+                    "type": "staticText",
+                    "text": "hint_severalMacs",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 8,
+                    "xl": 8
+                },
                 "devices": {
                     "type": "table",
                     "newLine": true,

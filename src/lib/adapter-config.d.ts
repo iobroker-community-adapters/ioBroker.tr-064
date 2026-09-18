@@ -20,6 +20,11 @@ declare global {
             useDevices: boolean;
             useMDNS: boolean;
             jsonDeviceList: boolean;
+            /**
+             * The objects of the devices get the names of the tab "Devices" instead of the names in
+             * the box. Objects with other names are deleted. `false` for instances without the option
+             */
+            useConfiguredNames: boolean;
             devices: DeviceConfigEntry[];
             calllists: CallListsConfig;
 

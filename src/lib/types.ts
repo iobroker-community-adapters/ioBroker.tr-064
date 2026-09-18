@@ -32,7 +32,13 @@ export interface DiscoveredDevice {
 export interface DeviceConfigEntry {
     name: string;
     ip: string;
+    /** One MAC address, or several separated by comma or semicolon */
     mac: string;
+    /**
+     * Name of the channel below `devices`, if the objects are named after the configuration
+     * (`useConfiguredNames`). Set by the adapter, it differs from `name` for a duplicate name.
+     */
+    channelName?: string;
     /**
      * Last host entry which the box delivered for this device. It is reused when the box
      * answers with error 500 because the device is not in the host list any more.

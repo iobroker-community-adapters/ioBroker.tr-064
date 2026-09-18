@@ -20,7 +20,7 @@ import { CHANNEL_DEFLECTIONS, Deflections } from './lib/deflections';
 import { Phonebook } from './lib/phonebook';
 import { SystemData } from './lib/systemdata';
 import { TR064Client } from './lib/tr064';
-import { CallbackTimers } from './lib/utils';
+import { CallbackTimers, macsOverlap, normalizedName } from './lib/utils';
 import {
     CHANNEL_CALLLISTS,
     CHANNEL_CALLMONITOR,
@@ -338,7 +338,7 @@ export class Tr064Adapter extends utils.Adapter {
         );
 
         found.forEach(device => {
-            const known = devices.find(entry => (entry.mac || '').toUpperCase() === (device.mac || '').toUpperCase());
+            const known = devices.find(entry => macsOverlap(entry.mac || '', device.mac || ''));
             if (!known) {
                 devices.push({ name: device.name, ip: device.ip, mac: device.mac });
             }
@@ -414,8 +414,62 @@ export class Tr064Adapter extends utils.Adapter {
         this.devices.update(cb);
     }
 
-    private isKnownMac(mac: string): boolean {
-        return !!this.config.devices.find(v => v.mac === mac);
+    /** The configured device with this MAC address (or one of these addresses) */
+    private findDeviceByMac(mac: string): DeviceConfigEntry | undefined {
+        return this.config.devices.find(entry => macsOverlap(entry.mac || '', mac));
+    }
+
+    /**
+     * Name of the channel of a configured device below `devices`: the name of the configuration
+     * with `useConfiguredNames`, otherwise (and for a device without name) the name in the box.
+     *
+     * @param entry the device of the configuration
+     * @param hostName the name of the device in the box, by default the one of the last answer
+     */
+    private deviceChannelName(entry: DeviceConfigEntry, hostName = entry.lastResult?.NewHostName): string | undefined {
+        return (this.config.useConfiguredNames && entry.channelName) || hostName || undefined;
+    }
+
+    /** Moves `dev` to the channel of a configured device, the channel is created if it is missing */
+    private setDeviceChannel(dev: CDevice, entry: DeviceConfigEntry, device: HostEntry): void {
+        const name = this.deviceChannelName(entry, device.NewHostName) || '';
+        dev.setChannelEx(name, {
+            common: { name: `${name} (${device.NewIPAddress})`, role: 'channel' },
+            native: { mac: entry.mac },
+        });
+    }
+
+    /**
+     * Gives every configured device the name of its channel, if the objects are named after the
+     * configuration. Characters which are not allowed in an object ID are replaced, a name which
+     * occurs twice gets a number, so that two devices never write into the same channel.
+     */
+    private prepareDeviceNames(): void {
+        if (!this.config.useConfiguredNames) {
+            return;
+        }
+        const used = new Set<string>();
+        const duplicates = new Set<string>();
+
+        for (const entry of this.config.devices) {
+            const name = (entry.name || '').trim().replace(this.FORBIDDEN_CHARS, '_');
+            if (!name) {
+                continue;
+            }
+            let channelName = name;
+            for (let n = 2; used.has(normalizedName(channelName)); n++) {
+                channelName = `${name}_${n}`;
+                duplicates.add(entry.name);
+            }
+            used.add(normalizedName(channelName));
+            entry.channelName = channelName;
+        }
+
+        if (duplicates.size) {
+            this.log.warn(
+                `Several devices in the tab "Devices" have the same name (${[...duplicates].join(', ')}), their objects get a number at the end. Give them different names`,
+            );
+        }
     }
 
     private deleteStates(list: string[], callback?: () => void): void {
@@ -443,7 +497,12 @@ export class Tr064Adapter extends utils.Adapter {
         });
     }
 
-    /** Removes the objects of devices which are not configured any more */
+    /**
+     * Removes the objects of devices which are not configured any more.
+     *
+     * With `useConfiguredNames` also the channel of a configured device which has another name -
+     * the objects were created with the name in the box before, or the device was renamed.
+     */
     private deleteUnusedDevices(callback?: (err?: Error | null) => void): void {
         const ch = `${this.namespace}.${CHANNEL_DEVICES}`;
 
@@ -460,10 +519,26 @@ export class Tr064Adapter extends utils.Adapter {
                     return;
                 }
                 const native = o.value?.native as { mac?: string } | undefined;
-                // old device, without native.mac
-                let doDelete = !native?.mac && !o.id.substring(ch.length + 1).includes('.');
-                doDelete = doDelete || (!!native?.mac && !this.isKnownMac(native.mac));
-                if (doDelete) {
+                const channel = o.id.substring(ch.length + 1);
+                if (!native?.mac) {
+                    // old device, without native.mac
+                    if (!channel.includes('.')) {
+                        toDelete.push(o.id);
+                    }
+                    return;
+                }
+                const entry = this.findDeviceByMac(native.mac);
+                if (!entry) {
+                    toDelete.push(o.id);
+                } else if (
+                    this.config.useConfiguredNames &&
+                    entry.channelName &&
+                    channel !== normalizedName(entry.channelName)
+                ) {
+                    this.log.info(
+                        `Device "${entry.name}": the objects are created with the name of the tab "Devices" now, the old objects are deleted`,
+                    );
+                    this.log.silly(`Device "${entry.name}": ${o.id} is deleted`);
                     toDelete.push(o.id);
                 }
             });
@@ -512,8 +587,8 @@ export class Tr064Adapter extends utils.Adapter {
         }
 
         this.tr064Client.forEachConfiguredDevice(
-            (device: HostEntry | null) => {
-                if (!device) {
+            (device: HostEntry | null, entry?: DeviceConfigEntry) => {
+                if (!device || !entry) {
                     if (this.config.jsonDeviceList) {
                         dev.setChannelEx();
                         dev.set('jsonDeviceList', {
@@ -525,16 +600,13 @@ export class Tr064Adapter extends utils.Adapter {
                     return;
                 }
 
-                dev.setChannelEx(device.NewHostName, {
-                    common: { name: `${device.NewHostName} (${device.NewIPAddress})`, role: 'channel' },
-                    native: { mac: device.NewMACAddress },
-                });
+                this.setDeviceChannel(dev, entry, device);
                 this.setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
                 arr.push({
                     active: !!~~Number(device.NewActive),
                     ip: device.NewIPAddress,
-                    name: device.NewHostName,
-                    mac: device.NewMACAddress,
+                    name: this.deviceChannelName(entry, device.NewHostName) || '',
+                    mac: entry.mac,
                 });
             },
             // a device which the box does not know is listed as inactive instead of being left out
@@ -549,8 +621,8 @@ export class Tr064Adapter extends utils.Adapter {
         const arr: DiscoveredDevice[] = [];
 
         this.tr064Client.forEachConfiguredDevice(
-            (device: HostEntry | null) => {
-                if (!device) {
+            (device: HostEntry | null, entry?: DeviceConfigEntry) => {
+                if (!device || !entry) {
                     if (this.config.jsonDeviceList) {
                         dev.setChannelEx();
                         dev.set('jsonDeviceList', JSON.stringify(arr));
@@ -560,15 +632,15 @@ export class Tr064Adapter extends utils.Adapter {
                 }
 
                 this.log.silly(`forEachConfiguredDevice: ${JSON.stringify(device)}`);
-                dev.setChannelEx(device.NewHostName);
+                this.setDeviceChannel(dev, entry, device);
                 this.setActive(dev, device.NewActive, device.NewIPAddress, device.NewMACAddress);
 
                 if (this.config.jsonDeviceList) {
                     arr.push({
                         active: !!~~Number(device.NewActive),
                         ip: device.NewIPAddress,
-                        name: device.NewHostName,
-                        mac: device.NewMACAddress,
+                        name: this.deviceChannelName(entry, device.NewHostName) || '',
+                        mac: entry.mac,
                     });
                 }
             },
@@ -713,8 +785,10 @@ export class Tr064Adapter extends utils.Adapter {
             this.ipActive[rinfo.address] = true;
 
             const d = this.config.devices.find(device => device.ip === rinfo.address);
-            if (d) {
-                dev.setChannelEx(d.name);
+            // the same channel as the poll, not one of its own
+            const channelName = d && this.deviceChannelName(d);
+            if (d && channelName) {
+                dev.setChannelEx(channelName);
                 this.setActive(dev, true);
                 this.devices.update();
                 this.log.debug('mDNS: a configured device is active again');
@@ -747,9 +821,12 @@ export class Tr064Adapter extends utils.Adapter {
         if (this.config.useDeflectionOptions === undefined) {
             this.config.useDeflectionOptions = true;
         }
+        // older instances do not have the option: their objects keep the names of the box
+        this.config.useConfiguredNames = !!this.config.useConfiguredNames;
         if (!Array.isArray(this.config.devices)) {
             this.config.devices = [];
         }
+        this.prepareDeviceNames();
     }
 
     private async main(): Promise<void> {

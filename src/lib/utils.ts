@@ -155,6 +155,24 @@ export function normalizeMac(mac: string): string {
 }
 
 /**
+ * The MAC addresses of a configured device, as written in the configuration. A device may have
+ * several, separated by comma or semicolon - e.g. a smartphone with a private Wi-Fi address,
+ * which differs from Wi-Fi to Wi-Fi.
+ */
+export function splitMacs(macs: string): string[] {
+    return macs
+        .split(/[,;]/)
+        .map(mac => mac.trim())
+        .filter(mac => mac);
+}
+
+/** Whether both lists of MAC addresses have one address in common, independent of their spelling */
+export function macsOverlap(macs1: string, macs2: string): boolean {
+    const list = splitMacs(macs1).map(normalizeMac);
+    return splitMacs(macs2).some(mac => list.includes(normalizeMac(mac)));
+}
+
+/**
  * Replaces the session ID in a URL of the box (`sid=`, `tr064sid=`), so that the URL can be logged.
  * A session ID is a credential - it must never end up in a log, not even with level silly.
  */

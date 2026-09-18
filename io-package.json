@@ -186,6 +186,7 @@
     "useDevices": true,
     "useMDNS": true,
     "jsonDeviceList": false,
+    "useConfiguredNames": false,
     "devices": [],
     "calllists": {
       "missed": {

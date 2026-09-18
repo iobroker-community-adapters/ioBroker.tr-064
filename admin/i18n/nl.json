@@ -18,11 +18,14 @@
     "Use MDNS": "Gebruik MDNS om apparaatlijstvernieuwing te activeren",
     "Use call forwarding options": "Gebruik opties voor doorschakelen",
     "Use phonebook": "Gebruik het telefoonboek (naamomzetting)",
+    "Use the names of this table for the objects": "Objecten naar deze tabel benoemen",
     "User": "Gebruiker",
     "Watch devices": "Bekijk aangesloten apparaten (aanwezigheid)",
+    "hint_severalMacs": "Apparaat met meerdere MAC-adressen (bijv. een smartphone met een privé wifi-adres, dat per wifi-netwerk verschilt): voer alle adressen gescheiden door komma's in. Het apparaat is aanwezig als een van de adressen actief is",
     "ip": "IK P",
     "max Entries": "max Invoer",
     "name": "Naam",
     "tooltip_ip": "Fritz!Box IP-adres",
+    "tooltip_useConfiguredNames": "De objecten onder \"devices\" krijgen de namen uit deze tabel in plaats van de namen in de FRITZ!Box. Objecten die met de naam uit de FRITZ!Box zijn aangemaakt, worden bij het starten van de adapter verwijderd",
     "tooltip_useMDNS": "multicast Domain Name System (mDNS) lost hostnamen op IP-adressen op in kleine netwerken die geen lokale naamserver bevatten"
 }

@@ -12,7 +12,7 @@ import type { Action, ActionArguments, ActionResult, Device, Service, TR064Error
 import { Device as TR064DeviceClass } from 'tr-O64/lib/Device';
 
 import { refresh, ROOT as CALLLIST_ROOT } from './calllist';
-import { getXml, normalizeMac, parseXml, safeFunction } from './utils';
+import { getXml, normalizeMac, parseXml, safeFunction, splitMacs } from './utils';
 import { CHANNEL_STATES, STATES } from './states';
 import type { DeviceConfigEntry, HostEntry, TamListXml, TamMessageListXml } from './types';
 import type { Tr064Adapter } from '../main';
@@ -563,9 +563,12 @@ export class TR064Client extends TR064 {
      * seen before is then reported with its last entry as inactive; a device which was never seen
      * is logged once and reported by `onUnknown`. Every request has a timeout, otherwise one lost
      * answer would stop the presence detection and the poll cycle.
+     *
+     * A device with several MAC addresses is active if one of them is active. `NewMACAddress` of the
+     * reported entry is the address as written in the configuration.
      */
     public forEachConfiguredDevice(
-        callback: (device: HostEntry | null) => void,
+        callback: (device: HostEntry | null, entry?: DeviceConfigEntry) => void,
         onUnknown?: (entry: DeviceConfigEntry) => void,
     ): void {
         let i = 0;
@@ -578,61 +581,96 @@ export class TR064Client extends TR064 {
             }
 
             const dev = this.adapter.config.devices[i++];
-            // the box writes MAC addresses as `AA:BB:CC:DD:EE:FF`, the configuration may not
-            const mac = normalizeMac(dev.mac || '');
+            const macs = splitMacs(dev.mac || '');
 
-            if (!mac) {
+            if (!macs.length) {
                 setImmediate(doIt);
                 return;
             }
 
-            this.safe(this, 'getSpecificHostEntry')(
-                { NewMACAddress: mac },
-                this.adapter.callbackTimers.wrap<ActionResult>(3000, (err, result) => {
-                    let device: HostEntry | null = result as unknown as HostEntry | null;
+            this.getHostEntries(macs, answers => {
+                const found = answers.filter(answer => answer.entry);
+                let device = found.find(answer => ~~Number(answer.entry!.NewActive))?.entry ?? found[0]?.entry ?? null;
+                const errors = answers.filter(answer => answer.error && answer.error !== 'unknown');
 
-                    if (err === 'timeout') {
-                        this.adapter.log.warn(`GetSpecificHostEntry: no answer for "${dev.name}"`);
-                        device = dev.lastResult ?? null;
-                    } else if (err && typeof err === 'object' && err.code === 500) {
-                        if (dev.lastResult) {
-                            device = dev.lastResult;
-                            device.NewActive = false as unknown as string;
-                        } else {
-                            if (!dev.notFoundLogged) {
-                                dev.notFoundLogged = true;
-                                this.adapter.log.info(
-                                    `Device "${dev.name}" is unknown to the FRITZ!Box or offline since the adapter was started. If it is online, check its MAC address in the tab "Devices"`,
-                                );
-                            }
-                            device = null;
-                            onUnknown?.(dev);
-                        }
-                    } else if (err) {
-                        this.adapter.log.warn(
-                            `forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1} (${dev.name}): ${typeof err === 'string' ? err : err.message} - ${JSON.stringify(err)}`,
+                if (device) {
+                    // store last result to reuse if device goes offline and error 500 is returned
+                    dev.lastResult = device;
+                    dev.notFoundLogged = false;
+                } else if (errors.some(answer => answer.error === 'timeout')) {
+                    this.adapter.log.warn(`GetSpecificHostEntry: no answer for "${dev.name}"`);
+                    device = dev.lastResult ?? null;
+                } else if (errors.length) {
+                    this.adapter.log.warn(
+                        `forEachConfiguredDevice: in GetSpecificHostEntry ${i - 1} (${dev.name}): ${errors[0].error}`,
+                    );
+                } else if (dev.lastResult) {
+                    device = dev.lastResult;
+                    device.NewActive = false as unknown as string;
+                } else {
+                    if (!dev.notFoundLogged) {
+                        dev.notFoundLogged = true;
+                        this.adapter.log.info(
+                            `Device "${dev.name}" is unknown to the FRITZ!Box or offline since the adapter was started. If it is online, check its MAC address in the tab "Devices"`,
                         );
-                        device = null;
-                    } else if (device) {
-                        // store last result to reuse if device goes offline and error 500 is returned
-                        dev.lastResult = device;
-                        dev.notFoundLogged = false;
                     }
+                    onUnknown?.(dev);
+                }
 
-                    if (device) {
-                        this.adapter.log.debug(`forEachConfiguredDevice: i=${i - 1} active=${device.NewActive}`);
-                        this.adapter.log.silly(
-                            `forEachConfiguredDevice: i=${i - 1} ${device.NewHostName} active=${device.NewActive}`,
-                        );
-                        device.NewMACAddress = dev.mac;
-                        callback(device);
-                    }
-                    setImmediate(doIt);
-                }),
-            );
+                if (device) {
+                    this.adapter.log.debug(`forEachConfiguredDevice: i=${i - 1} active=${device.NewActive}`);
+                    this.adapter.log.silly(
+                        `forEachConfiguredDevice: i=${i - 1} ${device.NewHostName} active=${device.NewActive}`,
+                    );
+                    callback(device, dev);
+                }
+                setImmediate(doIt);
+            });
         };
 
         doIt();
+    }
+
+    /**
+     * Asks the box for the MAC addresses of one device, one after the other.
+     *
+     * `error` of an answer is `unknown` for error 500 (unknown address or device offline),
+     * `timeout` if the box did not answer, otherwise the error text.
+     */
+    private getHostEntries(
+        macs: string[],
+        cb: (answers: { entry?: HostEntry; error?: string }[]) => void,
+        answers: { entry?: HostEntry; error?: string }[] = [],
+    ): void {
+        if (answers.length >= macs.length) {
+            cb(answers);
+            return;
+        }
+
+        const mac = macs[answers.length];
+        // the box writes MAC addresses as `AA:BB:CC:DD:EE:FF`, the configuration may not
+        this.safe(this, 'getSpecificHostEntry')(
+            { NewMACAddress: normalizeMac(mac) },
+            this.adapter.callbackTimers.wrap<ActionResult>(3000, (err, result) => {
+                const entry = result as unknown as HostEntry | null;
+                if (err === 'timeout') {
+                    answers.push({ error: 'timeout' });
+                } else if (err && typeof err === 'object' && err.code === 500) {
+                    answers.push({ error: 'unknown' });
+                } else if (err) {
+                    answers.push({
+                        error: typeof err === 'string' ? err : `${err.message} - ${JSON.stringify(err)}`,
+                    });
+                } else if (entry) {
+                    // the MAC as configured: states, `native.mac` and `jsonDeviceList` keep the spelling of the user
+                    entry.NewMACAddress = mac;
+                    answers.push({ entry });
+                } else {
+                    answers.push({ error: 'unknown' });
+                }
+                setImmediate(() => this.getHostEntries(macs, cb, answers));
+            }),
+        );
     }
 
     /** Writes all services and actions of the box into `commandResult` and optionally into a file */
