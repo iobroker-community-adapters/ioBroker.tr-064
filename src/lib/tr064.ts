@@ -20,6 +20,11 @@ import type { Tr064Adapter } from '../main';
 /** Milliseconds within which the box has to deliver the description (SCPD) of one service */
 const SCPD_TIMEOUT = 10_000;
 
+/** Error of `init()` when the box answered, but refused the login (see `checkLogin()`) */
+export interface LoginError extends TR064Error {
+    loginRejected?: boolean;
+}
+
 /**
  * `tr-O64` reads the description (SCPD) of every service of the box and calls back only when all
  * of them arrived. For a description which the box does not deliver - e.g. `x_speedtestSCPD.xml`
@@ -239,6 +244,28 @@ export class TR064Client extends TR064 {
         );
     }
 
+    /**
+     * Checks with a first request that the box answers and accepts the login.
+     *
+     * `DeviceInfo:1 GetInfo` exists on every box and does not depend on a function which can be
+     * switched off. `GetInfo` of the WLAN, which was used before, answers with error 820 when the
+     * WLAN is off, so the adapter never connected (issue #527). A SOAP fault (the library reports
+     * every fault as 500) or "Credentials incorrect" of the library means that the box refused the
+     * login: wrong user or password, missing rights, or logins blocked after wrong attempts.
+     */
+    private checkLogin(device: Device, callback: (err?: TR064Error | string | null) => void): void {
+        this.safe(
+            device,
+            'services.urn:dslforum-org:service:DeviceInfo:1.actions.GetInfo',
+            true,
+        )((err: TR064Error | null) => {
+            if (err && (err.code === 500 || err.code === 401 || /credentials/i.test(err.message))) {
+                (err as LoginError).loginRejected = true;
+            }
+            callback(err);
+        });
+    }
+
     /** Connects to the box and collects all actions which the adapter uses */
     public init(callback: (err?: TR064Error | string | null) => void): void {
         this.initTR064Device(this.ip, this.port, (err, device) => {
@@ -303,7 +330,8 @@ export class TR064Client extends TR064 {
                 this.reconnectInternet = wanIp.actions.ForceTermination;
             });
 
-            this.initWLANs(device, () => this.getWLAN(this.adapter.callbackTimers.wrap(2000, callback)));
+            // the time limit of the whole connection (`INIT_TIMEOUT` in main.ts) also covers this request
+            this.initWLANs(device, () => this.checkLogin(device, callback));
         });
     }
 

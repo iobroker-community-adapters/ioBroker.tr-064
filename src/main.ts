@@ -20,6 +20,7 @@ import { CHANNEL_DEFLECTIONS, Deflections } from './lib/deflections';
 import { Phonebook } from './lib/phonebook';
 import { SystemData } from './lib/systemdata';
 import { TR064Client } from './lib/tr064';
+import type { LoginError } from './lib/tr064';
 import { CallbackTimers, macsOverlap, normalizedName } from './lib/utils';
 import {
     CHANNEL_CALLLISTS,
@@ -928,8 +929,17 @@ export class Tr064Adapter extends utils.Adapter {
             // explain the problem once, the repeated attempts must not fill up the log
             this.log.error(`${err as string} - ${JSON.stringify(err)}`);
             this.log.error('~');
-            this.log.error('~~ Cannot connect to your FritzBox.');
-            this.log.error('~~ If configuration, network, IP address, etc. ok, try to restart your FritzBox');
+            if (typeof err === 'object' && (err as LoginError).loginRejected) {
+                // a restart of the box does not help here (issue #527)
+                this.log.error('~~ The FritzBox refused the login.');
+                this.log.error(
+                    '~~ Check user and password in the tab "Options" and that the user has the right for the FritzBox settings.',
+                );
+                this.log.error('~~ After wrong logins the FritzBox blocks further logins for a while.');
+            } else {
+                this.log.error('~~ Cannot connect to your FritzBox.');
+                this.log.error('~~ If configuration, network, IP address, etc. ok, try to restart your FritzBox');
+            }
             this.log.error(`~~ The connection is retried every ${RECONNECT_INTERVAL / 1000} seconds`);
             this.log.error('~');
         } else {

@@ -92,6 +92,12 @@ reason to stop the adapter: the attempt is repeated every `RECONNECT_INTERVAL` (
 works, and only then the objects are created, the polling starts and `subscribeStates()` runs. The
 detailed error block is logged once, the following attempts only at debug level.
 
+The last step of `init()` is `checkLogin()`: the first authenticated request, `DeviceInfo:1 GetInfo`.
+It must be an action which every box has and which cannot be switched off - it was `GetInfo` of the
+2.4 GHz WLAN, which answers with error 820 when the WLAN is off, so such a box never connected
+(issue #527). A fault of that request or "Credentials incorrect" of `tr-O64` sets `loginRejected`,
+and the error block then points to user, password and rights instead of a restart of the box.
+
 `info.connection` shows whether the box answers. It is written by `setConnected()`, which is called
 on a failed connection, on the first successful one and after every poll cycle in `updateAll()` -
 so a box which disappears later also switches the state to `false`.
