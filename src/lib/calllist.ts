@@ -47,6 +47,31 @@ function createCallList(type: CallListName): CallList {
     return { count: 0, lastId: 0, array: [], type };
 }
 
+/** `dd.mm.yy hh:mm` of the call list as sortable `yymmddhhmm`, empty if the date has another form */
+function dateKey(date?: string): string {
+    const m = /^(\d\d)\.(\d\d)\.(\d\d) (\d\d):(\d\d)/.exec(date ?? '');
+    return m ? `${m[3]}${m[2]}${m[1]}${m[4]}${m[5]}` : '';
+}
+
+/** A call which is still running: the box writes its final entry when it ends */
+function isActive(call: CallEntry): boolean {
+    return ~~call.type === 9 || ~~call.type === 11;
+}
+
+/** Identifies a call without its ID */
+function callSignature(call: CallEntry): string {
+    return `${call.date}|${~~call.type}|${call.caller ?? ''}|${call.called ?? ''}`;
+}
+
+/** `root.call` of the call list XML as an array, in the order of the box: the newest call first */
+function getCalls(json: CallListXml): CallEntry[] {
+    const call = json.root?.call;
+    if (!call) {
+        return [];
+    }
+    return Array.isArray(call) ? call : [call];
+}
+
 /**
  * Brings the configuration of the call lists into the current form and determines which lists
  * are used at all.
@@ -218,8 +243,14 @@ export class CallLists {
         this.#html.set(value);
     }
 
-    /** Adds a call to one list, the oldest entries are removed */
-    public addCall2List(call: CallEntry, listName: CallListName | number): void {
+    /**
+     * Adds a call to one list, the oldest entries are removed
+     *
+     * @param call the call
+     * @param listName the list
+     * @param counted false: the call is not new, the counter of the list stays as it is
+     */
+    public addCall2List(call: CallEntry, listName: CallListName | number, counted = true): void {
         if (!call) {
             return;
         }
@@ -237,12 +268,14 @@ export class CallLists {
             }
             if (list.lastId < call.id) {
                 list.lastId = call.id;
-                list.count += 1;
+                if (counted) {
+                    list.count += 1;
+                }
             }
         }
     }
 
-    public addCall(call: CallEntry): void {
+    public addCall(call: CallEntry, counted = true): void {
         call.id = ~~call.id;
 
         if ((call.type as number) > 3) {
@@ -255,41 +288,73 @@ export class CallLists {
         this.#adapter.log.debug(`Processing call ID${call.id} (call.type = ${call.type})`);
         call.sym = SYMS[~~call.type];
         call.external = ~~call.type === 3 ? call.called : call.caller;
-        this.addCall2List(call, NO2NAME[~~call.type] || call.type);
-        this.addCall2List(call, 'all');
+        this.addCall2List(call, NO2NAME[~~call.type] || call.type, counted);
+        this.addCall2List(call, 'all', counted);
     }
 
-    public add(call: CallEntry | CallEntry[], timestamp?: number): void {
-        if (!call) {
-            return;
-        }
-        if (timestamp && timestamp > this.lastTimestamp) {
+    /**
+     * Adds the calls of the box to the lists.
+     *
+     * @param calls the calls in the order of the box: the newest call first
+     * @param timestamp `timestamp` of the call list
+     * @param isNew decides whether a call increases the counters, by default every call which is not known yet
+     */
+    public add(calls: CallEntry[], timestamp: number, isNew?: (call: CallEntry) => boolean): void {
+        if (timestamp) {
+            // Not a point in time but the ID of the call list of the box: a list which the box has
+            // created again (e.g. another box) may have a smaller one, therefore it is not compared.
             this.lastTimestamp = timestamp;
         }
 
         let blocker = false;
 
-        if (Array.isArray(call)) {
-            this.#adapter.log.debug('Separating parallel calls for calllist handling');
-            call.reverse();
-            call.forEach(singleCall => {
-                this.addCall(singleCall); // process all calls of the array
-                // but don't update lastId if an earlier started call is still active
-                if (~~singleCall.type === 9 || ~~singleCall.type === 11) {
-                    blocker = true;
-                }
+        // the oldest call first
+        for (const call of [...calls].reverse()) {
+            this.addCall(call, isNew ? isNew(call) : true);
+            // do not move lastId past a call which is still active, its final entry has to be read again
+            if (isActive(call)) {
+                blocker = true;
+            }
 
-                if (!blocker && singleCall.id > this.lastId) {
-                    this.lastId = singleCall.id;
-                }
-            });
-        } else {
-            this.addCall(call);
-
-            if (call.id > this.lastId) {
+            if (!blocker && call.id > this.lastId) {
                 this.lastId = call.id;
             }
         }
+    }
+
+    /**
+     * Builds the lists again from the complete call list of the box.
+     *
+     * The IDs of the calls cannot be compared any more (the box has numbered its calls from the
+     * beginning again), therefore a call is counted as new if it is not older than the newest known
+     * call and not one of the known calls.
+     *
+     * @param calls the complete call list of the box, the newest call first
+     * @param timestamp `timestamp` of the call list
+     */
+    public rebuild(calls: CallEntry[], timestamp: number): void {
+        const known = new Set<string>();
+        let newest = '';
+        for (const n of TYPES) {
+            for (const call of this[n].array) {
+                known.add(callSignature(call));
+                const key = dateKey(call.date);
+                if (key > newest) {
+                    newest = key;
+                }
+            }
+        }
+
+        this.lastId = 0;
+        for (const n of TYPES) {
+            this[n].array = [];
+            this[n].lastId = 0;
+        }
+
+        this.add(calls, timestamp, call => {
+            const key = dateKey(call.date);
+            return !!key && key >= newest && !known.has(callSignature(call));
+        });
     }
 
     /** Calls `cb` for every used list, `html` contains the generated HTML */
@@ -310,13 +375,18 @@ export class CallLists {
 /**
  * Reads the call list of the box and adds the new calls to the lists.
  *
+ * Only the calls after the last known one are requested (`timestamp` together with `id`). A box
+ * which numbers its calls from the beginning again - another box, a factory reset, a list which
+ * the box has created again - answers that request with an empty list for good, because it has no
+ * call after that ID. Therefore an empty answer is checked against the newest call of the box, and
+ * the lists are built again from the complete call list if the IDs do not fit (issue #582).
+ *
  * @param adapter the adapter instance
  * @param systemData the meta object with the stored lists
  * @param err error of `GetCallList`
  * @param data result of `GetCallList` with the URL of the list
  * @param cb called for every regenerated list
  * @param done called when all lists are processed
- * @param fallbackTry internal: second attempt after the box has reset its call IDs
  */
 export function refresh(
     adapter: Tr064Adapter,
@@ -325,66 +395,88 @@ export function refresh(
     data: ActionResult | null,
     cb: (list: CallList, name: CallListName, html: string, self: CallLists) => void,
     done?: () => void,
-    fallbackTry?: boolean,
 ): void {
     const callLists = systemData.native.callLists;
+    const url = data?.NewCallListURL;
 
-    if (err || !data || !callLists) {
+    if (err || !callLists || !url || url.startsWith('https:')) {
         done?.();
         return;
     }
 
-    let url = data.NewCallListURL;
-    if (callLists.lastTimestamp && url) {
-        url += `&timestamp=${callLists.lastTimestamp}`;
-    }
-    if (callLists.lastId && url) {
-        url += `&id=${callLists.lastId}`;
-    }
-    if (!url || url.startsWith('https:')) {
-        done?.();
-        return;
-    }
-
-    adapter.log.debug(`Request Calllist JSON: url = ${redactUrl(url)}`);
-    getXml<CallListXml>(url, (httpErr, json) => {
-        if (httpErr) {
-            adapter.log.warn(`Cannot read the call list: ${httpErr.message}`);
-            done?.();
-            return;
+    const stored = JSON.stringify(callLists);
+    const finish = (): void => {
+        callLists.forEach(cb);
+        // the list is read every minute, the object is only written if something changed
+        if (JSON.stringify(callLists) !== stored) {
+            systemData.save();
         }
-        // the calls contain phone numbers and names
-        adapter.log.debug('Calllist received');
-        adapter.log.silly(`Result Calllist JSON: ${JSON.stringify(json)}`);
+        done?.();
+    };
 
-        if (json?.root) {
-            const firstCall = Array.isArray(json.root.call) ? json.root.call[0] : json.root.call;
-
-            // it seems that the latest id is smaller than our stored latest one,
-            // so something happened, read again with timestamp only
-            if (!fallbackTry && firstCall?.id && firstCall.id < callLists.lastId) {
-                callLists.lastId = 0;
-                for (const n of TYPES) {
-                    const list = callLists[n];
-                    if (!list || !list.use) {
-                        continue;
-                    }
-                    list.lastId = 0;
-                }
-
-                adapter.log.info(
-                    `Reset of call ids in Fritzbox detected, re-add all calls since ${callLists.lastTimestamp}`,
+    const read = (params: string, onRead: (calls: CallEntry[], timestamp: number) => void): void => {
+        adapter.log.debug(`Request Calllist JSON: url = ${redactUrl(url + params)}`);
+        getXml<CallListXml>(url + params, (httpErr, json) => {
+            if (httpErr || !json?.root) {
+                adapter.log.warn(
+                    `Cannot read the call list: ${httpErr ? httpErr.message : 'no call list in the answer'}`,
                 );
-                refresh(adapter, systemData, err, data, cb, done, true);
+                done?.();
                 return;
             }
+            // the calls contain phone numbers and names
+            adapter.log.debug('Calllist received');
+            adapter.log.silly(`Result Calllist JSON: ${JSON.stringify(json)}`);
+            onRead(getCalls(json), ~~Number(json.root.timestamp));
+        });
+    };
 
-            callLists.add(json.root.call as CallEntry | CallEntry[], ~~Number(json.root.timestamp));
+    const rebuild = (reason: string): void => {
+        adapter.log.info(`${reason}, the call lists are read again completely`);
+        read('', (calls, timestamp) => {
+            callLists.rebuild(calls, timestamp);
+            finish();
+        });
+    };
+
+    const lastId = callLists.lastId;
+    // AVM: the parameters work only together, one of them alone is ignored
+    if (!lastId || !callLists.lastTimestamp) {
+        read('', (calls, timestamp) => {
+            callLists.add(calls, timestamp);
+            finish();
+        });
+        return;
+    }
+
+    read(`&timestamp=${callLists.lastTimestamp}&id=${lastId}`, (calls, timestamp) => {
+        if (calls.some(call => ~~call.id < lastId)) {
+            // the box has not filtered the list, it does not know the ID
+            rebuild(`The FRITZ!Box sent calls before the last known call ID ${lastId}`);
+            return;
+        }
+        if (calls.length) {
+            callLists.add(calls, timestamp);
+            finish();
+            return;
         }
 
-        callLists.forEach(cb);
-        // save system data in namespace
-        systemData.save();
-        done?.();
+        // "no new calls" - or no call after `lastId` any more: the newest call of the box tells
+        read('&max=1', ([newest]) => {
+            const newestId = ~~(newest?.id ?? 0);
+            if (newestId && newestId < lastId) {
+                rebuild(
+                    `The FRITZ!Box numbers its calls from the beginning again (last known call ID ${lastId}, newest ${newestId})`,
+                );
+            } else if (newestId > lastId && !isActive(newest)) {
+                // the box has newer calls, but not for this request (a call which has just started is not
+                // a reason, it is read with the next refresh)
+                rebuild(`The FRITZ!Box did not send the calls after the last known call ID ${lastId}`);
+            } else {
+                // an empty call list of the box (e.g. deleted by the user) keeps the lists as they are
+                callLists.add([], timestamp);
+                finish();
+            }
+        });
     });
 }
