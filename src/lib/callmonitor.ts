@@ -16,6 +16,10 @@ const CALLMONITOR_NAME = 'callmonitor';
 const KEEPALIVE_DELAY = 60_000;
 /** Milliseconds between two attempts while the box refuses port 1012 (port not opened, or restarting) */
 const REFUSED_RETRY_INTERVAL = 60_000;
+/** Milliseconds after which a received rest without line break is evaluated as a line of its own */
+const LINE_FLUSH_DELAY = 1000;
+/** A rest without line break which is longer than this is not a call event, it is thrown away */
+const MAX_LINE_LENGTH = 1024;
 const ENABLE_CONNECT_1012 = `--- To use the callmonitor, enable connects to port 1012 on FritzBox by dialing #96*5* with a directly connected phone (line/dect). The adapter retries every ${REFUSED_RETRY_INTERVAL / 1000} seconds`;
 
 /** Value of `toPauseState` per call state */
@@ -35,6 +39,9 @@ export class CallMonitor {
     private client: Socket | null = null;
     private timeout: ioBroker.Timeout | null = null;
     private updateTimer: ioBroker.Timeout | null = null;
+    /** Received text after the last line break */
+    private lineBuffer = '';
+    private flushTimer: ioBroker.Timeout | null = null;
     private lastCaller: string | undefined;
     private lastCallee: string | undefined;
     /** The call monitor was connected at least once - a refusal then means that the box restarts */
@@ -66,6 +73,7 @@ export class CallMonitor {
         // silently (e.g. by a reboot) is never detected: no `close`, no reconnect, no events.
         client.setKeepAlive(true, KEEPALIVE_DELAY);
         this.refused = false;
+        this.clearLineBuffer();
 
         client.on('connect', () => {
             if (this.refusedLogged) {
@@ -133,8 +141,55 @@ export class CallMonitor {
             });
     }
 
+    /**
+     * Splits the received data into lines, one line per call event.
+     *
+     * TCP delivers a stream and not single messages: one packet can hold two events (e.g. `RING`
+     * and `DISCONNECT` of a very short call) or only a part of one. Evaluating every packet as one
+     * line lost the second event - a lost `DISCONNECT` means no `lastCall` and no refresh of the
+     * call lists. A rest without line break is evaluated after `LINE_FLUSH_DELAY`, in case a box
+     * does not end its lines.
+     */
     private onData(data: Buffer): void {
-        const raw = data.toString();
+        if (this.flushTimer) {
+            this.adapter.clearTimeout(this.flushTimer);
+            this.flushTimer = null;
+        }
+
+        const lines = (this.lineBuffer + data.toString()).split(/\r?\n/);
+        this.lineBuffer = lines.pop() ?? '';
+        if (this.lineBuffer.length > MAX_LINE_LENGTH) {
+            this.adapter.log.debug(`Callmonitor: ${this.lineBuffer.length} characters without line break discarded`);
+            this.lineBuffer = '';
+        }
+
+        for (const line of lines) {
+            if (line.trim()) {
+                this.onLine(line);
+            }
+        }
+
+        if (this.lineBuffer.trim()) {
+            this.flushTimer =
+                this.adapter.setTimeout(() => {
+                    this.flushTimer = null;
+                    const line = this.lineBuffer;
+                    this.lineBuffer = '';
+                    this.onLine(line);
+                }, LINE_FLUSH_DELAY) ?? null;
+        }
+    }
+
+    private clearLineBuffer(): void {
+        this.lineBuffer = '';
+        if (this.flushTimer) {
+            this.adapter.clearTimeout(this.flushTimer);
+            this.flushTimer = null;
+        }
+    }
+
+    /** Evaluates one line of the call monitor, e.g. `date;RING;id;caller;callee;line;` */
+    private onLine(raw: string): void {
         const array = raw.split(';');
         const type = array[1];
         const id = parseInt(array[2], 10);
@@ -299,5 +354,6 @@ export class CallMonitor {
             this.adapter.clearTimeout(this.updateTimer);
             this.updateTimer = null;
         }
+        this.clearLineBuffer();
     }
 }
