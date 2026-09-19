@@ -12,8 +12,11 @@ TypeScript (CommonJS output). Sources live in `src/`, the published and runnable
 
 ```bash
 npm run build                             # tsc -p tsconfig.build.json  -> build/
+npm run build:gui                         # tsx tasks.ts: sync src-shared, build src-admin, src-widgets, src-devices
+npm run build:admin                       # only src-admin   -> admin/custom/      (also build:widgets -> widgets/tr-064/,
+                                          #                                       build:devices -> admin/dm-widgets/)
 npm run watch                             # same in watch mode
-npm run check                             # type check only (tsconfig.json, noEmit)
+npm run check                             # type check only (tsconfig.json and tsconfig.tasks.json, noEmit)
 npm run lint                              # eslint (@iobroker/eslint-config, flat config)
 npx eslint -c eslint.config.mjs --fix src # autofix + prettier formatting
 
@@ -38,6 +41,7 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 | `src/lib/callmonitor.ts` | TCP client for port 1012 |
 | `src/lib/phonebook.ts` | phone book, resolves numbers to names |
 | `src/lib/deflections.ts` | call forwardings |
+| `src/lib/mesh.ts` | converts the mesh list of the box into nodes/links, finds the access point of a device |
 | `src/lib/systemdata.ts` | the `meta` object which stores the call lists between restarts |
 | `src/lib/states.ts` | definition of all states below `states` and `phonebook` |
 | `src/lib/utils.ts` | `getProp`, `safeFunction`, `CallbackTimers`, name and value conversion |
@@ -45,6 +49,16 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 | `src/lib/adapter-config.d.ts` | augments `ioBroker.AdapterConfig` |
 | `src/types/*.d.ts` | typings for the untyped packages `tr-O64` and `mdns-discovery` |
 | `admin/jsonConfig.json` | the configuration dialog |
+| `src-admin/` | React custom component `MeshTopology` for the tab "Mesh" (own `package.json`, vite, module federation, `guiApi: 2`) |
+| `admin/custom/` | build output of `src-admin` - **committed**, rebuilt with `npm run build:admin` |
+| `tasks.ts` | build of the GUI projects, run with `tsx` (root devDependency), type checked by `tsconfig.tasks.json` in `npm run check` |
+| `src-shared/` | mesh topology UI used by all GUI projects (`MeshView`, `meshApi`, layout, i18n) - see its README |
+| `src-widgets/` | vis-2 widget set `vis2Tr064Widgets` (`Tr064FritzBox`, `Tr064Mesh`, `Tr064Presence`) -> `widgets/tr-064/` (**committed**), registered in `common.visWidgets` |
+| `src-devices/` | ioBroker.devices plugin `FritzBoxComponent` -> `admin/dm-widgets/` (**committed**), registered in `common.deviceWidgets` |
+
+`src-shared/` has no `node_modules`: bare imports from outside a project root would not resolve against the project's React/MUI. `tsx tasks.ts --sync` (also `prestart`/`prebuild` of every GUI project) copies it into `<project>/src/shared/`, which is gitignored - always edit `src-shared/`, never the copies (an `eslint --fix` in a project only fixes the copy).
+
+The GUI projects use different hosts: admin and vis-2 share React/MUI through module federation, ioBroker.devices does **not** - it puts them on `window.__iobrokerShared__`. `src-devices/vite.config.ts` therefore redirects `react`, `@mui/material`, `@mui/material/styles` and `@mui/icons-material` to `src-devices/src/bridge/*`, which export the host's instances. A new name which `src-shared` imports from these packages has to be added to the bridge (the build fails otherwise); never import sub-paths like `@mui/material/Box` in `src-shared`. `tasks.ts` builds every project with its own `npm run build` - `buildReact()` of build-tools forks vite with the execArgv of tsx and breaks the CommonJS vite config of `src-devices`.
 
 `src/lib/adapter-config.d.ts` is hand-maintained and must be kept in sync with `native` in `io-package.json` **and** with `admin/jsonConfig.json` — nothing generates it.
 
@@ -83,7 +97,7 @@ Everything which must **not** end up in the database is a `#` private field (`#a
 
 ### Admin
 
-`admin/jsonConfig.json` with `i18n: true`; the keys of `admin/i18n/<lang>.json` are the **English labels**. The button "Find a device" sends the message `discovery` with `native: true` and gets the device list back as `{ native: { devices } }` (`useNative`). Without `native: true` the same command answers with a JSON string, like all versions before — user scripts rely on that.
+`admin/jsonConfig.json` with `i18n: true`; the keys of `admin/i18n/<lang>.json` are the **English labels**. A `table` must get the whole width (`lg`/`xl` 12): admin 8 shows a narrow table as cards whose fields are too small to read (issue #743). The button "Find a device" sends the message `discovery` with `native: true` and gets the device list back as `{ native: { devices } }` (`useNative`). Without `native: true` the same command answers with a JSON string, like all versions before — user scripts rely on that. The devices come from `getHostList()` - one XML list of `X_AVM-DE_GetHostListPath`, the single `GetGenericHostEntry` requests only as fallback - and the command is answered in every case (issue #742).
 
 ### Connection to the box
 
@@ -115,6 +129,16 @@ whether the TCP connect gave up within the 5 second observation window of the te
 - Every SOAP fault arrives as `err.code === 500` - `tr-O64` drops the UPnP error code - so an unknown MAC (714) and an offline device cannot be told apart. A device which was never seen is logged once and listed as inactive via `onUnknown`.
 - Every `GetSpecificHostEntry` is guarded by `callbackTimers.wrap()`. Without it one lost answer stops `updateAll()` for good (issue #660).
 
+### Mesh, WAN, event log (issues #383, #269, #432, #444)
+
+- `refreshSlow()` in `src/main.ts` runs from `updateAll()` at most every `SLOW_REFRESH_INTERVAL` (60 s): the mesh list (`useMesh`, writes `devices.<x>.accessPoint`/`connection` for every device with `lastResult`) and the event log (`useDeviceLog`).
+- Mesh list and event log are paths (`X_AVM-DE_GetMeshListPath`, `X_AVM-DE_GetDeviceLogPath`) which `boxUrl()` completes to `http://<box>:<port>`. The mesh list is JSON (`getJson()`), the event log XML. The mesh JSON lists every link at both ends - `buildMeshTopology()` deduplicates by link UID and turns every link so that `from` is the upstream side (master < switch < slave < client, `UPLINK` interface is downstream).
+- The admin component asks with `sendTo('mesh')` and gets a `MeshResponse` (`src/lib/types.ts`), `error: 'not connected'` while the box is not connected. Keep the interface in sync with `src-admin/src`.
+- `GetDeviceLog` returns a shortened log without events with addresses (logins, WLAN devices); only the XML list of the path has them. `deviceLog.newEvents` is computed by event keys (`date|time|id|msg`) against the previous reading; after a start the previous reading is `deviceLog.json`.
+- `states.wlan` uses `X_AVM-DE_SetWLANGlobalEnable` (like the WLAN button, only the last active WLANs come back) and is read from `GetInfo` `NewX_AVM-DE_WLANGlobalEnable`; switching every band was the old way and switched on the guest WLAN (issue #395). It stays as fallback for firmware without the action.
+- WAN: `getWANLink()` (`GetCommonLinkProperties` + `X_AVM-DE_GetActiveProvider`) and `getWANTraffic()` (IGD `GetAddonInfos` with 64 bit counters, fallback `GetTotalBytesSent/Received` which are 32 bit). A `PollEntry` can write several states from one answer (`more`); a value which the box does not report is not written.
+- `updateUnchanged` (issue #441) makes `CDevice.set()` write an unchanged value too, but it still returns `false` - `setActive()` relies on that to write `lastActive` only on a change.
+
 ### Call lists and answering machine
 
 - The call lists and `states.abNewMessages` are refreshed by `refreshCalls()` in `src/main.ts`: on connect, 100 ms after the call monitor wrote `callmonitor.lastCall.timestamp`, and from `updateAll()` at most every `CALLS_REFRESH_INTERVAL` (60 s). The poll path is the only one for an instance without call monitor.
@@ -127,6 +151,9 @@ whether the TCP connect gave up within the 5 second observation window of the te
 - XML files of the box are read with `getXml()`/`parseXml()` of `src/lib/utils.ts`: 10 s timeout, the callback is called exactly once, tag names are lower case and a single element is an object, not an array. Only `http` URLs are read.
 - Actions which answer with an XML list in a string (`<List><Item>`, e.g. `GetDeflections`, `X_AVM-DE_GetNumbers`) are unpacked by the wrapper of `getFunctions()` in `src/lib/deflections.ts`: the callback always gets an array, `[]` for an empty list. It once passed the single item as object, so one call forwarding created no state (issue #480).
 - There is no TR-064 action for the "new missed calls" counter of a FRITZ!Fon; the call list XML has no seen/unseen flag.
+- The call monitor reports only the port of the telephone (`extension`). `CallLists.ports` learns port -> `Device` from the call lists (same numbering, e.g. 10 = first DECT handset) and is stored in the `meta` object; `callmonitor.*.device` uses it (issue #215).
+- `phonebooksByNumber` (issue #226): `Phonebook.byNumber(number, ownNumber)` prefers the phone books assigned to the own number (compared by the last digits, phone book by name or ID). The own number is the callee of an inbound and the caller of an outbound call - `_direction` keeps the direction, because `_type` changes with every event.
+- `callmonitor.connected` is written on `connect`/`close` of the socket (issue #399).
 
 ### Misc conventions
 

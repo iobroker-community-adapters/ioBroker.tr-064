@@ -1,0 +1,388 @@
+{
+  "_Generic-CIzmRpeI.js": {
+    "file": "assets/Generic-CIzmRpeI.js",
+    "name": "Generic",
+    "imports": [
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js-ub-5ZQs3.js",
+      "_defineProperty-CfKsT8I7.js"
+    ]
+  },
+  "_MeshView-340Nx-Yr.js": {
+    "file": "assets/MeshView-340Nx-Yr.js",
+    "name": "MeshView",
+    "imports": [
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js-ub-5ZQs3.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+      "_defineProperty-CfKsT8I7.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_emotion_mf_1_react__loadShare__.js-CBUuPkFA.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_emotion_mf_1_react__loadShare__.js-CBUuPkFA.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_emotion_mf_1_react__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_emotion_mf_1_react__prebuild__.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js-ub-5ZQs3.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js-ub-5ZQs3.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_material__prebuild__.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_private_mf_2_theming__loadShare__.js-BKa066ny.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_private_mf_2_theming__loadShare__.js-BKa066ny.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_private_mf_2_theming__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_private_mf_2_theming__prebuild__.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react__prebuild__.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_dev_mf_2_runtime__loadShare__.js-xgh8ZgUb.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_dev_mf_2_runtime__loadShare__.js-xgh8ZgUb.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_dev_mf_2_runtime__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_dev_mf_2_runtime__prebuild__.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom__loadShare__.js-Bq-33FtC.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom__loadShare__.js-Bq-33FtC.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom__prebuild__.js"
+    ]
+  },
+  "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom_mf_1_client__loadShare__.js-BEZyUUG0.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom_mf_1_client__loadShare__.js-BEZyUUG0.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom_mf_1_client__loadShare__.js",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom_mf_1_client__prebuild__.js"
+    ]
+  },
+  "_defineProperty-CfKsT8I7.js": {
+    "file": "assets/defineProperty-CfKsT8I7.js",
+    "name": "defineProperty",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_emotion_mf_1_react__loadShare__.js-CBUuPkFA.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+      "_emotion-use-insertion-effect-with-fallbacks.browser.esm-CilgCtis.js"
+    ]
+  },
+  "_dist-FhHpT0VB.js": {
+    "file": "assets/dist-FhHpT0VB.js",
+    "name": "dist",
+    "imports": [
+      "_utils-CJGuRvLL.js"
+    ]
+  },
+  "_emotion-cache.browser.esm-Bul_CO7q.js": {
+    "file": "assets/emotion-cache.browser.esm-Bul_CO7q.js",
+    "name": "emotion-cache.browser.esm"
+  },
+  "_emotion-use-insertion-effect-with-fallbacks.browser.esm-CilgCtis.js": {
+    "file": "assets/emotion-use-insertion-effect-with-fallbacks.browser.esm-CilgCtis.js",
+    "name": "emotion-use-insertion-effect-with-fallbacks.browser.esm",
+    "imports": [
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js"
+    ]
+  },
+  "_format-sGUrIYMZ.js": {
+    "file": "assets/format-sGUrIYMZ.js",
+    "name": "format"
+  },
+  "_helpers-DTPosF_X.js": {
+    "file": "assets/helpers-DTPosF_X.js",
+    "name": "helpers",
+    "imports": [
+      "_utils-CJGuRvLL.js"
+    ]
+  },
+  "_react-dom-CzGJkh8d.js": {
+    "file": "assets/react-dom-CzGJkh8d.js",
+    "name": "react-dom",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_react.production-DPSSDlXY.js"
+    ]
+  },
+  "_react.production-DPSSDlXY.js": {
+    "file": "assets/react.production-DPSSDlXY.js",
+    "name": "react.production",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js"
+    ]
+  },
+  "_rolldown-runtime-hePW80VL.js": {
+    "file": "assets/rolldown-runtime-hePW80VL.js",
+    "name": "rolldown-runtime"
+  },
+  "_utils-CJGuRvLL.js": {
+    "file": "assets/utils-CJGuRvLL.js",
+    "name": "utils",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js"
+    ]
+  },
+  "_vite-preload-helper-CaC3yEL3.js": {
+    "file": "assets/vite-preload-helper-CaC3yEL3.js",
+    "name": "vite-preload-helper"
+  },
+  "index.html": {
+    "file": "assets/index-P2Xu9kJm.js",
+    "name": "index",
+    "src": "index.html",
+    "isEntry": true
+  },
+  "src/Tr064FritzBox.tsx": {
+    "file": "assets/Tr064FritzBox-DdODZruN.js",
+    "name": "Tr064FritzBox",
+    "src": "src/Tr064FritzBox.tsx",
+    "isEntry": true,
+    "imports": [
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js-ub-5ZQs3.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+      "_defineProperty-CfKsT8I7.js",
+      "_MeshView-340Nx-Yr.js",
+      "_Generic-CIzmRpeI.js",
+      "_format-sGUrIYMZ.js"
+    ]
+  },
+  "src/Tr064Mesh.tsx": {
+    "file": "assets/Tr064Mesh-CQf54WE0.js",
+    "name": "Tr064Mesh",
+    "src": "src/Tr064Mesh.tsx",
+    "isEntry": true,
+    "imports": [
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+      "_defineProperty-CfKsT8I7.js",
+      "_MeshView-340Nx-Yr.js",
+      "_Generic-CIzmRpeI.js"
+    ]
+  },
+  "src/Tr064Presence.tsx": {
+    "file": "assets/Tr064Presence--G7eM1F-.js",
+    "name": "Tr064Presence",
+    "src": "src/Tr064Presence.tsx",
+    "isEntry": true,
+    "imports": [
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js-ub-5ZQs3.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+      "_defineProperty-CfKsT8I7.js",
+      "_Generic-CIzmRpeI.js",
+      "_format-sGUrIYMZ.js"
+    ]
+  },
+  "src/translations.ts": {
+    "file": "assets/translations-CXDgEVIh.js",
+    "name": "translations",
+    "src": "src/translations.ts",
+    "isEntry": true
+  },
+  "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__vis2Tr064Widgets__customWidgets_js": {
+    "file": "customWidgets.js",
+    "name": "remoteEntry",
+    "src": "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__vis2Tr064Widgets__customWidgets_js",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js",
+      "_dist-FhHpT0VB.js",
+      "_helpers-DTPosF_X.js"
+    ],
+    "dynamicImports": [
+      "src/Tr064FritzBox.tsx",
+      "src/Tr064Mesh.tsx",
+      "src/Tr064Presence.tsx",
+      "src/translations.ts",
+      "virtual:mf-localSharedImportMap:__mfe_internal__vis2Tr064Widgets__mf_owner__1"
+    ]
+  },
+  "virtual:mf-localSharedImportMap:__mfe_internal__vis2Tr064Widgets__mf_owner__1": {
+    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__vis2Tr064Widgets__mf_owner__1-D7nylM3Z.js",
+    "name": "_virtual_mf-localSharedImportMap___mfe_internal__vis2Tr064Widgets__mf_owner__1",
+    "src": "virtual:mf-localSharedImportMap:__mfe_internal__vis2Tr064Widgets__mf_owner__1",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js",
+      "_dist-FhHpT0VB.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react__prebuild__.js",
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_dev_mf_2_runtime__prebuild__.js",
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__.js",
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom__prebuild__.js",
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom_mf_1_client__prebuild__.js",
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_emotion_mf_1_react__prebuild__.js",
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_material__prebuild__.js",
+      "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_private_mf_2_theming__prebuild__.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js": {
+    "file": "assets/hostInit-BrwRSewP.js",
+    "name": "hostInit",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js",
+      "_helpers-DTPosF_X.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__vis2Tr064Widgets__customWidgets_js",
+      "virtual:mf-localSharedImportMap:__mfe_internal__vis2Tr064Widgets__mf_owner__1"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__1__P_S__pendingShares__P_S__.js": {
+    "file": "assets/pendingShares-CDDxKtx8.js",
+    "name": "pendingShares",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__1__P_S__pendingShares__P_S__.js",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_dev_mf_2_runtime__loadShare__.js-xgh8ZgUb.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom__loadShare__.js-Bq-33FtC.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom_mf_1_client__loadShare__.js-BEZyUUG0.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_emotion_mf_1_react__loadShare__.js-CBUuPkFA.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_material__loadShare__.js-ub-5ZQs3.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_private_mf_2_theming__loadShare__.js-BKa066ny.js",
+      "virtual:mf-localSharedImportMap:__mfe_internal__vis2Tr064Widgets__mf_owner__1"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_emotion_mf_1_react__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_emotion_mf_1_react__prebuild__-BFtS0SC_.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_emotion_mf_1_react__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_emotion_mf_1_react__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "_emotion-cache.browser.esm-Bul_CO7q.js",
+      "_emotion-use-insertion-effect-with-fallbacks.browser.esm-CilgCtis.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_material__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_material__prebuild__-Ba3YBPHm.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_material__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_material__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_emotion_mf_1_react__loadShare__.js-CBUuPkFA.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare___mf_0_mui_mf_1_private_mf_2_theming__loadShare__.js-BKa066ny.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_2_dom__loadShare__.js-Bq-33FtC.js",
+      "_emotion-cache.browser.esm-Bul_CO7q.js",
+      "_defineProperty-CfKsT8I7.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_private_mf_2_theming__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_private_mf_2_theming__prebuild__-BQqNvxi1.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_private_mf_2_theming__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild___mf_0_mui_mf_1_private_mf_2_theming__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react__loadShare__.js-CcVuD-II.js",
+      "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__loadShare__react_mf_1_jsx_mf_2_runtime__loadShare__.js-CRKteJto.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react__prebuild__-DMwD2vWI.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_react.production-DPSSDlXY.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_dev_mf_2_runtime__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_dev_mf_2_runtime__prebuild__-Cbwz_BNS.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_dev_mf_2_runtime__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_dev_mf_2_runtime__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__-ls7Ro8xU.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom__prebuild__-CwDi_M7l.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_react-dom-CzGJkh8d.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom_mf_1_client__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom_mf_1_client__prebuild__-DoImG-wh.js",
+    "name": "_virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom_mf_1_client__prebuild__",
+    "src": "virtual:mf:__mfe_internal__vis2Tr064Widgets__mf_owner__228572001985851__prebuild__react_mf_2_dom_mf_1_client__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_react-dom-CzGJkh8d.js"
+    ]
+  }
+}

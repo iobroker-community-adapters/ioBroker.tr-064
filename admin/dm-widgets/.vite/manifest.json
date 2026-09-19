@@ -1,0 +1,140 @@
+{
+  "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare___mf_0_iobroker_mf_1_dm_mf_2_widgets__loadShare__.js-C8vWIM5I.js": {
+    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare___mf_0_iobroker_mf_1_dm_mf_2_widgets__loadShare__.js-C8vWIM5I.js",
+    "name": "_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare___mf_0_iobroker_mf_1_dm_mf_2_widgets__loadShare__.js",
+    "imports": [
+      "_react-pcwjPi4V.js",
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js"
+    ]
+  },
+  "_dist-FhHpT0VB.js": {
+    "file": "assets/dist-FhHpT0VB.js",
+    "name": "dist",
+    "imports": [
+      "_utils-CJGuRvLL.js"
+    ]
+  },
+  "_helpers-DTPosF_X.js": {
+    "file": "assets/helpers-DTPosF_X.js",
+    "name": "helpers",
+    "imports": [
+      "_utils-CJGuRvLL.js"
+    ]
+  },
+  "_react-pcwjPi4V.js": {
+    "file": "assets/react-pcwjPi4V.js",
+    "name": "react"
+  },
+  "_utils-CJGuRvLL.js": {
+    "file": "assets/utils-CJGuRvLL.js",
+    "name": "utils",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js"
+    ]
+  },
+  "_vite-preload-helper-CaC3yEL3.js": {
+    "file": "assets/vite-preload-helper-CaC3yEL3.js",
+    "name": "vite-preload-helper"
+  },
+  "src/Components.tsx": {
+    "file": "assets/Components-CdGqHdsm.js",
+    "name": "Components",
+    "src": "src/Components.tsx",
+    "isEntry": true,
+    "imports": [
+      "_react-pcwjPi4V.js",
+      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare___mf_0_iobroker_mf_1_dm_mf_2_widgets__loadShare__.js-C8vWIM5I.js"
+    ]
+  },
+  "src/no-page.ts": {
+    "file": "assets/no-page-fzExEvxc.js",
+    "name": "no-page",
+    "src": "src/no-page.ts",
+    "isEntry": true,
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
+      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js",
+      "src/no-page.ts?mf-entry-bootstrap"
+    ]
+  },
+  "src/no-page.ts?mf-entry-bootstrap": {
+    "file": "assets/no-page-BvRk9kiK.js",
+    "name": "no-page",
+    "src": "src/no-page.ts?mf-entry-bootstrap",
+    "isDynamicEntry": true
+  },
+  "src/translations.ts": {
+    "file": "assets/translations-yVA7ZGpf.js",
+    "name": "translations",
+    "src": "src/translations.ts",
+    "isEntry": true
+  },
+  "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__DevicesWidgetTr064Set__customDevices_js": {
+    "file": "customDevices.js",
+    "name": "remoteEntry",
+    "src": "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__DevicesWidgetTr064Set__customDevices_js",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js",
+      "_dist-FhHpT0VB.js",
+      "_helpers-DTPosF_X.js"
+    ],
+    "dynamicImports": [
+      "src/Components.tsx",
+      "src/translations.ts",
+      "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1"
+    ]
+  },
+  "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1": {
+    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__DevicesWidgetTr064Set__mf_owner__1-ULiXi9yv.js",
+    "name": "_virtual_mf-localSharedImportMap___mfe_internal__DevicesWidgetTr064Set__mf_owner__1",
+    "src": "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js",
+      "_dist-FhHpT0VB.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__-CiYX8DhF.js",
+    "name": "_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__",
+    "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-pcwjPi4V.js"
+    ]
+  },
+  "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js": {
+    "file": "assets/hostInit-JmMt7dnU.js",
+    "name": "hostInit",
+    "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js",
+      "_helpers-DTPosF_X.js"
+    ],
+    "dynamicImports": [
+      "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__DevicesWidgetTr064Set__customDevices_js",
+      "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1"
+    ]
+  },
+  "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js": {
+    "file": "assets/pendingShares-CEv6kRoK.js",
+    "name": "pendingShares",
+    "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js",
+    "imports": [
+      "_vite-preload-helper-CaC3yEL3.js"
+    ],
+    "dynamicImports": [
+      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare___mf_0_iobroker_mf_1_dm_mf_2_widgets__loadShare__.js-C8vWIM5I.js",
+      "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1"
+    ]
+  }
+}

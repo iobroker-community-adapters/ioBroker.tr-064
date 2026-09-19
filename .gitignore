@@ -1,5 +1,14 @@
 /.idea
 /node_modules
+src-admin/node_modules
+src-admin/.__mf__temp
+src-admin/src/shared/
+src-widgets/src/shared/
+src-devices/src/shared/
+src-widgets/node_modules
+src-devices/node_modules
+src-widgets/.__mf__temp
+src-devices/.__mf__temp
 
 
 # Windows image file caches

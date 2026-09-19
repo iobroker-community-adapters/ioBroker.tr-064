@@ -199,6 +199,11 @@ class HtmlTemplate {
 export class CallLists {
     public lastId = 0;
     public lastTimestamp = 0;
+    /**
+     * Name of the telephone per port, learned from the calls (`Port` and `Device` of the call
+     * list). The call monitor reports only the port of a call as `extension` (issue #215).
+     */
+    public ports: Record<string, string> = {};
     public all: CallList = createCallList('all');
     public inbound: CallList = createCallList('inbound');
     public missed: CallList = createCallList('missed');
@@ -218,6 +223,7 @@ export class CallLists {
         if (saved) {
             this.lastId = saved.lastId ?? 0;
             this.lastTimestamp = saved.lastTimestamp ?? 0;
+            this.ports = { ...(saved.ports ?? {}) };
             for (const n of TYPES) {
                 const list = saved[n];
                 if (list) {
@@ -277,6 +283,9 @@ export class CallLists {
 
     public addCall(call: CallEntry, counted = true): void {
         call.id = ~~call.id;
+        if (call.port !== undefined && call.port !== '' && call.device) {
+            this.ports[String(call.port)] = String(call.device);
+        }
 
         if ((call.type as number) > 3) {
             this.#adapter.log.debug(

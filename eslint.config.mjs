@@ -15,11 +15,15 @@ export default [
     {
         ignores: [
             'src-admin/**/*',
+            'src-shared/**/*',
+            'src-widgets/**/*',
+            'src-devices/**/*',
+            'widgets/**/*',
             'admin/**/*',
             'node_modules/**/*',
             'test/**/*',
             'build/**/*',
-            'tasks.js',
+            'tasks.ts',
             'tmp/**/*',
             'www/**/*',
             '.**/*',

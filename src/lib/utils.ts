@@ -330,6 +330,32 @@ export function parseXml<T>(xml: string, cb: (err: Error | null, json?: T) => vo
     parser.parseString(xml, (err: Error | null, json: T) => cb(err, json));
 }
 
+/** Reads a JSON file of the box by `http` (e.g. the mesh list). `cb` is called exactly once */
+export function getJson<T>(url: string, cb: (err: Error | null, json?: T) => void): void {
+    let finished = false;
+    const finish = (err: Error | null, json?: T): void => {
+        if (!finished) {
+            finished = true;
+            cb(err, json);
+        }
+    };
+
+    const request = httpGet(url, response => {
+        let data = '';
+        response.on('data', d => (data += d));
+        response.on('end', () => {
+            try {
+                finish(null, JSON.parse(data) as T);
+            } catch (err) {
+                finish(err as Error);
+            }
+        });
+    });
+    request.setTimeout(HTTP_TIMEOUT, () => request.destroy(new Error(`no answer within ${HTTP_TIMEOUT} ms`)));
+    request.on('error', err => finish(err));
+    request.end();
+}
+
 /** Reads an XML file of the box by `http` and converts it into JSON. `cb` is called exactly once */
 export function getXml<T>(url: string, cb: (err: Error | null, json?: T) => void): void {
     let finished = false;

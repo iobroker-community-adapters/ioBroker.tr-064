@@ -54,6 +54,8 @@ export class Devices {
     public list: DeviceObject[] = [];
     /** The root device - everything without an own device name is created below it */
     public readonly root: CDevice;
+    /** `CDevice.set()` also writes a value which did not change (option `updateUnchanged`) */
+    public updateUnchanged = false;
 
     private readonly adapter: Tr064Adapter;
     private readonly objects: Record<string, DeviceObject> = {};
@@ -424,6 +426,10 @@ export class CDevice {
         if (known.val !== val) {
             this.devices.setState(_id, val, true);
             return true;
+        }
+        if (this.devices.updateUnchanged) {
+            // the value stays the same, only its time stamp is new (issue #441)
+            this.devices.setState(_id, val, true);
         }
 
         return false;

@@ -157,7 +157,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=7.7.22"
+        "admin": ">=8.0.0"
       }
     ],
     "connectionType": "local",
@@ -167,7 +167,46 @@
       "sentry": {
         "dsn": "https://5423236b998b415bb9118690986763ea@sentry.iobroker.net/13"
       }
-    }
+    },
+    "visWidgets": {
+      "vis2Tr064Widgets": {
+        "i18n": "component",
+        "name": "vis2Tr064Widgets",
+        "url": "tr-064/customWidgets.js",
+        "bundlerType": "module",
+        "components": [
+          "Tr064FritzBox",
+          "Tr064Mesh",
+          "Tr064Presence"
+        ]
+      }
+    },
+    "deviceWidgets": {
+      "url": "customDevices.js",
+      "components": [
+        {
+          "name": "FritzBoxComponent",
+          "label": "FRITZ!Box",
+          "description": {
+            "en": "State of the FRITZ!Box, a click shows the mesh topology",
+            "de": "Zustand der FRITZ!Box, ein Klick zeigt die Mesh-Topologie",
+            "ru": "Состояние FRITZ!Box, по нажатию показывается mesh-топология",
+            "pt": "Estado da FRITZ!Box, um clique mostra a topologia mesh",
+            "nl": "Status van de FRITZ!Box, een klik toont de mesh-topologie",
+            "fr": "État de la FRITZ!Box, un clic affiche la topologie mesh",
+            "it": "Stato della FRITZ!Box, un clic mostra la topologia mesh",
+            "es": "Estado de la FRITZ!Box, un clic muestra la topología mesh",
+            "pl": "Stan FRITZ!Box, kliknięcie pokazuje topologię mesh",
+            "uk": "Стан FRITZ!Box, натискання показує mesh-топологію",
+            "zh-cn": "FRITZ!Box 的状态，点击显示 Mesh 拓扑"
+          },
+          "icon": "fritzbox.png"
+        }
+      ]
+    },
+    "restartAdapters": [
+      "vis-2"
+    ]
   },
   "encryptedNative": [
     "password"
@@ -187,6 +226,10 @@
     "useMDNS": true,
     "jsonDeviceList": false,
     "useConfiguredNames": false,
+    "useMesh": true,
+    "useDeviceLog": false,
+    "updateUnchanged": false,
+    "phonebooksByNumber": [],
     "devices": [],
     "calllists": {
       "missed": {
