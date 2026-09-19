@@ -12,9 +12,18 @@ import type { Action, ActionArguments, ActionResult, Device, Service, TR064Error
 import { Device as TR064DeviceClass } from 'tr-O64/lib/Device';
 
 import { refresh, ROOT as CALLLIST_ROOT } from './calllist';
-import { getXml, normalizeMac, parseXml, safeFunction, splitMacs } from './utils';
+import { getJson, getXml, normalizeMac, parseXml, safeFunction, splitMacs } from './utils';
+import type { MeshList } from './mesh';
 import { CHANNEL_STATES, STATES } from './states';
-import type { DeviceConfigEntry, HostEntry, TamListXml, TamMessageListXml } from './types';
+import type {
+    DeviceConfigEntry,
+    DeviceLogEvent,
+    DeviceLogXml,
+    HostEntry,
+    HostListXml,
+    TamListXml,
+    TamMessageListXml,
+} from './types';
 import type { Tr064Adapter } from '../main';
 
 /** Milliseconds within which the box has to deliver the description (SCPD) of one service */
@@ -103,6 +112,8 @@ export class TR064Client extends TR064 {
     public abIndex: number | undefined = undefined;
 
     public sslDevice!: Device;
+    /** Model and firmware of the box from `DeviceInfo:1 GetInfo` of the connection check */
+    public boxInfo: { model: string; firmware: string } = { model: '', firmware: '' };
 
     public wlan24: WlanFunctions = {};
     /** Undefined if the box has no separate 5 GHz configuration */
@@ -116,6 +127,10 @@ export class TR064Client extends TR064 {
     private readonly adapter: Tr064Adapter;
 
     private hosts: Service | undefined;
+    private deviceInfo: Service | undefined;
+    /** `WANCommonInterfaceConfig` of the TR-064 device and of the IGD device */
+    private wanCommon: Service | undefined;
+    private igdWanCommon: Service | undefined;
     private getWLANConfiguration: Service | undefined;
     private voip: Record<string, Action> | undefined;
     private stateVariables: Record<string, unknown> = {};
@@ -258,9 +273,13 @@ export class TR064Client extends TR064 {
             device,
             'services.urn:dslforum-org:service:DeviceInfo:1.actions.GetInfo',
             true,
-        )((err: TR064Error | null) => {
+        )((err: TR064Error | null, info: ActionResult) => {
             if (err && (err.code === 500 || err.code === 401 || /credentials/i.test(err.message))) {
                 (err as LoginError).loginRejected = true;
+            }
+            if (!err && info) {
+                // shown as title of the widgets
+                this.boxInfo = { model: info.NewModelName || '', firmware: info.NewSoftwareVersion || '' };
             }
             callback(err);
         });
@@ -279,6 +298,8 @@ export class TR064Client extends TR064 {
             this.logUnavailableServices(device);
 
             this.hosts = device.services['urn:dslforum-org:service:Hosts:1'];
+            this.deviceInfo = device.services['urn:dslforum-org:service:DeviceInfo:1'];
+            this.wanCommon = device.services['urn:dslforum-org:service:WANCommonInterfaceConfig:1'];
             this.reboot = device.services['urn:dslforum-org:service:DeviceConfig:1']?.actions.Reboot;
             // in: NewX_AVM-DE_Password, NewX_AVM-DE_ConfigFileUrl
             this.getConfigFile =
@@ -319,6 +340,7 @@ export class TR064Client extends TR064 {
                     return;
                 }
                 this.logUnavailableServices(device);
+                this.igdWanCommon = device.services['urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1'];
 
                 const wanIp = device.services['urn:schemas-upnp-org:service:WANIPConnection:1'];
                 if (!wanIp) {
@@ -536,51 +558,90 @@ export class TR064Client extends TR064 {
         }
     }
 
-    /** Calls `callback` for every device which the box knows */
-    public forEachHostEntry(
-        callback: (err: TR064Error | null, device: HostEntry, cnt: number, all: number) => void,
-    ): void {
-        this.adapter.log.debug('forEachHostEntry');
+    /**
+     * Reads all devices which the box knows. `callback` is called exactly once.
+     *
+     * `X_AVM-DE_GetHostListPath` returns all of them in one XML list. Asking every device with
+     * `GetGenericHostEntry` - as before - took longer than the 20 seconds of the admin button
+     * for a box with 100 and more devices, and it never answered if one request failed or the box
+     * had no device at all (issue #742). The single requests stay for a firmware without the list.
+     */
+    public getHostList(callback: (err: Error | null, hosts: HostEntry[]) => void): void {
+        this.adapter.log.debug('getHostList');
+        const getPath = this.hosts?.actions?.['X_AVM-DE_GetHostListPath'];
+        if (!getPath) {
+            this.getHostListOneByOne(callback);
+            return;
+        }
 
-        this.safe(
-            this,
-            'hosts.actions.GetHostNumberOfEntries',
-        )((err, obj) => {
-            if (err) {
-                this.adapter.log.error(`GetHostNumberOfEntries:${err.message} - ${JSON.stringify(err)}`);
-            }
-            if (err || !obj) {
-                return;
-            }
-
-            const all = ~~Number(obj.NewHostNumberOfEntries);
-            this.adapter.log.debug(`forEachHostEntry: all=${all}`);
-            let cnt = 0;
-
-            const doIt = (): void => {
-                if (cnt >= all) {
+        getPath(
+            this.adapter.callbackTimers.wrap<ActionResult>(5000, (err, res) => {
+                const path = res?.['NewX_AVM-DE_HostListPath'];
+                if (err || !path) {
+                    this.adapter.log.debug(`X_AVM-DE_GetHostListPath: ${err ? JSON.stringify(err) : 'no path'}`);
+                    this.getHostListOneByOne(callback);
                     return;
                 }
-
-                this.safe(this, 'getGenericHostEntry')({ NewIndex: cnt }, (err, obj) => {
-                    if (err) {
-                        this.adapter.log.error(
-                            `forEachHostEntry: in getGenericHostEntry ${cnt}:${err.message} - ${JSON.stringify(err)}`,
-                        );
-                    }
-                    if (err || !obj) {
+                getXml<HostListXml>(this.boxUrl(path), (xmlErr, json) => {
+                    if (xmlErr) {
+                        this.adapter.log.debug(`Host list: ${xmlErr.message}`);
+                        this.getHostListOneByOne(callback);
                         return;
                     }
-
-                    const host = obj as unknown as HostEntry;
-                    this.adapter.log.silly(`forEachHostEntry cnt=${cnt} ${host.NewHostName}`);
-                    callback(err, host, cnt++, all);
-                    this.adapter.setTimeout(doIt, 10);
+                    const item = typeof json?.list === 'object' ? json.list.item : undefined;
+                    const items = item ? (Array.isArray(item) ? item : [item]) : [];
+                    callback(
+                        null,
+                        items.map(host => ({
+                            NewHostName: String(host.hostname ?? ''),
+                            NewIPAddress: String(host.ipaddress ?? ''),
+                            NewMACAddress: String(host.macaddress ?? ''),
+                            NewActive: String(host.active ?? '0'),
+                            NewInterfaceType: String(host.interfacetype ?? ''),
+                        })),
+                    );
                 });
-            };
+            }),
+        );
+    }
 
-            doIt();
-        });
+    /** Fallback of `getHostList()`: asks for every device on its own; a failed request is skipped */
+    private getHostListOneByOne(callback: (err: Error | null, hosts: HostEntry[]) => void): void {
+        const getCount = this.hosts?.actions?.GetHostNumberOfEntries;
+        const getEntry = this.hosts?.actions?.GetGenericHostEntry;
+        if (!getCount || !getEntry) {
+            callback(new Error('the FritzBox does not deliver its host list'), []);
+            return;
+        }
+
+        getCount(
+            this.adapter.callbackTimers.wrap<ActionResult>(5000, (err, res) => {
+                if (err || !res) {
+                    callback(new Error(`GetHostNumberOfEntries: ${typeof err === 'string' ? err : err?.message}`), []);
+                    return;
+                }
+                const all = ~~Number(res.NewHostNumberOfEntries);
+                this.adapter.log.debug(`getHostList: ${all} devices, one by one`);
+                const hosts: HostEntry[] = [];
+
+                const next = (index: number): void => {
+                    if (index >= all) {
+                        callback(null, hosts);
+                        return;
+                    }
+                    getEntry(
+                        { NewIndex: index },
+                        this.adapter.callbackTimers.wrap<ActionResult>(3000, (entryErr, entry) => {
+                            if (!entryErr && entry) {
+                                hosts.push(entry as unknown as HostEntry);
+                            }
+                            this.adapter.setTimeout(() => next(index + 1), 10);
+                        }),
+                    );
+                };
+                next(0);
+            }),
+        );
     }
 
     /**
@@ -839,7 +900,24 @@ export class TR064Client extends TR064 {
     }
 
     /** Switches all WLANs of the box */
+    /**
+     * Switches all WLANs like the WLAN button of the box (`X_AVM-DE_SetWLANGlobalEnable`): only the
+     * WLANs which were active before are switched on again. Switching every band on its own, as
+     * before, also switched on the guest WLAN and bands which the user had switched off (issue
+     * #395). A firmware without that action still switches every band.
+     */
     public setWLAN(val: ioBroker.StateValue, callback: (err?: TR064Error | number | null) => void): void {
+        const setGlobal = this.getWLANConfiguration?.actions?.['X_AVM-DE_SetWLANGlobalEnable'];
+        if (setGlobal) {
+            setGlobal({ 'NewX_AVM-DE_WLANGlobalEnable': val ? 1 : 0 }, err => {
+                if (err) {
+                    this.adapter.log.error(`setWLAN: ${err.message} - ${JSON.stringify(err)}`);
+                }
+                callback(err ? -1 : null);
+            });
+            return;
+        }
+
         this.setWLAN24(val, (err, result) => {
             if (err) {
                 this.adapter.log.error(`setWLAN24: ${err.message} - ${JSON.stringify(err)}`);
@@ -927,6 +1005,134 @@ export class TR064Client extends TR064 {
                     }
                 }),
         );
+    }
+
+    /** Complete URL of a path which the box returned, e.g. `/devicelog.lua?sid=...` */
+    private boxUrl(path: string): string {
+        if (/^https?:\/\//i.test(path)) {
+            return path;
+        }
+        const host = this.ip.includes(':') && !this.ip.startsWith('[') ? `[${this.ip}]` : this.ip;
+        return `http://${host}:${this.port}${path.startsWith('/') ? '' : '/'}${path}`;
+    }
+
+    /**
+     * Kind and state of the internet connection (issue #269): `NewWANAccessType` (DSL, Ethernet,
+     * X_AVM-DE_Fiber, X_AVM-DE_Cable, X_AVM-DE_LTE, X_AVM-DE_UMTS), `NewPhysicalLinkStatus`, the
+     * line speeds and `NewX_AVM-DE_Provider`.
+     */
+    public getWANLink(callback: (err: TR064Error | null, result: ActionResult) => void): void {
+        const getLink =
+            this.wanCommon?.actions?.GetCommonLinkProperties ?? this.igdWanCommon?.actions?.GetCommonLinkProperties;
+        if (!getLink) {
+            callback(new Error('no WANCommonInterfaceConfig'), {});
+            return;
+        }
+        getLink((err, link) => {
+            const getProvider = this.wanCommon?.actions?.['X_AVM-DE_GetActiveProvider'];
+            if (err || !link || !getProvider) {
+                callback(err, link);
+                return;
+            }
+            getProvider((_err, provider) => callback(null, { ...link, ...(provider || {}) }));
+        });
+    }
+
+    /**
+     * Bytes over the internet connection and the current rates in bytes per second (issue #432).
+     * `GetAddonInfos` of the IGD has 64 bit counters; the counters of `GetTotalBytesSent` and
+     * `GetTotalBytesReceived` are 32 bit and overflow after 4 GiB, they are only the fallback.
+     * The result is `{ sent, received, sendRate, receiveRate }`.
+     */
+    public getWANTraffic(callback: (err: TR064Error | null, result: ActionResult) => void): void {
+        const addonInfos = this.igdWanCommon?.actions?.GetAddonInfos;
+        if (addonInfos) {
+            addonInfos((err, res) => {
+                if (err || !res) {
+                    callback(err, res);
+                    return;
+                }
+                callback(null, {
+                    sent: res.NewX_AVM_DE_TotalBytesSent64 ?? res.NewTotalBytesSent,
+                    received: res.NewX_AVM_DE_TotalBytesReceived64 ?? res.NewTotalBytesReceived,
+                    sendRate: res.NewByteSendRate,
+                    receiveRate: res.NewByteReceiveRate,
+                });
+            });
+            return;
+        }
+
+        const getSent = this.wanCommon?.actions?.GetTotalBytesSent;
+        const getReceived = this.wanCommon?.actions?.GetTotalBytesReceived;
+        if (!getSent || !getReceived) {
+            callback(new Error('no traffic counters'), {});
+            return;
+        }
+        getSent((err, sent) => {
+            if (err || !sent) {
+                callback(err, sent);
+                return;
+            }
+            getReceived((err2, received) =>
+                callback(err2, { sent: sent.NewTotalBytesSent, received: received?.NewTotalBytesReceived }),
+            );
+        });
+    }
+
+    /**
+     * Reads the event log of the box, the newest event first (issue #444).
+     *
+     * `GetDeviceLog` returns a shortened log without the events with addresses (e.g. the logins to
+     * the user interface); the XML list of `X_AVM-DE_GetDeviceLogPath` contains all of them.
+     */
+    public getDeviceLog(callback: (err: Error | null, events?: DeviceLogEvent[]) => void): void {
+        const getPath = this.deviceInfo?.actions?.['X_AVM-DE_GetDeviceLogPath'];
+        if (!getPath) {
+            callback(new Error('not supported'));
+            return;
+        }
+        getPath((err, res) => {
+            const path = res?.NewDeviceLogPath;
+            if (err || !path) {
+                callback(err || new Error('no path of the event log'));
+                return;
+            }
+            getXml<DeviceLogXml>(this.boxUrl(path), (xmlErr, json) => {
+                if (xmlErr) {
+                    callback(xmlErr);
+                    return;
+                }
+                const event = typeof json?.devicelog === 'object' ? json.devicelog.event : undefined;
+                const events = event ? (Array.isArray(event) ? event : [event]) : [];
+                callback(
+                    null,
+                    events.map(e => ({
+                        id: ~~Number(e.id),
+                        group: String(e.group ?? ''),
+                        date: String(e.date ?? ''),
+                        time: String(e.time ?? ''),
+                        msg: String(e.msg ?? ''),
+                    })),
+                );
+            });
+        });
+    }
+
+    /** Reads the JSON list of the mesh topology (issue #383) */
+    public getMeshList(callback: (err: Error | null, list?: MeshList) => void): void {
+        const getPath = this.hosts?.actions?.['X_AVM-DE_GetMeshListPath'];
+        if (!getPath) {
+            callback(new Error('not supported'));
+            return;
+        }
+        getPath((err, res) => {
+            const path = res?.['NewX_AVM-DE_MeshListPath'];
+            if (err || !path) {
+                callback(err || new Error('no path of the mesh list'));
+                return;
+            }
+            getJson<MeshList>(this.boxUrl(path), callback);
+        });
     }
 
     public getWLAN(callback: (err: TR064Error | null, result: ActionResult) => void): void {

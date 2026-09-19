@@ -6,6 +6,7 @@ export const CHANNEL_DEVICES = 'devices';
 export const CHANNEL_PHONEBOOK = 'phonebook';
 export const CHANNEL_CALLLISTS = 'calllists';
 export const CHANNEL_CALLMONITOR = 'callmonitor';
+export const CHANNEL_DEVICELOG = 'deviceLog';
 
 const COMMAND_DESC =
     'eg. { "service": "urn:dslforum-org:service:WLANConfiguration:1", "action": "X_AVM-DE_SetWPSConfig", "params": { "NewX_AVM-DE_WPSMode": "pbc", "NewX_AVM-DE_WPSClientPIN": "" } }';
@@ -20,7 +21,12 @@ export interface StateDefinition extends DeviceObject {
 /** States below `tr-064.<instance>.states` */
 export const STATES: Record<string, StateDefinition> = {
     wps: { name: 'wps', val: false, common: {}, native: { func: 'setWPSMode' } },
-    wlan: { name: 'wlan', val: false, common: { desc: 'All WLANs' }, native: { func: 'setWLAN' } },
+    wlan: {
+        name: 'wlan',
+        val: false,
+        common: { desc: 'All WLANs, like the WLAN button of the FRITZ!Box' },
+        native: { func: 'setWLAN' },
+    },
     wlan24: { name: 'wlan24', val: true, common: { desc: '2.4 GHz WLAN' }, native: { func: 'setWLAN24' } },
     wlan50: { name: 'wlan50', val: true, common: { desc: '5.0 GHz WLAN' }, native: { func: 'setWLAN50' } },
     wlan52: {
@@ -85,6 +91,46 @@ export const STATES: Record<string, StateDefinition> = {
     externalIP: { name: 'externalIP', val: '', common: { write: false } },
     externalIPv6: { name: 'externalIPv6', val: '', common: { write: false } },
     externalIPv6Prefix: { name: 'externalIPv6Prefix', val: '', common: { write: false } },
+    boxModel: { name: 'boxModel', val: '', common: { write: false, desc: 'Model of the FRITZ!Box' } },
+    boxFirmware: { name: 'boxFirmware', val: '', common: { write: false, desc: 'FRITZ!OS version of the box' } },
+    wanAccessType: {
+        name: 'wanAccessType',
+        val: '',
+        common: { write: false, desc: 'Kind of the internet connection: DSL, Ethernet, Fiber, Cable, LTE, UMTS' },
+    },
+    wanLinkStatus: {
+        name: 'wanLinkStatus',
+        val: '',
+        common: { write: false, desc: 'State of the internet connection: Up, Down, Initializing, Unavailable' },
+    },
+    wanProvider: { name: 'wanProvider', val: '', common: { write: false, desc: 'Active internet provider' } },
+    wanDownstreamMax: {
+        name: 'wanDownstreamMax',
+        val: 0,
+        common: { write: false, role: 'value', unit: 'bit/s', desc: 'Maximal downstream of the line' },
+    },
+    wanUpstreamMax: {
+        name: 'wanUpstreamMax',
+        val: 0,
+        common: { write: false, role: 'value', unit: 'bit/s', desc: 'Maximal upstream of the line' },
+    },
+    wanBytesSent: {
+        name: 'wanBytesSent',
+        val: 0,
+        common: { write: false, role: 'value', unit: 'B', desc: 'Bytes sent since the connection was established' },
+    },
+    wanBytesReceived: {
+        name: 'wanBytesReceived',
+        val: 0,
+        common: {
+            write: false,
+            role: 'value',
+            unit: 'B',
+            desc: 'Bytes received since the connection was established',
+        },
+    },
+    wanSendRate: { name: 'wanSendRate', val: 0, common: { write: false, role: 'value', unit: 'B/s' } },
+    wanReceiveRate: { name: 'wanReceiveRate', val: 0, common: { write: false, role: 'value', unit: 'B/s' } },
     reboot: {
         name: 'reboot',
         val: false,

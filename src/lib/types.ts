@@ -20,6 +20,23 @@ export interface HostEntry {
     [key: string]: unknown;
 }
 
+/** Host list of `X_AVM-DE_GetHostListPath` converted to JSON (tags in lower case) */
+export interface HostListXml {
+    list?: {
+        item?: HostListItem | HostListItem[];
+    };
+}
+
+export interface HostListItem {
+    ipaddress?: string;
+    macaddress?: string;
+    /** `1` if the device is active */
+    active?: string;
+    hostname?: string;
+    interfacetype?: string;
+    [key: string]: unknown;
+}
+
 /** Device as it is delivered to the admin by the `discovery` message */
 export interface DiscoveredDevice {
     name: string;
@@ -101,6 +118,73 @@ export interface CallListXml {
         timestamp?: string;
         call?: CallEntry | CallEntry[];
     };
+}
+
+/** One event of the event log of the box (`X_AVM-DE_GetDeviceLogPath`, issue #444) */
+export interface DeviceLogEvent {
+    id: number;
+    /** `sys`, `net`, `fon`, `wlan` or `usb` */
+    group: string;
+    /** `dd.mm.yy` */
+    date: string;
+    /** `hh:mm:ss` */
+    time: string;
+    msg: string;
+}
+
+/** Event log of the box converted to JSON */
+export interface DeviceLogXml {
+    devicelog?: {
+        event?: DeviceLogEvent | DeviceLogEvent[];
+    };
+}
+
+/** Phone book which is searched first for the calls of one own number (issue #226) */
+export interface PhonebookByNumberConfig {
+    /** Own number, compared by its last digits */
+    number: string;
+    /** Name of the phone book in the box, or its index */
+    phonebook: string;
+}
+
+/** Node of the mesh topology as the admin component gets it (issue #383) */
+export interface MeshNodeInfo {
+    uid: string;
+    name: string;
+    mac: string;
+    ip?: string;
+    model?: string;
+    role: 'master' | 'slave' | 'switch' | 'client';
+    /** Name in the tab "Devices", if this is a configured device */
+    configured?: string;
+}
+
+/** Connection between two nodes of the mesh topology */
+export interface MeshLinkInfo {
+    /** The access point or upstream side */
+    from: string;
+    to: string;
+    /** `WLAN`, `LAN`, ... */
+    type: string;
+    /** `CONNECTED` or `DISCONNECTED` */
+    state: string;
+    /** Name of the interface on the `from` side, e.g. `AP:5G:0`, `LAN:1` */
+    interface: string;
+    band?: '2.4' | '5' | '6';
+    /** Data rates in kbit/s */
+    curRx?: number;
+    curTx?: number;
+    maxRx?: number;
+    maxTx?: number;
+}
+
+/** Answer of the message `mesh` */
+export interface MeshResponse {
+    /** `not connected`, `not supported` or another error text */
+    error?: string;
+    ts?: number;
+    nodes: MeshNodeInfo[];
+    links: MeshLinkInfo[];
 }
 
 /** One answering machine of `X_AVM-DE_TAM:GetList` */
@@ -208,6 +292,10 @@ export interface CallMonitorMessage {
     type?: string;
     /** Internal: name of the state channel this call was written to last */
     _type?: string;
+    /** Internal: `inbound` or `outbound` */
+    _direction?: string;
+    /** Name of the telephone of `extension`, learned from the call lists */
+    device?: string;
     callerName?: string;
     calleeName?: string;
     imageurlcaller?: string;

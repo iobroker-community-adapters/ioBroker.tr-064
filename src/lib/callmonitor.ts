@@ -62,6 +62,15 @@ export class CallMonitor {
             val: '',
             common: { name: 'On call states', desc: 'State to pause players. values are: ring, connect, end' },
         });
+        this.devices.root.createNew(`${CALLMONITOR_NAME}.connected`, {
+            val: false,
+            common: {
+                name: 'Connected to the call monitor of the FRITZ!Box',
+                type: 'boolean',
+                role: 'indicator.connected',
+                write: false,
+            },
+        });
 
         this.init();
     }
@@ -83,6 +92,7 @@ export class CallMonitor {
             }
             this.connectedOnce = true;
             this.refusedLogged = false;
+            this.setConnected(true);
         });
 
         client.on('error', err => {
@@ -107,6 +117,7 @@ export class CallMonitor {
         });
 
         client.on('close', () => {
+            this.setConnected(false);
             const delay = this.refused ? REFUSED_RETRY_INTERVAL : this.adapter.config.reconnectInterval || 5000;
             this.adapter.log.debug(`callmonitor closed ... reconnect in ${delay / 1000} s`);
             if (this.timeout) {
@@ -178,6 +189,12 @@ export class CallMonitor {
                     this.onLine(line);
                 }, LINE_FLUSH_DELAY) ?? null;
         }
+    }
+
+    /** Writes `callmonitor.connected`, so that a script can watch the connection (issue #399) */
+    private setConnected(connected: boolean): void {
+        this.devices.root.set(`${CALLMONITOR_NAME}.connected`, connected);
+        this.devices.root.update();
     }
 
     private clearLineBuffer(): void {
@@ -255,6 +272,10 @@ export class CallMonitor {
         }
 
         this.adapter.log.silly(`New Call data ${name}: ${JSON.stringify(message)}`);
+        if (message.extension !== undefined && !Number.isNaN(message.extension)) {
+            // the name is learned from the call lists, the call monitor only reports the port
+            message.device = this.adapter.systemData.native.callLists?.ports[String(message.extension)] ?? '';
+        }
         dev.setChannel('', '');
         dev.set('ringing', name === 'inbound');
 
@@ -273,14 +294,20 @@ export class CallMonitor {
         }
         dev.set('timestamp', timestamp);
         message._type = name;
+        if (name === 'inbound' || name === 'outbound') {
+            // `_type` changes with every event, the direction of the call stays
+            message._direction = name;
+        }
 
         if (this.adapter.config.usePhonebook && this.phonebook) {
             if (this.lastCaller !== message.caller) {
                 this.lastCaller = message.caller;
             }
 
+            // the own number decides which phone book is searched first (issue #226)
+            const outbound = message._direction === 'outbound';
             if (!message.callerName && message.caller) {
-                const pbe = this.phonebook.byNumber(message.caller);
+                const pbe = this.phonebook.byNumber(message.caller, outbound ? undefined : message.callee);
                 if (pbe) {
                     message.callerName = pbe.name;
                     if (pbe.imageurl) {
@@ -297,7 +324,7 @@ export class CallMonitor {
             }
 
             if (!message.calleeName && message.callee) {
-                const pbee = this.phonebook.byNumber(message.callee);
+                const pbee = this.phonebook.byNumber(message.callee, outbound ? message.caller : undefined);
                 if (pbee) {
                     message.calleeName = pbee.name;
                     if (pbee.imageurl) {
@@ -355,5 +382,6 @@ export class CallMonitor {
             this.updateTimer = null;
         }
         this.clearLineBuffer();
+        void this.adapter.setState(`${CALLMONITOR_NAME}.connected`, false, true);
     }
 }

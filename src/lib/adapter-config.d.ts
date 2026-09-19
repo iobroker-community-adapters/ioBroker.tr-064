@@ -1,7 +1,7 @@
 // Augments the globally declared ioBroker types with everything this adapter adds.
 // The attributes of `AdapterConfig` must be kept in sync with `native` in io-package.json
 // and with admin/jsonConfig.json.
-import type { CallListsConfig, DeviceConfigEntry } from './types';
+import type { CallListsConfig, DeviceConfigEntry, PhonebookByNumberConfig } from './types';
 
 declare global {
     namespace ioBroker {
@@ -25,6 +25,14 @@ declare global {
              * the box. Objects with other names are deleted. `false` for instances without the option
              */
             useConfiguredNames: boolean;
+            /** Writes the access point of every device from the mesh topology. `true` for instances without the option */
+            useMesh: boolean;
+            /** Reads the event log of the box into `deviceLog` */
+            useDeviceLog: boolean;
+            /** Writes every polled value, not only a changed one (with a new time stamp) */
+            updateUnchanged: boolean;
+            /** Phone books which are searched first for the calls of an own number */
+            phonebooksByNumber: PhonebookByNumberConfig[];
             devices: DeviceConfigEntry[];
             calllists: CallListsConfig;
 

@@ -1,0 +1,41 @@
+{
+    "name": "iobroker.tr-064-widgets",
+    "private": true,
+    "version": "5.0.2",
+    "type": "module",
+    "dependencies": {
+        "@iobroker/types-vis-2": "~2.20.1",
+        "@module-federation/vite": "^1.21.6",
+        "@vitejs/plugin-react": "^6.1.1"
+    },
+    "devDependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@iobroker/eslint-config": "^2.3.4",
+        "@iobroker/types": "^7.2.2",
+        "@mui/icons-material": "^9.4.0",
+        "@mui/material": "^9.4.0",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0",
+        "typescript": "~6.0.3",
+        "vite": "^8.3.0"
+    },
+    "scripts": {
+        "prestart": "tsx ../tasks.ts --sync",
+        "start": "vite --port 4173 --host 127.0.0.1",
+        "prebuild": "tsx ../tasks.ts --sync",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "npm": "npm i -f",
+        "lint": "eslint -c eslint.config.mjs src"
+    },
+    "homepage": ".",
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ]
+}

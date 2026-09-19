@@ -45,6 +45,8 @@ export class Phonebook {
     });
 
     private entries: PhonebookEntry[] = [];
+    /** Name of every phone book by its ID */
+    private bookNames: Record<string, string> = {};
     private areaCode = '';
     private countryCode = '';
     private countryAndAreaCode = '';
@@ -148,6 +150,7 @@ export class Phonebook {
                         cb?.(err);
                         return;
                     }
+                    this.bookNames[phonebookId] = res.NewPhonebookName || '';
 
                     const url = new URL(res.NewPhonebookURL);
                     let data = '';
@@ -248,13 +251,50 @@ export class Phonebook {
         return v ? v.name : '';
     }
 
-    public byNumber(number: string): PhonebookEntry | undefined {
+    /**
+     * Searches a number.
+     *
+     * @param number the number to search
+     * @param ownNumber the own number of the call: the phone books which the configuration assigns
+     *     to it are searched first (issue #226), then all of them
+     */
+    public byNumber(number: string, ownNumber?: string): PhonebookEntry | undefined {
         const completed = this.complete(number);
-        const entry = this.entries.find(v => v.number === completed);
+        const found = this.entries.filter(v => v.number === completed);
+        const books = ownNumber ? this.booksOf(ownNumber) : [];
+        const entry = found.find(v => books.includes(v.phonebookId)) || found[0];
         this.adapter.log.debug(`Search number in phonebook: ${entry ? 'found' : 'not found'}`);
         this.adapter.log.silly(`Search number ${completed} in phonebook: ${JSON.stringify(entry)}`);
 
         return entry;
+    }
+
+    /**
+     * IDs of the phone books which the configuration assigns to an own number. The numbers are
+     * compared by their last digits, because the call monitor reports an own number with or
+     * without area code.
+     */
+    private booksOf(ownNumber: string): string[] {
+        const own = ownNumber.replace(/[^0-9]/g, '');
+        if (own.length < 3) {
+            return [];
+        }
+        const ids: string[] = [];
+        for (const cfg of this.adapter.config.phonebooksByNumber || []) {
+            const number = String(cfg.number || '').replace(/[^0-9]/g, '');
+            if (number.length < 3 || !(own.endsWith(number) || number.endsWith(own))) {
+                continue;
+            }
+            const book = String(cfg.phonebook || '')
+                .trim()
+                .toLowerCase();
+            for (const id of Object.keys(this.bookNames)) {
+                if (id === book || this.bookNames[id].trim().toLowerCase() === book) {
+                    ids.push(id);
+                }
+            }
+        }
+        return ids;
     }
 
     /** Searches by name. First the complete name is compared, then a part of it */

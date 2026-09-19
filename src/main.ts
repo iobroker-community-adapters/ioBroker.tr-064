@@ -22,16 +22,19 @@ import { SystemData } from './lib/systemdata';
 import { TR064Client } from './lib/tr064';
 import type { LoginError } from './lib/tr064';
 import { CallbackTimers, macsOverlap, normalizedName } from './lib/utils';
+import { buildMeshTopology, findAccessPoint } from './lib/mesh';
+import type { MeshList } from './lib/mesh';
 import {
     CHANNEL_CALLLISTS,
     CHANNEL_CALLMONITOR,
+    CHANNEL_DEVICELOG,
     CHANNEL_DEVICES,
     CHANNEL_PHONEBOOK,
     CHANNEL_STATES,
     PB_STATES,
     STATES,
 } from './lib/states';
-import type { DeviceConfigEntry, DiscoveredDevice, HostEntry } from './lib/types';
+import type { DeviceConfigEntry, DeviceLogEvent, DiscoveredDevice, HostEntry, MeshResponse } from './lib/types';
 
 /** Default secret of `system.config` if the host has none */
 const DEFAULT_SECRET = 'Zgfr56gFe87jJOM';
@@ -50,6 +53,12 @@ const INIT_TIMEOUT = 60_000;
  */
 const CALLS_REFRESH_INTERVAL = 60_000;
 
+/** Milliseconds between two readings of the mesh topology and of the event log of the box */
+const SLOW_REFRESH_INTERVAL = 60_000;
+
+/** Number of events of the event log which are kept in `deviceLog.json` */
+const DEVICE_LOG_ENTRIES = 50;
+
 /** Method of `TR064Client` which is called when a state below `states` is written */
 type StateFunction = (val: ioBroker.StateValue, callback?: () => void) => boolean | void;
 
@@ -59,6 +68,19 @@ interface PollEntry {
     state: string;
     result: string;
     format: (val: string) => ioBroker.StateValue;
+    /** Further states which are written from the same answer */
+    more?: { state: string; result: string; format: (val: string) => ioBroker.StateValue }[];
+}
+
+const toBoolean = (val: string): boolean => !!~~Number(val);
+const toNumber = (val: string): number => Number(val) || 0;
+
+/** Text of an error of a callback, including the `timeout` of `CallbackTimers` */
+function errorText(err: unknown): string {
+    if (err === 'timeout') {
+        return 'no answer';
+    }
+    return err instanceof Error ? err.message : String(err);
 }
 
 export class Tr064Adapter extends utils.Adapter {
@@ -93,6 +115,16 @@ export class Tr064Adapter extends utils.Adapter {
     private refreshCalllistTimeout: ioBroker.Timeout | null = null;
     /** `Date.now()` of the last refresh of the call lists and messages */
     private lastCallsRefresh = 0;
+    private lastSlowRefresh = 0;
+    /** Last mesh topology which was read, for the admin (issue #383) */
+    private meshTopology: MeshResponse | null = null;
+    /** Reading the mesh list failed - it is logged once */
+    private meshErrorLogged = false;
+    /** Reading the event log failed - it is logged once */
+    private deviceLogErrorLogged = false;
+    /** Keys of the events of the last reading of the event log, and the time of its newest event */
+    private deviceLogKeys: Set<string> | null = null;
+    private deviceLogNewest = '';
 
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({ ...options, name: 'tr-064' });
@@ -246,6 +278,36 @@ export class Tr064Adapter extends utils.Adapter {
         this.log.silly(`onMessage: ${JSON.stringify(obj)}`);
 
         switch (obj.command) {
+            case 'mesh': {
+                // the mesh topology for the admin component (issue #383)
+                if (!obj.callback) {
+                    return;
+                }
+                const answer = (response: MeshResponse): void => {
+                    this.sendTo(obj.from, obj.command, response, obj.callback);
+                };
+                if (!this.boxConnected || !this.tr064Client) {
+                    answer({ error: 'not connected', nodes: [], links: [] });
+                    return;
+                }
+                this.tr064Client.getMeshList(
+                    this.callbackTimers.wrap<MeshList | undefined>(15_000, (err, list) => {
+                        if (err || !list) {
+                            const error = errorText(err);
+                            answer({
+                                error: error === 'not supported' ? error : error || 'no mesh list',
+                                nodes: [],
+                                links: [],
+                            });
+                            return;
+                        }
+                        this.meshTopology = buildMeshTopology(list, this.config.devices);
+                        answer(this.meshTopology);
+                    }),
+                );
+                return;
+            }
+
             case 'discovery': {
                 let onlyActive: boolean | undefined;
                 let reread: boolean | undefined;
@@ -276,32 +338,33 @@ export class Tr064Adapter extends utils.Adapter {
                     return;
                 }
 
-                const newAllDevices: DiscoveredDevice[] = [];
-                let responseSent = false;
+                if (!this.boxConnected || !this.tr064Client) {
+                    // the search is always answered, otherwise the admin shows a timeout
+                    this.log.warn('Search for devices: the adapter is not connected to the FritzBox');
+                    this.sendDiscoveryResult(obj, [], asNative, configured);
+                    return;
+                }
 
-                this.tr064Client.forEachHostEntry((_err, device, cnt, all) => {
-                    const active = !!~~Number(device.NewActive);
-
-                    if (!onlyActive || active) {
-                        newAllDevices.push({
-                            name: device.NewHostName,
-                            ip: device.NewIPAddress,
-                            mac: device.NewMACAddress,
-                            active,
-                        });
+                this.tr064Client.getHostList((err, hosts) => {
+                    if (err) {
+                        this.log.warn(`Search for devices: ${err.message}`);
                     }
-                    this.log.silly(
-                        `Discovery Add (${cnt}/${all}): ${device.NewHostName} ${device.NewIPAddress} ${device.NewMACAddress} ${device.NewActive}`,
-                    );
+                    const found: DiscoveredDevice[] = hosts
+                        .map(host => ({
+                            name: host.NewHostName,
+                            ip: host.NewIPAddress,
+                            mac: host.NewMACAddress,
+                            active: !!~~Number(host.NewActive),
+                        }))
+                        .filter(device => device.mac && (!onlyActive || device.active));
 
-                    if (cnt + 1 >= all && !responseSent) {
-                        responseSent = true;
-                        this.allDevices = newAllDevices;
+                    if (!err) {
+                        this.allDevices = found;
                         this.allDevicesOnlyActive = onlyActive;
-                        this.log.debug(`Discovery result: ${this.allDevices.length} devices`);
-                        this.log.silly(`Discovery result: ${JSON.stringify(this.allDevices)}`);
-                        this.sendDiscoveryResult(obj, newAllDevices, asNative, configured);
                     }
+                    this.log.debug(`Discovery result: ${found.length} devices`);
+                    this.log.silly(`Discovery result: ${JSON.stringify(found)}`);
+                    this.sendDiscoveryResult(obj, found, asNative, configured);
                 });
                 return;
             }
@@ -668,12 +731,146 @@ export class Tr064Adapter extends utils.Adapter {
         this.tr064Client.refreshTAMMessages();
     }
 
+    /** Reads the mesh topology and the event log of the box, and remembers when */
+    private refreshSlow(): void {
+        this.lastSlowRefresh = Date.now();
+        if (this.config.useMesh && this.config.useDevices && this.config.devices.length) {
+            this.refreshAccessPoints();
+        }
+        if (this.config.useDeviceLog) {
+            this.refreshDeviceLog();
+        }
+    }
+
+    /**
+     * Writes `accessPoint` and `connection` of every configured device: the box or repeater it is
+     * connected to and the band or LAN (issue #383).
+     */
+    private refreshAccessPoints(): void {
+        this.tr064Client.getMeshList(
+            this.callbackTimers.wrap<MeshList | undefined>(15_000, (err, list) => {
+                if (err || !list) {
+                    if (!this.meshErrorLogged) {
+                        this.meshErrorLogged = true;
+                        this.log.info(
+                            `Cannot read the mesh topology of the FritzBox, the access points of the devices are not shown: ${errorText(err)}`,
+                        );
+                    }
+                    return;
+                }
+                this.meshErrorLogged = false;
+                const topology = buildMeshTopology(list, this.config.devices);
+                this.meshTopology = topology;
+
+                const dev = new CDevice(this.devices, CHANNEL_DEVICES, '');
+                for (const entry of this.config.devices) {
+                    // the channel of a device exists only when the box knows it
+                    if (!entry.lastResult) {
+                        continue;
+                    }
+                    const accessPoint = findAccessPoint(topology, entry);
+                    this.setDeviceChannel(dev, entry, entry.lastResult);
+                    dev.set('accessPoint', {
+                        val: accessPoint?.name ?? '',
+                        common: {
+                            name: 'Access point (FRITZ!Box or repeater)',
+                            type: 'string',
+                            role: 'text',
+                            write: false,
+                        },
+                    });
+                    dev.set('connection', {
+                        val: accessPoint?.connection ?? '',
+                        common: {
+                            name: 'Connection: 2.4 GHz, 5 GHz, 6 GHz or LAN',
+                            type: 'string',
+                            role: 'text',
+                            write: false,
+                        },
+                    });
+                }
+                this.devices.update();
+            }),
+        );
+    }
+
+    /**
+     * Reads the event log of the box into `deviceLog.json` and writes the events which came since
+     * the last reading into `deviceLog.newEvents` (issue #444). After a start the events up to the
+     * last run are known from `deviceLog.json`.
+     */
+    private refreshDeviceLog(): void {
+        const key = (e: DeviceLogEvent): string => `${e.date}|${e.time}|${e.id}|${e.msg}`;
+        // `dd.mm.yy` and `hh:mm:ss` as sortable text
+        const time = (e: DeviceLogEvent): string => {
+            const m = /^(\d\d)\.(\d\d)\.(\d\d)$/.exec(e.date);
+            return m ? `${m[3]}${m[2]}${m[1]}${e.time}` : '';
+        };
+        const newest = (events: DeviceLogEvent[]): string =>
+            events.reduce((max, e) => (time(e) > max ? time(e) : max), '');
+
+        this.tr064Client.getDeviceLog(
+            this.callbackTimers.wrap<DeviceLogEvent[] | undefined>(15_000, (err, events) => {
+                if (err || !events) {
+                    if (!this.deviceLogErrorLogged) {
+                        this.deviceLogErrorLogged = true;
+                        this.log.info(`Cannot read the event log of the FritzBox: ${errorText(err)}`);
+                    }
+                    return;
+                }
+                this.deviceLogErrorLogged = false;
+
+                if (!this.deviceLogKeys) {
+                    let stored: DeviceLogEvent[] = [];
+                    try {
+                        const val = this.devices.getval(`${CHANNEL_DEVICELOG}.json`);
+                        stored = typeof val === 'string' && val ? (JSON.parse(val) as DeviceLogEvent[]) : [];
+                    } catch {
+                        // a broken value is replaced below
+                    }
+                    const known = Array.isArray(stored) && stored.length ? stored : events;
+                    this.deviceLogKeys = new Set(known.map(key));
+                    this.deviceLogNewest = newest(known);
+                }
+                const keys = this.deviceLogKeys;
+                const fresh = events.filter(e => !keys.has(key(e)) && time(e) >= this.deviceLogNewest);
+                this.deviceLogKeys = new Set(events.map(key));
+                this.deviceLogNewest = newest(events) || this.deviceLogNewest;
+
+                // the events contain addresses and names
+                this.log.debug(`Event log: ${events.length} events, ${fresh.length} new`);
+                this.log.silly(`Event log new: ${JSON.stringify(fresh)}`);
+
+                const dev = new CDevice(this.devices, CHANNEL_DEVICELOG, 'Event log');
+                dev.set('json', {
+                    val: JSON.stringify(events.slice(0, DEVICE_LOG_ENTRIES)),
+                    common: { name: 'Last events of the event log', type: 'string', role: 'json', write: false },
+                });
+                if (fresh.length || !this.devices.get(`${CHANNEL_DEVICELOG}.newEvents`)) {
+                    dev.set('newEvents', {
+                        val: JSON.stringify(fresh),
+                        common: {
+                            name: 'Events since the last reading',
+                            type: 'string',
+                            role: 'json',
+                            write: false,
+                        },
+                    });
+                }
+                this.devices.update();
+            }),
+        );
+    }
+
     /** Reads everything from the box which is polled cyclically */
     private updateAll(): void {
         this.log.debug('in updateAll');
 
         if (Date.now() - this.lastCallsRefresh >= CALLS_REFRESH_INTERVAL) {
             this.refreshCalls();
+        }
+        if (Date.now() - this.lastSlowRefresh >= SLOW_REFRESH_INTERVAL) {
+            this.refreshSlow();
         }
 
         const names: PollEntry[] = [
@@ -695,11 +892,45 @@ export class Tr064Adapter extends utils.Adapter {
                 result: 'NewIPv6Prefix',
                 format: val => val,
             },
-            { func: 'getWLAN', state: STATES.wlan24.name, result: 'NewEnable', format: val => !!~~Number(val) },
-            { func: 'getWLAN5', state: STATES.wlan50.name, result: 'NewEnable', format: val => !!~~Number(val) },
-            { func: 'getWLAN52', state: STATES.wlan52.name, result: 'NewEnable', format: val => !!~~Number(val) },
-            { func: 'getWLAN6', state: STATES.wlan60.name, result: 'NewEnable', format: val => !!~~Number(val) },
-            { func: 'getWLANGuest', state: STATES.wlanGuest.name, result: 'NewEnable', format: val => !!~~Number(val) },
+            {
+                func: 'getWLAN',
+                state: STATES.wlan24.name,
+                result: 'NewEnable',
+                format: toBoolean,
+                // the state of the WLAN button - older firmware does not report it
+                more: [{ state: STATES.wlan.name, result: 'NewX_AVM-DE_WLANGlobalEnable', format: toBoolean }],
+            },
+            { func: 'getWLAN5', state: STATES.wlan50.name, result: 'NewEnable', format: toBoolean },
+            { func: 'getWLAN52', state: STATES.wlan52.name, result: 'NewEnable', format: toBoolean },
+            { func: 'getWLAN6', state: STATES.wlan60.name, result: 'NewEnable', format: toBoolean },
+            { func: 'getWLANGuest', state: STATES.wlanGuest.name, result: 'NewEnable', format: toBoolean },
+            {
+                func: 'getWANLink',
+                state: STATES.wanAccessType.name,
+                result: 'NewWANAccessType',
+                format: val => String(val).replace(/^X_AVM-DE_/, ''),
+                more: [
+                    { state: STATES.wanLinkStatus.name, result: 'NewPhysicalLinkStatus', format: val => val },
+                    { state: STATES.wanProvider.name, result: 'NewX_AVM-DE_Provider', format: val => val },
+                    {
+                        state: STATES.wanDownstreamMax.name,
+                        result: 'NewLayer1DownstreamMaxBitRate',
+                        format: toNumber,
+                    },
+                    { state: STATES.wanUpstreamMax.name, result: 'NewLayer1UpstreamMaxBitRate', format: toNumber },
+                ],
+            },
+            {
+                func: 'getWANTraffic',
+                state: STATES.wanBytesSent.name,
+                result: 'sent',
+                format: toNumber,
+                more: [
+                    { state: STATES.wanBytesReceived.name, result: 'received', format: toNumber },
+                    { state: STATES.wanSendRate.name, result: 'sendRate', format: toNumber },
+                    { state: STATES.wanReceiveRate.name, result: 'receiveRate', format: toNumber },
+                ],
+            },
         ];
         let i = 0;
         let anySuccess = false;
@@ -750,7 +981,12 @@ export class Tr064Adapter extends utils.Adapter {
                 this.callbackTimers.wrap<ActionResult>(3000, (err, res) => {
                     if (!err && res) {
                         anySuccess = true;
-                        this.devStates.set(name.state, name.format(res[name.result]));
+                        // a value which the box does not report is not written
+                        for (const out of [name, ...(name.more || [])]) {
+                            if (res[out.result] !== undefined) {
+                                this.devStates.set(out.state, out.format(res[out.result]));
+                            }
+                        }
                     }
                     this.setTimeout(doIt, 10);
                 }),
@@ -824,6 +1060,14 @@ export class Tr064Adapter extends utils.Adapter {
         }
         // older instances do not have the option: their objects keep the names of the box
         this.config.useConfiguredNames = !!this.config.useConfiguredNames;
+        if (this.config.useMesh === undefined) {
+            this.config.useMesh = true;
+        }
+        this.config.useDeviceLog = !!this.config.useDeviceLog;
+        this.config.updateUnchanged = !!this.config.updateUnchanged;
+        if (!Array.isArray(this.config.phonebooksByNumber)) {
+            this.config.phonebooksByNumber = [];
+        }
         if (!Array.isArray(this.config.devices)) {
             this.config.devices = [];
         }
@@ -838,6 +1082,7 @@ export class Tr064Adapter extends utils.Adapter {
         });
 
         this.normalizeConfigVars();
+        this.devices.updateUnchanged = this.config.updateUnchanged;
         this.deleteUnusedDevices();
         this.phonebook = new Phonebook(this);
         await this.systemData.load();
@@ -891,6 +1136,8 @@ export class Tr064Adapter extends utils.Adapter {
 
             // the objects first, so that the refresh writes into objects with their full definition
             this.createObjects();
+            this.devStates.set(STATES.boxModel.name, this.tr064Client.boxInfo.model);
+            this.devStates.set(STATES.boxFirmware.name, this.tr064Client.boxInfo.firmware);
             this.refreshCalls();
 
             this.createConfiguredDevices(() => {

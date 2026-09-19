@@ -117,6 +117,91 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4
+                },
+                "useMesh": {
+                    "type": "checkbox",
+                    "label": "Show the access point of the devices",
+                    "help": "tooltip_useMesh",
+                    "hidden": "!data.useDevices",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "useDeviceLog": {
+                    "type": "checkbox",
+                    "label": "Read the event log of the FRITZ!Box",
+                    "help": "tooltip_useDeviceLog",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "updateUnchanged": {
+                    "type": "checkbox",
+                    "label": "Write unchanged values too",
+                    "help": "tooltip_updateUnchanged",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "_phonebooksHeader": {
+                    "type": "header",
+                    "text": "Phone book per own number",
+                    "size": 5,
+                    "newLine": true,
+                    "hidden": "!data.usePhonebook",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_phonebooksHint": {
+                    "type": "staticText",
+                    "text": "hint_phonebooksByNumber",
+                    "newLine": true,
+                    "hidden": "!data.usePhonebook",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 8,
+                    "xl": 8
+                },
+                "phonebooksByNumber": {
+                    "type": "table",
+                    "newLine": true,
+                    "hidden": "!data.usePhonebook",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 6,
+                    "xl": 6,
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "number",
+                            "title": "Own number",
+                            "width": "50%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "phonebook",
+                            "title": "Phone book",
+                            "width": "50%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        }
+                    ]
                 }
             }
         },
@@ -130,7 +215,7 @@
                     "jsonData": "{\"onlyActive\": true, \"reread\": true, \"native\": true, \"devices\": ${JSON.stringify(data.devices || [])}}",
                     "useNative": true,
                     "showProcess": true,
-                    "timeout": 20000,
+                    "timeout": 60000,
                     "icon": "search",
                     "variant": "outlined",
                     "label": "Find a device",
@@ -166,8 +251,8 @@
                     "xs": 12,
                     "sm": 12,
                     "md": 12,
-                    "lg": 4,
-                    "xl": 4,
+                    "lg": 12,
+                    "xl": 12,
                     "uniqueColumns": ["mac"],
                     "items": [
                         {
@@ -382,6 +467,24 @@
                     "md": 4,
                     "lg": 3,
                     "xl": 3
+                }
+            }
+        },
+        "_mesh": {
+            "type": "panel",
+            "label": "Mesh",
+            "items": {
+                "_meshTopology": {
+                    "type": "custom",
+                    "i18n": true,
+                    "url": "custom/customComponents.js",
+                    "name": "ConfigCustomTr064Set/Components/MeshTopology",
+                    "guiApi": 2,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 }
             }
         }
