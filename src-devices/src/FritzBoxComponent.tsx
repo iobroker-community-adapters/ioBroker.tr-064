@@ -431,7 +431,17 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
     }
 
     private rate(key: 'receiveRate' | 'sendRate'): Rate {
+        // the box does not answer: the last rate is not the current one - `–` like the vis-2 tile
+        if (this.status === 'unreachable' || !has(this.values, key)) {
+            return { value: '–', unit: '' };
+        }
         return formatRate(num(this.values, key) * 8, this.floatComma);
+    }
+
+    /** `48,2 Mbit/s` or `–` */
+    private rateText(key: 'receiveRate' | 'sendRate'): string {
+        const rate = this.rate(key);
+        return rate.unit ? `${rate.value} ${rate.unit}` : rate.value;
     }
 
     private get hasRates(): boolean {
@@ -570,7 +580,7 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 >
                     {rate.value}
                 </Box>
-                {options?.unit === false ? null : (
+                {options?.unit === false || !rate.unit ? null : (
                     <Box
                         component="span"
                         sx={{ fontSize: 'max(9px, 0.62em)', fontWeight: 500, color: 'text.secondary' }}
@@ -1189,7 +1199,7 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                         <Box sx={{ flex: '1 1 auto', minWidth: 0 }}>{this.renderStatus('0.72rem', true)}</Box>
                         {this.hasRates ? (
                             <Box
-                                title={`${I18n.t('fritzdm_download')}: ${this.rate('receiveRate').value} ${this.rate('receiveRate').unit}, ${I18n.t('fritzdm_upload')}: ${this.rate('sendRate').value} ${this.rate('sendRate').unit}`}
+                                title={`${I18n.t('fritzdm_download')}: ${this.rateText('receiveRate')}, ${I18n.t('fritzdm_upload')}: ${this.rateText('sendRate')}`}
                                 sx={{ display: 'flex', gap: '8px', flexShrink: 0, ...this.staleSx }}
                             >
                                 {this.renderRateValue('receiveRate', '0.8rem')}
