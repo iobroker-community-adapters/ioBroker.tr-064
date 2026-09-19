@@ -195,7 +195,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.1.0 (2026-09-19)
 - (@GermanBluefox) New widgets for vis-2 ("FRITZ!Box", "Mesh topology", "Presence") and for ioBroker.devices ("FRITZ!Box"): the state of the box as a tile, a click shows the mesh topology
 - (@GermanBluefox) New states `boxModel` and `boxFirmware`
 - (@GermanBluefox) The table in the tab "Devices" uses the whole width again: in 5.0.2 it was so narrow that name, IP and MAC could not be read
@@ -252,10 +252,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 
 ### 4.2.18 (2023-01-04)
 * (Apollon77) Prepare for future js-controller versions
-
-### 4.2.17 (2022-09-16)
-* (simatec/Apollon77) Prevent duplication of entries in configuration
-* (Apollon77) Make sure the active status of devices in jsonDeviceList is correct
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
