@@ -6,6 +6,8 @@ version: 2
 updates:
 
   - package-ecosystem: 'npm'
+    directories:
+      - '**/*'
     schedule:
       interval: 'cron'
       timezone: 'Europe/Berlin'
@@ -18,8 +20,6 @@ updates:
       - dependency-name: '@types/node'
         update-types:
           - 'version-update:semver-major'
-    directories:
-      - '**/*'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
