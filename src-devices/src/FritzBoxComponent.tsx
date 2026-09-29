@@ -1143,6 +1143,7 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                         loading={loading}
                         error={error}
                         onRefresh={() => void this.meshLoader?.refresh()}
+                        onRename={async (mac, name) => (this.meshLoader ? this.meshLoader.rename(mac, name) : 'not alive')}
                         t={meshT}
                         height="100%"
                         storageKey={MESH_STORAGE_KEY}

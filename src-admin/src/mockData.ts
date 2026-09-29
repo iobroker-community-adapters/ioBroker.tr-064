@@ -3,6 +3,20 @@ import type { MeshLinkInfo, MeshNodeInfo, MeshResponse } from './shared/types';
 
 type Band = MeshLinkInfo['band'];
 
+/** Manufacturers of the simulation - the real ones come from `data/oui.txt` of the adapter */
+const VENDORS = [
+    'Apple, Inc.',
+    'Espressif Inc.',
+    'AVM GmbH',
+    'Samsung Electronics Co.,Ltd',
+    'Raspberry Pi Trading Ltd',
+    'Sonos, Inc.',
+    'Synology Incorporated',
+    'LG Electronics (Mobile Communications)',
+    'Hewlett Packard',
+    'Shenzhen Reolink Technology Co.,Ltd',
+];
+
 function mac(i: number): string {
     const hex = i.toString(16).padStart(4, '0').toUpperCase();
     return `3C:A6:2F:00:${hex.substring(0, 2)}:${hex.substring(2)}`;
@@ -18,6 +32,8 @@ function client(
 ): void {
     const i = nodes.length + 1;
     const uid = `landevice${1000 + i}`;
+    // every fourth device hides behind a randomized MAC address, as a phone does
+    const random = i % 4 === 0;
     nodes.push({
         uid,
         name,
@@ -25,6 +41,8 @@ function client(
         ip: `192.168.178.${20 + i}`,
         role: 'client',
         configured: options?.configured,
+        vendor: random ? undefined : VENDORS[i % VENDORS.length],
+        randomMac: random || undefined,
     });
     if (options?.noLink) {
         return;
@@ -129,7 +147,7 @@ export function meshMock(): MeshResponse {
 
     client(nodes, links, '', 'Unknown-Device', '2.4', { noLink: true });
 
-    return { ts: Date.now(), nodes, links };
+    return { ts: Date.now(), nodes, links, canRename: true };
 }
 
 /**
@@ -155,5 +173,5 @@ export function bigMeshMock(count: number): MeshResponse {
             configured: i === 3 ? 'Handy Anna' : undefined,
         });
     }
-    return { ts: Date.now(), nodes, links };
+    return { ts: Date.now(), nodes, links, canRename: true };
 }

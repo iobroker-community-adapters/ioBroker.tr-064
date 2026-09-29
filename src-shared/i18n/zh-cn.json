@@ -30,5 +30,14 @@
     "tr064_role_master": "Mesh 主设备",
     "tr064_role_slave": "Mesh 中继器",
     "tr064_role_switch": "交换机",
-    "tr064_role_client": "设备"
+    "tr064_role_client": "设备",
+    "tr064_showVendor": "显示制造商",
+    "tr064_randomMac": "随机 MAC 地址",
+    "tr064_rename": "重命名",
+    "tr064_renameTitle": "重命名设备",
+    "tr064_newName": "FRITZ!Box 中的名称",
+    "tr064_renameHint": "FRITZ!Box 在所有位置使用此名称。只要\"使用已配置的名称\"选项未启用，\"devices\"下的对象也会一并重命名。",
+    "tr064_renameFailed": "FRITZ!Box 未能重命名设备：%s",
+    "tr064_clickToRename": "点击以重命名",
+    "tr064_cancel": "取消"
 }

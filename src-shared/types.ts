@@ -5,6 +5,14 @@ export interface MeshResponse {
     ts?: number;
     nodes: MeshNodeInfo[];
     links: MeshLinkInfo[];
+    /** The box offers `X_AVM-DE_SetHostNameByMACAddress`, i.e. a device can be renamed */
+    canRename?: boolean;
+}
+
+/** Answer of the message `setHostName`: empty if the device was renamed */
+export interface RenameResponse {
+    /** `not connected`, `not supported` or the error text of the box */
+    error?: string;
 }
 
 export type MeshRole = 'master' | 'slave' | 'switch' | 'client';
@@ -19,6 +27,10 @@ export interface MeshNodeInfo {
     role: MeshRole;
     /** Name in the tab "Devices", if this is a configured device */
     configured?: string;
+    /** Manufacturer of the first bytes of the MAC address (`src/lib/oui.ts` of the adapter) */
+    vendor?: string;
+    /** A randomized (locally administered) MAC address, which belongs to no manufacturer */
+    randomMac?: boolean;
 }
 
 /** Connection between two nodes of the mesh topology */

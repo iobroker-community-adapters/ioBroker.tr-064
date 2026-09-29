@@ -2,12 +2,13 @@
  * Reads the mesh topology from a running tr-064 instance.
  *
  * - `fetchMesh()` - one request, never throws
+ * - `renameDevice()` - renames a device in the box, never throws
  * - `MeshLoader`  - periodic refresh for class components (`start()` / `stop()`)
  * - `useMeshLoader()` - the same as React hook for function components
  */
 import { useEffect, useRef, useState } from 'react';
 
-import type { MeshResponse } from './types';
+import type { MeshResponse, RenameResponse } from './types';
 
 /** The part of the admin/vis socket (`AdminConnection`, `Connection`) which is used here */
 export interface MeshSocket {
@@ -58,9 +59,53 @@ export async function fetchMesh(socket: MeshSocket, instanceId: string, timeoutM
             ts: answer.ts,
             nodes: Array.isArray(answer.nodes) ? answer.nodes : [],
             links: Array.isArray(answer.links) ? answer.links : [],
+            canRename: !!answer.canRename,
         };
     } catch (e) {
         return { error: (e as Error)?.message || String(e), nodes: [], links: [] };
+    }
+}
+
+/**
+ * Renames a device in the box (`X_AVM-DE_SetHostNameByMACAddress`).
+ *
+ * Resolves always: `undefined` if the device was renamed, otherwise the error - `not alive` if the
+ * instance does not run, `not connected`/`not supported` from the adapter, `timeout`, or the text
+ * which the box answered with.
+ *
+ * @param socket connection of the host (admin, vis-2, devices)
+ * @param instanceId e.g. `tr-064.0`
+ * @param mac address of the device
+ * @param name the new name
+ * @param timeoutMs time limit of the request
+ */
+export async function renameDevice(
+    socket: MeshSocket,
+    instanceId: string,
+    mac: string,
+    name: string,
+    timeoutMs = 20_000,
+): Promise<string | undefined> {
+    try {
+        const alive = await socket.getState(`system.adapter.${instanceId}.alive`);
+        if (!alive?.val) {
+            return MESH_ERROR_NOT_ALIVE;
+        }
+
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const timeout = new Promise<typeof MESH_ERROR_TIMEOUT>(resolve => {
+            timer = setTimeout(() => resolve(MESH_ERROR_TIMEOUT), timeoutMs);
+        });
+        const request = socket.sendTo(instanceId, 'setHostName', { mac, name }) as Promise<RenameResponse | null>;
+        const answer = await Promise.race([request, timeout]);
+        clearTimeout(timer);
+
+        if (answer === MESH_ERROR_TIMEOUT || !answer || typeof answer !== 'object') {
+            return MESH_ERROR_TIMEOUT;
+        }
+        return answer.error || undefined;
+    } catch (e) {
+        return (e as Error)?.message || String(e);
     }
 }
 
@@ -156,6 +201,21 @@ export class MeshLoader {
         }
     }
 
+    /**
+     * Renames a device in the box and reads the topology again. Resolves with the error text or
+     * `undefined` if it worked.
+     *
+     * @param mac address of the device
+     * @param name the new name
+     */
+    async rename(mac: string, name: string): Promise<string | undefined> {
+        const error = await renameDevice(this.options.socket, this.options.instanceId, mac, name, this.options.timeout);
+        if (!error && !this.stopped) {
+            await this.refresh();
+        }
+        return error;
+    }
+
     private update(changed: Partial<MeshLoaderState>): void {
         this.current = { ...this.current, ...changed };
         if (!this.stopped) {
@@ -175,7 +235,7 @@ export function useMeshLoader(
     socket: MeshSocket | null | undefined,
     instanceId: string,
     interval = MESH_REFRESH_INTERVAL,
-): MeshLoaderState & { refresh: () => void } {
+): MeshLoaderState & { refresh: () => void; rename: (mac: string, name: string) => Promise<string | undefined> } {
     const [state, setState] = useState<MeshLoaderState>({ data: null, loading: false, error: null });
     const loader = useRef<MeshLoader | null>(null);
 
@@ -192,5 +252,10 @@ export function useMeshLoader(
         };
     }, [socket, instanceId, interval]);
 
-    return { ...state, refresh: () => void loader.current?.refresh() };
+    return {
+        ...state,
+        refresh: () => void loader.current?.refresh(),
+        rename: async (mac: string, name: string) =>
+            loader.current ? loader.current.rename(mac, name) : MESH_ERROR_NOT_ALIVE,
+    };
 }

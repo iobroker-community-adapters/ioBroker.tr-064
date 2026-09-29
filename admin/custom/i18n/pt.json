@@ -30,5 +30,14 @@
     "tr064_role_master": "Mesh master",
     "tr064_role_slave": "Repetidor mesh",
     "tr064_role_switch": "Switch",
-    "tr064_role_client": "Dispositivo"
+    "tr064_role_client": "Dispositivo",
+    "tr064_showVendor": "Mostrar o fabricante",
+    "tr064_randomMac": "endereço MAC aleatório",
+    "tr064_rename": "Renomear",
+    "tr064_renameTitle": "Renomear dispositivo",
+    "tr064_newName": "Nome na FRITZ!Box",
+    "tr064_renameHint": "A FRITZ!Box usa este nome em todo o lado. Enquanto a opção \"Usar os nomes configurados\" estiver desligada, os objetos em \"devices\" são renomeados junto.",
+    "tr064_renameFailed": "A FRITZ!Box não renomeou o dispositivo: %s",
+    "tr064_clickToRename": "Clique para renomear",
+    "tr064_cancel": "Cancelar"
 }

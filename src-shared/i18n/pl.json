@@ -30,5 +30,14 @@
     "tr064_role_master": "Mesh master",
     "tr064_role_slave": "Wzmacniacz mesh",
     "tr064_role_switch": "Przełącznik",
-    "tr064_role_client": "Urządzenie"
+    "tr064_role_client": "Urządzenie",
+    "tr064_showVendor": "Pokaż producenta",
+    "tr064_randomMac": "losowy adres MAC",
+    "tr064_rename": "Zmień nazwę",
+    "tr064_renameTitle": "Zmień nazwę urządzenia",
+    "tr064_newName": "Nazwa w FRITZ!Box",
+    "tr064_renameHint": "FRITZ!Box używa tej nazwy wszędzie. Dopóki opcja „Używaj skonfigurowanych nazw” jest wyłączona, obiekty w „devices” są zmieniane razem z nią.",
+    "tr064_renameFailed": "FRITZ!Box nie zmienił nazwy urządzenia: %s",
+    "tr064_clickToRename": "Kliknij, aby zmienić nazwę",
+    "tr064_cancel": "Anuluj"
 }

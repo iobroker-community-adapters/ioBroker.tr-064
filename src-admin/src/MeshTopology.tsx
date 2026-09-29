@@ -49,6 +49,7 @@ export default class MeshTopology extends ConfigGeneric<ConfigGenericProps, Mesh
                 loading={this.state.loading}
                 error={this.state.error}
                 onRefresh={() => void this.loader?.refresh()}
+                onRename={async (mac, name) => (this.loader ? this.loader.rename(mac, name) : 'not alive')}
                 t={MeshTopology.t}
                 themeType={this.props.oContext.themeType === 'dark' ? 'dark' : 'light'}
                 storageKey="tr064.meshTopology"

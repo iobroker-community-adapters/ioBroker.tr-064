@@ -1,78 +1,82 @@
 {
-  "name": "iobroker.tr-064",
-  "version": "5.1.0",
-  "description": "ioBroker tr-064 Adapter",
-  "author": "soef <soef@gmx.net>",
-  "contributors": [
-    "soef <soef@gmx.net>",
-    "Apollon77 <iobroker@fischer-ka.de>",
-    "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
-  ],
-  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064",
-  "license": "MIT",
-  "keywords": [
-    "ioBroker",
-    "tr-064",
-    "fritz.box",
-    "avm"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064"
-  },
-  "engines": {
-    "node": ">=22.19.0"
-  },
-  "dependencies": {
-    "@iobroker/adapter-core": "^3.4.3",
-    "mdns-discovery": "^0.2.6",
-    "tr-O64": "^0.2.4",
-    "xml2js": "^0.6.2"
-  },
-  "devDependencies": {
-    "@alcalzone/release-script": "^5.2.1",
-    "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
-    "@alcalzone/release-script-plugin-license": "^5.2.2",
-    "@iobroker/adapter-dev": "^1.5.0",
-    "@iobroker/build-tools": "^3.0.3",
-    "@iobroker/eslint-config": "^2.3.4",
-    "@iobroker/testing": "^6.1.2",
-    "@iobroker/types": "^7.2.2",
-    "@tsconfig/node22": "^22.0.6",
-    "@types/node": "^22.20.2",
-    "@types/xml2js": "^0.4.14",
-    "tsx": "^4.23.13",
-    "typescript": "~6.0.3"
-  },
-  "main": "build/main.js",
-  "files": [
-    "build/",
-    "admin/",
-    "widgets/",
-    "io-package.json",
-    "LICENSE"
-  ],
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "build:gui": "tsx tasks.ts",
-    "build:admin": "tsx tasks.ts --admin",
-    "build:widgets": "tsx tasks.ts --widgets",
-    "build:devices": "tsx tasks.ts --devices",
-    "watch": "tsc -p tsconfig.build.json --watch",
-    "check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tasks.json",
-    "lint": "eslint -c eslint.config.mjs",
-    "test:package": "mocha test/packageFiles --exit",
-    "test:integration": "mocha test/integrationAdapter --exit",
-    "test": "npm run test:package",
-    "translate": "translate-adapter -b admin/i18n/en.json",
-    "release": "release-script --noPush -y",
-    "release-patch": "release-script patch --yes",
-    "release-minor": "release-script minor --yes",
-    "release-major": "release-script major --yes",
-    "update-packages": "npx npm-check-updates --upgrade"
-  },
-  "bugs": {
-    "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues"
-  },
-  "readmeFilename": "README.md"
+    "name": "iobroker.tr-064",
+    "version": "5.1.0",
+    "description": "ioBroker tr-064 Adapter",
+    "author": "soef <soef@gmx.net>",
+    "contributors": [
+        "soef <soef@gmx.net>",
+        "Apollon77 <iobroker@fischer-ka.de>",
+        "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
+    ],
+    "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tr-064",
+    "license": "MIT",
+    "keywords": [
+        "ioBroker",
+        "tr-064",
+        "fritz.box",
+        "avm"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064"
+    },
+    "engines": {
+        "node": ">=22.19.0"
+    },
+    "dependencies": {
+        "@iobroker/adapter-core": "^3.4.3",
+        "mdns-discovery": "^0.2.6",
+        "tr-O64": "^0.2.4",
+        "xml2js": "^0.6.2"
+    },
+    "devDependencies": {
+        "@alcalzone/release-script": "^5.2.1",
+        "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
+        "@alcalzone/release-script-plugin-license": "^5.2.2",
+        "@iobroker/adapter-dev": "^1.5.0",
+        "@iobroker/build-tools": "^3.0.3",
+        "@iobroker/eslint-config": "^2.3.4",
+        "@iobroker/testing": "^6.2.2",
+        "@iobroker/types": "^7.2.3",
+        "@tsconfig/node22": "^22.0.6",
+        "@types/node": "^22.20.4",
+        "@types/xml2js": "^0.4.14",
+        "tsx": "^4.23.15",
+        "typescript": "~6.0.3"
+    },
+    "main": "build/main.js",
+    "files": [
+        "build/",
+        "admin/",
+        "widgets/",
+        "data/",
+        "io-package.json",
+        "LICENSE"
+    ],
+    "scripts": {
+        "build:backend": "tsc -p tsconfig.build.json",
+        "build": "npm run build:backend && npm run build:gui",
+        "build:gui": "tsx tasks.ts",
+        "update-oui": "tsx tasks-oui.ts",
+        "build:admin": "tsx tasks.ts --admin",
+        "build:widgets": "tsx tasks.ts --widgets",
+        "build:devices": "tsx tasks.ts --devices",
+        "watch": "tsc -p tsconfig.build.json --watch",
+        "check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tasks.json",
+        "lint": "eslint -c eslint.config.mjs",
+        "test:package": "mocha test/packageFiles --exit",
+        "test:integration": "mocha test/integrationAdapter --exit",
+        "test": "npm run test:package",
+        "translate": "translate-adapter -b admin/i18n/en.json",
+        "release": "release-script --noPush -y",
+        "release-patch": "release-script patch --yes",
+        "release-minor": "release-script minor --yes",
+        "release-major": "release-script major --yes",
+        "update-packages": "npx npm-check-updates --upgrade && cd src-devices && npx npm-check-updates --upgrade && cd .. && cd src-admin && npx npm-check-updates --upgrade && cd ../src-widgets && npx npm-check-updates --upgrade",
+        "npm": "npm i && cd src-devices && npm i && cd ../src-admin && npm i && cd ../src-widgets && npm i"
+    },
+    "bugs": {
+        "url": "https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues"
+    },
+    "readmeFilename": "README.md"
 }

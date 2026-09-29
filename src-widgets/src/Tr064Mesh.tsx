@@ -22,6 +22,7 @@ interface Tr064MeshRxData {
     view: 'graph' | 'table';
     onlyConfigured: boolean;
     showDisconnected: boolean;
+    showVendor: boolean;
     interval: number | string;
 }
 
@@ -42,6 +43,7 @@ interface Tr064MeshState extends VisRxWidgetState {
 interface ViewSettings {
     onlyConfigured: boolean;
     showDisconnected: boolean;
+    showVendor: boolean;
     viewMode: 'graph' | 'table';
 }
 
@@ -141,6 +143,13 @@ export default class Tr064Mesh extends Generic<Tr064MeshRxData, Tr064MeshState> 
                             label: 'show_disconnected',
                             tooltip: 'view_tooltip',
                         },
+                        {
+                            name: 'showVendor',
+                            type: 'checkbox',
+                            default: true,
+                            label: 'show_vendor',
+                            tooltip: 'view_tooltip',
+                        },
                     ],
                 },
             ],
@@ -183,7 +192,8 @@ export default class Tr064Mesh extends Generic<Tr064MeshRxData, Tr064MeshState> 
         if (
             prevRxData.view !== rxData.view ||
             !!prevRxData.onlyConfigured !== !!rxData.onlyConfigured ||
-            !!prevRxData.showDisconnected !== !!rxData.showDisconnected
+            !!prevRxData.showDisconnected !== !!rxData.showDisconnected ||
+            !!prevRxData.showVendor !== !!rxData.showVendor
         ) {
             this.applyViewDefaults();
             this.setState({ viewKey: this.state.viewKey + 1 });
@@ -206,6 +216,7 @@ export default class Tr064Mesh extends Generic<Tr064MeshRxData, Tr064MeshState> 
         return {
             onlyConfigured: !!rxData.onlyConfigured,
             showDisconnected: !!rxData.showDisconnected,
+            showVendor: !!rxData.showVendor,
             viewMode: rxData.view === 'table' ? 'table' : 'graph',
         };
     }
@@ -341,6 +352,7 @@ export default class Tr064Mesh extends Generic<Tr064MeshRxData, Tr064MeshState> 
                     loading={this.state.meshLoading}
                     error={this.state.meshError}
                     onRefresh={() => void this.loader?.refresh()}
+                    onRename={async (mac, name) => (this.loader ? this.loader.rename(mac, name) : 'not alive')}
                     t={Generic.meshT()}
                     themeType={this.getThemeType()}
                     compact={compact}

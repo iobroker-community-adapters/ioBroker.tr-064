@@ -31,6 +31,7 @@
     "view_tooltip": "Ustawienie domyślne widoku. Zmiany użytkownika są zapamiętywane w przeglądarce, dopóki to ustawienie nie zostanie zmienione",
     "only_configured": "Tylko skonfigurowane urządzenia",
     "show_disconnected": "Pokaż odłączone urządzenia",
+    "show_vendor": "Pokaż producenta",
     "only_active": "Tylko obecne urządzenia",
     "active_first": "Najpierw obecne urządzenia",
     "show_access_point": "Pokaż punkt dostępu",

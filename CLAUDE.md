@@ -22,6 +22,7 @@ npx eslint -c eslint.config.mjs --fix src # autofix + prettier formatting
 
 npm run test:package                      # validates package.json / io-package.json / admin JSON (fast)
 npm run test:integration                  # starts a real js-controller + adapter instance
+npm run update-oui                        # tsx tasks-oui.ts: fetches the IEEE registries -> data/oui.txt
 npm run translate                         # translate-adapter -b admin/i18n/en.json
 npm run release-patch                     # @alcalzone/release-script, moves the README changelog into io-package news
 ```
@@ -42,6 +43,7 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 | `src/lib/phonebook.ts` | phone book, resolves numbers to names |
 | `src/lib/deflections.ts` | call forwardings |
 | `src/lib/mesh.ts` | converts the mesh list of the box into nodes/links, finds the access point of a device |
+| `src/lib/oui.ts` | manufacturer of a MAC address, binary search in `data/oui.txt` |
 | `src/lib/systemdata.ts` | the `meta` object which stores the call lists between restarts |
 | `src/lib/states.ts` | definition of all states below `states` and `phonebook` |
 | `src/lib/utils.ts` | `getProp`, `safeFunction`, `CallbackTimers`, name and value conversion |
@@ -52,6 +54,8 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 | `src-admin/` | React custom component `MeshTopology` for the tab "Mesh" (own `package.json`, vite, module federation, `guiApi: 2`) |
 | `admin/custom/` | build output of `src-admin` - **committed**, rebuilt with `npm run build:admin` |
 | `tasks.ts` | build of the GUI projects, run with `tsx` (root devDependency), type checked by `tsconfig.tasks.json` in `npm run check` |
+| `tasks-oui.ts` | generates `data/oui.txt` from the IEEE registries (`npm run update-oui`), also type checked by `tsconfig.tasks.json` |
+| `data/oui.txt` | MA-L/MA-M/MA-S of the IEEE as `prefix<TAB>name`, sorted - **committed**, shipped by `files` of `package.json` |
 | `src-shared/` | mesh topology UI used by all GUI projects (`MeshView`, `meshApi`, layout, i18n) - see its README |
 | `src-widgets/` | vis-2 widget set `vis2Tr064Widgets` (`Tr064FritzBox`, `Tr064Mesh`, `Tr064Presence`) -> `widgets/tr-064/` (**committed**), registered in `common.visWidgets` |
 | `src-devices/` | ioBroker.devices plugin `FritzBoxComponent` -> `admin/dm-widgets/` (**committed**), registered in `common.deviceWidgets` |
@@ -134,6 +138,8 @@ whether the TCP connect gave up within the 5 second observation window of the te
 - `refreshSlow()` in `src/main.ts` runs from `updateAll()` at most every `SLOW_REFRESH_INTERVAL` (60 s): the mesh list (`useMesh`, writes `devices.<x>.accessPoint`/`connection` for every device with `lastResult`) and the event log (`useDeviceLog`).
 - Mesh list and event log are paths (`X_AVM-DE_GetMeshListPath`, `X_AVM-DE_GetDeviceLogPath`) which `boxUrl()` completes to `http://<box>:<port>`. The mesh list is JSON (`getJson()`), the event log XML. The mesh JSON lists every link at both ends - `buildMeshTopology()` deduplicates by link UID and turns every link so that `from` is the upstream side (master < switch < slave < client, `UPLINK` interface is downstream).
 - The admin component asks with `sendTo('mesh')` and gets a `MeshResponse` (`src/lib/types.ts`), `error: 'not connected'` while the box is not connected. Keep the interface in sync with `src-admin/src`.
+- The manufacturer of a node comes from `lookupVendor()` (`src/lib/oui.ts`), which binary searches the sorted `data/oui.txt` instead of building a map of 50.000 entries; the file is read on the first lookup, i.e. only in an instance which really shows the mesh. A locally administered address (bit `0x02` of the first byte) is the randomized MAC of a phone and belongs to no manufacturer - it becomes `randomMac`, not an unknown vendor. Refresh the list with `npm run update-oui`, never by hand.
+- `setHostName` (`X_AVM-DE_SetHostNameByMACAddress`, FRITZ!OS 7 and newer) renames a device in the box; `canRename` of the `MeshResponse` says whether the box has the action, so the view shows no rename button for an older firmware. The name of the box decides how the channel below `devices` is called (`deviceChannelName()`), i.e. renaming moves objects unless `useConfiguredNames` is on - the dialog says so.
 - `GetDeviceLog` returns a shortened log without events with addresses (logins, WLAN devices); only the XML list of the path has them. `deviceLog.newEvents` is computed by event keys (`date|time|id|msg`) against the previous reading; after a start the previous reading is `deviceLog.json`.
 - `states.wlan` uses `X_AVM-DE_SetWLANGlobalEnable` (like the WLAN button, only the last active WLANs come back) and is read from `GetInfo` `NewX_AVM-DE_WLANGlobalEnable`; switching every band was the old way and switched on the guest WLAN (issue #395). It stays as fallback for firmware without the action.
 - WAN: `getWANLink()` (`GetCommonLinkProperties` + `X_AVM-DE_GetActiveProvider`) and `getWANTraffic()` (IGD `GetAddonInfos` with 64 bit counters, fallback `GetTotalBytesSent/Received` which are 32 bit). A `PollEntry` can write several states from one answer (`more`); a value which the box does not report is not written.

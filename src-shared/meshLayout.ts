@@ -28,6 +28,10 @@ export interface TableRow {
     uid: string;
     name: string;
     hostName: string;
+    /** Manufacturer of the MAC address */
+    vendor?: string;
+    /** A randomized MAC address, which belongs to no manufacturer */
+    randomMac?: boolean;
     configured: boolean;
     accessPoint: string;
     kind: LinkKind | '';
@@ -184,6 +188,8 @@ export function buildTree(response: MeshResponse | null, options: TreeOptions): 
             uid: node.uid,
             name: clientName(node),
             hostName: node.name,
+            vendor: node.vendor,
+            randomMac: node.randomMac,
             configured: !!node.configured,
             accessPoint: accessPoint?.node?.name || '',
             kind,
@@ -258,6 +264,8 @@ export const CHIP_MIN_W = 170;
 /** Widest chip in the stack layout */
 export const CHIP_MAX_W = 360;
 export const CHIP_H = 26;
+/** Height of a chip with the manufacturer below the name */
+export const CHIP_H_VENDOR = 38;
 export const GAP = 6;
 export const PAD = 10;
 export const HEADER_H = 60;
@@ -279,6 +287,8 @@ export interface PlacedCard {
     h: number;
     columns: number;
     chipW: number;
+    /** `CHIP_H`, or `CHIP_H_VENDOR` if the manufacturer is shown below the name */
+    chipH: number;
 }
 
 export interface PlacedEdge {
@@ -316,17 +326,18 @@ export function clientColumns(count: number): number {
     return 4;
 }
 
-function cardHeight(count: number, columns: number): number {
+function cardHeight(count: number, columns: number, chipH: number): number {
     const rows = Math.ceil(count / columns);
-    return HEADER_H + (count ? rows * (CHIP_H + GAP) - GAP + PAD : 0);
+    return HEADER_H + (count ? rows * (chipH + GAP) - GAP + PAD : 0);
 }
 
 /**
  * Positions of all cards and edges, repeaters side by side below their parent
  *
  * @param roots the trees of the infrastructure
+ * @param chipH height of a client chip, `CHIP_H_VENDOR` if the manufacturer is shown
  */
-export function layoutTree(roots: InfraView[]): MeshLayout {
+export function layoutTree(roots: InfraView[], chipH: number = CHIP_H): MeshLayout {
     const cards: PlacedCard[] = [];
     const edges: PlacedEdge[] = [];
     const widths = new Map<InfraView, number>();
@@ -335,7 +346,7 @@ export function layoutTree(roots: InfraView[]): MeshLayout {
         const count = view.clients.length;
         const columns = clientColumns(count);
         const w = Math.max(CARD_MIN_W, columns * CHIP_W + (columns - 1) * GAP + 2 * PAD);
-        return { w, h: cardHeight(count, columns), columns };
+        return { w, h: cardHeight(count, columns, chipH), columns };
     };
 
     const measure = (view: InfraView): number => {
@@ -358,6 +369,7 @@ export function layoutTree(roots: InfraView[]): MeshLayout {
             h: s.h,
             columns: s.columns,
             chipW: CHIP_W,
+            chipH,
         };
         cards.push(card);
         height = Math.max(height, y + s.h);
@@ -408,8 +420,9 @@ export function layoutTree(roots: InfraView[]): MeshLayout {
  *
  * @param roots the trees of the infrastructure
  * @param width available width in pixels
+ * @param chipH height of a client chip, `CHIP_H_VENDOR` if the manufacturer is shown
  */
-export function layoutStack(roots: InfraView[], width: number): MeshLayout {
+export function layoutStack(roots: InfraView[], width: number, chipH: number = CHIP_H): MeshLayout {
     const cards: PlacedCard[] = [];
     const edges: PlacedEdge[] = [];
     let y = STACK_MARGIN;
@@ -421,7 +434,7 @@ export function layoutStack(roots: InfraView[], width: number): MeshLayout {
         const count = view.clients.length;
         const columns = Math.max(1, Math.min(count || 1, Math.floor((inner + GAP) / (CHIP_MIN_W + GAP))));
         const chipW = Math.min(CHIP_MAX_W, (inner - (columns - 1) * GAP) / columns);
-        const card: PlacedCard = { view, x, y, w, h: cardHeight(count, columns), columns, chipW };
+        const card: PlacedCard = { view, x, y, w, h: cardHeight(count, columns, chipH), columns, chipW, chipH };
         cards.push(card);
         y += card.h + STACK_GAP;
 
@@ -457,10 +470,11 @@ export function layoutStack(roots: InfraView[], width: number): MeshLayout {
  *
  * @param roots the trees of the infrastructure
  * @param width available width in pixels
+ * @param chipH height of a client chip, `CHIP_H_VENDOR` if the manufacturer is shown
  */
-export function layoutMesh(roots: InfraView[], width: number): MeshLayout {
-    const tree = layoutTree(roots);
-    return tree.width <= width ? tree : layoutStack(roots, width);
+export function layoutMesh(roots: InfraView[], width: number, chipH: number = CHIP_H): MeshLayout {
+    const tree = layoutTree(roots, chipH);
+    return tree.width <= width ? tree : layoutStack(roots, width, chipH);
 }
 
 /**

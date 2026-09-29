@@ -31,6 +31,7 @@
     "view_tooltip": "视图的默认设置。查看者所做的更改会保存在浏览器中，直到此设置被更改",
     "only_configured": "仅已配置的设备",
     "show_disconnected": "显示已断开的设备",
+    "show_vendor": "显示制造商",
     "only_active": "仅在家的设备",
     "active_first": "在家的设备优先",
     "show_access_point": "显示接入点",

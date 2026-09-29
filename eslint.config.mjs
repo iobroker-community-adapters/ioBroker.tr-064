@@ -24,6 +24,7 @@ export default [
             'test/**/*',
             'build/**/*',
             'tasks.ts',
+            'tasks-oui.ts',
             'tmp/**/*',
             'www/**/*',
             '.**/*',

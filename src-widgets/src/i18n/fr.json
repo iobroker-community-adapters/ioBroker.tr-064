@@ -31,6 +31,7 @@
     "view_tooltip": "Valeur par défaut de la vue. Ce que l'utilisateur modifie est mémorisé dans le navigateur jusqu'à ce que ce réglage change",
     "only_configured": "Seulement les appareils configurés",
     "show_disconnected": "Afficher les appareils déconnectés",
+    "show_vendor": "Afficher le fabricant",
     "only_active": "Seulement les appareils présents",
     "active_first": "Appareils présents d'abord",
     "show_access_point": "Afficher le point d'accès",

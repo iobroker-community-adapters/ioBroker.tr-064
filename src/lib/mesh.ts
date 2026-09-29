@@ -6,6 +6,7 @@
  * (the box, a repeater) and a client is the access point of that client. The same link is listed
  * at both ends, therefore the links are collected by their UID.
  */
+import { lookupVendor } from './oui';
 import { macsOverlap } from './utils';
 import type { DeviceConfigEntry, MeshLinkInfo, MeshNodeInfo, MeshResponse } from './types';
 
@@ -83,8 +84,13 @@ function roleOf(node: MeshListNode): MeshNodeInfo['role'] {
  *
  * @param list the JSON list of the box
  * @param configured the devices of the tab "Devices", they are marked with their name
+ * @param onError called once if the manufacturer list cannot be read
  */
-export function buildMeshTopology(list: MeshList, configured: DeviceConfigEntry[]): MeshResponse {
+export function buildMeshTopology(
+    list: MeshList,
+    configured: DeviceConfigEntry[],
+    onError?: (error: string) => void,
+): MeshResponse {
     const nodes: MeshNodeInfo[] = [];
     const byUid = new Map<string, MeshNodeInfo>();
     /** interface UID -> interface name */
@@ -111,6 +117,13 @@ export function buildMeshTopology(list: MeshList, configured: DeviceConfigEntry[
         }
         if (entry) {
             info.configured = entry.name;
+        }
+        const { vendor, random } = lookupVendor(mac, onError);
+        if (vendor) {
+            info.vendor = vendor;
+        }
+        if (random) {
+            info.randomMac = true;
         }
         nodes.push(info);
         byUid.set(node.uid, info);

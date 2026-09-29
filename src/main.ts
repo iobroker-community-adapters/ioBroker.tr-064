@@ -34,7 +34,14 @@ import {
     PB_STATES,
     STATES,
 } from './lib/states';
-import type { DeviceConfigEntry, DeviceLogEvent, DiscoveredDevice, HostEntry, MeshResponse } from './lib/types';
+import type {
+    DeviceConfigEntry,
+    DeviceLogEvent,
+    DiscoveredDevice,
+    HostEntry,
+    MeshResponse,
+    RenameResponse,
+} from './lib/types';
 
 /** Default secret of `system.config` if the host has none */
 const DEFAULT_SECRET = 'Zgfr56gFe87jJOM';
@@ -58,6 +65,9 @@ const SLOW_REFRESH_INTERVAL = 60_000;
 
 /** Number of events of the event log which are kept in `deviceLog.json` */
 const DEVICE_LOG_ENTRIES = 50;
+
+/** Longest name which `setHostName` sends to the box */
+const MAX_HOST_NAME = 63;
 
 /** Method of `TR064Client` which is called when a state below `states` is written */
 type StateFunction = (val: ioBroker.StateValue, callback?: () => void) => boolean | void;
@@ -290,6 +300,7 @@ export class Tr064Adapter extends utils.Adapter {
                     answer({ error: 'not connected', nodes: [], links: [] });
                     return;
                 }
+                const canRename = this.tr064Client.canSetHostName();
                 this.tr064Client.getMeshList(
                     this.callbackTimers.wrap<MeshList | undefined>(15_000, (err, list) => {
                         if (err || !list) {
@@ -298,13 +309,58 @@ export class Tr064Adapter extends utils.Adapter {
                                 error: error === 'not supported' ? error : error || 'no mesh list',
                                 nodes: [],
                                 links: [],
+                                canRename,
                             });
                             return;
                         }
-                        this.meshTopology = buildMeshTopology(list, this.config.devices);
-                        answer(this.meshTopology);
+                        this.meshTopology = buildMeshTopology(list, this.config.devices, text => this.log.info(text));
+                        answer({ ...this.meshTopology, canRename });
                     }),
                 );
+                return;
+            }
+
+            case 'setHostName': {
+                // renames a device in the box (X_AVM-DE_SetHostNameByMACAddress)
+                const message = (typeof obj.message === 'object' && obj.message !== null ? obj.message : {}) as {
+                    mac?: string;
+                    name?: string;
+                };
+                const mac = String(message.mac ?? '').trim();
+                const name = String(message.name ?? '').trim();
+                const answer = (response: RenameResponse): void => {
+                    if (obj.callback) {
+                        this.sendTo(obj.from, obj.command, response, obj.callback);
+                    }
+                };
+
+                if (!mac || !name) {
+                    answer({ error: 'mac and name are required' });
+                    return;
+                }
+                if (name.length > MAX_HOST_NAME) {
+                    answer({ error: `the name must not be longer than ${MAX_HOST_NAME} characters` });
+                    return;
+                }
+                if (!this.boxConnected || !this.tr064Client) {
+                    answer({ error: 'not connected' });
+                    return;
+                }
+
+                this.tr064Client.setHostName(mac, name, err => {
+                    if (err) {
+                        this.log.warn(`Cannot rename a device in the FritzBox: ${err.message}`);
+                        this.log.silly(`setHostName ${mac} -> ${name}: ${err.message}`);
+                        answer({ error: err.message });
+                        return;
+                    }
+                    // the cached list of the button "Find a device" and the mesh are outdated now
+                    this.allDevices = [];
+                    this.lastSlowRefresh = 0;
+                    this.log.debug('A device was renamed in the FritzBox');
+                    this.log.silly(`setHostName: ${mac} -> ${name}`);
+                    answer({});
+                });
                 return;
             }
 
@@ -759,7 +815,7 @@ export class Tr064Adapter extends utils.Adapter {
                     return;
                 }
                 this.meshErrorLogged = false;
-                const topology = buildMeshTopology(list, this.config.devices);
+                const topology = buildMeshTopology(list, this.config.devices, text => this.log.info(text));
                 this.meshTopology = topology;
 
                 const dev = new CDevice(this.devices, CHANNEL_DEVICES, '');

@@ -16,13 +16,14 @@ I18n.setTranslations(meshTranslations);
 const params = new URLSearchParams(window.location.search);
 // `?view=table&disconnected=true&configured=true` preset the settings which the component remembers
 try {
-    if (params.get('view') || params.get('disconnected') || params.get('configured')) {
+    if (params.get('view') || params.get('disconnected') || params.get('configured') || params.get('vendor')) {
         window.localStorage.setItem(
             'tr064.meshTopology',
             JSON.stringify({
                 viewMode: params.get('view') || 'graph',
                 showDisconnected: params.get('disconnected') === 'true',
                 onlyConfigured: params.get('configured') === 'true',
+                showVendor: params.get('vendor') !== 'false',
             }),
         );
     }
@@ -35,15 +36,18 @@ I18n.setLanguage(
 
 /**
  * Answers like the adapter: `?clients=100` for one box with many clients, `?error=not connected`, `?alive=false`.
- * `?width=320` limits the width of the component (phone), `?theme=dark`, `?lang=de`.
+ * `?width=320` limits the width of the component (phone), `?theme=dark`, `?lang=de`, `?vendor=false`
+ * without the manufacturer, `?renameError=...` lets every rename fail.
  */
 const mockSocket = {
     getState: (): Promise<ioBroker.State> =>
         Promise.resolve({ val: params.get('alive') !== 'false' } as ioBroker.State),
-    sendTo: (_instance: string, _command: string, _data: unknown): Promise<unknown> =>
+    sendTo: (_instance: string, command: string, _data: unknown): Promise<unknown> =>
         new Promise(resolve =>
             setTimeout(() => {
-                if (params.get('error')) {
+                if (command === 'setHostName') {
+                    resolve({ error: params.get('renameError') || undefined });
+                } else if (params.get('error')) {
                     resolve({ error: params.get('error'), nodes: [], links: [] });
                 } else if (params.get('clients')) {
                     resolve(bigMeshMock(parseInt(params.get('clients')!, 10) || 100));

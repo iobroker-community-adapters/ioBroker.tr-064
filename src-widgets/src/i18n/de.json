@@ -31,6 +31,7 @@
     "view_tooltip": "Vorgabe für die Ansicht. Was der Betrachter ändert, merkt sich der Browser, bis diese Einstellung geändert wird",
     "only_configured": "Nur konfigurierte Geräte",
     "show_disconnected": "Getrennte Geräte anzeigen",
+    "show_vendor": "Hersteller anzeigen",
     "only_active": "Nur anwesende Geräte",
     "active_first": "Anwesende Geräte zuerst",
     "show_access_point": "Zugangspunkt anzeigen",

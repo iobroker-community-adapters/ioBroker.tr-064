@@ -31,6 +31,7 @@
     "view_tooltip": "Valor predeterminado de la vista. Lo que cambie el usuario se recuerda en el navegador hasta que se cambie este ajuste",
     "only_configured": "Solo dispositivos configurados",
     "show_disconnected": "Mostrar dispositivos desconectados",
+    "show_vendor": "Mostrar el fabricante",
     "only_active": "Solo dispositivos presentes",
     "active_first": "Dispositivos presentes primero",
     "show_access_point": "Mostrar punto de acceso",

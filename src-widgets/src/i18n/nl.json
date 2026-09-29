@@ -31,6 +31,7 @@
     "view_tooltip": "Standaard voor de weergave. Wat de kijker wijzigt, onthoudt de browser totdat deze instelling wordt gewijzigd",
     "only_configured": "Alleen geconfigureerde apparaten",
     "show_disconnected": "Losgekoppelde apparaten tonen",
+    "show_vendor": "Fabrikant tonen",
     "only_active": "Alleen aanwezige apparaten",
     "active_first": "Aanwezige apparaten eerst",
     "show_access_point": "Toegangspunt tonen",

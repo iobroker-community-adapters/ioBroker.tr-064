@@ -30,5 +30,14 @@
     "tr064_role_master": "Mesh-master",
     "tr064_role_slave": "Mesh-repeater",
     "tr064_role_switch": "Switch",
-    "tr064_role_client": "Apparaat"
+    "tr064_role_client": "Apparaat",
+    "tr064_showVendor": "Fabrikant tonen",
+    "tr064_randomMac": "willekeurig MAC-adres",
+    "tr064_rename": "Hernoemen",
+    "tr064_renameTitle": "Apparaat hernoemen",
+    "tr064_newName": "Naam in de FRITZ!Box",
+    "tr064_renameHint": "De FRITZ!Box gebruikt deze naam overal. Zolang de optie \"Geconfigureerde namen gebruiken\" uit staat, worden de objecten onder \"devices\" mee hernoemd.",
+    "tr064_renameFailed": "De FRITZ!Box heeft het apparaat niet hernoemd: %s",
+    "tr064_clickToRename": "Klik om te hernoemen",
+    "tr064_cancel": "Annuleren"
 }

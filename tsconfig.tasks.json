@@ -1,4 +1,4 @@
-// Type check of tasks.ts, which runs with tsx (`npm run check`)
+// Type check of tasks.ts and tasks-oui.ts, which run with tsx (`npm run check`)
 {
     "extends": "@tsconfig/node22/tsconfig.json",
     "compilerOptions": {
@@ -7,5 +7,5 @@
         "skipLibCheck": true,
         "types": ["node"]
     },
-    "include": ["tasks.ts"]
+    "include": ["tasks.ts", "tasks-oui.ts"]
 }

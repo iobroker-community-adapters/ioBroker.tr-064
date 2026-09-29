@@ -13,6 +13,10 @@ import {
     Button,
     Checkbox,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     FormControlLabel,
     IconButton,
     Table,
@@ -21,16 +25,23 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TextField,
     ToggleButton,
     ToggleButtonGroup,
     Typography,
 } from '@mui/material';
 import { createTheme, ThemeProvider, useTheme, type Theme } from '@mui/material';
-import { AccountTree as IconGraph, Refresh as IconRefresh, TableRows as IconTable } from '@mui/icons-material';
+import {
+    AccountTree as IconGraph,
+    Edit as IconEdit,
+    Refresh as IconRefresh,
+    TableRows as IconTable,
+} from '@mui/icons-material';
 
 import {
     buildTree,
     CHIP_H,
+    CHIP_H_VENDOR,
     ellipsis,
     fittingChars,
     GAP,
@@ -53,7 +64,7 @@ import {
     MESH_ERROR_NOT_SUPPORTED,
     MESH_ERROR_TIMEOUT,
 } from './meshApi';
-import type { MeshResponse } from './types';
+import type { MeshNodeInfo, MeshResponse } from './types';
 
 export const KIND_COLORS: Record<LinkKind, string> = {
     2.4: '#f59e0b',
@@ -65,6 +76,8 @@ export const KIND_COLORS: Record<LinkKind, string> = {
 
 /** Below this width the toolbar is compact */
 const DENSE_WIDTH = 600;
+/** Longest name which the box accepts, see `MAX_HOST_NAME` of `src/main.ts` */
+const MAX_HOST_NAME = 63;
 /** Table columns by the available width */
 const TABLE_FULL_WIDTH = 760;
 const TABLE_MEDIUM_WIDTH = 480;
@@ -80,6 +93,12 @@ export interface MeshViewProps {
     error: string | null;
     /** Called by the refresh button */
     onRefresh: () => void;
+    /**
+     * Renames a device in the box (`renameDevice()` of `meshApi.ts`). Without it - and without
+     * `canRename` of the answer - the view shows no rename button. It resolves with the error
+     * text, or with `undefined` if the device was renamed.
+     */
+    onRename?: (mac: string, name: string) => Promise<string | undefined>;
     /** Translation of the `tr064_*` keys, e.g. `I18n.t` - `%s` is replaced by the arguments */
     t: MeshTranslate;
     /** Forces light or dark colors, by default the mode of the MUI theme of the host */
@@ -97,15 +116,23 @@ type ViewMode = 'graph' | 'table';
 interface ViewSettings {
     onlyConfigured: boolean;
     showDisconnected: boolean;
+    /** The manufacturer of the MAC address below the name - the chips get a second line */
+    showVendor: boolean;
     viewMode: ViewMode;
 }
 
 function loadSettings(key: string): ViewSettings {
-    const settings: ViewSettings = { onlyConfigured: false, showDisconnected: false, viewMode: 'graph' };
+    const settings: ViewSettings = {
+        onlyConfigured: false,
+        showDisconnected: false,
+        showVendor: true,
+        viewMode: 'graph',
+    };
     try {
         const stored = JSON.parse(window.localStorage.getItem(key) || '{}') as Partial<ViewSettings>;
         settings.onlyConfigured = !!stored.onlyConfigured;
         settings.showDisconnected = !!stored.showDisconnected;
+        settings.showVendor = stored.showVendor !== false;
         settings.viewMode = stored.viewMode === 'table' ? 'table' : 'graph';
     } catch {
         // no storage (private window, blocked site data) - the defaults are used
@@ -119,6 +146,17 @@ function saveSettings(key: string, settings: ViewSettings): void {
     } catch {
         // ignore
     }
+}
+
+/**
+ * The manufacturer of a device below its name: the owner of the MAC prefix, or the note that the
+ * device uses a randomized address, which belongs to nobody.
+ *
+ * @param info a node of the topology or a row of the table
+ * @param t
+ */
+function vendorText(info: { vendor?: string; randomMac?: boolean }, t: MeshTranslate): string {
+    return info.vendor || (info.randomMac ? t('tr064_randomMac') : '');
 }
 
 function kindLabel(kind: LinkKind | ''): string {
@@ -229,14 +267,25 @@ function renderEdge(edge: PlacedEdge, index: number, theme: Theme, t: MeshTransl
     );
 }
 
-function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX.Element {
+/** What the cards need besides the topology itself */
+interface CardContext {
+    /** The manufacturer below the name */
+    showVendor: boolean;
+    /** Opens the rename dialog, missing if the box or the host cannot rename a device */
+    onRename?: (uid: string) => void;
+}
+
+function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardContext): React.JSX.Element {
     const palette = theme.palette;
     const node = card.view.node;
     const title = node ? node.name || node.mac : t('tr064_notAssigned');
     const role = node ? t(`tr064_role_${node.role}`) : '';
-    const subtitle = [node?.model && node.model !== node.name ? node.model : '', node?.ip || '', role]
-        .filter(Boolean)
-        .join(' · ');
+    const model = node?.model && node.model !== node.name ? node.model : '';
+    const vendor = node && ctx.showVendor ? vendorText(node, t) : '';
+    // the manufacturer only stands in for the model, which says more about a box or a repeater
+    const subtitle = [model || vendor, node?.ip || '', role].filter(Boolean).join(' · ');
+    // the box itself is not renamed with the name of a device of the home network
+    const renameUid = node && node.role !== 'master' && node.mac && ctx.onRename ? node.uid : '';
     const count = card.view.clients.length;
     const countText = count === 1 ? t('tr064_oneDevice') : count ? t('tr064_devices', count) : '';
     const titleChars = fittingChars(card.w - 2 * PAD - (countText ? countText.length * 6.2 + 8 : 0), 14, true);
@@ -249,7 +298,18 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX
             key={`card-${node?.uid || 'unassigned'}`}
             transform={`translate(${card.x}, ${card.y})`}
         >
-            <title>{[title, node?.model, node?.mac, node?.ip].filter(Boolean).join('\n')}</title>
+            <title>
+                {[
+                    title,
+                    node?.model,
+                    node ? vendorText(node, t) : '',
+                    node?.mac,
+                    node?.ip,
+                    renameUid ? t('tr064_clickToRename') : '',
+                ]
+                    .filter(Boolean)
+                    .join('\n')}
+            </title>
             <rect
                 width={card.w}
                 height={card.h}
@@ -265,6 +325,8 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX
                 fontSize={14}
                 fontWeight={600}
                 fill={palette.text.primary}
+                style={renameUid ? { cursor: 'pointer' } : undefined}
+                onClick={renameUid ? () => ctx.onRename!(renameUid) : undefined}
             >
                 {ellipsis(title, titleChars)}
             </text>
@@ -289,13 +351,18 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX
                 const column = i % card.columns;
                 const row = Math.floor(i / card.columns);
                 const x = PAD + column * (card.chipW + GAP);
-                const y = HEADER_H + row * (CHIP_H + GAP);
+                const y = HEADER_H + row * (card.chipH + GAP);
                 const kind = linkKind(client.link);
                 const configured = !!client.node.configured;
                 const name = client.node.configured || client.node.name || client.node.mac;
+                const manufacturer = vendorText(client.node, t);
+                // the chip has room for a second line only if the manufacturer is switched on
+                const twoLines = card.chipH >= CHIP_H_VENDOR;
+                const nameY = twoLines ? 16 : 17;
                 const details = [
                     configured ? t('tr064_configuredAs', client.node.configured!) : '',
                     client.node.name,
+                    manufacturer,
                     client.node.mac,
                     client.node.ip,
                     client.link ? client.link.interface || client.link.type : '',
@@ -303,6 +370,7 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX
                     client.link && (client.link.curRx || client.link.curTx)
                         ? t('tr064_rateTooltip', mbit(client.link.curRx), mbit(client.link.curTx))
                         : '',
+                    ctx.onRename ? t('tr064_clickToRename') : '',
                 ].filter(Boolean);
 
                 return (
@@ -311,11 +379,13 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX
                         transform={`translate(${x}, ${y})`}
                         // a configured device stays readable in the dark theme, the dashed frame marks it
                         opacity={client.connected ? 1 : configured ? 0.85 : 0.65}
+                        style={ctx.onRename ? { cursor: 'pointer' } : undefined}
+                        onClick={ctx.onRename ? () => ctx.onRename!(client.node.uid) : undefined}
                     >
                         <title>{details.join('\n')}</title>
                         <rect
                             width={card.chipW}
-                            height={CHIP_H}
+                            height={card.chipH}
                             rx={5}
                             fill={palette.action.hover}
                             stroke={configured ? palette.primary.main : palette.divider}
@@ -324,22 +394,34 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX
                         />
                         <rect
                             width={5}
-                            height={CHIP_H}
+                            height={card.chipH}
                             rx={2}
                             fill={KIND_COLORS[kind]}
                         />
                         <text
                             x={12}
-                            y={17}
+                            y={nameY}
                             fontSize={12}
                             fontWeight={configured ? 700 : 400}
                             fill={configured ? palette.primary.main : palette.text.primary}
                         >
                             {ellipsis(name, fittingChars(nameWidth, 12, configured))}
                         </text>
+                        {twoLines && ctx.showVendor && manufacturer ? (
+                            <text
+                                x={12}
+                                y={30}
+                                fontSize={10}
+                                fontStyle="italic"
+                                opacity={0.7}
+                                fill={palette.text.secondary}
+                            >
+                                {ellipsis(manufacturer, fittingChars(card.chipW - 18, 10))}
+                            </text>
+                        ) : null}
                         <text
                             x={card.chipW - 6}
-                            y={17}
+                            y={nameY}
                             fontSize={10}
                             textAnchor="end"
                             fill={palette.text.secondary}
@@ -353,8 +435,15 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate): React.JSX
     );
 }
 
-function MeshTable(props: { tree: MeshTree; width: number; t: MeshTranslate; theme: Theme }): React.JSX.Element {
-    const { tree, width, t, theme } = props;
+function MeshTable(props: {
+    tree: MeshTree;
+    width: number;
+    t: MeshTranslate;
+    theme: Theme;
+    showVendor: boolean;
+    onRename?: (uid: string) => void;
+}): React.JSX.Element {
+    const { tree, width, t, theme, showVendor, onRename } = props;
     const full = width >= TABLE_FULL_WIDTH;
     const medium = width >= TABLE_MEDIUM_WIDTH;
     // a phone: device (with access point and state below the name) and connection only
@@ -374,6 +463,7 @@ function MeshTable(props: { tree: MeshTree; width: number; t: MeshTranslate; the
                     {medium ? <TableCell>{t('tr064_rate')}</TableCell> : null}
                     {full ? <TableCell>{t('tr064_mac')}</TableCell> : null}
                     {full ? <TableCell>{t('tr064_ip')}</TableCell> : null}
+                    {onRename ? <TableCell sx={{ width: 40 }} /> : null}
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -392,6 +482,16 @@ function MeshTable(props: { tree: MeshTree; width: number; t: MeshTranslate; the
                             title={row.configured && row.hostName !== row.name ? row.hostName : undefined}
                         >
                             {row.name}
+                            {showVendor && vendorText(row, t) ? (
+                                <Typography
+                                    variant="caption"
+                                    component="div"
+                                    color="text.secondary"
+                                    sx={{ fontStyle: 'italic', opacity: 0.7, fontWeight: 400 }}
+                                >
+                                    {vendorText(row, t)}
+                                </Typography>
+                            ) : null}
                             {medium ? null : (
                                 <Typography
                                     variant="caption"
@@ -423,10 +523,124 @@ function MeshTable(props: { tree: MeshTree; width: number; t: MeshTranslate; the
                         {medium ? <TableCell sx={{ whiteSpace: 'nowrap' }}>{rate(row)}</TableCell> : null}
                         {full ? <TableCell sx={{ fontFamily: 'monospace' }}>{row.mac}</TableCell> : null}
                         {full ? <TableCell>{row.ip || ''}</TableCell> : null}
+                        {onRename ? (
+                            <TableCell sx={{ ...cell, width: 40 }}>
+                                <IconButton
+                                    size="small"
+                                    title={t('tr064_rename')}
+                                    onClick={() => onRename(row.uid)}
+                                >
+                                    <IconEdit fontSize="small" />
+                                </IconButton>
+                            </TableCell>
+                        ) : null}
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
+    );
+}
+
+/**
+ * Asks for the new name of a device and renames it in the box.
+ *
+ * The box uses that name everywhere, so it also decides how the objects below `devices` are
+ * called - `tr064_renameHint` says so.
+ *
+ * @param props
+ */
+function RenameDialog(props: {
+    node: MeshNodeInfo;
+    t: MeshTranslate;
+    onClose: () => void;
+    onRename: (mac: string, name: string) => Promise<string | undefined>;
+}): React.JSX.Element {
+    const { node, t, onClose, onRename } = props;
+    const [name, setName] = useState(node.name || '');
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const changed = name.trim() && name.trim() !== node.name;
+
+    const save = (): void => {
+        if (!changed || busy) {
+            return;
+        }
+        setBusy(true);
+        setError(null);
+        void onRename(node.mac, name.trim()).then(failed => {
+            setBusy(false);
+            if (failed) {
+                setError(failed);
+            } else {
+                onClose();
+            }
+        });
+    };
+
+    return (
+        <Dialog
+            open
+            fullWidth
+            maxWidth="sm"
+            onClose={busy ? undefined : onClose}
+        >
+            <DialogTitle>{t('tr064_renameTitle')}</DialogTitle>
+            <DialogContent>
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                >
+                    {[node.mac, vendorText(node, t), node.ip].filter(Boolean).join(' · ')}
+                </Typography>
+                <TextField
+                    fullWidth
+                    autoFocus
+                    variant="standard"
+                    label={t('tr064_newName')}
+                    value={name}
+                    disabled={busy}
+                    error={!!error}
+                    slotProps={{ htmlInput: { maxLength: MAX_HOST_NAME } }}
+                    onChange={e => setName(e.target.value)}
+                    onKeyUp={e => {
+                        if (e.key === 'Enter') {
+                            save();
+                        }
+                    }}
+                />
+                <Alert
+                    severity="info"
+                    sx={{ mt: 2 }}
+                >
+                    {t('tr064_renameHint')}
+                </Alert>
+                {error ? (
+                    <Alert
+                        severity="error"
+                        sx={{ mt: 1 }}
+                    >
+                        {t('tr064_renameFailed', error)}
+                    </Alert>
+                ) : null}
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    disabled={busy}
+                    onClick={onClose}
+                >
+                    {t('tr064_cancel')}
+                </Button>
+                <Button
+                    variant="contained"
+                    disabled={busy || !changed}
+                    startIcon={busy ? <CircularProgress size={16} /> : <IconEdit />}
+                    onClick={save}
+                >
+                    {t('tr064_rename')}
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 }
 
@@ -436,7 +650,7 @@ function MeshTable(props: { tree: MeshTree; width: number; t: MeshTranslate; the
  * @param props
  */
 export default function MeshView(props: MeshViewProps): React.JSX.Element {
-    const { data, loading, error, onRefresh, t, compact, height } = props;
+    const { data, loading, error, onRefresh, onRename, t, compact, height } = props;
     const storageKey = props.storageKey || 'tr064.meshTopology';
 
     const outerTheme = useTheme();
@@ -454,6 +668,12 @@ export default function MeshView(props: MeshViewProps): React.JSX.Element {
         setSettings(next);
         saveSettings(storageKey, next);
     };
+
+    // the device of the open rename dialog, by its UID: the node itself is taken from the last
+    // answer, so the dialog closes by itself if the device disappears
+    const [renameUid, setRenameUid] = useState<string | null>(null);
+    const renameNode = renameUid ? (data?.nodes || []).find(node => node.uid === renameUid) : undefined;
+    const openRename = onRename && data?.canRename ? (uid: string) => setRenameUid(uid) : undefined;
 
     // the width of the container decides about the layout
     const rootRef = useRef<HTMLDivElement | null>(null);
@@ -495,8 +715,8 @@ export default function MeshView(props: MeshViewProps): React.JSX.Element {
         if (tree.unassigned.length) {
             roots.push({ clients: tree.unassigned, children: [] });
         }
-        return layoutMesh(roots, graphWidth);
-    }, [tree, graphWidth]);
+        return layoutMesh(roots, graphWidth, settings.showVendor ? CHIP_H_VENDOR : CHIP_H);
+    }, [tree, graphWidth, settings.showVendor]);
 
     const dense = !!compact || (width > 0 && width < DENSE_WIDTH);
     const fixedHeight = height !== undefined && height !== null && height !== '';
@@ -543,6 +763,7 @@ export default function MeshView(props: MeshViewProps): React.JSX.Element {
             {[
                 { key: 'onlyConfigured' as const, label: t('tr064_onlyConfigured') },
                 { key: 'showDisconnected' as const, label: t('tr064_showDisconnected') },
+                { key: 'showVendor' as const, label: t('tr064_showVendor') },
             ].map(item => (
                 <FormControlLabel
                     key={item.key}
@@ -626,6 +847,8 @@ export default function MeshView(props: MeshViewProps): React.JSX.Element {
                             width={graphWidth}
                             t={t}
                             theme={theme}
+                            showVendor={settings.showVendor}
+                            onRename={openRename}
                         />
                     </TableContainer>
                 ) : (
@@ -637,7 +860,12 @@ export default function MeshView(props: MeshViewProps): React.JSX.Element {
                                 style={{ display: 'block', fontFamily: theme.typography.fontFamily }}
                             >
                                 {layout.edges.map((edge, i) => renderEdge(edge, i, theme, t))}
-                                {layout.cards.map(card => renderCard(card, theme, t))}
+                                {layout.cards.map(card =>
+                                    renderCard(card, theme, t, {
+                                        showVendor: settings.showVendor,
+                                        onRename: openRename,
+                                    }),
+                                )}
                             </svg>
                         ) : null}
                     </Box>
@@ -659,6 +887,14 @@ export default function MeshView(props: MeshViewProps): React.JSX.Element {
         >
             {toolbar}
             {content}
+            {renameNode && onRename ? (
+                <RenameDialog
+                    node={renameNode}
+                    t={t}
+                    onClose={() => setRenameUid(null)}
+                    onRename={onRename}
+                />
+            ) : null}
         </Box>
     );
 

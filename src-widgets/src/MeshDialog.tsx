@@ -23,13 +23,14 @@ interface MeshDialogProps {
 function MeshContent(
     props: Omit<MeshDialogProps, 'title' | 'closeText' | 'onClose'> & { phone: boolean },
 ): React.JSX.Element {
-    const { data, loading, error, refresh } = useMeshLoader(props.socket, props.instanceId, 30);
+    const { data, loading, error, refresh, rename } = useMeshLoader(props.socket, props.instanceId, 30);
     return (
         <MeshView
             data={data}
             loading={loading}
             error={error}
             onRefresh={refresh}
+            onRename={rename}
             t={props.t}
             themeType={props.themeType}
             compact={props.phone}

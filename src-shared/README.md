@@ -23,7 +23,7 @@ The copies are gitignored - **edit only `src-shared/`**, a change of a copy is o
 | File | Content |
 | --- | --- |
 | `types.ts` | `MeshResponse`, `MeshNodeInfo`, `MeshLinkInfo` - answer of `sendTo('<instance>', 'mesh', {})`, same as `src/lib/types.ts` of the adapter |
-| `meshApi.ts` | `fetchMesh()`, `MeshLoader`, `useMeshLoader()`, error codes |
+| `meshApi.ts` | `fetchMesh()`, `renameDevice()`, `MeshLoader`, `useMeshLoader()`, error codes |
 | `MeshView.tsx` | the React component: toolbar, SVG graph, table |
 | `meshLayout.ts` | tree building and layout (pure functions, no React) |
 | `i18n/<lang>.json` | the `tr064_*` texts in 11 languages |
@@ -37,6 +37,9 @@ The copies are gitignored - **edit only `src-shared/`**, a change of a copy is o
     loading={loading}    // boolean - a request is running (spinner on the refresh button)
     error={error}        // string | null - error code or text, see below
     onRefresh={refresh}  // () => void - refresh button
+    onRename={rename}    // (mac, name) => Promise<string | undefined> - renames a device in the box,
+                         //   resolves with the error text. Without it (or without `canRename` of the
+                         //   answer) the view shows no rename button. `MeshLoader.rename()` does it.
     t={t}                // (key, ...args) => string - translation of the tr064_* keys, `%s` = args
     themeType="dark"     // optional 'light' | 'dark' - default: mode of the MUI theme of the host
     compact              // optional - small toolbar (icon refresh button, small labels) for tiles/dialogs

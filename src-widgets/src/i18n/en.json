@@ -31,6 +31,7 @@
     "view_tooltip": "Default of the view. What the viewer changes is remembered in the browser until this setting is changed",
     "only_configured": "Only configured devices",
     "show_disconnected": "Show disconnected devices",
+    "show_vendor": "Show manufacturer",
     "only_active": "Only present devices",
     "active_first": "Present devices first",
     "show_access_point": "Show access point",

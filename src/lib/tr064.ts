@@ -1135,6 +1135,41 @@ export class TR064Client extends TR064 {
         });
     }
 
+    /** Whether the firmware of the box offers `X_AVM-DE_SetHostNameByMACAddress` */
+    public canSetHostName(): boolean {
+        return !!this.hosts?.actions?.['X_AVM-DE_SetHostNameByMACAddress'];
+    }
+
+    /**
+     * Renames a device in the box, i.e. changes the name which the box shows everywhere.
+     *
+     * The action was added with FRITZ!OS 7, a box without it answers with `not supported` instead
+     * of failing silently. `callback` is called exactly once.
+     *
+     * @param mac the address of the device, in any notation
+     * @param name the new name
+     */
+    public setHostName(mac: string, name: string, callback: (err: Error | null) => void): void {
+        const setName = this.hosts?.actions?.['X_AVM-DE_SetHostNameByMACAddress'];
+        if (!setName) {
+            callback(new Error('not supported'));
+            return;
+        }
+        this.adapter.log.debug('setHostName');
+        this.adapter.log.silly(`setHostName: ${mac} -> ${name}`);
+
+        setName(
+            { NewMACAddress: normalizeMac(mac), NewHostName: name },
+            this.adapter.callbackTimers.wrap<ActionResult>(10_000, err => {
+                if (err) {
+                    callback(new Error(typeof err === 'string' ? err : err.message || 'unknown error'));
+                    return;
+                }
+                callback(null);
+            }),
+        );
+    }
+
     public getWLAN(callback: (err: TR064Error | null, result: ActionResult) => void): void {
         this.safe(this.wlan24, 'getInfo', true)(callback);
     }

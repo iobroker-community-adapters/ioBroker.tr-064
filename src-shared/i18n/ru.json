@@ -30,5 +30,14 @@
     "tr064_role_master": "Mesh-мастер",
     "tr064_role_slave": "Mesh-репитер",
     "tr064_role_switch": "Коммутатор",
-    "tr064_role_client": "Устройство"
+    "tr064_role_client": "Устройство",
+    "tr064_showVendor": "Показывать производителя",
+    "tr064_randomMac": "случайный MAC-адрес",
+    "tr064_rename": "Переименовать",
+    "tr064_renameTitle": "Переименовать устройство",
+    "tr064_newName": "Имя в FRITZ!Box",
+    "tr064_renameHint": "FRITZ!Box использует это имя везде. Пока опция «Использовать настроенные имена» выключена, объекты в «devices» переименовываются вместе с ним.",
+    "tr064_renameFailed": "FRITZ!Box не переименовал устройство: %s",
+    "tr064_clickToRename": "Нажмите, чтобы переименовать",
+    "tr064_cancel": "Отмена"
 }
