@@ -1,4 +1,9 @@
 # Older changes
+## 4.3.0 (2024-04-30)
+* (mcm1957) Adapter requires node.js >= 18 and js-controller >= 5 now
+* (mcm1957) Dependencies have been updated
+
+
 ## 4.2.18 (2023-01-04)
 * (Apollon77) Prepare for future js-controller versions
 

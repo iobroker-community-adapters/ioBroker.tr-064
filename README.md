@@ -198,7 +198,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.1.2 (2026-10-01)
 - (@GermanBluefox) The mesh topology shows the signal strength of a WLAN device: four bars and the value in dBm (`rx_rcpi`/`tx_rcpi` of the mesh list), the signal to noise and the rating of the FRITZ!Box itself ("too far away from the access point", `client_position`) in the tooltip and in the new column "Signal" of the table
 - (@GermanBluefox) A device which is not connected any more shows when it was connected last (`last_connected`)
 - (@GermanBluefox) The manufacturer of a device is taken from the FRITZ!Box (`device_manufacturer`, which it knows from LLDP or the DHCP request) and only looked up in the IEEE registries if the box does not name one
@@ -260,10 +260,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 - (@GermanBluefox) The adapter can only be installed from npm now, no longer directly from GitHub (`common.nogit`)
 - (@GermanBluefox) The options "Use call forwarding options", "Use mDNS" and "Create JSON device list" have a default value in `io-package.json` now
 - (@GermanBluefox) The command `dumpservices.fs` writes the file again instead of stopping the adapter
-
-### 4.3.0 (2024-04-30)
-* (mcm1957) Adapter requires node.js >= 18 and js-controller >= 5 now
-* (mcm1957) Dependencies have been updated
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
