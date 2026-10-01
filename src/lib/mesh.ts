@@ -18,10 +18,18 @@ interface MeshListLink {
     node_2_uid?: string;
     node_interface_1_uid?: string;
     node_interface_2_uid?: string;
+    last_connected?: number;
+    /** `rx` is measured at node 1, `tx` at node 2 - see `MeshLinkInfo` */
     cur_data_rate_rx?: number;
     cur_data_rate_tx?: number;
     max_data_rate_rx?: number;
     max_data_rate_tx?: number;
+    /** WLAN: receive channel power indicator in dBm, `rx` at node 1, `tx` at node 2 */
+    rx_rcpi?: number;
+    tx_rcpi?: number;
+    /** WLAN: receive signal to noise indicator in dB, the same two sides */
+    rx_rsni?: number;
+    tx_rsni?: number;
 }
 
 interface MeshListInterface {
@@ -29,6 +37,8 @@ interface MeshListInterface {
     name?: string;
     type?: string;
     node_links?: MeshListLink[];
+    /** WLAN: how the box rates the RCPI of the uplink */
+    client_position?: string;
 }
 
 interface MeshListNode {
@@ -36,6 +46,7 @@ interface MeshListNode {
     device_name?: string;
     device_mac_address?: string;
     device_model?: string;
+    device_manufacturer?: string;
     device_class?: string;
     is_meshed?: boolean;
     mesh_role?: string;
@@ -67,6 +78,45 @@ function bandOf(name: string): MeshLinkInfo['band'] {
         return undefined;
     }
     return m[1] === '2' ? '2.4' : (m[1] as '5' | '6');
+}
+
+/**
+ * A measured value of the box, `undefined` if it is missing or unknown.
+ *
+ * AVM reports an unknown RCPI, RSNI or availability as `255` - a value which none of them can
+ * really have (the RCPI is negative, the others are at most 100).
+ *
+ * @param value the raw value of the mesh list
+ */
+function measured(value: number | undefined): number | undefined {
+    return typeof value === 'number' && value !== 255 ? value : undefined;
+}
+
+/**
+ * `last_connected` of the box as a time stamp in milliseconds.
+ *
+ * AVM does not document the unit, and unlike `last_update` of the metrics it is in seconds on the
+ * boxes - a value which is too small for milliseconds is therefore converted.
+ *
+ * @param value `last_connected` of a link
+ */
+function lastConnectedMs(value: number | undefined): number | undefined {
+    if (typeof value !== 'number' || value <= 0) {
+        return undefined;
+    }
+    // 1e11 ms is 1973, 1e11 s is the year 5138: everything below is seconds
+    return value < 1e11 ? value * 1000 : value;
+}
+
+/** `client_position` of the box, without its `unknown` */
+function positionOf(node: MeshListNode): MeshNodeInfo['position'] {
+    for (const iface of node.node_interfaces || []) {
+        const position = String(iface.client_position || '').toLowerCase();
+        if (position === 'too_close' || position === 'too_far' || position === 'ok') {
+            return position;
+        }
+    }
+    return undefined;
 }
 
 function roleOf(node: MeshListNode): MeshNodeInfo['role'] {
@@ -118,12 +168,19 @@ export function buildMeshTopology(
         if (entry) {
             info.configured = entry.name;
         }
-        const { vendor, random } = lookupVendor(mac, onError);
-        if (vendor) {
-            info.vendor = vendor;
+        // the box knows the manufacturer of many devices from LLDP or the DHCP request - that is
+        // the better source than the MAC prefix, which only names the owner of the address block
+        const fromBox = (node.device_manufacturer || '').trim();
+        const { vendor, random } = lookupVendor(mac, fromBox ? undefined : onError);
+        if (fromBox || vendor) {
+            info.vendor = fromBox || vendor;
         }
         if (random) {
             info.randomMac = true;
+        }
+        const position = positionOf(node);
+        if (position) {
+            info.position = position;
         }
         nodes.push(info);
         byUid.set(node.uid, info);
@@ -170,24 +227,45 @@ export function buildMeshTopology(
                 if (band && info.type !== 'LAN') {
                     info.band = band;
                 }
-                // the rates as the box reports them
-                const rates = [
-                    link.cur_data_rate_rx,
-                    link.cur_data_rate_tx,
-                    link.max_data_rate_rx,
-                    link.max_data_rate_tx,
-                ];
-                if (typeof rates[0] === 'number') {
-                    info.curRx = rates[0];
+                // The box names its two ends `rx` and `tx` of node 1: `rx` is node 2 -> node 1,
+                // `tx` is node 1 -> node 2, and RCPI/RSNI `rx` is measured at node 1, `tx` at
+                // node 2. `from` is not always node 1, therefore every pair is turned with the link.
+                const down = forward ? link.cur_data_rate_tx : link.cur_data_rate_rx;
+                const up = forward ? link.cur_data_rate_rx : link.cur_data_rate_tx;
+                const maxDown = forward ? link.max_data_rate_tx : link.max_data_rate_rx;
+                const maxUp = forward ? link.max_data_rate_rx : link.max_data_rate_tx;
+                const rcpiFrom = measured(forward ? link.rx_rcpi : link.tx_rcpi);
+                const rcpiTo = measured(forward ? link.tx_rcpi : link.rx_rcpi);
+                const rsniFrom = measured(forward ? link.rx_rsni : link.tx_rsni);
+                const rsniTo = measured(forward ? link.tx_rsni : link.rx_rsni);
+                const lastConnected = lastConnectedMs(link.last_connected);
+
+                if (typeof down === 'number') {
+                    info.curDown = down;
                 }
-                if (typeof rates[1] === 'number') {
-                    info.curTx = rates[1];
+                if (typeof up === 'number') {
+                    info.curUp = up;
                 }
-                if (typeof rates[2] === 'number') {
-                    info.maxRx = rates[2];
+                if (typeof maxDown === 'number') {
+                    info.maxDown = maxDown;
                 }
-                if (typeof rates[3] === 'number') {
-                    info.maxTx = rates[3];
+                if (typeof maxUp === 'number') {
+                    info.maxUp = maxUp;
+                }
+                if (rcpiFrom !== undefined) {
+                    info.rcpiFrom = rcpiFrom;
+                }
+                if (rcpiTo !== undefined) {
+                    info.rcpiTo = rcpiTo;
+                }
+                if (rsniFrom !== undefined) {
+                    info.rsniFrom = rsniFrom;
+                }
+                if (rsniTo !== undefined) {
+                    info.rsniTo = rsniTo;
+                }
+                if (lastConnected !== undefined) {
+                    info.lastConnected = lastConnected;
                 }
                 links.set(key, info);
             }

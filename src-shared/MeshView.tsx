@@ -56,6 +56,8 @@ import {
     PAD,
     type PlacedCard,
     type PlacedEdge,
+    signalLevel,
+    signalOf,
     type TableRow as MeshTableRow,
 } from './meshLayout';
 import {
@@ -194,7 +196,97 @@ function errorAlert(error: string, t: MeshTranslate): { severity: 'info' | 'warn
 }
 
 function rate(row: MeshTableRow): string {
-    return row.connected && (row.curRx || row.curTx) ? `↓ ${mbit(row.curRx)} / ↑ ${mbit(row.curTx)}` : '';
+    return row.connected && (row.curDown || row.curUp) ? `↓ ${mbit(row.curDown)} / ↑ ${mbit(row.curUp)}` : '';
+}
+
+/** Color of a signal: green from -60 dBm, yellow from -70, orange from -80, red below */
+const SIGNAL_COLORS: Record<1 | 2 | 3 | 4, string> = {
+    4: '#22c55e',
+    3: '#a3b018',
+    2: '#f59e0b',
+    1: '#ef4444',
+};
+
+/**
+ * Four bars like a WLAN symbol, the bars above the level are only outlined.
+ *
+ * Drawn in SVG coordinates, 13 x 11 px with the baseline of the text as the lower edge.
+ *
+ * @param props `rcpi` in dBm, `x`/`y` of the lower left corner
+ */
+function SignalBars(props: { rcpi: number; x: number; y: number }): React.JSX.Element {
+    const level = signalLevel(props.rcpi);
+    const color = SIGNAL_COLORS[level];
+    return (
+        <g transform={`translate(${props.x}, ${props.y})`}>
+            {[0, 1, 2, 3].map(i => {
+                const height = 3 + i * 2.5;
+                return (
+                    <rect
+                        key={i}
+                        x={i * 3.3}
+                        y={-height}
+                        width={2.4}
+                        height={height}
+                        rx={0.8}
+                        fill={color}
+                        opacity={i < level ? 1 : 0.22}
+                    />
+                );
+            })}
+        </g>
+    );
+}
+
+/** `-58 dBm`, empty if the box reports no signal for that link */
+function signalText(rcpi?: number): string {
+    return rcpi === undefined ? '' : `${rcpi} dBm`;
+}
+
+/** The time of the last connection of a device which is not connected any more */
+function lastSeenText(lastConnected: number | undefined, t: MeshTranslate): string {
+    if (!lastConnected) {
+        return '';
+    }
+    return t('tr064_lastSeen', new Date(lastConnected).toLocaleString());
+}
+
+/**
+ * The lines about the signal for a tooltip: the strength at both ends, the signal to noise and
+ * the rating of the box ("too far away").
+ *
+ * @param link the link of the device
+ * @param position `client_position` of the device
+ * @param t
+ */
+function signalDetails(
+    link: { rcpiFrom?: number; rcpiTo?: number; rsniFrom?: number; rsniTo?: number } | undefined,
+    position: MeshNodeInfo['position'],
+    t: MeshTranslate,
+): string[] {
+    const lines: string[] = [];
+    if (link?.rcpiTo !== undefined || link?.rcpiFrom !== undefined) {
+        lines.push(
+            t(
+                'tr064_signalTooltip',
+                link.rcpiTo === undefined ? '–' : String(link.rcpiTo),
+                link.rcpiFrom === undefined ? '–' : String(link.rcpiFrom),
+            ),
+        );
+    }
+    if (link?.rsniTo !== undefined || link?.rsniFrom !== undefined) {
+        lines.push(
+            t(
+                'tr064_noiseTooltip',
+                link.rsniTo === undefined ? '–' : String(link.rsniTo),
+                link.rsniFrom === undefined ? '–' : String(link.rsniFrom),
+            ),
+        );
+    }
+    if (position === 'too_far' || position === 'too_close') {
+        lines.push(t(`tr064_position_${position}`));
+    }
+    return lines;
 }
 
 function KindMark(props: { kind: LinkKind }): React.JSX.Element {
@@ -234,20 +326,22 @@ function renderEdge(edge: PlacedEdge, index: number, theme: Theme, t: MeshTransl
     const connected = edge.link.state?.toUpperCase() === 'CONNECTED';
     const label = [
         kindLabel(kind) || edge.link.type,
-        connected && edge.link.curRx ? `${mbit(edge.link.curRx)} Mbit/s` : '',
+        connected && edge.link.curDown ? `${mbit(edge.link.curDown)} Mbit/s` : '',
     ]
         .filter(Boolean)
         .join(' · ');
-    const rates =
-        edge.link.curRx || edge.link.curTx
-            ? `\n${t('tr064_rateTooltip', mbit(edge.link.curRx), mbit(edge.link.curTx))}`
-            : '';
+    const details = [
+        `${edge.link.interface || edge.link.type} - ${connected ? t('tr064_connected') : t('tr064_disconnected')}`,
+        edge.link.curDown || edge.link.curUp
+            ? t('tr064_rateTooltip', mbit(edge.link.curDown), mbit(edge.link.curUp))
+            : '',
+        ...signalDetails(edge.link, undefined, t),
+        connected ? '' : lastSeenText(edge.link.lastConnected, t),
+    ].filter(Boolean);
 
     return (
         <g key={`edge-${index}`}>
-            <title>
-                {`${edge.link.interface || edge.link.type} - ${connected ? t('tr064_connected') : t('tr064_disconnected')}${rates}`}
-            </title>
+            <title>{details.join('\n')}</title>
             <path
                 d={edge.d}
                 fill="none"
@@ -290,8 +384,6 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
     const countText = count === 1 ? t('tr064_oneDevice') : count ? t('tr064_devices', count) : '';
     const titleChars = fittingChars(card.w - 2 * PAD - (countText ? countText.length * 6.2 + 8 : 0), 14, true);
     const subtitleChars = fittingChars(card.w - 2 * PAD, 11);
-    // the band is right aligned in the chip, the name gets the rest
-    const nameWidth = card.chipW - 12 - 44;
 
     return (
         <g
@@ -359,6 +451,10 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
                 // the chip has room for a second line only if the manufacturer is switched on
                 const twoLines = card.chipH >= CHIP_H_VENDOR;
                 const nameY = twoLines ? 16 : 17;
+                // the band and, for a WLAN device, the signal are right aligned - the name gets the rest
+                const signal = client.connected ? signalOf(client.link) : undefined;
+                const bandW = kindLabel(kind) ? 30 : 0;
+                const signalW = signal === undefined ? 0 : 17;
                 const details = [
                     configured ? t('tr064_configuredAs', client.node.configured!) : '',
                     client.node.name,
@@ -367,9 +463,11 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
                     client.node.ip,
                     client.link ? client.link.interface || client.link.type : '',
                     client.connected ? t('tr064_connected') : t('tr064_disconnected'),
-                    client.link && (client.link.curRx || client.link.curTx)
-                        ? t('tr064_rateTooltip', mbit(client.link.curRx), mbit(client.link.curTx))
+                    client.link && (client.link.curDown || client.link.curUp)
+                        ? t('tr064_rateTooltip', mbit(client.link.curDown), mbit(client.link.curUp))
                         : '',
+                    ...(client.connected ? signalDetails(client.link, client.node.position, t) : []),
+                    client.connected ? '' : lastSeenText(client.link?.lastConnected, t),
                     ctx.onRename ? t('tr064_clickToRename') : '',
                 ].filter(Boolean);
 
@@ -405,8 +503,15 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
                             fontWeight={configured ? 700 : 400}
                             fill={configured ? palette.primary.main : palette.text.primary}
                         >
-                            {ellipsis(name, fittingChars(nameWidth, 12, configured))}
+                            {ellipsis(name, fittingChars(card.chipW - 12 - 6 - bandW - signalW, 12, configured))}
                         </text>
+                        {signal === undefined ? null : (
+                            <SignalBars
+                                rcpi={signal}
+                                x={card.chipW - 6 - bandW - 14}
+                                y={nameY}
+                            />
+                        )}
                         {twoLines && ctx.showVendor && manufacturer ? (
                             <text
                                 x={12}
@@ -416,7 +521,21 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
                                 opacity={0.7}
                                 fill={palette.text.secondary}
                             >
-                                {ellipsis(manufacturer, fittingChars(card.chipW - 18, 10))}
+                                {ellipsis(
+                                    manufacturer,
+                                    fittingChars(card.chipW - 18 - (signal === undefined ? 0 : 44), 10),
+                                )}
+                            </text>
+                        ) : null}
+                        {twoLines && signal !== undefined ? (
+                            <text
+                                x={card.chipW - 6}
+                                y={30}
+                                fontSize={10}
+                                textAnchor="end"
+                                fill={SIGNAL_COLORS[signalLevel(signal)]}
+                            >
+                                {signalText(signal)}
                             </text>
                         ) : null}
                         <text
@@ -460,6 +579,7 @@ function MeshTable(props: {
                     {medium ? <TableCell>{t('tr064_accessPoint')}</TableCell> : null}
                     <TableCell sx={cell}>{t('tr064_connection')}</TableCell>
                     {medium ? <TableCell>{t('tr064_state')}</TableCell> : null}
+                    {medium ? <TableCell>{t('tr064_signal')}</TableCell> : null}
                     {medium ? <TableCell>{t('tr064_rate')}</TableCell> : null}
                     {full ? <TableCell>{t('tr064_mac')}</TableCell> : null}
                     {full ? <TableCell>{t('tr064_ip')}</TableCell> : null}
@@ -518,7 +638,47 @@ function MeshTable(props: {
                             ) : null}
                         </TableCell>
                         {medium ? (
-                            <TableCell>{row.connected ? t('tr064_connected') : t('tr064_disconnected')}</TableCell>
+                            <TableCell>
+                                {row.connected ? t('tr064_connected') : t('tr064_disconnected')}
+                                {!row.connected && row.lastConnected ? (
+                                    <Typography
+                                        variant="caption"
+                                        component="div"
+                                        color="text.secondary"
+                                    >
+                                        {lastSeenText(row.lastConnected, t)}
+                                    </Typography>
+                                ) : null}
+                            </TableCell>
+                        ) : null}
+                        {medium ? (
+                            <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                                {row.connected && row.rcpi !== undefined ? (
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                        <Box
+                                            component="svg"
+                                            viewBox="0 0 13 11"
+                                            sx={{ width: 13, height: 11, flex: '0 0 auto' }}
+                                        >
+                                            <SignalBars
+                                                rcpi={row.rcpi}
+                                                x={0}
+                                                y={11}
+                                            />
+                                        </Box>
+                                        {signalText(row.rcpi)}
+                                    </Box>
+                                ) : null}
+                                {row.connected && (row.position === 'too_far' || row.position === 'too_close') ? (
+                                    <Typography
+                                        variant="caption"
+                                        component="div"
+                                        color={row.position === 'too_far' ? 'warning.main' : 'text.secondary'}
+                                    >
+                                        {t(`tr064_position_${row.position}`)}
+                                    </Typography>
+                                ) : null}
+                            </TableCell>
                         ) : null}
                         {medium ? <TableCell sx={{ whiteSpace: 'nowrap' }}>{rate(row)}</TableCell> : null}
                         {full ? <TableCell sx={{ fontFamily: 'monospace' }}>{row.mac}</TableCell> : null}

@@ -1,6 +1,6 @@
 {
-  "_MeshTopology-HM3Rb3zU.js": {
-    "file": "assets/MeshTopology-HM3Rb3zU.js",
+  "_MeshTopology-_NZPGJ4l.js": {
+    "file": "assets/MeshTopology-_NZPGJ4l.js",
     "name": "MeshTopology",
     "imports": [
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__107524468039083__loadShare___mf_0_iobroker_mf_1_gui_mf_2_components__loadShare__.js-CxQQV36A.js",
@@ -62,14 +62,14 @@
     "name": "vite-preload-helper"
   },
   "index.html": {
-    "file": "assets/index-XWIOIcXZ.js",
+    "file": "assets/index-CDA4qIdI.js",
     "name": "index",
     "src": "index.html",
     "isEntry": true,
     "imports": [
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__107524468039083__loadShare___mf_0_iobroker_mf_1_gui_mf_2_components__loadShare__.js-CxQQV36A.js",
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__107524468039083__loadShare__shared-BJ-Gw4cQ.js",
-      "_MeshTopology-HM3Rb3zU.js"
+      "_MeshTopology-_NZPGJ4l.js"
     ]
   },
   "node_modules/@iobroker/gui-components/build/Components/IconLibrary/iconLibraryData.js": {
@@ -89,12 +89,12 @@
     ]
   },
   "src/Components.tsx": {
-    "file": "assets/Components-GdfsBetI.js",
+    "file": "assets/Components-CZ15GFD5.js",
     "name": "Components",
     "src": "src/Components.tsx",
     "isEntry": true,
     "imports": [
-      "_MeshTopology-HM3Rb3zU.js"
+      "_MeshTopology-_NZPGJ4l.js"
     ]
   },
   "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__ConfigCustomTr064Set__customComponents_js": {

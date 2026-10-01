@@ -1,6 +1,16 @@
 import React from 'react';
 
-import { alpha, Box, type Theme } from '@mui/material';
+import {
+    alpha,
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    type Theme,
+} from '@mui/material';
 import {
     ArrowDownward as IconDown,
     ArrowUpward as IconUp,
@@ -107,6 +117,8 @@ interface Tr064FritzBoxState extends VisRxWidgetState {
     /** Size of the widget, measured */
     size: { width: number; height: number };
     dialogOpen: boolean;
+    /** the question whether the counter of the missed calls is reset */
+    resetOpen: boolean;
 }
 
 /** Everything the tile shows, read from the states */
@@ -239,6 +251,7 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
             fb: {},
             size: { width: 0, height: 0 },
             dialogOpen: false,
+            resetOpen: false,
         };
     }
 
@@ -344,7 +357,7 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
     onRxDataChanged(prevRxData: Tr064FritzBoxRxData): void {
         if (prevRxData.instance !== this.state.rxData.instance) {
             this.watcher?.watch(this.getStateIds());
-            this.setState({ dialogOpen: false });
+            this.setState({ dialogOpen: false, resetOpen: false });
         }
     }
 
@@ -576,6 +589,25 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
         e.stopPropagation();
         this.props.context.setValue(id, !value);
     }
+
+    /**
+     * The chip of the missed calls asks whether the counter is reset. It is the own counter of the
+     * adapter, not a value of the box, and it counts every missed call since the installation -
+     * including the complete call list which was read on the first start.
+     */
+    private askReset = (e: React.MouseEvent): void => {
+        if (this.state.editMode) {
+            return;
+        }
+        // the click must not open the mesh dialog as well
+        e.stopPropagation();
+        this.setState({ resetOpen: true });
+    };
+
+    private resetMissed = (): void => {
+        this.setState({ resetOpen: false });
+        this.props.context.setValue(`${this.getInstanceId()}.calllists.missed.count`, 0);
+    };
 
     // ---- render parts -------------------------------------------------------
 
@@ -974,7 +1006,10 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
                         icon: <IconMissed />,
                         label: String(data.missed),
                         tone: data.missed > 0 ? 'alert' : 'neutral',
-                        title: `${Generic.t('missed_calls')}: ${data.missed}`,
+                        title: data.missed
+                            ? `${Generic.t('missed_calls')}: ${data.missed}\n${Generic.t('reset_hint')}`
+                            : `${Generic.t('missed_calls')}: ${data.missed}`,
+                        onClick: data.missed && !this.state.editMode ? this.askReset : undefined,
                     }),
                 );
             }
@@ -998,6 +1033,52 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
             >
                 {list.map(item => item[1])}
             </Box>
+        );
+    }
+
+    /**
+     * The question whether the counter of the missed calls is set to 0. React events bubble through
+     * the portal, therefore every event of the dialog is stopped - otherwise the click would reach
+     * the tile and open the mesh topology.
+     */
+    private renderResetDialog(data: BoxData): React.JSX.Element {
+        const close = (): void => this.setState({ resetOpen: false });
+        return (
+            <Dialog
+                open
+                maxWidth="xs"
+                fullWidth
+                onClose={close}
+                onClick={e => e.stopPropagation()}
+                onMouseDown={e => e.stopPropagation()}
+                onTouchStart={e => e.stopPropagation()}
+                slotProps={{ paper: { sx: { borderRadius: '16px' } } }}
+            >
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconMissed />
+                    {Generic.t('reset_missed_title')}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{Generic.t('reset_missed_text', String(data.missed ?? 0))}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="text"
+                        color="inherit"
+                        onClick={close}
+                    >
+                        {Generic.t('cancel')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        autoFocus
+                        onClick={this.resetMissed}
+                    >
+                        {Generic.t('reset')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         );
     }
 
@@ -1036,7 +1117,8 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
                     icon: <IconMissed />,
                     label: String(data.missed),
                     tone: 'alert',
-                    title: `${Generic.t('missed_calls')}: ${data.missed}`,
+                    title: `${Generic.t('missed_calls')}: ${data.missed}\n${Generic.t('reset_hint')}`,
+                    onClick: this.state.editMode ? undefined : this.askReset,
                 }),
             );
         }
@@ -1344,6 +1426,7 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
                         onClose={() => this.setState({ dialogOpen: false })}
                     />
                 ) : null}
+                {this.state.resetOpen && !this.state.editMode ? this.renderResetDialog(data) : null}
             </div>
         );
     }

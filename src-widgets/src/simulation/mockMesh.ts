@@ -8,6 +8,17 @@ function mac(i: number): string {
     return `3C:A6:2F:00:${hex.substring(0, 2)}:${hex.substring(2)}`;
 }
 
+/** WLAN signal of a mock link: from -45 dBm down to -85 dBm, a bit weaker at the access point */
+function signal(i: number): { rcpiTo: number; rcpiFrom: number; rsniTo: number; rsniFrom: number } {
+    const rcpi = -45 - ((i * 7) % 41);
+    return { rcpiTo: rcpi, rcpiFrom: rcpi - 3, rsniTo: 60 + rcpi, rsniFrom: 57 + rcpi };
+}
+
+/** The box rates a weak signal as "too far away" */
+function position(lan: boolean, i: number): MeshNodeInfo['position'] {
+    return !lan && signal(i).rcpiTo < -78 ? 'too_far' : undefined;
+}
+
 function client(
     nodes: MeshNodeInfo[],
     links: MeshLinkInfo[],
@@ -25,6 +36,7 @@ function client(
         ip: `192.168.178.${20 + i}`,
         role: 'client',
         configured: options?.configured,
+        position: position(band === 'LAN', i),
     });
     if (options?.noLink) {
         return;
@@ -38,10 +50,12 @@ function client(
         state: options?.disconnected ? 'DISCONNECTED' : 'CONNECTED',
         interface: lan ? `LAN:${(i % 4) + 1}` : `AP:${band === '2.4' ? '2G' : band === '5' ? '5G' : '6G'}:0`,
         band: lan ? undefined : band,
-        curRx: options?.disconnected ? 0 : Math.round(rate * (0.3 + (i % 7) / 10)),
-        curTx: options?.disconnected ? 0 : Math.round(rate * (0.2 + (i % 5) / 10)),
-        maxRx: rate,
-        maxTx: rate,
+        curDown: options?.disconnected ? 0 : Math.round(rate * (0.3 + (i % 7) / 10)),
+        curUp: options?.disconnected ? 0 : Math.round(rate * (0.2 + (i % 5) / 10)),
+        maxDown: rate,
+        maxUp: rate,
+        ...(lan ? {} : signal(i)),
+        lastConnected: options?.disconnected ? Date.now() - (i % 7) * 3_600_000 : undefined,
     });
 }
 
@@ -81,10 +95,10 @@ export function meshMock(): MeshResponse {
             state: 'CONNECTED',
             interface: 'AP:5G:0',
             band: '5',
-            curRx: 520_000,
-            curTx: 610_000,
-            maxRx: 866_700,
-            maxTx: 866_700,
+            curDown: 520_000,
+            curUp: 610_000,
+            maxDown: 866_700,
+            maxUp: 866_700,
         },
         {
             from: 'n-1',
@@ -92,10 +106,10 @@ export function meshMock(): MeshResponse {
             type: 'LAN',
             state: 'CONNECTED',
             interface: 'LAN:2',
-            curRx: 940_000,
-            curTx: 940_000,
-            maxRx: 1_000_000,
-            maxTx: 1_000_000,
+            curDown: 940_000,
+            curUp: 940_000,
+            maxDown: 1_000_000,
+            maxUp: 1_000_000,
         },
     ];
 

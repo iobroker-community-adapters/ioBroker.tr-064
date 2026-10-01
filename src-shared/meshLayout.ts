@@ -28,7 +28,7 @@ export interface TableRow {
     uid: string;
     name: string;
     hostName: string;
-    /** Manufacturer of the MAC address */
+    /** Manufacturer, from the box or from the MAC address */
     vendor?: string;
     /** A randomized MAC address, which belongs to no manufacturer */
     randomMac?: boolean;
@@ -37,8 +37,14 @@ export interface TableRow {
     kind: LinkKind | '';
     type: string;
     connected: boolean;
-    curRx?: number;
-    curTx?: number;
+    /** Data rates in kbit/s, seen from the device */
+    curDown?: number;
+    curUp?: number;
+    /** WLAN: signal strength in dBm at the device, and how the box rates it */
+    rcpi?: number;
+    position?: MeshNodeInfo['position'];
+    /** Time stamp of the last connection in ms, for a device which is not connected */
+    lastConnected?: number;
     mac: string;
     ip?: string;
 }
@@ -121,6 +127,51 @@ function compareClients(a: ClientView, b: ClientView): number {
  * @param response
  * @param options
  */
+/**
+ * The same link seen from the other end: every value which belongs to one side is turned with it.
+ *
+ * @param link a link whose `from` is the device and not the access point
+ */
+function reverseLink(link: MeshLinkInfo): MeshLinkInfo {
+    return {
+        ...link,
+        from: link.to,
+        to: link.from,
+        curDown: link.curUp,
+        curUp: link.curDown,
+        maxDown: link.maxUp,
+        maxUp: link.maxDown,
+        rcpiFrom: link.rcpiTo,
+        rcpiTo: link.rcpiFrom,
+        rsniFrom: link.rsniTo,
+        rsniTo: link.rsniFrom,
+    };
+}
+
+/** Signal strength in dBm which is shown for a link: the one at the device, else the one at the access point */
+export function signalOf(link?: MeshLinkInfo): number | undefined {
+    return link?.rcpiTo ?? link?.rcpiFrom;
+}
+
+/**
+ * The signal in four steps, as a WLAN symbol shows it. The thresholds are the usual ones for
+ * 2.4/5 GHz: from -60 dBm everything works, below -80 dBm hardly anything does.
+ *
+ * @param rcpi signal strength in dBm
+ */
+export function signalLevel(rcpi: number): 1 | 2 | 3 | 4 {
+    if (rcpi >= -60) {
+        return 4;
+    }
+    if (rcpi >= -70) {
+        return 3;
+    }
+    if (rcpi >= -80) {
+        return 2;
+    }
+    return 1;
+}
+
 export function buildTree(response: MeshResponse | null, options: TreeOptions): MeshTree {
     const nodes = response?.nodes || [];
     const links = response?.links || [];
@@ -146,8 +197,7 @@ export function buildTree(response: MeshResponse | null, options: TreeOptions): 
             clientLinks.set(link.to, better(clientLinks.get(link.to), link));
         } else if (isInfra(link.to)) {
             // a link in the other direction: the access point is `to`
-            const swapped: MeshLinkInfo = { ...link, from: link.to, to: link.from };
-            clientLinks.set(link.from, better(clientLinks.get(link.from), swapped));
+            clientLinks.set(link.from, better(clientLinks.get(link.from), reverseLink(link)));
         }
     }
 
@@ -195,8 +245,11 @@ export function buildTree(response: MeshResponse | null, options: TreeOptions): 
             kind,
             type: link?.type || '',
             connected,
-            curRx: link?.curRx,
-            curTx: link?.curTx,
+            curDown: link?.curDown,
+            curUp: link?.curUp,
+            rcpi: signalOf(link),
+            position: node.position,
+            lastConnected: connected ? undefined : link?.lastConnected,
             mac: node.mac,
             ip: node.ip,
         });

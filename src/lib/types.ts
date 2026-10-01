@@ -157,10 +157,15 @@ export interface MeshNodeInfo {
     role: 'master' | 'slave' | 'switch' | 'client';
     /** Name in the tab "Devices", if this is a configured device */
     configured?: string;
-    /** Manufacturer of the first bytes of the MAC address (`src/lib/oui.ts`) */
+    /**
+     * Manufacturer: `device_manufacturer` of the box, which knows it from LLDP or DHCP, otherwise
+     * the owner of the first bytes of the MAC address (`src/lib/oui.ts`)
+     */
     vendor?: string;
     /** A randomized (locally administered) MAC address, which belongs to no manufacturer */
     randomMac?: boolean;
+    /** WLAN: how the box rates the signal of the uplink of this device (`client_position`) */
+    position?: 'too_close' | 'too_far' | 'ok';
 }
 
 /** Connection between two nodes of the mesh topology */
@@ -175,11 +180,23 @@ export interface MeshLinkInfo {
     /** Name of the interface on the `from` side, e.g. `AP:5G:0`, `LAN:1` */
     interface: string;
     band?: '2.4' | '5' | '6';
-    /** Data rates in kbit/s */
-    curRx?: number;
-    curTx?: number;
-    maxRx?: number;
-    maxTx?: number;
+    /**
+     * Data rates in kbit/s, seen from the device (`to`): `down` is `from` -> `to`. The box reports
+     * them as `rx`/`tx` of its node 1, which is not always the access point - they are turned with
+     * the link in `buildMeshTopology()`.
+     */
+    curDown?: number;
+    curUp?: number;
+    maxDown?: number;
+    maxUp?: number;
+    /** WLAN: signal strength in dBm, measured at the access point (`from`) and at the device (`to`) */
+    rcpiFrom?: number;
+    rcpiTo?: number;
+    /** WLAN: signal to noise in dB, measured at the same two sides */
+    rsniFrom?: number;
+    rsniTo?: number;
+    /** `last_connected` of the box as a UNIX time stamp in milliseconds */
+    lastConnected?: number;
 }
 
 /** Answer of the message `mesh` */

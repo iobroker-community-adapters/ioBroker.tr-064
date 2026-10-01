@@ -20,6 +20,8 @@ import WidgetGeneric, {
 } from '@iobroker/dm-widgets';
 import type {
     BoxProps,
+    ButtonProps,
+    DialogActionsProps,
     DialogContentProps,
     DialogProps,
     DialogTitleProps,
@@ -74,6 +76,8 @@ const Tooltip: ComponentType<TooltipProps> = MuiMaterial?.Tooltip;
 const Dialog: ComponentType<DialogProps> = MuiMaterial?.Dialog;
 const DialogTitle: ComponentType<DialogTitleProps> = MuiMaterial?.DialogTitle;
 const DialogContent: ComponentType<DialogContentProps> = MuiMaterial?.DialogContent;
+const DialogActions: ComponentType<DialogActionsProps> = MuiMaterial?.DialogActions;
+const Button: ComponentType<ButtonProps> = MuiMaterial?.Button;
 const IconButton: ComponentType<IconButtonProps> = MuiMaterial?.IconButton;
 const muiAlpha: (color: string, value: number) => string = MuiMaterial?.alpha;
 const I18n = AdapterReact?.I18n as typeof I18nType;
@@ -123,6 +127,8 @@ interface FritzBoxComponentState extends WidgetGenericState {
     /** the mesh dialog is open */
     meshOpen: boolean;
     mesh: MeshLoaderState;
+    /** the question whether the counter of the missed calls is reset */
+    resetOpen: boolean;
 }
 
 /** `alpha()` of MUI throws on colors it cannot parse (`red`, CSS variables) - a user color may be one */
@@ -155,6 +161,7 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
             values: {},
             meshOpen: props.openDialogId === FritzBoxComponent.dialogIdOf(props),
             mesh: { data: null, loading: false, error: null },
+            resetOpen: false,
         };
     }
 
@@ -230,7 +237,7 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
 
         if (normalizeInstance(prevProps.settings.instance) !== this.instance) {
             this.unsubscribe();
-            this.setState({ values: {}, mesh: { data: null, loading: false, error: null } }, () => {
+            this.setState({ values: {}, mesh: { data: null, loading: false, error: null }, resetOpen: false }, () => {
                 this.subscribe();
                 if (this.state.meshOpen) {
                     this.startMesh();
@@ -332,6 +339,34 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
             e.preventDefault();
             this.openMesh();
         }
+    };
+
+    // ---- reset of the missed calls ----------------------------------------------
+
+    /**
+     * The pill of the missed calls asks whether the counter is set to 0. It is the own counter of
+     * the adapter, not a value of the box: it counts every missed call since the installation,
+     * including the complete call list which was read on the first start.
+     */
+    private askReset = (e: SyntheticEvent): void => {
+        // the click must not open the mesh dialog as well
+        e.stopPropagation();
+        this.setState({ resetOpen: true });
+    };
+
+    private closeReset = (): void => {
+        this.setState({ resetOpen: false });
+    };
+
+    private resetMissed = (e: SyntheticEvent): void => {
+        e.stopPropagation();
+        this.setState({ resetOpen: false });
+        void this.props.stateContext
+            .getSocket()
+            .setState(`${this.instance}.${STATE_IDS.missedCalls}`, 0, false)
+            .catch(() => {
+                /* the state does not exist or may not be written - nothing to do here */
+            });
     };
 
     // ---- WidgetGeneric override points ------------------------------------------
@@ -671,12 +706,31 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
     private static renderPill(
         key: string,
         content: ReactNode,
-        options: { color?: (theme: Theme) => string; off?: boolean; title?: string; strong?: boolean },
+        options: {
+            color?: (theme: Theme) => string;
+            off?: boolean;
+            title?: string;
+            strong?: boolean;
+            onClick?: (e: SyntheticEvent) => void;
+        },
     ): JSX.Element {
         const pill = (
             <Box
                 key={key}
                 component="span"
+                role={options.onClick ? 'button' : undefined}
+                tabIndex={options.onClick ? 0 : undefined}
+                onClick={options.onClick}
+                onKeyDown={
+                    options.onClick
+                        ? (e: KeyboardEvent) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  options.onClick!(e);
+                              }
+                          }
+                        : undefined
+                }
                 sx={theme => {
                     const color = options.color?.(theme);
                     return {
@@ -702,6 +756,16 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                             : '1px solid transparent',
                         textDecoration: options.off ? 'line-through' : 'none',
                         '& .MuiSvgIcon-root': { fontSize: '1.15em' },
+                        ...(options.onClick
+                            ? {
+                                  cursor: 'pointer',
+                                  outline: 'none',
+                                  '&:hover': { filter: 'brightness(1.15)' },
+                                  '&:focus-visible': {
+                                      boxShadow: `0 0 0 2px ${alpha(theme.palette.text.primary, 0.4)}`,
+                                  },
+                              }
+                            : {}),
                     };
                 }}
             >
@@ -872,7 +936,11 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                             <MissedCallIcon />
                             {label(count, full)}
                         </>,
-                        { color: count ? error : undefined, title: full },
+                        {
+                            color: count ? error : undefined,
+                            title: count ? `${full} - ${I18n.t('fritzdm_resetHint')}` : full,
+                            onClick: count ? this.askReset : undefined,
+                        },
                     ),
                 );
             }
@@ -1026,7 +1094,7 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                     {content}
                     {this.renderTileIndicators()}
                 </Box>
-                {this.state.meshOpen ? (
+                {this.state.meshOpen || this.state.resetOpen ? (
                     <span
                         style={{ display: 'contents' }}
                         onClick={stop}
@@ -1035,7 +1103,8 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                         onTouchStart={stop}
                         onKeyDown={stop}
                     >
-                        {this.renderMeshDialog()}
+                        {this.state.meshOpen ? this.renderMeshDialog() : null}
+                        {this.state.resetOpen ? this.renderResetDialog() : null}
                     </span>
                 ) : null}
             </Box>
@@ -1063,6 +1132,55 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
             default:
                 return WidgetGeneric.getStyleCompact(theme) as Record<string, unknown>;
         }
+    }
+
+    /** The question whether the counter of the missed calls is set to 0 */
+    private renderResetDialog(): JSX.Element {
+        const count = num(this.values, 'missedCalls');
+
+        return (
+            <Dialog
+                open
+                onClose={this.closeReset}
+                maxWidth="xs"
+                fullWidth
+                aria-labelledby={`${this.dialogId}-reset-title`}
+            >
+                <DialogTitle
+                    id={`${this.dialogId}-reset-title`}
+                    component="div"
+                    sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 1.5 }}
+                >
+                    <MissedCallIcon sx={(theme: Theme) => ({ color: theme.palette.error.main, flexShrink: 0 })} />
+                    <Typography
+                        component="h2"
+                        sx={{ fontSize: '1.05rem', fontWeight: 600, lineHeight: 1.3 }}
+                    >
+                        {I18n.t('fritzdm_resetMissedTitle')}
+                    </Typography>
+                </DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2">{I18n.t('fritzdm_resetMissedText', count)}</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="text"
+                        color="inherit"
+                        onClick={this.closeReset}
+                    >
+                        {I18n.t('fritzdm_cancel')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        autoFocus
+                        onClick={this.resetMissed}
+                    >
+                        {I18n.t('fritzdm_reset')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
     private renderMeshDialog(): JSX.Element {

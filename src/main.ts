@@ -258,6 +258,9 @@ export class Tr064Adapter extends utils.Adapter {
                     const list = this.systemData.native.callLists[cmd as 'all'];
                     if (list) {
                         list.count = ~~Number(state.val);
+                        // confirm the written value right away: the widgets offer a reset of the
+                        // counter, the next poll would acknowledge it only up to a minute later
+                        this.devices.root.set(`${as[2]}.${cmd}.count`, list.count);
                     }
                     // save system data in namespace
                     this.systemData.save();
