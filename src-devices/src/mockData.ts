@@ -94,6 +94,30 @@ function position(lan: boolean, i: number): MeshNodeInfo['position'] {
     return !lan && signal(i).rcpiTo < -78 ? 'too_far' : undefined;
 }
 
+/** A plausible device class for a mock name, so the simulation shows the symbols */
+function deviceClassOf(name: string): string | undefined {
+    const n = name.toLowerCase();
+    const classes: [RegExp, string][] = [
+        [/iphone|pixel|galaxy|handy|phone/, 'SMARTPHONE'],
+        [/tablet|ipad/, 'TABLET'],
+        [/macbook|laptop|notebook|pc|imac|desktop/, 'COMPUTER'],
+        [/nas|synology|proxmox|server|dell/, 'STORAGE'],
+        [/doorbell|klingel|doorbird/, 'DOOR_BELL'],
+        [/raspberry|esp32|shelly|tasmota|iobroker|zigbee|ccu/, 'CIRCUIT_BOARD'],
+        [/sonos|echo|speaker|lautsprecher/, 'SPEAKER'],
+        [/cam|kamera|camera|reolink/, 'CAMERA'],
+        [/tv|oled/, 'SET_TOP_BOX'],
+        [/laserjet|print|drucker/, 'PRINTER'],
+        [/mower|vacuum|robot|maeher/, 'ROBOT'],
+        [/licht|light|lamp|beleuchtung/, 'LAMP'],
+        [/thermostat|heiz/, 'THERMOSTAT'],
+        [/weather|wetter|sensor/, 'SENSOR'],
+        [/pump|irrigation|bewaesser|steckdose|socket/, 'SOCKET'],
+        [/switch/, 'NETWORK_SWITCH'],
+    ];
+    return classes.find(([re]) => re.test(n))?.[1];
+}
+
 /** A master, a repeater by WLAN and one by LAN, and 26 clients */
 export function meshMock(): MeshResponse {
     const nodes: MeshNodeInfo[] = [
@@ -188,6 +212,7 @@ export function meshMock(): MeshResponse {
             role: 'client',
             configured: options?.configured,
             position: position(band === 'LAN', i),
+            deviceClass: deviceClassOf(name),
         });
         const lan = band === 'LAN';
         const rate = lan ? 1_000_000 : band === '2.4' ? 144_400 : band === '5' ? 866_700 : 1_201_000;

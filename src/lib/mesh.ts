@@ -48,6 +48,7 @@ interface MeshListNode {
     device_model?: string;
     device_manufacturer?: string;
     device_class?: string;
+    device_class_user?: string;
     is_meshed?: boolean;
     mesh_role?: string;
     ip_addresses?: { version?: string; value?: string }[];
@@ -181,6 +182,11 @@ export function buildMeshTopology(
         const position = positionOf(node);
         if (position) {
             info.position = position;
+        }
+        // what the user has set in the box beats what the box has guessed
+        const deviceClass = (node.device_class_user || node.device_class || '').toUpperCase();
+        if (deviceClass && deviceClass !== 'GENERIC') {
+            info.deviceClass = deviceClass;
         }
         nodes.push(info);
         byUid.set(node.uid, info);

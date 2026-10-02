@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     Alert,
+    alpha,
     Box,
     Button,
     Checkbox,
@@ -40,7 +41,6 @@ import {
 
 import {
     buildTree,
-    CHIP_H,
     CHIP_H_VENDOR,
     ellipsis,
     fittingChars,
@@ -60,6 +60,7 @@ import {
     signalOf,
     type TableRow as MeshTableRow,
 } from './meshLayout';
+import { deviceIcon, DeviceIcon } from './deviceIcons';
 import {
     MESH_ERROR_NOT_ALIVE,
     MESH_ERROR_NOT_CONNECTED,
@@ -75,6 +76,16 @@ export const KIND_COLORS: Record<LinkKind, string> = {
     LAN: '#10b981',
     other: '#9ca3af',
 };
+
+/** The symbol of a device in a client chip: left edge, size of its box and of the symbol itself */
+const ICON_X = 13;
+const ICON_BOX = 26;
+const ICON_SIZE = 16;
+
+/** The signal in a client chip: width of `-73 dBm`, of the four bars and of both together */
+const SIGNAL_TEXT_W = 44;
+const SIGNAL_BARS_W = 13;
+const SIGNAL_W = SIGNAL_TEXT_W + 6 + SIGNAL_BARS_W;
 
 /** Below this width the toolbar is compact */
 const DENSE_WIDTH = 600;
@@ -199,24 +210,33 @@ function rate(row: MeshTableRow): string {
     return row.connected && (row.curDown || row.curUp) ? `↓ ${mbit(row.curDown)} / ↑ ${mbit(row.curUp)}` : '';
 }
 
-/** Color of a signal: green from -60 dBm, yellow from -70, orange from -80, red below */
-const SIGNAL_COLORS: Record<1 | 2 | 3 | 4, string> = {
-    4: '#22c55e',
-    3: '#a3b018',
-    2: '#f59e0b',
-    1: '#ef4444',
-};
+/** A signal below -80 dBm, or one which the box itself calls too far away */
+const WEAK_COLOR = '#ef4444';
 
 /**
- * Four bars like a WLAN symbol, the bars above the level are only outlined.
+ * The bars carry the color of the band - the strength is the number of filled bars and the value
+ * next to them. Only a signal which really is too weak turns red.
+ *
+ * @param kind band or LAN of the link
+ * @param rcpi signal strength in dBm
+ * @param position `client_position` of the device
+ */
+function signalColor(kind: LinkKind | '', rcpi: number, position?: MeshNodeInfo['position']): string {
+    if (signalLevel(rcpi) === 1 || position === 'too_far') {
+        return WEAK_COLOR;
+    }
+    return KIND_COLORS[kind || 'other'];
+}
+
+/**
+ * Four bars like a WLAN symbol, the bars above the level only faintly filled.
  *
  * Drawn in SVG coordinates, 13 x 11 px with the baseline of the text as the lower edge.
  *
- * @param props `rcpi` in dBm, `x`/`y` of the lower left corner
+ * @param props `rcpi` in dBm, `x`/`y` of the lower left corner and the color of the bars
  */
-function SignalBars(props: { rcpi: number; x: number; y: number }): React.JSX.Element {
+function SignalBars(props: { rcpi: number; x: number; y: number; color: string }): React.JSX.Element {
     const level = signalLevel(props.rcpi);
-    const color = SIGNAL_COLORS[level];
     return (
         <g transform={`translate(${props.x}, ${props.y})`}>
             {[0, 1, 2, 3].map(i => {
@@ -229,7 +249,7 @@ function SignalBars(props: { rcpi: number; x: number; y: number }): React.JSX.El
                         width={2.4}
                         height={height}
                         rx={0.8}
-                        fill={color}
+                        fill={props.color}
                         opacity={i < level ? 1 : 0.22}
                     />
                 );
@@ -447,18 +467,26 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
                 const kind = linkKind(client.link);
                 const configured = !!client.node.configured;
                 const name = client.node.configured || client.node.name || client.node.mac;
-                const manufacturer = vendorText(client.node, t);
-                // the chip has room for a second line only if the manufacturer is switched on
-                const twoLines = card.chipH >= CHIP_H_VENDOR;
-                const nameY = twoLines ? 16 : 17;
-                // the band and, for a WLAN device, the signal are right aligned - the name gets the rest
+                const manufacturer = ctx.showVendor ? vendorText(client.node, t) : '';
+                // three lines (name, manufacturer, IP address) or two, with both below the name
+                const threeLines = card.chipH >= CHIP_H_VENDOR && !!manufacturer;
                 const signal = client.connected ? signalOf(client.link) : undefined;
-                const bandW = kindLabel(kind) ? 30 : 0;
-                const signalW = signal === undefined ? 0 : 17;
+                // the band stands above the signal on the right side, the texts get the rest
+                const rightW = Math.max(kindLabel(kind) ? 34 : 0, signal === undefined ? 0 : SIGNAL_W);
+                const textX = ICON_X + ICON_BOX + 8;
+                // the name shares its line with the band, the lines below it with the signal -
+                // without a signal they reach to the right edge of the chip
+                const textW = card.chipW - textX - rightW - 6;
+                const lineW = signal === undefined ? card.chipW - textX - 8 : textW;
+                const ip = client.node.ip ? `IP: ${client.node.ip}` : '';
+                // the second line of a two line chip: the IP address at its right end, the
+                // manufacturer gets what is left of it
+                const ipW = !threeLines && ip && manufacturer ? ip.length * 5.7 + 10 : 0;
+                const signalFill = signal === undefined ? '' : signalColor(kind, signal, client.node.position);
                 const details = [
                     configured ? t('tr064_configuredAs', client.node.configured!) : '',
                     client.node.name,
-                    manufacturer,
+                    vendorText(client.node, t),
                     client.node.mac,
                     client.node.ip,
                     client.link ? client.link.interface || client.link.type : '',
@@ -476,7 +504,7 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
                         key={client.node.uid}
                         transform={`translate(${x}, ${y})`}
                         // a configured device stays readable in the dark theme, the dashed frame marks it
-                        opacity={client.connected ? 1 : configured ? 0.85 : 0.65}
+                        opacity={client.connected ? 1 : configured ? 0.85 : 0.6}
                         style={ctx.onRename ? { cursor: 'pointer' } : undefined}
                         onClick={ctx.onRename ? () => ctx.onRename!(client.node.uid) : undefined}
                     >
@@ -484,69 +512,92 @@ function renderCard(card: PlacedCard, theme: Theme, t: MeshTranslate, ctx: CardC
                         <rect
                             width={card.chipW}
                             height={card.chipH}
-                            rx={5}
+                            rx={7}
                             fill={palette.action.hover}
                             stroke={configured ? palette.primary.main : palette.divider}
                             strokeWidth={configured ? 2 : 1}
                             strokeDasharray={client.connected ? undefined : '4 3'}
                         />
-                        <rect
-                            width={5}
-                            height={card.chipH}
-                            rx={2}
+                        {/* the band as a stripe at the left edge, rounded like the chip */}
+                        <path
+                            d={`M 7 0.5 H 7 A 6.5 6.5 0 0 0 0.5 7 V ${card.chipH - 7} A 6.5 6.5 0 0 0 7 ${card.chipH - 0.5} V 0.5 Z`}
                             fill={KIND_COLORS[kind]}
                         />
+                        <rect
+                            x={ICON_X}
+                            y={(card.chipH - ICON_BOX) / 2}
+                            width={ICON_BOX}
+                            height={ICON_BOX}
+                            rx={6}
+                            fill={alpha(KIND_COLORS[kind], 0.14)}
+                        />
+                        <DeviceIcon
+                            deviceClass={client.node.deviceClass}
+                            x={ICON_X + (ICON_BOX - ICON_SIZE) / 2}
+                            y={(card.chipH - ICON_SIZE) / 2}
+                            size={ICON_SIZE}
+                            color={KIND_COLORS[kind]}
+                        />
                         <text
-                            x={12}
-                            y={nameY}
-                            fontSize={12}
-                            fontWeight={configured ? 700 : 400}
+                            x={textX}
+                            y={threeLines ? 19 : 17}
+                            fontSize={12.5}
+                            fontWeight={configured ? 700 : 600}
                             fill={configured ? palette.primary.main : palette.text.primary}
                         >
-                            {ellipsis(name, fittingChars(card.chipW - 12 - 6 - bandW - signalW, 12, configured))}
+                            {ellipsis(name, fittingChars(textW, 12.5, true))}
                         </text>
-                        {signal === undefined ? null : (
-                            <SignalBars
-                                rcpi={signal}
-                                x={card.chipW - 6 - bandW - 14}
-                                y={nameY}
-                            />
-                        )}
-                        {twoLines && ctx.showVendor && manufacturer ? (
+                        {manufacturer ? (
                             <text
-                                x={12}
-                                y={30}
+                                x={textX}
+                                y={threeLines ? 34 : 31}
                                 fontSize={10}
                                 fontStyle="italic"
-                                opacity={0.7}
+                                opacity={0.75}
                                 fill={palette.text.secondary}
                             >
-                                {ellipsis(
-                                    manufacturer,
-                                    fittingChars(card.chipW - 18 - (signal === undefined ? 0 : 44), 10),
-                                )}
+                                {ellipsis(manufacturer, fittingChars(lineW - ipW, 10))}
                             </text>
                         ) : null}
-                        {twoLines && signal !== undefined ? (
+                        {ip ? (
                             <text
-                                x={card.chipW - 6}
-                                y={30}
+                                x={ipW ? textX + lineW : textX}
+                                y={threeLines ? 48 : 31}
                                 fontSize={10}
-                                textAnchor="end"
-                                fill={SIGNAL_COLORS[signalLevel(signal)]}
+                                textAnchor={ipW ? 'end' : 'start'}
+                                fill={palette.text.secondary}
                             >
-                                {signalText(signal)}
+                                {ellipsis(ip, fittingChars(lineW, 10))}
                             </text>
                         ) : null}
                         <text
-                            x={card.chipW - 6}
-                            y={nameY}
+                            x={card.chipW - 8}
+                            y={threeLines ? 19 : 16}
                             fontSize={10}
                             textAnchor="end"
                             fill={palette.text.secondary}
                         >
                             {kindLabel(kind)}
                         </text>
+                        {signal === undefined ? null : (
+                            <>
+                                <SignalBars
+                                    rcpi={signal}
+                                    x={card.chipW - 8 - SIGNAL_W}
+                                    y={threeLines ? 41 : 34}
+                                    color={signalFill}
+                                />
+                                <text
+                                    x={card.chipW - 8}
+                                    y={threeLines ? 41 : 34}
+                                    fontSize={10.5}
+                                    textAnchor="end"
+                                    fill={signalFill}
+                                >
+                                    {signalText(signal)}
+                                </text>
+                            </>
+                        )}
                     </g>
                 );
             })}
@@ -601,7 +652,17 @@ function MeshTable(props: {
                             }}
                             title={row.configured && row.hostName !== row.name ? row.hostName : undefined}
                         >
-                            {row.name}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                                <Box
+                                    component={deviceIcon(row.deviceClass)}
+                                    sx={{
+                                        fontSize: 17,
+                                        flex: '0 0 auto',
+                                        color: row.kind ? KIND_COLORS[row.kind] : 'text.secondary',
+                                    }}
+                                />
+                                <span>{row.name}</span>
+                            </Box>
                             {showVendor && vendorText(row, t) ? (
                                 <Typography
                                     variant="caption"
@@ -664,6 +725,7 @@ function MeshTable(props: {
                                                 rcpi={row.rcpi}
                                                 x={0}
                                                 y={11}
+                                                color={signalColor(row.kind, row.rcpi, row.position)}
                                             />
                                         </Box>
                                         {signalText(row.rcpi)}
@@ -875,7 +937,7 @@ export default function MeshView(props: MeshViewProps): React.JSX.Element {
         if (tree.unassigned.length) {
             roots.push({ clients: tree.unassigned, children: [] });
         }
-        return layoutMesh(roots, graphWidth, settings.showVendor ? CHIP_H_VENDOR : CHIP_H);
+        return layoutMesh(roots, graphWidth, settings.showVendor);
     }, [tree, graphWidth, settings.showVendor]);
 
     const dense = !!compact || (width > 0 && width < DENSE_WIDTH);

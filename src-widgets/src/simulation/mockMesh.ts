@@ -19,6 +19,30 @@ function position(lan: boolean, i: number): MeshNodeInfo['position'] {
     return !lan && signal(i).rcpiTo < -78 ? 'too_far' : undefined;
 }
 
+/** A plausible device class for a mock name, so the simulation shows the symbols */
+function deviceClassOf(name: string): string | undefined {
+    const n = name.toLowerCase();
+    const classes: [RegExp, string][] = [
+        [/iphone|pixel|galaxy|handy|phone/, 'SMARTPHONE'],
+        [/tablet|ipad/, 'TABLET'],
+        [/macbook|laptop|notebook|pc|imac|desktop/, 'COMPUTER'],
+        [/nas|synology|proxmox|server|dell/, 'STORAGE'],
+        [/doorbell|klingel|doorbird/, 'DOOR_BELL'],
+        [/raspberry|esp32|shelly|tasmota|iobroker|zigbee|ccu/, 'CIRCUIT_BOARD'],
+        [/sonos|echo|speaker|lautsprecher/, 'SPEAKER'],
+        [/cam|kamera|camera|reolink/, 'CAMERA'],
+        [/tv|oled/, 'SET_TOP_BOX'],
+        [/laserjet|print|drucker/, 'PRINTER'],
+        [/mower|vacuum|robot|maeher/, 'ROBOT'],
+        [/licht|light|lamp|beleuchtung/, 'LAMP'],
+        [/thermostat|heiz/, 'THERMOSTAT'],
+        [/weather|wetter|sensor/, 'SENSOR'],
+        [/pump|irrigation|bewaesser|steckdose|socket/, 'SOCKET'],
+        [/switch/, 'NETWORK_SWITCH'],
+    ];
+    return classes.find(([re]) => re.test(n))?.[1];
+}
+
 function client(
     nodes: MeshNodeInfo[],
     links: MeshLinkInfo[],
@@ -37,6 +61,7 @@ function client(
         role: 'client',
         configured: options?.configured,
         position: position(band === 'LAN', i),
+        deviceClass: deviceClassOf(name),
     });
     if (options?.noLink) {
         return;
@@ -86,6 +111,13 @@ export function meshMock(): MeshResponse {
             ip: '192.168.178.3',
             role: 'slave',
         },
+        {
+            uid: 'n-4',
+            name: 'Switch Technikraum',
+            model: 'Netgear GS308',
+            mac: mac(9003),
+            role: 'switch',
+        },
     ];
     const links: MeshLinkInfo[] = [
         {
@@ -108,6 +140,17 @@ export function meshMock(): MeshResponse {
             interface: 'LAN:2',
             curDown: 940_000,
             curUp: 940_000,
+            maxDown: 1_000_000,
+            maxUp: 1_000_000,
+        },
+        {
+            from: 'n-1',
+            to: 'n-4',
+            type: 'LAN',
+            state: 'CONNECTED',
+            interface: 'LAN:3',
+            curDown: 1_000_000,
+            curUp: 1_000_000,
             maxDown: 1_000_000,
             maxUp: 1_000_000,
         },
@@ -140,6 +183,13 @@ export function meshMock(): MeshResponse {
     client(nodes, links, 'n-3', 'Workshop-PC', '5');
     client(nodes, links, 'n-3', 'Freezer-Plug', '2.4');
     client(nodes, links, 'n-3', 'Laundry-Sensor', '2.4');
+
+    // a card without any signal: the chips show the manufacturer and the IP address next to each other
+    client(nodes, links, 'n-4', 'CAM-Einfahrt', 'LAN');
+    client(nodes, links, 'n-4', 'CAM-Garten', 'LAN');
+    client(nodes, links, 'n-4', 'Doorbird-Klingel', 'LAN');
+    client(nodes, links, 'n-4', 'Server-Proxmox', 'LAN');
+    client(nodes, links, 'n-4', 'Drucker-Buero', 'LAN');
 
     client(nodes, links, '', 'Unknown-Device', '2.4', { noLink: true });
 

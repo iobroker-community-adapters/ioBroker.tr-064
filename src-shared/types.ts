@@ -36,6 +36,8 @@ export interface MeshNodeInfo {
     randomMac?: boolean;
     /** WLAN: how the box rates the signal of the uplink of this device (`client_position`) */
     position?: 'too_close' | 'too_far' | 'ok';
+    /** Kind of the device as the box knows it: `COMPUTER`, `SMARTPHONE`, `CAMERA`, `LAMP`, ... */
+    deviceClass?: string;
 }
 
 /** Connection between two nodes of the mesh topology */

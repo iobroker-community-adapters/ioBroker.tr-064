@@ -6,4 +6,36 @@ import { hostModule } from './host';
 
 const Icons = hostModule<typeof IconsTypes>('@mui/icons-material');
 
-export const { AccountTree, Edit, Refresh, TableRows } = Icons;
+export const {
+    AccountTree,
+    AcUnit,
+    Blinds,
+    Computer,
+    DeveloperBoard,
+    DevicesOther,
+    Doorbell,
+    Edit,
+    Lan,
+    Lightbulb,
+    Lock,
+    Monitor,
+    Phone,
+    PhoneInTalk,
+    Power,
+    Print,
+    Refresh,
+    Router,
+    Sensors,
+    Smartphone,
+    SmartToy,
+    Speaker,
+    SportsEsports,
+    Storage,
+    TableRows,
+    Tablet,
+    Thermostat,
+    TouchApp,
+    Tv,
+    Videocam,
+    Watch,
+} = Icons;
