@@ -14,7 +14,6 @@
 - (@GermanBluefox) The options "Use call forwarding options", "Use mDNS" and "Create JSON device list" have a default value in `io-package.json` now
 - (@GermanBluefox) The command `dumpservices.fs` writes the file again instead of stopping the adapter
 
-
 ## 4.3.0 (2024-04-30)
 * (mcm1957) Adapter requires node.js >= 18 and js-controller >= 5 now
 * (mcm1957) Dependencies have been updated

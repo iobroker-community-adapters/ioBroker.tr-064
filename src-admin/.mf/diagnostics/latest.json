@@ -1,10 +1,10 @@
 {
   "latestErrorEvent": {
     "code": "TYPE-001",
-    "message": "Failed to generate type declaration. Execute the below cmd to reproduce and fix the error. #TYPE-001\nargs: {\"cmd\":\"\\\"C:\\\\\\\\Program Files\\\\\\\\nodejs\\\\\\\\node.exe\\\" C:\\\\pWork\\\\ioBroker.tr-064\\\\src-admin\\\\node_modules\\\\typescript\\\\bin\\\\tsc --project C:\\\\pWork\\\\ioBroker.tr-064\\\\src-admin\\\\node_modules\\\\.federation\\\\tsconfig.9c645b946d64d2baacbc1b933a266b87.json\"}\nView the docs to see how to solve: https://module-federation.io/guide/troubleshooting/type#type-001",
+    "message": "Failed to generate type declaration. Execute the below cmd to reproduce and fix the error. #TYPE-001\nargs: {\"cmd\":\"\\\"C:\\\\\\\\Program Files\\\\\\\\nodejs\\\\\\\\node.exe\\\" C:\\\\pWork\\\\ioBroker.tr-064\\\\src-admin\\\\node_modules\\\\typescript\\\\bin\\\\tsc --project C:\\\\pWork\\\\ioBroker.tr-064\\\\src-admin\\\\node_modules\\\\.federation\\\\tsconfig.eb6cd7fa87f50c117b41c6ac78542f45.json\"}\nView the docs to see how to solve: https://module-federation.io/guide/troubleshooting/type#type-001",
     "args": {
-      "cmd": "\"C:\\\\Program Files\\\\nodejs\\\\node.exe\" C:\\pWork\\ioBroker.tr-064\\src-admin\\node_modules\\typescript\\bin\\tsc --project C:\\pWork\\ioBroker.tr-064\\src-admin\\node_modules\\.federation\\tsconfig.9c645b946d64d2baacbc1b933a266b87.json"
+      "cmd": "\"C:\\\\Program Files\\\\nodejs\\\\node.exe\" C:\\pWork\\ioBroker.tr-064\\src-admin\\node_modules\\typescript\\bin\\tsc --project C:\\pWork\\ioBroker.tr-064\\src-admin\\node_modules\\.federation\\tsconfig.eb6cd7fa87f50c117b41c6ac78542f45.json"
     },
-    "timestamp": 1790933570579
+    "timestamp": 1790939391081
   }
 }
