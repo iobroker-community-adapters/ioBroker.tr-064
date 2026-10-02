@@ -112,7 +112,7 @@
     ]
   },
   "virtual:mf-localSharedImportMap:__mfe_internal__ConfigCustomTr064Set__mf_owner__1": {
-    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__ConfigCustomTr064Set__mf_owner__1-CRie6KAF.js",
+    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__ConfigCustomTr064Set__mf_owner__1-CGOYQo2E.js",
     "name": "_virtual_mf-localSharedImportMap___mfe_internal__ConfigCustomTr064Set__mf_owner__1",
     "src": "virtual:mf-localSharedImportMap:__mfe_internal__ConfigCustomTr064Set__mf_owner__1",
     "isDynamicEntry": true,
@@ -122,6 +122,8 @@
     ],
     "dynamicImports": [
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__107524468039083__loadShare___mf_0_iobroker_mf_1_gui_mf_2_components__loadShare__.js-BZd7tmRH.js",
+      "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__107524468039083__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__.js",
+      "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__107524468039083__prebuild__react_mf_2_dom_mf_1_client__prebuild__.js",
       "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__107524468039083__prebuild___mf_0_iobroker_mf_1_json_mf_2_config__prebuild__.js"
     ]
   },
@@ -160,7 +162,7 @@
     ]
   },
   "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js": {
-    "file": "assets/hostInit-DDNZTM2C.js",
+    "file": "assets/hostInit-wVdoW6Oh.js",
     "name": "hostInit",
     "src": "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
     "imports": [
@@ -173,7 +175,7 @@
     ]
   },
   "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js": {
-    "file": "assets/pendingShares-ClGRv1JB.js",
+    "file": "assets/pendingShares-BfENypH5.js",
     "name": "pendingShares",
     "src": "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js",
     "imports": [

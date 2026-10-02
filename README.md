@@ -198,7 +198,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.1.3 (2026-10-02)
 - (@GermanBluefox) New look of the devices in the mesh topology: every device carries the symbol of its kind (computer, smartphone, camera, lamp, printer, ...) next to its name, below it the manufacturer and the IP address, and on the right side the band and the signal. The kind comes from the FRITZ!Box (`device_class`, or the kind which was set for the device in the box), an unknown one gets a generic symbol
 - (@GermanBluefox) A card of the mesh topology whose devices have no signal - a switch, a repeater with LAN devices only - uses compact devices: the manufacturer and the IP address stand next to each other below the name instead of below each other
 - (@GermanBluefox) The table of the mesh topology shows the same symbol in front of the name, and the bars of the signal carry the color of the band - only a signal below -80 dBm, or one which the box itself calls too far away, turns red
@@ -250,21 +250,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 ### 5.0.2 (2026-09-10)
 - (@GermanBluefox) Fixed the crash `Cannot read properties of undefined (reading 'safe')` in `getWLAN` right after the start: the WLAN states are read again in every poll cycle
 - (@GermanBluefox) A box without a separate 5 GHz configuration does not delay the polling by 3 seconds any more
-
-### 5.0.1 (2026-09-09)
-- (@GermanBluefox) **Breaking change:** the adapter requires node.js >= 22 now
-- (@GermanBluefox) Adapter requires admin >= 7.7.22 now
-- (@GermanBluefox) Adapter requires js-controller >= 6.0.11 now
-- (@GermanBluefox) The adapter does not stop any more if the Fritz!Box cannot be reached. The connection is retried every 30 seconds, and the new state `info.connection` shows whether the box answers
-- (@justr1) Expected disconnects of the call monitor (`ETIMEDOUT`, `ECONNRESET`, `EPIPE`) are logged as info now, because the adapter reconnects on its own
-- (@GermanBluefox) The mDNS socket is closed when the adapter stops, so a restart does not leave a listener behind
-- (@GermanBluefox) A phone book with only one contact is read now
-- (@GermanBluefox) The hint how to open port 1012 is shown again if the call monitor is refused by the Fritz!Box
-- (@GermanBluefox) The adapter was refactored to TypeScript. The sources are in `src/`, the adapter runs from `build/`
-- (@GermanBluefox) The configuration dialog was rewritten as JsonConfig. Admin 7.7.22 or newer is required for it
-- (@GermanBluefox) The adapter can only be installed from npm now, no longer directly from GitHub (`common.nogit`)
-- (@GermanBluefox) The options "Use call forwarding options", "Use mDNS" and "Create JSON device list" have a default value in `io-package.json` now
-- (@GermanBluefox) The command `dumpservices.fs` writes the file again instead of stopping the adapter
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
