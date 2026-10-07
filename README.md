@@ -198,6 +198,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) The dialogs "Rename device" of the mesh topology and "Reset missed calls" of the widget and the device card show the button "Cancel" on the right side, grey and with a close icon, like everywhere in ioBroker
+
 ### 5.1.5 (2026-10-07)
 - (@GermanBluefox) Updated packages
 

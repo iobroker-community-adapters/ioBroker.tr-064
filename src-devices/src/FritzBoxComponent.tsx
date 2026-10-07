@@ -1164,19 +1164,20 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        variant="text"
-                        color="inherit"
-                        onClick={this.closeReset}
-                    >
-                        {I18n.t('fritzdm_cancel')}
-                    </Button>
-                    <Button
                         variant="contained"
                         color="primary"
                         autoFocus
                         onClick={this.resetMissed}
                     >
                         {I18n.t('fritzdm_reset')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="inherit"
+                        startIcon={<CloseIcon />}
+                        onClick={this.closeReset}
+                    >
+                        {I18n.t('fritzdm_cancel')}
                     </Button>
                 </DialogActions>
             </Dialog>

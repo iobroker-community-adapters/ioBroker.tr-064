@@ -34,6 +34,7 @@ import {
 import { createTheme, ThemeProvider, useTheme, type Theme } from '@mui/material';
 import {
     AccountTree as IconGraph,
+    Close as IconClose,
     Edit as IconEdit,
     Refresh as IconRefresh,
     TableRows as IconTable,
@@ -848,18 +849,21 @@ function RenameDialog(props: {
             </DialogContent>
             <DialogActions>
                 <Button
-                    disabled={busy}
-                    onClick={onClose}
-                >
-                    {t('tr064_cancel')}
-                </Button>
-                <Button
                     variant="contained"
                     disabled={busy || !changed}
                     startIcon={busy ? <CircularProgress size={16} /> : <IconEdit />}
                     onClick={save}
                 >
                     {t('tr064_rename')}
+                </Button>
+                <Button
+                    variant="contained"
+                    color="inherit"
+                    disabled={busy}
+                    startIcon={<IconClose />}
+                    onClick={onClose}
+                >
+                    {t('tr064_cancel')}
                 </Button>
             </DialogActions>
         </Dialog>

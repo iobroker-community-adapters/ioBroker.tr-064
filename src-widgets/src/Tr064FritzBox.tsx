@@ -14,6 +14,7 @@ import {
 import {
     ArrowDownward as IconDown,
     ArrowUpward as IconUp,
+    Close as IconClose,
     PhoneInTalk as IconRinging,
     PhoneMissed as IconMissed,
     Public as IconInternet,
@@ -1063,19 +1064,20 @@ export default class Tr064FritzBox extends Generic<Tr064FritzBoxRxData, Tr064Fri
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        variant="text"
-                        color="inherit"
-                        onClick={close}
-                    >
-                        {Generic.t('cancel')}
-                    </Button>
-                    <Button
                         variant="contained"
                         color="primary"
                         autoFocus
                         onClick={this.resetMissed}
                     >
                         {Generic.t('reset')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="inherit"
+                        startIcon={<IconClose />}
+                        onClick={close}
+                    >
+                        {Generic.t('cancel')}
                     </Button>
                 </DialogActions>
             </Dialog>

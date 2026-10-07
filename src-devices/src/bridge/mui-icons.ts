@@ -10,6 +10,7 @@ export const {
     AccountTree,
     AcUnit,
     Blinds,
+    Close,
     Computer,
     DeveloperBoard,
     DevicesOther,
