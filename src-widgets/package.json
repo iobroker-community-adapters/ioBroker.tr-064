@@ -1,7 +1,7 @@
 {
     "name": "iobroker.tr-064-widgets",
     "private": true,
-    "version": "5.1.5",
+    "version": "5.1.6",
     "type": "module",
     "dependencies": {
         "@iobroker/types-vis-2": "~2.20.1",
