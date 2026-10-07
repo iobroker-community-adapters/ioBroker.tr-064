@@ -1,61 +1,61 @@
 {
-  "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare__shared-90ks6q6X.js": {
-    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare__shared-90ks6q6X.js",
-    "name": "_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare__shared",
+  "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-8564RYVs.js": {
+    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-8564RYVs.js",
+    "name": "_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared",
     "imports": [
       "_react-pcwjPi4V.js",
-      "_vite-preload-helper-CaC3yEL3.js"
+      "_vite-preload-helper-DjNwdemH.js"
     ],
     "dynamicImports": [
-      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js"
+      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js"
     ]
   },
-  "_dist-eloWKTxM.js": {
-    "file": "assets/dist-eloWKTxM.js",
+  "_dist-DAUjjciP.js": {
+    "file": "assets/dist-DAUjjciP.js",
     "name": "dist",
     "imports": [
-      "_utils-DMh7iVlT.js"
+      "_utils-DEUY4RDL.js"
     ]
   },
-  "_helpers-C7lQ9D8o.js": {
-    "file": "assets/helpers-C7lQ9D8o.js",
+  "_helpers-LL3aTdF3.js": {
+    "file": "assets/helpers-LL3aTdF3.js",
     "name": "helpers",
     "imports": [
-      "_utils-DMh7iVlT.js"
+      "_utils-DEUY4RDL.js"
     ]
   },
   "_react-pcwjPi4V.js": {
     "file": "assets/react-pcwjPi4V.js",
     "name": "react"
   },
-  "_utils-DMh7iVlT.js": {
-    "file": "assets/utils-DMh7iVlT.js",
+  "_utils-DEUY4RDL.js": {
+    "file": "assets/utils-DEUY4RDL.js",
     "name": "utils",
     "imports": [
-      "_vite-preload-helper-CaC3yEL3.js"
+      "_vite-preload-helper-DjNwdemH.js"
     ]
   },
-  "_vite-preload-helper-CaC3yEL3.js": {
-    "file": "assets/vite-preload-helper-CaC3yEL3.js",
+  "_vite-preload-helper-DjNwdemH.js": {
+    "file": "assets/vite-preload-helper-DjNwdemH.js",
     "name": "vite-preload-helper"
   },
   "src/Components.tsx": {
-    "file": "assets/Components-Dy9S3Oqp.js",
+    "file": "assets/Components-Bh-mXe3F.js",
     "name": "Components",
     "src": "src/Components.tsx",
     "isEntry": true,
     "imports": [
       "_react-pcwjPi4V.js",
-      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare__shared-90ks6q6X.js"
+      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-8564RYVs.js"
     ]
   },
   "src/no-page.ts": {
-    "file": "assets/no-page-D8jArRpU.js",
+    "file": "assets/no-page-C-g_PIyM.js",
     "name": "no-page",
     "src": "src/no-page.ts",
     "isEntry": true,
     "imports": [
-      "_vite-preload-helper-CaC3yEL3.js"
+      "_vite-preload-helper-DjNwdemH.js"
     ],
     "dynamicImports": [
       "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
@@ -80,9 +80,9 @@
     "name": "remoteEntry",
     "src": "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__DevicesWidgetTr064Set__customDevices_js",
     "imports": [
-      "_vite-preload-helper-CaC3yEL3.js",
-      "_dist-eloWKTxM.js",
-      "_helpers-C7lQ9D8o.js"
+      "_vite-preload-helper-DjNwdemH.js",
+      "_dist-DAUjjciP.js",
+      "_helpers-LL3aTdF3.js"
     ],
     "dynamicImports": [
       "src/Components.tsx",
@@ -91,34 +91,25 @@
     ]
   },
   "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1": {
-    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__DevicesWidgetTr064Set__mf_owner__1-k2Q0ZlQx.js",
+    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__DevicesWidgetTr064Set__mf_owner__1-BF5b7ZEP.js",
     "name": "_virtual_mf-localSharedImportMap___mfe_internal__DevicesWidgetTr064Set__mf_owner__1",
     "src": "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1",
     "isDynamicEntry": true,
     "imports": [
-      "_vite-preload-helper-CaC3yEL3.js",
-      "_dist-eloWKTxM.js"
+      "_vite-preload-helper-DjNwdemH.js",
+      "_dist-DAUjjciP.js"
     ],
     "dynamicImports": [
-      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js"
-    ]
-  },
-  "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js": {
-    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__-CiYX8DhF.js",
-    "name": "_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__",
-    "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "_react-pcwjPi4V.js"
+      "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js"
     ]
   },
   "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js": {
-    "file": "assets/hostInit-hUxYjlJV.js",
+    "file": "assets/hostInit-DQpykEkM.js",
     "name": "hostInit",
     "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
     "imports": [
-      "_vite-preload-helper-CaC3yEL3.js",
-      "_helpers-C7lQ9D8o.js"
+      "_vite-preload-helper-DjNwdemH.js",
+      "_helpers-LL3aTdF3.js"
     ],
     "dynamicImports": [
       "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__DevicesWidgetTr064Set__customDevices_js",
@@ -126,15 +117,24 @@
     ]
   },
   "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js": {
-    "file": "assets/pendingShares-BJrmbtIv.js",
+    "file": "assets/pendingShares-CNny_2LZ.js",
     "name": "pendingShares",
     "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js",
     "imports": [
-      "_vite-preload-helper-CaC3yEL3.js"
+      "_vite-preload-helper-DjNwdemH.js"
     ],
     "dynamicImports": [
-      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__14264094198548__loadShare__shared-90ks6q6X.js",
+      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-8564RYVs.js",
       "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1"
+    ]
+  },
+  "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js": {
+    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__-CiYX8DhF.js",
+    "name": "_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__",
+    "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__prebuild___mf_0_iobroker_mf_1_dm_mf_2_widgets__prebuild__.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_react-pcwjPi4V.js"
     ]
   }
 }
