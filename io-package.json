@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "5.1.4",
+    "version": "5.1.5",
     "news": {
+      "5.1.5": {
+        "en": "Updated packages",
+        "de": "Neue Pakete",
+        "ru": "Обновленные пакеты",
+        "pt": "Pacotes novos",
+        "nl": "Bijgewerkte pakketten",
+        "fr": "Packages mis à jour",
+        "it": "Pacchi nuovi",
+        "es": "Paquetes nuevos",
+        "pl": "Zaktualizowane pakiety",
+        "uk": "Оновлені пакети",
+        "zh-cn": "更新的软件包"
+      },
       "5.1.4": {
         "en": "New look of the devices in the mesh topology: every device carries the symbol of its kind (computer, smartphone, camera, lamp, printer, ...) next to its name, below it the manufacturer and the IP address, and on the right side the band and the signal. The kind comes from the FRITZ!Box (`device_class`, or the kind which was set for the device in the box), an unknown one gets a generic symbol\n`common.localLink` of `io-package.json`, the link to the web interface of the FRITZ!Box, is replaced by `common.localLinks` - the js-controller has removed the old attribute from its schema, which made the package test fail\nA card of the mesh topology whose devices have no signal - a switch, a repeater with LAN devices only - uses compact devices: the manufacturer and the IP address stand next to each other below the name instead of below each other\nThe table of the mesh topology shows the same symbol in front of the name, and the bars of the signal carry the color of the band - only a signal below -80 dBm, or one which the box itself calls too far away, turns red",
         "de": "Neues Aussehen der Geräte in der Mesh-Topologie: Jedes Gerät trägt ein Symbol seiner Art (Computer, Smartphone, Kamera, Lampe, Drucker,...) neben dem Namen, darunter Hersteller und IP-Adresse und rechts Band und Signal. Die Art kommt von FRITZ! Box (`device_class` oder die Art, die in der Box steht), ein Unbekanntes erhält ein generisches Symbol\n`common.localLink` von `io-package.json`, der Link zum Webinterface der FRITZ! Box wird durch `common.LocalLinks` ersetzt — der JS-Controller hat das alte Attribut aus dem Schema entfernt, sodass der Pakettest fehlschlug\nEine Karte der Mesh-Topologie, deren Geräte kein Signal haben — Switch, Repeater nur mit LAN-Geräten — nutzt kompakte Geräte: Hersteller und IP-Adresse stehen unter dem Namen neben- statt\nDie Tabelle der Mesh-Topologie zeigt dasselbe Symbol vor dem Namen und die Balken des Signals tragen die Farbe des Bandes — nur ein Signal unter -80 dBm oder eines, das die Box selbst zu weit weg ruft, wird rot",
@@ -80,19 +93,6 @@
         "pl": "**Przełomowa zmiana: ** adapter wymaga teraz node.js >= 22\nAdapter wymaga administratora >= 7.7.22 teraz\nAdapter wymaga kontrolera js->= 6.0.11 teraz\nAdapter nie zatrzyma się już, jeśli Fritz! Nie można dotrzeć do pudełka. Połączenie jest ponownie próbowane co 30 sekund, a nowy stan `info.connection` pokazuje, czy pole odpowiada\nOczekiwane rozłączenia monitora połączeń (`ETIMEDOUT`, `ECONNERESET`, `EPIPE`) są teraz rejestrowane jako informacje, ponieważ adapter ponownie łączy się samodzielnie\nGniazdo mDNS jest zamknięte po zatrzymaniu adaptera, więc ponowne uruchomienie nie pozostawia słuchacza w tyle\nKsiążka telefoniczna z tylko jednym kontaktem jest teraz czytana\nWskazówka, jak otworzyć port 1012, zostanie ponownie wyświetlona, jeśli monitor połączeń zostanie odrzucony przez Fritz! Pudełko\nAdapter został zmieniony do TypeScript. Źródła są w `src/`, adapter działa z `build/`\nOkno dialogowe konfiguracji zostało przepisane jako JSONConfig. Wymagany jest Administrator 7.7.22 lub nowszy\nAdapter można teraz zainstalować tylko z npm, nie bezpośrednio z GitHub (`common.nogit`)\nOpcje „Użyj opcji przekierowywania połączeń”, „Użyj mDNS” i „Utwórz listę urządzeń JSON” mają domyślną wartość w `io-package.json` teraz\nPolecenie `dumpservices.fs` ponownie zapisuje plik zamiast zatrzymywania adaptera",
         "uk": "**Порушення зміни: ** адаптер вимагає node.js >= 22 зараз\nАдаптер вимагає адміністратора >= 7.7.22 зараз\nАдаптер вимагає js-контролера >= 6.0.11 зараз\nАдаптер більше не зупиняється, якщо Fritz! До скриньки дістатися не можна. Підключення повторюється кожні 30 секунд, і новий стан `info.connection` показує, чи відповідає вікно\nОчікувані відключення монітора викликів (`ETIMEDOUT`, `ECONNRESET`, `EPIPE`) тепер реєструються як інформація, оскільки адаптер знову підключається самостійно\nСокет mDNS закривається, коли адаптер зупиняється, тому перезапуск не залишає слухача позаду\nЗараз прочитана телефонна книга лише з одним контактом\nПідказка, як відкрити порт 1012, відображається знову, якщо монітор виклику відмовив Fritz! Коробка\nАдаптер був перероблений на TypeScript. Джерела знаходяться в `src/`, адаптер працює з `build/`\nДіалогове вікно налаштування було переписано як JSONConfig. Для цього потрібен адміністратор 7.7.22 або новішої версії\nТепер адаптер можна встановити лише з npm, більше не безпосередньо з GitHub (`common.nogit`)\nПараметри «Використовувати параметри переадресації викликів», «Використовувати mDNS» та «Створити список пристроїв JSON» тепер мають значення за замовчуванням у `io-package.json`\nКоманда `dumpservices.fs` записує файл знову замість того, щоб зупинити адаптер",
         "zh-cn": "**重大更改：** 适配器现在需要 node.js >= 22\n适配器现在需要管理员 >= 7.7.22\n适配器现在需要 js-controller >= 6.0.11\n如果 Fritz 出现故障，适配器就不会再停止了！无法到达箱子。连接每 30 秒重试一次，新状态 “info.connection” 显示方框是否回答\n由于适配器会自行重新连接，因此呼叫监视器（“ETIMEDOUT”、“ECONNRESET”、“EPIPE”）的预期断开连接现在已记录为信息\n当适配器停止时，mDNS 套接字会关闭，因此重启不会留下监听器\n现在正在阅读一本只有一个联系人的电话簿\n如果 Fritz 拒绝呼叫监视器，则会再次显示如何打开端口 1012 的提示！盒子\n该适配器已重构为 TypeScript。源代码在 `src/` 中，适配器从 `build/` 运行\n配置对话框被重写为 JsonConfig。需要管理员 7.7.22 或更高版本才能使用\n适配器现在只能从 npm 安装，不能再直接从 GitHub (`common.nogit`) 安装\n现在，“使用呼叫转移选项”、“使用 mDNS” 和 “创建 JSON 设备列表” 选项在 `io-package.json`中有默认值\n命令 `dumpservices.fs` 再次写入文件而不是停止适配器"
-      },
-      "4.3.0": {
-        "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
-        "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Адаптер требует node.js >= 18 и js-контроллер >= 5 сейчас\nЗависимость обновлена",
-        "pt": "Adapter requer node.js >= 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
-        "nl": "Voor adaptor zijn node.js < 18 en js-controller > Nu 5\nAfhankelijkheden zijn bijgewerkt",
-        "fr": "L'adaptateur nécessite node.js >= 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
-        "it": "Adattatore richiede node.js >= 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
-        "es": "Adaptador requiere node.js √≥= 18 y js-controller 5 ahora\nSe han actualizado las dependencias",
-        "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
-        "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
-        "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
       }
     },
     "titleLang": {
