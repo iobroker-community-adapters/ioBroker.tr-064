@@ -34,6 +34,8 @@ export interface HostListItem {
     active?: string;
     hostname?: string;
     interfacetype?: string;
+    /** `1` for a device of the guest network */
+    'x_avm-de_guest'?: string;
     [key: string]: unknown;
 }
 
@@ -63,6 +65,57 @@ export interface DeviceConfigEntry {
     lastResult?: HostEntry;
     /** Set when the "unknown device" hint was logged, so that it is logged only once */
     notFoundLogged?: boolean;
+}
+
+/** One person of the configuration (tab "Persons") */
+export interface PersonConfigEntry {
+    /** `false` switches the person off without deleting the row; missing means on */
+    enabled?: boolean;
+    name: string;
+    /** Group of the person, e.g. `Family` - optional */
+    group?: string;
+    /**
+     * MAC and/or IP addresses of the devices of the person, separated by comma or semicolon. An IP
+     * address only works with a fixed address in the box and with the XML host list
+     */
+    addresses: string;
+    comment?: string;
+}
+
+/** One coming or going of a person, `history` of a person (newest first) */
+export interface PresenceEvent {
+    /** time stamp in ms */
+    ts: number;
+    present: boolean;
+}
+
+/** One person in `presence.json` and in the answer of the message `presence` */
+export interface PresencePersonInfo {
+    name: string;
+    /** full ID of the channel, e.g. `tr-064.0.presence.persons.Anna` */
+    id: string;
+    group: string;
+    /** `null` while the presence was never determined */
+    present: boolean | null;
+    /** last time the person came, ms, 0 = unknown */
+    lastArrival: number;
+    /** last time the person left, ms, 0 = unknown */
+    lastDeparture: number;
+}
+
+/** A device of the guest WLAN or a device which is not configured, in `presence.guests/unknown.json` */
+export interface PresenceHostInfo {
+    name: string;
+    ip: string;
+    mac: string;
+    /** `802.11`, `Ethernet`, ... */
+    interface: string;
+}
+
+/** Answer of the message `presence` */
+export interface PresenceResponse {
+    persons: PresencePersonInfo[];
+    groups: string[];
 }
 
 /** Configuration of one call list (all, inbound, missed, outbound) */

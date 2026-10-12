@@ -2,5 +2,6 @@
 // component by the name declared in `common.deviceWidgets.components[].name` of io-package.json,
 // so the keys here and the names there must match.
 import FritzBoxComponent from './FritzBoxComponent';
+import PersonComponent from './PersonComponent';
 
-export default { FritzBoxComponent };
+export default { FritzBoxComponent, PersonComponent };

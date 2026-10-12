@@ -286,6 +286,124 @@
                 }
             }
         },
+        "_persons": {
+            "type": "panel",
+            "label": "Persons",
+            "items": {
+                "_personsHint": {
+                    "type": "staticText",
+                    "text": "hint_persons",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "persons": {
+                    "type": "table",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "uniqueColumns": ["name"],
+                    "items": [
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "title": "Active",
+                            "width": "6%",
+                            "filter": false,
+                            "sort": false,
+                            "default": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "name",
+                            "width": "20%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "group",
+                            "title": "Group",
+                            "width": "16%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "addresses",
+                            "title": "MAC / IP",
+                            "width": "38%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "comment",
+                            "title": "Comment",
+                            "width": "20%",
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        }
+                    ]
+                },
+                "presenceDelay": {
+                    "type": "number",
+                    "label": "Absent after (min)",
+                    "help": "tooltip_presenceDelay",
+                    "min": 0,
+                    "max": 120,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "presenceHistory": {
+                    "type": "number",
+                    "label": "Kept comings and goings",
+                    "help": "tooltip_presenceHistory",
+                    "min": 1,
+                    "max": 1000,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "presenceGuests": {
+                    "type": "checkbox",
+                    "label": "Detect guests",
+                    "help": "tooltip_presenceGuests",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "presenceUnknown": {
+                    "type": "checkbox",
+                    "label": "Detect unknown devices",
+                    "help": "tooltip_presenceUnknown",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                }
+            }
+        },
         "_calllists": {
             "type": "panel",
             "label": "Calllists",
@@ -333,7 +451,6 @@
                     "lg": 3,
                     "xl": 3
                 },
-
                 "_headerMissed": {
                     "type": "header",
                     "text": "Missed calls",
@@ -378,7 +495,6 @@
                     "lg": 3,
                     "xl": 3
                 },
-
                 "_headerInbound": {
                     "type": "header",
                     "text": "Inbound",
@@ -423,7 +539,6 @@
                     "lg": 3,
                     "xl": 3
                 },
-
                 "_headerOutbound": {
                     "type": "header",
                     "text": "Outbound",

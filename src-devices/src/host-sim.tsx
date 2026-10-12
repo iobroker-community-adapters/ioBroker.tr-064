@@ -12,7 +12,7 @@ import { createRoot } from 'react-dom/client';
 import { createInstance } from '@module-federation/runtime';
 import { I18n } from '@iobroker/gui-components';
 
-import App, { type TileClass } from './App';
+import App, { type PersonTileClass, type TileClass } from './App';
 
 // ioBroker.devices is itself built with the federation plugin, which creates the global instance;
 // here the instance of `createInstance()` is used directly.
@@ -30,14 +30,20 @@ async function start(): Promise<void> {
             default: Record<ioBroker.Languages, Record<string, string>>;
         };
         I18n.extendTranslations(translations.default);
-        const components = (await federation.loadRemote('tr_064/Components')) as { default: Record<string, TileClass> };
+        const components = (await federation.loadRemote('tr_064/Components')) as {
+            default: { FritzBoxComponent?: TileClass; PersonComponent?: PersonTileClass };
+        };
         const Remote = components.default.FritzBoxComponent;
-        if (!Remote) {
-            throw new Error(`FritzBoxComponent not found, available: ${Object.keys(components.default).join(', ')}`);
+        const RemotePerson = components.default.PersonComponent;
+        if (!Remote || !RemotePerson) {
+            throw new Error(
+                `FritzBoxComponent or PersonComponent not found, available: ${Object.keys(components.default).join(', ')}`,
+            );
         }
         root.render(
             <App
                 component={Remote}
+                personComponent={RemotePerson}
                 banner={`Loaded through module federation: ${window.location.origin}/customDevices.js`}
             />,
         );

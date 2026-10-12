@@ -80,6 +80,38 @@ const DEVICES: { channel: string; name: string; active: boolean; accessPoint: st
     { channel: 'iPad_Oma', name: 'iPad Oma (192.168.178.61)', active: false, accessPoint: '', connection: '' },
 ];
 
+/** The persons of the presence detection (tab "Persons"); `history` = logged by history.0 */
+const PERSONS: {
+    channel: string;
+    name: string;
+    group: string;
+    present: boolean;
+    devices: string;
+    /** minutes ago, newest first, alternating: the first is the current state */
+    changes: number[];
+    history?: boolean;
+}[] = [
+    {
+        channel: 'Anna',
+        name: 'Anna',
+        group: 'Family',
+        present: true,
+        devices: 'Handy Anna, Tablet Küche',
+        changes: [135, 610, 1520, 1980, 2950, 3400, 4410],
+        history: true,
+    },
+    { channel: 'Max', name: 'Max', group: 'Family', present: false, devices: '', changes: [42, 520, 1460, 2010, 2900] },
+    {
+        channel: 'Oma',
+        name: 'Oma',
+        group: 'Guests',
+        present: false,
+        devices: '',
+        changes: [3 * 1440 + 200, 3 * 1440 + 420],
+    },
+    { channel: 'Lena', name: 'Lena', group: 'Family', present: true, devices: 'Laptop Arbeit', changes: [8] },
+];
+
 export default class MockSocket {
     private readonly states: Record<string, ioBroker.State> = {};
 
@@ -88,6 +120,9 @@ export default class MockSocket {
     private readonly objects: Record<string, ioBroker.Object> = {};
 
     private readonly options: MockOptions;
+
+    /** values of the states which history.0 logs */
+    private readonly history: Record<string, ioBroker.GetHistoryResult> = {};
 
     constructor(options: MockOptions) {
         this.options = options;
@@ -104,6 +139,9 @@ export default class MockSocket {
             values[`${id}.accessPoint`] = device.accessPoint;
             values[`${id}.connection`] = device.connection;
         }
+        if (options.box !== 'minimal') {
+            this.addPersons(values);
+        }
         for (const [id, val] of Object.entries(values)) {
             this.write(id, val, false);
         }
@@ -117,6 +155,57 @@ export default class MockSocket {
                 }
             }, 2000);
         }
+    }
+
+    /** `presence.persons.*` and `presence.guests` like the adapter writes them */
+    private addPersons(values: Record<string, ioBroker.StateValue>): void {
+        const now = Date.now();
+        const midnight = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
+        const sinceMidnight = Math.floor((now - midnight) / 60_000);
+        for (const person of PERSONS) {
+            const id = `${NS}.presence.persons.${person.channel}`;
+            this.objects[id] = {
+                _id: id,
+                type: 'channel',
+                common: { name: person.name },
+                native: { person: person.name, group: person.group },
+            };
+            const events = person.changes.map((minutes, i) => ({
+                ts: now - minutes * 60_000,
+                present: i % 2 === 0 ? person.present : !person.present,
+            }));
+            const last = (present: boolean): number => events.find(e => e.present === present)?.ts || 0;
+            const since = Math.floor((now - events[0].ts) / 60_000);
+            values[`${id}.present`] = person.present;
+            values[`${id}.lastArrival`] = last(true);
+            values[`${id}.lastDeparture`] = last(false);
+            values[`${id}.presentSince`] = person.present ? since : 0;
+            values[`${id}.absentSince`] = person.present ? 0 : since;
+            values[`${id}.presentToday`] = person.present ? Math.min(since, sinceMidnight) : 0;
+            values[`${id}.absentToday`] = sinceMidnight - (person.present ? Math.min(since, sinceMidnight) : 0);
+            values[`${id}.devices`] = person.devices;
+            values[`${id}.history`] = JSON.stringify(events);
+            if (person.history) {
+                // logged by history.0: `loadPresenceHistory()` asks the history instance
+                this.objects[`${id}.present`] = {
+                    _id: `${id}.present`,
+                    type: 'state',
+                    common: {
+                        name: 'Present',
+                        type: 'boolean',
+                        role: 'indicator',
+                        read: true,
+                        write: false,
+                        custom: { 'history.0': { enabled: true } },
+                    },
+                    native: {},
+                };
+                this.history[`${id}.present`] = [...events]
+                    .reverse()
+                    .map(e => ({ ts: e.ts, val: e.present, ack: true }) as ioBroker.GetHistoryResult[number]);
+            }
+        }
+        values[`${NS}.presence.guests.count`] = 2;
     }
 
     private write(id: string, val: ioBroker.StateValue, notify = true): void {
@@ -177,6 +266,16 @@ export default class MockSocket {
             }
         }
         return Promise.resolve(result);
+    }
+
+    getObject(id: string): Promise<ioBroker.Object | null> {
+        return Promise.resolve(this.objects[id] ?? null);
+    }
+
+    getHistory(id: string, options: ioBroker.GetHistoryOptions): Promise<ioBroker.GetHistoryResult> {
+        const start = options.start || 0;
+        const end = options.end || Date.now();
+        return Promise.resolve((this.history[id] || []).filter(entry => entry.ts >= start && entry.ts <= end));
     }
 
     sendTo(_instance: string, command: string, _data?: unknown): Promise<unknown> {

@@ -183,7 +183,8 @@
         "components": [
           "Tr064FritzBox",
           "Tr064Mesh",
-          "Tr064Presence"
+          "Tr064Presence",
+          "Tr064Person"
         ]
       }
     },
@@ -207,6 +208,24 @@
             "zh-cn": "FRITZ!Box 的状态，点击显示 Mesh 拓扑"
           },
           "icon": "fritzbox.png"
+        },
+        {
+          "name": "PersonComponent",
+          "label": "Person",
+          "description": {
+            "en": "Presence of a person: at home or away, since when, last came and left, a click shows the comings and goings",
+            "de": "Anwesenheit einer Person: zu Hause oder unterwegs, seit wann, zuletzt gekommen und gegangen, ein Klick zeigt das Kommen und Gehen",
+            "ru": "Присутствие человека: дома или нет, с какого времени, последний приход и уход, по нажатию показываются приходы и уходы",
+            "pt": "Presença de uma pessoa: em casa ou fora, desde quando, última chegada e saída, um clique mostra as chegadas e saídas",
+            "nl": "Aanwezigheid van een persoon: thuis of weg, sinds wanneer, laatst gekomen en gegaan, een klik toont het komen en gaan",
+            "fr": "Présence d'une personne : à la maison ou absente, depuis quand, dernière arrivée et dernier départ, un clic affiche les arrivées et départs",
+            "it": "Presenza di una persona: a casa o fuori, da quando, ultimo arrivo e ultima uscita, un clic mostra arrivi e uscite",
+            "es": "Presencia de una persona: en casa o fuera, desde cuándo, última llegada y salida, un clic muestra las llegadas y salidas",
+            "pl": "Obecność osoby: w domu lub poza nim, od kiedy, ostatnie przyjście i wyjście, kliknięcie pokazuje przyjścia i wyjścia",
+            "uk": "Присутність особи: вдома чи ні, з якого часу, останній прихід і відхід, натискання показує приходи та відходи",
+            "zh-cn": "人员在家状态：在家或离开、持续时间、最近到达和离开，点击显示到达与离开记录"
+          },
+          "icon": "person.svg"
         }
       ]
     },
@@ -237,6 +256,11 @@
     "updateUnchanged": false,
     "phonebooksByNumber": [],
     "devices": [],
+    "persons": [],
+    "presenceDelay": 0,
+    "presenceHistory": 50,
+    "presenceGuests": false,
+    "presenceUnknown": false,
     "calllists": {
       "missed": {
         "generateJson": true,

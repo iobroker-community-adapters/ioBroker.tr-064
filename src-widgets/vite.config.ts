@@ -20,6 +20,7 @@ const config = {
                 './Tr064FritzBox': './src/Tr064FritzBox',
                 './Tr064Mesh': './src/Tr064Mesh',
                 './Tr064Presence': './src/Tr064Presence',
+                './Tr064Person': './src/Tr064Person',
                 './translations': './src/translations.ts',
             },
             remotes: {},

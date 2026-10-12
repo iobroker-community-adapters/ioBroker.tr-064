@@ -76,6 +76,28 @@ Users report that the detection also works reliably for iOS devices, for example
 
 The ioBroker community has published a script that uses this information of the adapter to trigger actions. Examples are: switch off everything automatically after all persons have left the home, show the number of persons that are at home, or show the status of a person in VIS. See the [thread in the ioBroker forum](https://forum.iobroker.net/topic/4538/anwesenheitscontrol-basierend-auf-tr64-adapter-script) (in German).
 
+### Persons, groups, guests (like fb-checkpresence)
+
+The tab "Persons" watches persons instead of single devices. Every row is one person with a name, an optional group and the MAC or IP addresses of all its devices, separated by commas (e.g. `AA:BB:CC:DD:EE:FF, 192.168.178.23`). An IP address only works if the Fritz!Box always gives the device the same address ("Always assign this IPv4 address" in the Fritz!Box); a smartphone with a private Wi-Fi address is better watched by IP than by its changing MAC. A person is present as soon as one of its devices is active. Everything is written below `tr-064.0.presence`:
+
+| State | Content |
+| --- | --- |
+| `persons.<name>.present` | `true` while the person is at home |
+| `persons.<name>.lastArrival` / `lastDeparture` | when the person came / left the last time (ms, `0` = not known yet) |
+| `persons.<name>.presentSince` / `absentSince` | minutes since then, `0` in the other state |
+| `persons.<name>.presentToday` / `absentToday` | minutes present / absent since midnight |
+| `persons.<name>.devices` | the active devices of the person |
+| `persons.<name>.history` | the last comings and goings as JSON, the newest first: `[{"ts": 1791799596991, "present": false}]` |
+| `present`, `allPresent` | anybody / everybody is at home |
+| `presentCount`, `absentCount`, `presentNames`, `absentNames`, `json` | who is at home and who is not |
+| `groups.<group>.*` | the same as above for the persons of one group |
+| `guests.present`, `count`, `names`, `json` | active devices of the guest network (option "Detect guests") |
+| `unknown.present`, `count`, `names`, `json` | active devices which are neither in "Devices" nor in "Persons" (option "Detect unknown devices") |
+
+A smartphone switches its Wi-Fi off in standby. With "Absent after (min)" a person counts as absent only when all its devices are inactive for these minutes; `lastDeparture` is then the moment the last device went offline. The first reading after the setup is no event: `lastArrival` and `lastDeparture` stay `0` until the person comes or leaves for the first time. Times, sums and the history survive a restart of the adapter.
+
+For a longer history, switch on a history instance (history, sql or influxdb) for `persons.<name>.present`, the widgets read the events from there. The objects of a person who is removed from the table are deleted on the next start.
+
 ### Answering machine (in German: `Anrufbeantworter`)
 
 You can switch the answering machine on and off. With the state `cbIndex` you select the number of the answering machine.
@@ -136,9 +158,10 @@ vis-2 (widget set "FRITZ!Box"):
 
 - **FRITZ!Box** (`Tr064FritzBox`): a tile like in ioBroker.devices with the online state, model, kind of the connection, current download and upload, external IP, WLAN and guest WLAN, new messages and missed calls. It chooses its layout by its size, from a small square to a large card with the use of the line. Optionally the chips of the WLAN and the guest WLAN switch them (`switchWlan`).
 - **Mesh topology** (`Tr064Mesh`): the mesh topology as a graphic or table which fills the widget, refreshed while it is visible.
-- **Presence** (`Tr064Presence`): the configured devices with present/away, access point and band.
+- **Presence** (`Tr064Presence`): the configured devices with present/away, access point and band - or, with "Mode" = persons, the persons of the tab "Persons" (optionally of one group) with since when they are at home or away, and the number of guests.
+- **Person** (`Tr064Person`): one person, selected by its name. Icon, picture and text for present and for absent are free to choose, as well as the colors. It shows since when the person is at home or away, when it came and left the last time, the sums of today and - if the widget is high enough - the last comings and goings. They come from a history instance (history, sql, influxdb) if one logs `present`, otherwise from the state `history` of the adapter.
 
-ioBroker.devices: the widget **FRITZ!Box** can be added to a category in all four sizes (1x1, 2x0.5, 2x1, 2x2); in the settings of the widget the instance of the adapter is selected.
+ioBroker.devices: the widget **FRITZ!Box** can be added to a category in all four sizes (1x1, 2x0.5, 2x1, 2x2); in the settings of the widget the instance of the adapter is selected. The widget **Person** shows one person (selected by its name) with photo or icon, the texts and colors of the settings, since when and the last arrival and departure; a click opens the comings and goings of the last days.
 
 The widgets need the states of the adapter version with these widgets (`states.boxModel`, `states.wan*`, ...) and the running instance for the mesh topology.
 
@@ -198,6 +221,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) New tab "Persons" with the presence of persons, groups, guests and unknown devices below `presence`, like the adapter fb-checkpresence: present, last arrival and departure, present/absent since, the sums of the day and the last comings and goings. A person is watched by MAC or IP addresses
+- (@GermanBluefox) New widget "Person" for vis-2 and ioBroker.devices, the person is selected by name; the vis-2 widget "Presence" can list persons
 ### 5.1.6 (2026-10-07)
 - (@GermanBluefox) The dialogs "Rename device" of the mesh topology and "Reset missed calls" of the widget and the device card show the button "Cancel" on the right side, grey and with a close icon, like everywhere in ioBroker
 

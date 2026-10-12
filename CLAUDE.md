@@ -42,6 +42,7 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 | `src/lib/callmonitor.ts` | TCP client for port 1012 |
 | `src/lib/phonebook.ts` | phone book, resolves numbers to names |
 | `src/lib/deflections.ts` | call forwardings |
+| `src/lib/presence.ts` | persons, groups, guests and unknown devices below `presence` (tab "Persons", like fb-checkpresence) |
 | `src/lib/mesh.ts` | converts the mesh list of the box into nodes/links, finds the access point of a device |
 | `src/lib/oui.ts` | manufacturer of a MAC address, binary search in `data/oui.txt` |
 | `src/lib/systemdata.ts` | the `meta` object which stores the call lists between restarts |
@@ -132,6 +133,15 @@ whether the TCP connect gave up within the 5 second observation window of the te
 - The channel below `devices` is named by `deviceChannelName()`: the name in the box (`NewHostName`) by default, the name of the table with `useConfiguredNames` (`entry.channelName`, made unique and valid by `prepareDeviceNames()`). mDNS must use the same function, it once wrote into a channel of its own. With `useConfiguredNames`, `deleteUnusedDevices()` deletes a channel whose `native.mac` belongs to a configured device but whose ID differs - the user switched the option on, so the old objects go. `useConfiguredNames` is `false` for instances without it and in `io-package.json`: switching it on moves objects which scripts use.
 - Every SOAP fault arrives as `err.code === 500` - `tr-O64` drops the UPnP error code - so an unknown MAC (714) and an offline device cannot be told apart. A device which was never seen is logged once and listed as inactive via `onUnknown`.
 - Every `GetSpecificHostEntry` is guarded by `callbackTimers.wrap()`. Without it one lost answer stops `updateAll()` for good (issue #660).
+
+### Persons below `presence` (`src/lib/presence.ts`)
+
+- The tab "Persons" (`config.persons`: `enabled`, `name`, `group`, `addresses`, `comment`) is independent of the tab "Devices". `addresses` mixes MAC and IP addresses (`splitAddresses()`); a person is present while one of them is active. IPs are matched only against the XML host list - without it a person with an IP is left unchanged. `Presence` is created once on the first connection; `init()` deletes every object below `presence` which is not wanted any more and takes over `present`, `lastArrival`/`lastDeparture`, `history` and the sums of today (by the `ts` of the state) from the stored states.
+- One XML host list per poll cycle (`getHostListXml()` - **without** the one-by-one fallback of `getHostList()`, that would be 100+ requests every cycle). Without the list only the persons are read, MAC by MAC with `getHostEntries()`; a timeout skips the cycle instead of making somebody absent.
+- The first determination after the setup is no event (`lastArrival`/`lastDeparture` stay 0). `presenceDelay` (minutes) keeps a person present while all devices are inactive; the departure is the first inactive poll, not the end of the delay.
+- Objects are created with `extendObject()`, which keeps `common.custom`: the widgets read the history of `<person>.present` from a history/sql/influxdb instance if one logs it (`src-shared/presenceApi.ts`), otherwise the JSON `history` of the adapter.
+- The channel of a person has `native.person` = the configured name. The widgets store the **name** of the person, not an object ID, and find the channel by it (`loadPersons()`/`findPerson()`).
+- Person names are names in the sense of the logging rule - only `log.silly()`.
 
 ### Mesh, WAN, event log (issues #383, #269, #432, #444)
 

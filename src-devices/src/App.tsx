@@ -1,10 +1,10 @@
 // SIMULATION ONLY (`npm start`) - not part of the federation build (that starts at Components.tsx).
 //
-// Renders the tile in all sizes with mocked states and a mocked `sendTo('tr-064.0', 'mesh')`, in a
+// Renders the tiles in all sizes with mocked states and a mocked `sendTo('tr-064.0', 'mesh')`, in a
 // grid like the one of ioBroker.devices (columns of at least 135 px, 12 px gap, the 2x1 wrapper of
 // `WidgetPlugin`). URL parameters:
 //   ?theme=light|dark|neumorphic   ?lang=de   ?view=tiles|dialog   ?scenario=full|ringing|minimal|offline
-//   ?width=<px of the grid>        ?live=1 (changing rates)
+//   ?width=<px of the grid>        ?live=1 (changing rates)   ?tile=fritzbox|person (default both)
 // `#dialog=<id>` in the URL keeps an open dialog over a reload, like ioBroker.devices does.
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -13,8 +13,17 @@ import { I18n, type Connection, type ThemeType } from '@iobroker/gui-components'
 import type { IStateContext, ObjectChangeListener, StateChangeListener } from '@iobroker/dm-widgets';
 
 import FritzBoxComponent from './FritzBoxComponent';
+import PersonComponent from './PersonComponent';
 import translations from './translations';
-import { meshMock, mockStates, SCENARIOS, type Scenario } from './mockData';
+import {
+    meshMock,
+    mockPersonChannels,
+    mockPersons,
+    mockPersonStates,
+    mockStates,
+    SCENARIOS,
+    type Scenario,
+} from './mockData';
 
 const params = new URLSearchParams(window.location.search);
 const THEME = params.get('theme') || 'dark';
@@ -23,6 +32,7 @@ const VIEW = params.get('view') || 'tiles';
 const GRID_WIDTH = Number(params.get('width')) || 0;
 const LIVE = params.get('live') === '1';
 const INSTANCE = 'tr-064.0';
+const TILE = params.get('tile') || '';
 
 // ioBroker.devices loads `./translations` of the plugin and merges it before the components
 I18n.extendTranslations(translations);
@@ -114,7 +124,7 @@ class MockStateContext implements IStateContext {
 
     constructor(scenario: Scenario, themeType: ThemeType) {
         this.themeType = themeType;
-        const values = mockStates(scenario);
+        const values = { ...mockStates(scenario), ...mockPersonStates() };
         for (const [id, val] of Object.entries(values)) {
             this.states[`${INSTANCE}.${id}`] = { val, ack: true, ts: Date.now(), lc: Date.now(), from: 'sim', q: 0 };
         }
@@ -187,9 +197,27 @@ class MockStateContext implements IStateContext {
                 await new Promise(resolve => setTimeout(resolve, 30));
                 return this.states[id] || null;
             },
+            // the persons of the presence detection (`loadPersons()`, `loadPresenceHistory()`)
+            getObjectViewSystem: async (
+                type: string,
+                start?: string,
+                end?: string,
+            ): Promise<Record<string, ioBroker.Object>> => {
+                await new Promise(resolve => setTimeout(resolve, 30));
+                const channels = type === 'channel' ? mockPersonChannels(INSTANCE) : {};
+                return Object.fromEntries(
+                    Object.entries(channels).filter(([id]) => (!start || id >= start) && (!end || id <= end)),
+                );
+            },
+            // no history adapter: the dialog falls back to the state `history`
+            getObject: (_id: string): Promise<ioBroker.Object | null> => Promise.resolve(null),
+            getHistory: (): Promise<ioBroker.GetHistoryResult> => Promise.resolve([]),
             sendTo: async (instance: string, command: string): Promise<unknown> => {
                 console.debug(`[sim] sendTo ${instance} ${command}`);
                 await new Promise(resolve => setTimeout(resolve, 600));
+                if (instance === INSTANCE && command === 'personList') {
+                    return mockPersons().map(person => ({ label: person.name, value: person.name }));
+                }
                 if (instance !== INSTANCE || command !== 'mesh') {
                     return null;
                 }
@@ -274,6 +302,63 @@ function gridSpan(size: Size): React.CSSProperties {
 /** The tile class: the local one, or the one loaded through module federation (host-sim.tsx) */
 export type TileClass = typeof FritzBoxComponent;
 
+export type PersonTileClass = typeof PersonComponent;
+
+const PERSON_SIZES: Size[] = ['1x1', '2x0.5', '2x1', '2x2'];
+
+/** Every mock person in every size */
+function PersonTiles(props: {
+    component: PersonTileClass;
+    context: MockStateContext;
+    openDialogId: string | null;
+    onOpen: (id: string) => void;
+    onClose: () => void;
+}): React.JSX.Element {
+    return (
+        <Box
+            sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(135px, 1fr))',
+                gap: 1.5,
+                alignItems: 'start',
+                width: GRID_WIDTH ? `${GRID_WIDTH}px` : '100%',
+            }}
+        >
+            {mockPersons().flatMap(person =>
+                PERSON_SIZES.map(size => {
+                    const id = `person_${person.id}_${size.replace('.', '_')}`;
+                    return (
+                        <div
+                            key={id}
+                            style={gridSpan(size)}
+                        >
+                            <PluginFrame size={size}>
+                                <props.component
+                                    widget={widgetInfo(id)}
+                                    stateContext={props.context}
+                                    settings={{
+                                        ...baseSettings,
+                                        pluginComponent: 'PersonComponent',
+                                        id,
+                                        size,
+                                        person: person.name,
+                                        ...person.settings,
+                                    }}
+                                    onOpenSettings={() => console.log(`settings of ${id}`)}
+                                    openDialogId={props.openDialogId}
+                                    onOpenWidgetDialog={props.onOpen}
+                                    onCloseWidgetDialog={props.onClose}
+                                    onHide={() => {}}
+                                />
+                            </PluginFrame>
+                        </div>
+                    );
+                }),
+            )}
+        </Box>
+    );
+}
+
 function Tiles(props: {
     component: TileClass;
     scenario: Scenario;
@@ -319,7 +404,11 @@ function Tiles(props: {
     );
 }
 
-export default function App(props: { component?: TileClass; banner?: string }): React.JSX.Element {
+export default function App(props: {
+    component?: TileClass;
+    personComponent?: PersonTileClass;
+    banner?: string;
+}): React.JSX.Element {
     const theme = useMemo(() => buildTheme(THEME), []);
     const [openDialogId, setOpenDialogId] = useState<string | null>(() =>
         VIEW === 'dialog' ? `fritz_${params.get('scenario') || 'full'}_2x1_mesh` : readDialogFromHash(),
@@ -384,27 +473,43 @@ export default function App(props: { component?: TileClass; banner?: string }): 
                 {props.banner ? (
                     <Box sx={{ mb: 2, fontSize: 13, color: 'success.main', fontWeight: 600 }}>{props.banner}</Box>
                 ) : null}
-                {scenarios
-                    .filter(item => !only || item.id === only)
-                    .map(item => (
-                        <Box
-                            key={item.id}
-                            sx={{ mb: 3 }}
-                        >
-                            <Box sx={{ mb: 1, fontSize: 13, color: 'text.secondary', fontWeight: 600 }}>
-                                {`${item.title} - ${THEME}, ${LANG}`}
-                            </Box>
-                            <Tiles
-                                component={props.component || FritzBoxComponent}
-                                scenario={item.id}
-                                context={contexts[item.id]}
-                                sizes={VIEW === 'dialog' ? ['2x1'] : ['1x1', '2x0.5', '2x1', '2x2']}
-                                openDialogId={openDialogId}
-                                onOpen={onOpen}
-                                onClose={onClose}
-                            />
+                {TILE === 'person'
+                    ? null
+                    : scenarios
+                          .filter(item => !only || item.id === only)
+                          .map(item => (
+                              <Box
+                                  key={item.id}
+                                  sx={{ mb: 3 }}
+                              >
+                                  <Box sx={{ mb: 1, fontSize: 13, color: 'text.secondary', fontWeight: 600 }}>
+                                      {`${item.title} - ${THEME}, ${LANG}`}
+                                  </Box>
+                                  <Tiles
+                                      component={props.component || FritzBoxComponent}
+                                      scenario={item.id}
+                                      context={contexts[item.id]}
+                                      sizes={VIEW === 'dialog' ? ['2x1'] : ['1x1', '2x0.5', '2x1', '2x2']}
+                                      openDialogId={openDialogId}
+                                      onOpen={onOpen}
+                                      onClose={onClose}
+                                  />
+                              </Box>
+                          ))}
+                {TILE === 'fritzbox' || VIEW === 'dialog' ? null : (
+                    <Box sx={{ mb: 3 }}>
+                        <Box sx={{ mb: 1, fontSize: 13, color: 'text.secondary', fontWeight: 600 }}>
+                            {`Persons: initials, own icons and texts, photo - ${THEME}, ${LANG}`}
                         </Box>
-                    ))}
+                        <PersonTiles
+                            component={props.personComponent || PersonComponent}
+                            context={contexts.full}
+                            openDialogId={openDialogId}
+                            onOpen={onOpen}
+                            onClose={onClose}
+                        />
+                    </Box>
+                )}
             </Box>
         </ThemeProvider>
     );

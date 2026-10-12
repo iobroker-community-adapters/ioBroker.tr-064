@@ -568,9 +568,25 @@ export class TR064Client extends TR064 {
      */
     public getHostList(callback: (err: Error | null, hosts: HostEntry[]) => void): void {
         this.adapter.log.debug('getHostList');
+        this.getHostListXml((err, hosts) => {
+            if (err) {
+                this.adapter.log.debug(`Host list: ${err.message}`);
+                this.getHostListOneByOne(callback);
+            } else {
+                callback(null, hosts);
+            }
+        });
+    }
+
+    /**
+     * Reads the XML host list of `X_AVM-DE_GetHostListPath` without the slow fallback of
+     * `getHostList()`: a box without the list answers with an error. `callback` is called exactly
+     * once. `NewX_AVM-DE_Guest` is `'1'` for a device of the guest network.
+     */
+    public getHostListXml(callback: (err: Error | null, hosts: HostEntry[]) => void): void {
         const getPath = this.hosts?.actions?.['X_AVM-DE_GetHostListPath'];
         if (!getPath) {
-            this.getHostListOneByOne(callback);
+            callback(new Error('not supported'), []);
             return;
         }
 
@@ -578,14 +594,12 @@ export class TR064Client extends TR064 {
             this.adapter.callbackTimers.wrap<ActionResult>(5000, (err, res) => {
                 const path = res?.['NewX_AVM-DE_HostListPath'];
                 if (err || !path) {
-                    this.adapter.log.debug(`X_AVM-DE_GetHostListPath: ${err ? JSON.stringify(err) : 'no path'}`);
-                    this.getHostListOneByOne(callback);
+                    callback(new Error(`X_AVM-DE_GetHostListPath: ${err ? JSON.stringify(err) : 'no path'}`), []);
                     return;
                 }
                 getXml<HostListXml>(this.boxUrl(path), (xmlErr, json) => {
                     if (xmlErr) {
-                        this.adapter.log.debug(`Host list: ${xmlErr.message}`);
-                        this.getHostListOneByOne(callback);
+                        callback(xmlErr, []);
                         return;
                     }
                     const item = typeof json?.list === 'object' ? json.list.item : undefined;
@@ -598,6 +612,7 @@ export class TR064Client extends TR064 {
                             NewMACAddress: String(host.macaddress ?? ''),
                             NewActive: String(host.active ?? '0'),
                             NewInterfaceType: String(host.interfacetype ?? ''),
+                            'NewX_AVM-DE_Guest': String(host['x_avm-de_guest'] ?? '0'),
                         })),
                     );
                 });
@@ -726,7 +741,7 @@ export class TR064Client extends TR064 {
      * `error` of an answer is `unknown` for error 500 (unknown address or device offline),
      * `timeout` if the box did not answer, otherwise the error text.
      */
-    private getHostEntries(
+    public getHostEntries(
         macs: string[],
         cb: (answers: { entry?: HostEntry; error?: string }[]) => void,
         answers: { entry?: HostEntry; error?: string }[] = [],

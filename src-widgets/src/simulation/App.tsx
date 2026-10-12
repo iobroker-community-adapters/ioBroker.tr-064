@@ -3,12 +3,13 @@
 // URL parameters:
 //   ?theme=dark            dark theme of ioBroker (text.secondary is white there, like in vis-2)
 //   ?lang=de               language
-//   ?scene=tile|mesh|presence&w=150&h=150   one widget in this size (default: overview of all)
+//   ?scene=tile|mesh|presence|persons|person&w=150&h=150   one widget in this size (default: overview of all)
 //   ?h=auto                no height in the style: the widget grows with its content
 //   ?open=1                clicks the tile after the start (mesh dialog)
 //   ?edit=1                edit mode (no dialog)
 //   ?noCard=1 ?hideDetails=1 ?switchWlan=1 ?name=Office    attributes of the tile
 //   ?view=table ?onlyConfigured=1 ?showDisconnected=1 ?title=Mesh   attributes of the mesh widget
+//   ?person=Anna ?group=Family ?image=<url> ?showToday=1 ?showHistory=0   attributes of the person widget
 //   ?box=offline|stopped|minimal ?ringing=1 ?live=1 ?meshError=timeout ?clients=100    data
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -17,6 +18,7 @@ import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 
 import Tr064FritzBox from '../Tr064FritzBox';
 import Tr064Mesh from '../Tr064Mesh';
+import Tr064Person from '../Tr064Person';
 import Tr064Presence from '../Tr064Presence';
 import MockSocket from './mockSocket';
 import type { MockWidgetProps } from './VisRxWidgetMock';
@@ -128,6 +130,20 @@ function meshData(): Record<string, unknown> {
     };
 }
 
+function personData(): Record<string, unknown> {
+    return {
+        person: params.get('person') ?? 'Anna',
+        image: params.get('image') || '',
+        widgetTitle: params.get('title') || '',
+        noCard: params.get('noCard') === '1',
+        showToday: params.get('showToday') === '1',
+        showDevices: params.get('showDevices') === '1',
+        showHistory: params.get('showHistory') !== '0',
+        historyCount: 10,
+        historyDays: 7,
+    };
+}
+
 function Overview(): React.JSX.Element {
     const tiles: [number, number | string][] = [
         [150, 150],
@@ -187,6 +203,64 @@ function Overview(): React.JSX.Element {
                     height={360}
                     label="Tr064Presence 300×360"
                 />
+                <Widget
+                    widget={Tr064Presence}
+                    data={{ mode: 'persons' }}
+                    width={300}
+                    height={360}
+                    label="Tr064Presence persons 300×360"
+                />
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'flex-start' }}>
+                <Widget
+                    widget={Tr064Person}
+                    data={personData()}
+                    width={140}
+                    height={160}
+                    label="Tr064Person 140×160"
+                />
+                <Widget
+                    widget={Tr064Person}
+                    data={{ ...personData(), person: 'Max' }}
+                    width={140}
+                    height={160}
+                    label="Max 140×160"
+                />
+                <Widget
+                    widget={Tr064Person}
+                    data={personData()}
+                    width={380}
+                    height={90}
+                    label="Tr064Person 380×90"
+                />
+                <Widget
+                    widget={Tr064Person}
+                    data={{ ...personData(), showToday: true }}
+                    width={300}
+                    height={200}
+                    label="Tr064Person 300×200"
+                />
+                <Widget
+                    widget={Tr064Person}
+                    data={{ ...personData(), showToday: true, showDevices: true }}
+                    width={320}
+                    height={460}
+                    label="Tr064Person 320×460 (history.0)"
+                />
+                <Widget
+                    widget={Tr064Person}
+                    data={{ ...personData(), person: 'Max' }}
+                    width={300}
+                    height={380}
+                    label="Max 300×380 (adapter list)"
+                />
+                <Widget
+                    widget={Tr064Person}
+                    data={{ ...personData(), person: '' }}
+                    width={200}
+                    height={160}
+                    label="no person"
+                />
             </Box>
         </Box>
     );
@@ -221,6 +295,31 @@ function Scene(): React.JSX.Element {
                 data={{ onlyActive: params.get('onlyActive') === '1', widgetTitle: params.get('title') || '' }}
                 width={size('w', 300)}
                 height={size('h', 360)}
+            />
+        );
+    }
+    if (scene === 'persons') {
+        return (
+            <Widget
+                widget={Tr064Presence}
+                data={{
+                    mode: 'persons',
+                    group: params.get('group') || '',
+                    onlyActive: params.get('onlyActive') === '1',
+                    widgetTitle: params.get('title') || '',
+                }}
+                width={size('w', 300)}
+                height={size('h', 360)}
+            />
+        );
+    }
+    if (scene === 'person') {
+        return (
+            <Widget
+                widget={Tr064Person}
+                data={personData()}
+                width={size('w', 300)}
+                height={size('h', 340)}
             />
         );
     }

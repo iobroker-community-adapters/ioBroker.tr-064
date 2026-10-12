@@ -24,6 +24,7 @@ The copies are gitignored - **edit only `src-shared/`**, a change of a copy is o
 | --- | --- |
 | `types.ts` | `MeshResponse`, `MeshNodeInfo`, `MeshLinkInfo` - answer of `sendTo('<instance>', 'mesh', {})`, same as `src/lib/types.ts` of the adapter |
 | `meshApi.ts` | `fetchMesh()`, `renameDevice()`, `MeshLoader`, `useMeshLoader()`, error codes |
+| `presenceApi.ts` | persons of `presence.persons`: `loadPersons()`, `findPerson()` (by name), `loadPresenceHistory()` (history instance or the JSON `history`), `formatDuration()`, `formatEventTime()` - no React |
 | `MeshView.tsx` | the React component: toolbar, SVG graph, table |
 | `meshLayout.ts` | tree building and layout (pure functions, no React) |
 | `deviceIcons.tsx` | `device_class` of the box (`COMPUTER`, `LAMP`, ...) -> MUI icon, and `DeviceIcon` for the SVG |

@@ -18,6 +18,7 @@ import { CallMonitor } from './lib/callmonitor';
 import { normalizeConfig, ROOT as CALLLIST_ROOT, S_HTML_TEMPLATE } from './lib/calllist';
 import { CHANNEL_DEFLECTIONS, Deflections } from './lib/deflections';
 import { Phonebook } from './lib/phonebook';
+import { Presence } from './lib/presence';
 import { SystemData } from './lib/systemdata';
 import { TR064Client } from './lib/tr064';
 import type { LoginError } from './lib/tr064';
@@ -40,6 +41,7 @@ import type {
     DiscoveredDevice,
     HostEntry,
     MeshResponse,
+    PresenceResponse,
     RenameResponse,
 } from './lib/types';
 
@@ -128,6 +130,8 @@ export class Tr064Adapter extends utils.Adapter {
     private lastSlowRefresh = 0;
     /** Last mesh topology which was read, for the admin (issue #383) */
     private meshTopology: MeshResponse | null = null;
+    /** Persons, groups, guests and unknown devices below `presence`, created on the first connection */
+    private presence: Presence | null = null;
     /** Reading the mesh list failed - it is logged once */
     private meshErrorLogged = false;
     /** Reading the event log failed - it is logged once */
@@ -364,6 +368,31 @@ export class Tr064Adapter extends utils.Adapter {
                     this.log.silly(`setHostName: ${mac} -> ${name}`);
                     answer({});
                 });
+                return;
+            }
+
+            case 'presence': {
+                // the persons and groups for the widgets
+                if (obj.callback) {
+                    const response: PresenceResponse = this.presence?.info() ?? { persons: [], groups: [] };
+                    this.sendTo(obj.from, obj.command, response, obj.callback);
+                }
+                return;
+            }
+
+            case 'personList': {
+                // the person picker of the ioBroker.devices tile (`autocompleteSendTo` wants an array)
+                if (obj.callback) {
+                    const names = (this.presence?.info().persons ?? [])
+                        .map(person => person.name)
+                        .sort((a, b) => a.localeCompare(b));
+                    this.sendTo(
+                        obj.from,
+                        obj.command,
+                        names.map(name => ({ label: name, value: name })),
+                        obj.callback,
+                    );
+                }
                 return;
             }
 
@@ -1054,10 +1083,11 @@ export class Tr064Adapter extends utils.Adapter {
 
         this.tr064Client.setABIndex();
 
+        const updatePresence = (): void => (this.presence ? this.presence.update(doIt) : doIt());
         if (this.config.useDevices) {
-            this.updateDevices(doIt);
+            this.updateDevices(updatePresence);
         } else {
-            doIt();
+            updatePresence();
         }
     }
 
@@ -1131,6 +1161,13 @@ export class Tr064Adapter extends utils.Adapter {
             this.config.devices = [];
         }
         this.prepareDeviceNames();
+        if (!Array.isArray(this.config.persons)) {
+            this.config.persons = [];
+        }
+        this.config.presenceDelay = Math.max(0, Number(this.config.presenceDelay) || 0);
+        this.config.presenceHistory = ~~Number(this.config.presenceHistory) || 50;
+        this.config.presenceGuests = !!this.config.presenceGuests;
+        this.config.presenceUnknown = !!this.config.presenceUnknown;
     }
 
     private async main(): Promise<void> {
@@ -1198,6 +1235,11 @@ export class Tr064Adapter extends utils.Adapter {
             this.devStates.set(STATES.boxModel.name, this.tr064Client.boxInfo.model);
             this.devStates.set(STATES.boxFirmware.name, this.tr064Client.boxInfo.firmware);
             this.refreshCalls();
+
+            if (!this.presence) {
+                this.presence = new Presence(this, this.tr064Client);
+                this.presence.init().catch(e => this.log.warn(`Cannot create the presence objects: ${errorText(e)}`));
+            }
 
             this.createConfiguredDevices(() => {
                 this.phonebook.start(this.tr064Client.sslDevice, { return: !this.config.usePhonebook }, () => {

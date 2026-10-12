@@ -6,10 +6,18 @@ import { Person as IconPerson, PersonOff as IconAway } from '@mui/icons-material
 import type { RxRenderWidgetProps, RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
 import Generic, { faint, muted, StateWatcher, type StateValues } from './Generic';
-import { toBool, toText } from './format';
+import { presenceSelectComponent } from './PresenceSelect';
+import { toBool, toNumber, toText } from './format';
+import { formatDuration, formatEventTime, loadPersons, PERSON_STATES } from './shared/presenceApi';
 
 interface Tr064PresenceRxData {
     instance: string;
+    /** `devices` (also if not set - the widgets before 5.2) or `persons` */
+    mode: 'devices' | 'persons' | '';
+    /** persons: only the persons of this group, empty = all */
+    group: string;
+    /** persons: the number of devices in the guest network */
+    showGuests: boolean;
     noCard: boolean;
     widgetTitle: string;
     onlyActive: boolean;
@@ -17,7 +25,7 @@ interface Tr064PresenceRxData {
     showAccessPoint: boolean;
 }
 
-/** One configured device, a channel below `tr-064.<n>.devices` */
+/** One configured device (a channel below `tr-064.<n>.devices`) or person (below `presence.persons`) */
 interface PresenceDevice {
     /** e.g. `tr-064.0.devices.Handy_Anna` */
     id: string;
@@ -33,6 +41,24 @@ interface Tr064PresenceState extends VisRxWidgetState {
 /** The states of a device which are shown */
 const DEVICE_STATES = ['active', 'accessPoint', 'connection'] as const;
 
+/** The states of a person which are shown */
+const PERSON_LIST_STATES = [
+    PERSON_STATES.present,
+    PERSON_STATES.lastArrival,
+    PERSON_STATES.lastDeparture,
+    PERSON_STATES.presentSince,
+    PERSON_STATES.absentSince,
+] as const;
+
+/** One row of the list */
+interface PresenceRow extends PresenceDevice {
+    active: boolean | undefined;
+    /** the second line */
+    info: string;
+    /** right of the row: when the person came or left */
+    time: string;
+}
+
 /**
  * Name of the channel without the IP address which the adapter appends: `Handy Anna (192.168.178.23)`
  *
@@ -42,9 +68,14 @@ function deviceName(name: string): string {
     return name.replace(/\s*\((?:\d{1,3}(?:\.\d{1,3}){3}|[\da-f:]+|undefined)?\)\s*$/i, '').trim();
 }
 
-/** The configured devices of the instance (tab "Devices"): present or away, and where they are connected */
+/**
+ * The configured devices of the instance (tab "Devices"): present or away, and where they are
+ * connected - or the persons of the presence detection (tab "Persons"): present or away, and since when
+ */
 export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064PresenceState> {
     private watcher: StateWatcher | null = null;
+
+    private ticker: ReturnType<typeof setInterval> | null = null;
 
     constructor(props: VisRxWidgetProps) {
         super(props);
@@ -75,11 +106,44 @@ export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064Pre
                             default: 'tr-064.0',
                             label: 'instance',
                         },
+                        {
+                            name: 'mode',
+                            type: 'select',
+                            label: 'mode',
+                            tooltip: 'mode_tooltip',
+                            options: [
+                                { value: 'devices', label: 'mode_devices' },
+                                { value: 'persons', label: 'mode_persons' },
+                            ],
+                            default: 'devices',
+                        },
+                        {
+                            name: 'group',
+                            type: 'custom',
+                            label: 'group',
+                            tooltip: 'group_tooltip',
+                            component: presenceSelectComponent('group'),
+                            hidden: "data.mode !== 'persons'",
+                        },
                         { name: 'noCard', type: 'checkbox', label: 'without_card' },
                         { name: 'widgetTitle', type: 'text', label: 'title', hidden: '!!data.noCard' },
                         { name: 'onlyActive', type: 'checkbox', default: false, label: 'only_active' },
                         { name: 'activeFirst', type: 'checkbox', default: true, label: 'active_first' },
-                        { name: 'showAccessPoint', type: 'checkbox', default: true, label: 'show_access_point' },
+                        {
+                            name: 'showAccessPoint',
+                            type: 'checkbox',
+                            default: true,
+                            label: 'show_access_point',
+                            hidden: "data.mode === 'persons'",
+                        },
+                        {
+                            name: 'showGuests',
+                            type: 'checkbox',
+                            default: true,
+                            label: 'show_guests',
+                            tooltip: 'show_guests_tooltip',
+                            hidden: "data.mode !== 'persons'",
+                        },
                     ],
                 },
             ],
@@ -96,23 +160,68 @@ export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064Pre
     componentDidMount(): void {
         super.componentDidMount();
         this.watcher = new StateWatcher(this.getWatchSocket(), presence => this.setState({ presence }));
+        // the durations of the persons change every minute
+        this.ticker = setInterval(() => {
+            if (this.isPersonMode()) {
+                this.forceUpdate();
+            }
+        }, 60_000);
         void this.loadDevices();
     }
 
     componentWillUnmount(): void {
         this.watcher?.stop();
         this.watcher = null;
+        if (this.ticker) {
+            clearInterval(this.ticker);
+            this.ticker = null;
+        }
         super.componentWillUnmount();
     }
 
     onRxDataChanged(prevRxData: Tr064PresenceRxData): void {
-        if (prevRxData.instance !== this.state.rxData.instance) {
+        const rxData = this.state.rxData;
+        if (
+            prevRxData.instance !== rxData.instance ||
+            prevRxData.mode !== rxData.mode ||
+            (this.isPersonMode() &&
+                ((prevRxData.group || '') !== (rxData.group || '') || prevRxData.showGuests !== rxData.showGuests))
+        ) {
             this.setState({ devices: null }, () => void this.loadDevices());
         }
     }
 
-    /** The channels below `devices`, sorted by name */
+    /** The persons instead of the devices; a widget without `mode` (before 5.2) shows the devices */
+    private isPersonMode(): boolean {
+        return this.state.rxData.mode === 'persons';
+    }
+
+    private getGuestsId(): string {
+        return `${this.getInstanceId()}.presence.guests.count`;
+    }
+
+    /** The persons of the instance, only the ones of the group if one is set */
+    private async loadPersonList(): Promise<void> {
+        const group = (this.state.rxData.group || '').trim().toLowerCase();
+        const persons = (await loadPersons(this.getPresenceSocket(), this.getInstanceId())).filter(
+            person => !group || person.group.toLowerCase() === group,
+        );
+        if (!this.watcher) {
+            return; // unmounted meanwhile
+        }
+        const ids = persons.flatMap(person => PERSON_LIST_STATES.map(name => `${person.id}.${name}`));
+        if (this.state.rxData.showGuests !== false) {
+            ids.push(this.getGuestsId());
+        }
+        this.watcher.watch(ids);
+        this.setState({ devices: persons.map(person => ({ id: person.id, name: person.name })) });
+    }
+
+    /** The channels below `devices` (or the persons), sorted by name */
     private async loadDevices(): Promise<void> {
+        if (this.isPersonMode()) {
+            return this.loadPersonList();
+        }
         const prefix = `${this.getInstanceId()}.devices.`;
         let devices: PresenceDevice[] = [];
         try {
@@ -138,6 +247,56 @@ export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064Pre
         this.setState({ devices });
     }
 
+    private getDeviceRows(): PresenceRow[] {
+        const values = this.state.presence;
+        const showWhere = this.state.rxData.showAccessPoint !== false;
+        return (this.state.devices || []).map(device => {
+            const active = toBool(values[`${device.id}.active`]);
+            const where = [toText(values[`${device.id}.accessPoint`]), toText(values[`${device.id}.connection`])]
+                .filter(Boolean)
+                .join(' · ');
+            let info = '…';
+            if (active) {
+                info = showWhere && where ? where : Generic.t('present');
+            } else if (active === false) {
+                info = Generic.t('away');
+            }
+            return { ...device, active, info, time: '' };
+        });
+    }
+
+    /** A person: present or away and for how long, and when it came or left */
+    private getPersonRows(): PresenceRow[] {
+        const values = this.state.presence;
+        const lang = Generic.getLanguage();
+        const now = Date.now();
+        return (this.state.devices || []).map(person => {
+            const active = toBool(values[`${person.id}.${PERSON_STATES.present}`]);
+            if (active === undefined) {
+                return { ...person, active, info: '…', time: '' };
+            }
+            const since = toNumber(
+                values[`${person.id}.${active ? PERSON_STATES.lastArrival : PERSON_STATES.lastDeparture}`],
+            );
+            const minutes = toNumber(
+                values[`${person.id}.${active ? PERSON_STATES.presentSince : PERSON_STATES.absentSince}`],
+            );
+            let duration = 0;
+            if (since && since <= now) {
+                duration = now - since;
+            } else if (minutes) {
+                duration = minutes * 60_000;
+            }
+            const word = Generic.t(active ? 'present' : 'away');
+            return {
+                ...person,
+                active,
+                info: duration ? `${word} · ${formatDuration(duration, lang)}` : word,
+                time: since ? formatEventTime(since, lang) : '',
+            };
+        });
+    }
+
     private renderList(): React.JSX.Element {
         const rxData = this.state.rxData;
         const values = this.state.presence;
@@ -149,13 +308,11 @@ export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064Pre
             );
         }
 
-        let rows = this.state.devices.map(device => ({
-            ...device,
-            active: toBool(values[`${device.id}.active`]),
-            accessPoint: toText(values[`${device.id}.accessPoint`]),
-            connection: toText(values[`${device.id}.connection`]),
-        }));
+        const persons = this.isPersonMode();
+        let rows = persons ? this.getPersonRows() : this.getDeviceRows();
         const present = rows.filter(row => row.active).length;
+        const guests = persons && rxData.showGuests !== false ? toNumber(values[this.getGuestsId()]) : undefined;
+        const summary = Generic.t('present_count', String(present), String(this.state.devices.length));
         if (rxData.onlyActive) {
             rows = rows.filter(row => row.active);
         }
@@ -183,16 +340,17 @@ export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064Pre
                         mb: '6px',
                     })}
                 >
-                    {Generic.t('present_count', String(present), String(this.state.devices.length))}
+                    {guests === undefined ? summary : `${summary} · ${Generic.t('guests_count', String(guests))}`}
                 </Box>
                 {!rows.length ? (
                     <Box sx={theme => ({ fontSize: 13, color: muted(theme), py: 1 })}>
-                        {Generic.t(this.state.devices.length ? 'nobody_present' : 'no_devices')}
+                        {Generic.t(
+                            this.state.devices.length ? 'nobody_present' : persons ? 'no_persons' : 'no_devices',
+                        )}
                     </Box>
                 ) : null}
                 <Box sx={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto', mx: '-4px', px: '4px' }}>
                     {rows.map(row => {
-                        const where = [row.accessPoint, row.connection].filter(Boolean).join(' · ');
                         return (
                             <Box
                                 key={row.id}
@@ -239,15 +397,21 @@ export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064Pre
                                             whiteSpace: 'nowrap',
                                         })}
                                     >
-                                        {row.active === undefined
-                                            ? '…'
-                                            : row.active
-                                              ? rxData.showAccessPoint !== false && where
-                                                  ? where
-                                                  : Generic.t('present')
-                                              : Generic.t('away')}
+                                        {row.info}
                                     </Box>
                                 </Box>
+                                {row.time ? (
+                                    <Box
+                                        sx={theme => ({
+                                            flex: '0 0 auto',
+                                            fontSize: 12,
+                                            color: muted(theme),
+                                            fontVariantNumeric: 'tabular-nums',
+                                        })}
+                                    >
+                                        {row.time}
+                                    </Box>
+                                ) : null}
                             </Box>
                         );
                     })}

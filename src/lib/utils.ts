@@ -166,6 +166,25 @@ export function splitMacs(macs: string): string[] {
         .filter(mac => mac);
 }
 
+/**
+ * Splits a list of MAC and IP addresses (separated by comma or semicolon) of the tab "Persons".
+ * MACs are returned as `AA:BB:CC:DD:EE:FF`, IPs in lower case; anything else is `invalid`.
+ */
+export function splitAddresses(text: string): { macs: string[]; ips: string[]; invalid: string[] } {
+    const result = { macs: [] as string[], ips: [] as string[], invalid: [] as string[] };
+    for (const address of splitMacs(text)) {
+        const hex = address.replace(/[^0-9a-fA-F]/g, '');
+        if (hex.length === 12 && !address.includes('::') && /^[0-9a-fA-F:\-.\s]+$/.test(address)) {
+            result.macs.push(normalizeMac(address));
+        } else if (/^(\d{1,3})(\.\d{1,3}){3}$/.test(address) || /^[0-9a-fA-F:]+$/.test(address)) {
+            result.ips.push(address.toLowerCase());
+        } else {
+            result.invalid.push(address);
+        }
+    }
+    return result;
+}
+
 /** Whether both lists of MAC addresses have one address in common, independent of their spelling */
 export function macsOverlap(macs1: string, macs2: string): boolean {
     const list = splitMacs(macs1).map(normalizeMac);

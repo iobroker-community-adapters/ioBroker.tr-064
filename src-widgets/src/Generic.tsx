@@ -7,8 +7,23 @@ import type VisRxWidget from '@iobroker/types-vis-2/visRxWidget';
 import { meshTranslate } from './shared/i18n';
 import type { MeshTranslate } from './shared/MeshView';
 import type { MeshSocket } from './shared/meshApi';
+import type { PresenceSocket } from './shared/presenceApi';
 
 export const ADAPTER_NAME = 'tr-064';
+
+/**
+ * `tr-064.<n>` of the attribute `instance`.
+ *
+ * The attribute holds `tr-064.0`; `0` (a short instance) and `system.adapter.tr-064.0` are
+ * accepted too. Anything else is the first instance.
+ *
+ * @param raw value of the attribute
+ */
+export function instanceIdOf(raw: unknown): string {
+    const value = typeof raw === 'string' || typeof raw === 'number' ? String(raw).trim() : '';
+    const match = value.match(/^(?:system\.adapter\.)?(?:tr-064\.)?(\d+)$/);
+    return `${ADAPTER_NAME}.${match ? match[1] : '0'}`;
+}
 
 /**
  * Color of secondary texts. Not `palette.text.secondary`: the dark theme of ioBroker sets it to white,
@@ -121,22 +136,33 @@ export default class Generic<
         return 'tr064_vis_';
     }
 
-    /**
-     * `tr-064.<n>` of the attribute `instance`.
-     *
-     * The attribute holds `tr-064.0`; `0` (a short instance) and `system.adapter.tr-064.0` are
-     * accepted too. Anything else is the first instance.
-     */
+    /** `tr-064.<n>` of the attribute `instance`, see `instanceIdOf()` */
     getInstanceId(): string {
-        const raw = (this.state.rxData as { instance?: unknown }).instance;
-        const value = typeof raw === 'string' || typeof raw === 'number' ? String(raw).trim() : '';
-        const match = value.match(/^(?:system\.adapter\.)?(?:tr-064\.)?(\d+)$/);
-        return `${ADAPTER_NAME}.${match ? match[1] : '0'}`;
+        return instanceIdOf((this.state.rxData as { instance?: unknown }).instance);
     }
 
     /** The socket of vis-2 has `getState` and `sendTo`, which is everything `fetchMesh()` needs */
     getMeshSocket(): MeshSocket {
         return this.props.context.socket as MeshSocket;
+    }
+
+    /** The socket of vis-2 has everything `loadPersons()` and `loadPresenceHistory()` need */
+    getPresenceSocket(): PresenceSocket {
+        return this.props.context.socket;
+    }
+
+    /**
+     * URL of an attribute of the type `image`: `_PRJ_NAME/` is the folder of the vis-2 project
+     *
+     * @param src value of the attribute
+     */
+    getImageUrl(src: string | undefined): string {
+        const value = (src || '').trim();
+        if (value.startsWith('_PRJ_NAME/')) {
+            const { adapterName, instance, projectName } = this.props.context;
+            return value.replace('_PRJ_NAME/', `../${adapterName}.${instance}/${projectName || 'main'}/`);
+        }
+        return value;
     }
 
     /** The socket of vis-2 for `StateWatcher` */

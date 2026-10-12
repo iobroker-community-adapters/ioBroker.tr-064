@@ -36,6 +36,7 @@ import type { ConfigItemPanel, ConfigItemTabs } from '@iobroker/dm-utils';
 import type { ConfigItemPanel as JsonConfigItemPanel } from '@iobroker/json-config';
 import type { I18n as I18nType } from '@iobroker/gui-components';
 
+import { alpha, SIZE_OPTIONS, stop, tileRootStyle, type Size } from './tileUtils';
 import MeshView from './shared/MeshView';
 import { MeshLoader, type MeshLoaderState } from './shared/meshApi';
 import {
@@ -79,10 +80,7 @@ const DialogContent: ComponentType<DialogContentProps> = MuiMaterial?.DialogCont
 const DialogActions: ComponentType<DialogActionsProps> = MuiMaterial?.DialogActions;
 const Button: ComponentType<ButtonProps> = MuiMaterial?.Button;
 const IconButton: ComponentType<IconButtonProps> = MuiMaterial?.IconButton;
-const muiAlpha: (color: string, value: number) => string = MuiMaterial?.alpha;
 const I18n = AdapterReact?.I18n as typeof I18nType;
-
-type Size = '1x1' | '2x0.5' | '2x1' | '2x2';
 
 /** How the internet connection is shown */
 type Status = 'online' | 'noInternet' | 'connecting' | 'unreachable' | 'unknown';
@@ -98,18 +96,6 @@ const STATUS_TEXT: Record<Status, string> = {
 /** Values of `wanLinkStatus` and `wanAccessType` with a translation - others are shown as they are */
 const LINK_STATUS = ['Up', 'Down', 'Initializing', 'Unavailable'];
 const ACCESS_TYPES = ['Fiber', 'Cable'];
-
-/** The sizes of the host plus 2x2 (square, two columns and two rows) */
-const sizeIcon = (width: number, height: number): string =>
-    `data:image/svg+xml,${encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect x="1" y="1" width="${width - 2}" height="${height - 2}" rx="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>`,
-    )}`;
-const SIZE_OPTIONS = [
-    { value: '1x1', label: '1×1', icon: sizeIcon(18, 18) },
-    { value: '2x1', label: '2×1', icon: sizeIcon(32, 18) },
-    { value: '2x0.5', label: '2×½', icon: sizeIcon(32, 12) },
-    { value: '2x2', label: '2×2', icon: sizeIcon(32, 32) },
-];
 
 /** Key of the view settings (graph/table, filters) of the mesh view in the `localStorage` */
 const MESH_STORAGE_KEY = 'tr064.devices.meshTopology';
@@ -129,19 +115,6 @@ interface FritzBoxComponentState extends WidgetGenericState {
     mesh: MeshLoaderState;
     /** the question whether the counter of the missed calls is reset */
     resetOpen: boolean;
-}
-
-/** `alpha()` of MUI throws on colors it cannot parse (`red`, CSS variables) - a user color may be one */
-function alpha(color: string, value: number): string {
-    try {
-        return muiAlpha(color, value);
-    } catch {
-        return `color-mix(in srgb, ${color} ${Math.round(value * 100)}%, transparent)`;
-    }
-}
-
-function stop(e: SyntheticEvent): void {
-    e.stopPropagation();
 }
 
 /** `t` of the mesh view: the `tr064_*` texts are merged into the dictionary of the host */
@@ -1055,7 +1028,7 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
             <Box
                 id={String(this.props.widget.id)}
                 className={this.getWidgetClass()}
-                sx={theme => FritzBoxComponent.rootStyle(theme, size)}
+                sx={theme => tileRootStyle(theme, size)}
             >
                 {size === '2x1' ? (
                     // one column wide and square: the height of a 1x1 tile, as the host does it
@@ -1109,29 +1082,6 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 ) : null}
             </Box>
         );
-    }
-
-    private static rootStyle(theme: Theme, size: Size): Record<string, unknown> {
-        switch (size) {
-            case '2x0.5':
-                return WidgetGeneric.getStyleWide(theme) as Record<string, unknown>;
-            case '2x1':
-                return WidgetGeneric.getStyleWideTall(theme) as Record<string, unknown>;
-            case '2x2': {
-                const getStyleHuge = (
-                    WidgetGeneric as unknown as { getStyleHuge?: (theme: Theme) => Record<string, unknown> }
-                ).getStyleHuge;
-                return getStyleHuge
-                    ? getStyleHuge(theme)
-                    : {
-                          ...(WidgetGeneric.getStyleCompact(theme) as Record<string, unknown>),
-                          gridColumn: 'span 2',
-                          gridRow: 'span 2',
-                      };
-            }
-            default:
-                return WidgetGeneric.getStyleCompact(theme) as Record<string, unknown>;
-        }
     }
 
     /** The question whether the counter of the missed calls is set to 0 */
@@ -1262,7 +1212,9 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                         loading={loading}
                         error={error}
                         onRefresh={() => void this.meshLoader?.refresh()}
-                        onRename={async (mac, name) => (this.meshLoader ? this.meshLoader.rename(mac, name) : 'not alive')}
+                        onRename={async (mac, name) =>
+                            this.meshLoader ? this.meshLoader.rename(mac, name) : 'not alive'
+                        }
                         t={meshT}
                         height="100%"
                         storageKey={MESH_STORAGE_KEY}

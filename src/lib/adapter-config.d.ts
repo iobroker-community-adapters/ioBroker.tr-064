@@ -1,7 +1,7 @@
 // Augments the globally declared ioBroker types with everything this adapter adds.
 // The attributes of `AdapterConfig` must be kept in sync with `native` in io-package.json
 // and with admin/jsonConfig.json.
-import type { CallListsConfig, DeviceConfigEntry, PhonebookByNumberConfig } from './types';
+import type { CallListsConfig, DeviceConfigEntry, PersonConfigEntry, PhonebookByNumberConfig } from './types';
 
 declare global {
     namespace ioBroker {
@@ -34,6 +34,16 @@ declare global {
             /** Phone books which are searched first for the calls of an own number */
             phonebooksByNumber: PhonebookByNumberConfig[];
             devices: DeviceConfigEntry[];
+            /** Persons of the tab "Persons", each with the MAC addresses of its devices */
+            persons: PersonConfigEntry[];
+            /** Minutes all devices of a person must be inactive before the person is absent. 0 = at once */
+            presenceDelay: number;
+            /** Number of comings and goings which are kept in `history` of a person */
+            presenceHistory: number;
+            /** Writes `presence.guests` - the active devices of the guest WLAN/LAN */
+            presenceGuests: boolean;
+            /** Writes `presence.unknown` - active devices which are neither in "Devices" nor in "Persons" */
+            presenceUnknown: boolean;
             calllists: CallListsConfig;
 
             /**

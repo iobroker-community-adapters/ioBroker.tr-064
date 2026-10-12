@@ -234,3 +234,110 @@ export function meshMock(): MeshResponse {
 
     return { ts: Date.now(), nodes, links };
 }
+
+/** A person of the presence detection (`tr-064.0.presence.persons.<id>`) */
+export interface MockPerson {
+    name: string;
+    /** ID of the channel below `presence.persons` */
+    id: string;
+    group: string;
+    present: boolean;
+    /** newest first, `ts` in ms */
+    history: { ts: number; present: boolean }[];
+    devices: string;
+    /** settings of the tile which show a feature: photo, icons, own texts */
+    settings?: Record<string, unknown>;
+}
+
+const MINUTE = 60_000;
+
+/** A round "photo": gradient with the initials, as a data URL */
+function mockPhoto(initials: string, from: string, to: string): string {
+    return `data:image/svg+xml,${encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs><rect width="96" height="96" fill="url(#g)"/><text x="48" y="60" font-family="Arial" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">${initials}</text></svg>`,
+    )}`;
+}
+
+/** Three persons: present with initials, away with own icons and texts, present with a photo */
+export function mockPersons(now = Date.now()): MockPerson[] {
+    return [
+        {
+            name: 'Anna',
+            id: 'Anna',
+            group: 'Family',
+            present: true,
+            devices: 'iPhone-Anna',
+            history: [
+                { ts: now - 135 * MINUTE, present: true },
+                { ts: now - 9 * 60 * MINUTE, present: false },
+                { ts: now - 22 * 60 * MINUTE, present: true },
+                { ts: now - 26 * 60 * MINUTE, present: false },
+                { ts: now - 47 * 60 * MINUTE, present: true },
+                { ts: now - 3 * 24 * 60 * MINUTE, present: false },
+            ],
+        },
+        {
+            name: 'Peter Müller',
+            id: 'Peter_Mueller',
+            group: 'Family',
+            present: false,
+            devices: '',
+            history: [
+                { ts: now - 47 * MINUTE, present: false },
+                { ts: now - 5 * 60 * MINUTE, present: true },
+                { ts: now - 25 * 60 * MINUTE, present: false },
+            ],
+            settings: { iconActive: '🏠', icon: '🚗', textActive: 'At home', text: 'On the road' },
+        },
+        {
+            name: 'Lena',
+            id: 'Lena',
+            group: 'Guests',
+            present: true,
+            devices: 'Pixel-8, Galaxy-Tab',
+            history: [{ ts: now - 4 * 24 * 60 * MINUTE, present: true }],
+            settings: { photo: mockPhoto('L', '#ff8a65', '#ba68c8') },
+        },
+    ];
+}
+
+/** The states of the persons, relative to `tr-064.0.` */
+export function mockPersonStates(now = Date.now()): Record<string, ioBroker.StateValue> {
+    const result: Record<string, ioBroker.StateValue> = {};
+    const midnight = new Date(now).setHours(0, 0, 0, 0);
+    for (const person of mockPersons(now)) {
+        const prefix = `presence.persons.${person.id}`;
+        const lastArrival = person.history.find(event => event.present)?.ts || 0;
+        const lastDeparture = person.history.find(event => !event.present)?.ts || 0;
+        const since = person.present ? lastArrival : lastDeparture;
+        const today = Math.floor((now - midnight) / MINUTE);
+        const presentToday = person.present
+            ? Math.min(today, Math.floor((now - since) / MINUTE))
+            : Math.floor(today / 3);
+        result[`${prefix}.present`] = person.present;
+        result[`${prefix}.lastArrival`] = lastArrival;
+        result[`${prefix}.lastDeparture`] = lastDeparture;
+        result[`${prefix}.presentSince`] = person.present ? Math.floor((now - since) / MINUTE) : 0;
+        result[`${prefix}.absentSince`] = person.present ? 0 : Math.floor((now - since) / MINUTE);
+        result[`${prefix}.presentToday`] = presentToday;
+        result[`${prefix}.absentToday`] = Math.max(0, today - presentToday);
+        result[`${prefix}.devices`] = person.devices;
+        result[`${prefix}.history`] = JSON.stringify(person.history);
+    }
+    return result;
+}
+
+/** The channels of the persons, as `getObjectViewSystem('channel', ...)` delivers them */
+export function mockPersonChannels(instance: string): Record<string, ioBroker.ChannelObject> {
+    const result: Record<string, ioBroker.ChannelObject> = {};
+    for (const person of mockPersons()) {
+        const id = `${instance}.presence.persons.${person.id}`;
+        result[id] = {
+            _id: id,
+            type: 'channel',
+            common: { name: person.name },
+            native: { person: person.name, group: person.group },
+        };
+    }
+    return result;
+}
