@@ -34,6 +34,17 @@ export const SIZE_OPTIONS = [
     { value: '2x2', label: '2×2', icon: sizeIcon(32, 32) },
 ];
 
+/**
+ * Bottom edge of the buttons which the host lays over the top left corner of every tile: drag
+ * handle and favorite star (`Category.tsx` of ioBroker.devices: top 2px, padding 4px, icon 20px)
+ */
+const HOST_BUTTONS_BOTTOM = '28px';
+
+/** Top margin which moves the first row of a tile with the padding `pad` below the buttons of the host */
+export function belowHostButtons(pad: string): string {
+    return `max(0px, calc(${HOST_BUTTONS_BOTTOM} - ${pad}))`;
+}
+
 /** The outer box of a tile in the grid of the host */
 export function tileRootStyle(theme: Theme, size: Size): Record<string, unknown> {
     switch (size) {

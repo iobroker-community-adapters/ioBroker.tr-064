@@ -47,7 +47,7 @@ import {
     type PresenceSocket,
 } from './shared/presenceApi';
 import { normalizeInstance } from './utils';
-import { alpha, SIZE_OPTIONS, stop, tileRootStyle, type Size } from './tileUtils';
+import { alpha, belowHostButtons, SIZE_OPTIONS, stop, tileRootStyle, type Size } from './tileUtils';
 import {
     ArrivalIcon,
     ChevronIcon,
@@ -1370,6 +1370,8 @@ export class PersonComponent extends WidgetGeneric<PersonComponentState, PersonS
 
     /** 1x1: avatar, name, state and since when */
     renderCompact(): JSX.Element {
+        const pad = (theme: Theme): string => (isNeumorphicTheme(theme) ? 'max(12px, 8cqi)' : 'max(14px, 9cqi)');
+
         return this.renderFrame(
             '1x1',
             theme => ({
@@ -1377,10 +1379,17 @@ export class PersonComponent extends WidgetGeneric<PersonComponentState, PersonS
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 aspectRatio: '1',
-                padding: isNeumorphicTheme(theme) ? 'max(12px, 8cqi)' : 'max(14px, 9cqi)',
+                padding: pad(theme),
             }),
             <>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', minHeight: 0 }}>
+                <Box
+                    sx={theme => ({
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        minHeight: 0,
+                        mt: belowHostButtons(pad(theme)),
+                    })}
+                >
                     {this.renderAvatar('max(40px, 32cqi)')}
                 </Box>
                 <Box sx={{ minWidth: 0 }}>
@@ -1406,7 +1415,8 @@ export class PersonComponent extends WidgetGeneric<PersonComponentState, PersonS
                 padding: isNeumorphicTheme(theme) ? '8px 12px' : '8px 14px',
             }),
             <>
-                {this.renderAvatar('48px')}
+                {/* at the bottom: the buttons of the host cover the top left corner */}
+                <Box sx={{ alignSelf: 'flex-end', display: 'flex' }}>{this.renderAvatar('44px')}</Box>
                 <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <Box sx={{ pr: '26px', minWidth: 0 }}>{this.renderName('0.9rem', '0.74rem')}</Box>
                     {this.renderStatus('0.74rem', true)}
@@ -1418,6 +1428,8 @@ export class PersonComponent extends WidgetGeneric<PersonComponentState, PersonS
 
     /** 2x1: big avatar, name, state, since when, came and left with label */
     renderWideTall(): JSX.Element {
+        const pad = (theme: Theme): string => (isNeumorphicTheme(theme) ? 'max(12px, 3.5cqi)' : 'max(14px, 4cqi)');
+
         return this.renderFrame(
             '2x1',
             theme => ({
@@ -1426,10 +1438,19 @@ export class PersonComponent extends WidgetGeneric<PersonComponentState, PersonS
                 justifyContent: 'space-between',
                 gap: '6px',
                 height: '100%',
-                padding: isNeumorphicTheme(theme) ? 'max(12px, 3.5cqi)' : 'max(14px, 4cqi)',
+                padding: pad(theme),
             }),
             <>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 'max(12px, 3.5cqi)', minWidth: 0, flex: 1 }}>
+                <Box
+                    sx={theme => ({
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'max(12px, 3.5cqi)',
+                        minWidth: 0,
+                        flex: 1,
+                        mt: belowHostButtons(pad(theme)),
+                    })}
+                >
                     {this.renderAvatar('max(52px, 19cqi)')}
                     <Box sx={{ flex: 1, minWidth: 0, pr: '20px' }}>
                         {this.renderName('max(0.95rem, 5.4cqi)', 'max(0.76rem, 3.8cqi)')}
@@ -1447,6 +1468,8 @@ export class PersonComponent extends WidgetGeneric<PersonComponentState, PersonS
         const showHistory = this.canOpenHistory;
         const tileHistory = this.renderTileHistory('max(0.72rem, 2.9cqi)');
 
+        const pad = (theme: Theme): string => (isNeumorphicTheme(theme) ? 'max(14px, 4.5cqi)' : 'max(16px, 5cqi)');
+
         return this.renderFrame(
             '2x2',
             theme => ({
@@ -1454,10 +1477,19 @@ export class PersonComponent extends WidgetGeneric<PersonComponentState, PersonS
                 flexDirection: 'column',
                 gap: 'max(8px, 2.6cqi)',
                 aspectRatio: '1',
-                padding: isNeumorphicTheme(theme) ? 'max(14px, 4.5cqi)' : 'max(16px, 5cqi)',
+                padding: pad(theme),
             }),
             <>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 'max(12px, 3.5cqi)', minWidth: 0, pr: '26px' }}>
+                <Box
+                    sx={theme => ({
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'max(12px, 3.5cqi)',
+                        minWidth: 0,
+                        pr: '26px',
+                        mt: belowHostButtons(pad(theme)),
+                    })}
+                >
                     {this.renderAvatar('max(60px, 22cqi)')}
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                         {this.renderName('max(1rem, 5.6cqi)', 'max(0.8rem, 4cqi)')}

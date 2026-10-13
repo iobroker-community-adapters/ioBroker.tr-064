@@ -221,7 +221,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 5.2.1 (2026-10-13)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Tab "Persons": the devices of a person are chosen by name, MAC or IP from the devices of the Fritz!Box (autocomplete), no need to copy MAC addresses from the tab "Devices" any more
 - (@GermanBluefox) New tab "Persons" with the presence of persons, groups, guests and unknown devices below `presence`, like the adapter fb-checkpresence: present, last arrival and departure, present/absent since, the sums of the day and the last comings and goings. A person is watched by MAC or IP addresses
 - (@GermanBluefox) New widget "Person" for vis-2 and `ioBroker.devices`, the person is selected by name; the vis-2 widget "Presence" can list persons

@@ -36,7 +36,7 @@ import type { ConfigItemPanel, ConfigItemTabs } from '@iobroker/dm-utils';
 import type { ConfigItemPanel as JsonConfigItemPanel } from '@iobroker/json-config';
 import type { I18n as I18nType } from '@iobroker/gui-components';
 
-import { alpha, SIZE_OPTIONS, stop, tileRootStyle, type Size } from './tileUtils';
+import { alpha, belowHostButtons, SIZE_OPTIONS, stop, tileRootStyle, type Size } from './tileUtils';
 import MeshView from './shared/MeshView';
 import { MeshLoader, type MeshLoaderState } from './shared/meshApi';
 import {
@@ -1228,6 +1228,8 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
 
     /** 1x1: symbol, download rate, name and state of the connection */
     renderCompact(): JSX.Element {
+        const pad = (theme: Theme): string => (isNeumorphicTheme(theme) ? 'max(12px, 8cqi)' : 'max(14px, 9cqi)');
+
         return this.renderFrame(
             '1x1',
             theme => ({
@@ -1235,10 +1237,17 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 aspectRatio: '1',
-                padding: isNeumorphicTheme(theme) ? 'max(12px, 8cqi)' : 'max(14px, 9cqi)',
+                padding: pad(theme),
             }),
             <>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', minHeight: 0 }}>
+                <Box
+                    sx={theme => ({
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        minHeight: 0,
+                        mt: belowHostButtons(pad(theme)),
+                    })}
+                >
                     {this.renderIcon('max(34px, 25cqi)')}
                 </Box>
                 <Box sx={{ minWidth: 0 }}>
@@ -1264,7 +1273,8 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 padding: isNeumorphicTheme(theme) ? '8px 12px' : '8px 14px',
             }),
             <>
-                {this.renderIcon('34px')}
+                {/* at the bottom: the buttons of the host cover the top left corner */}
+                <Box sx={{ alignSelf: 'flex-end', display: 'flex' }}>{this.renderIcon('34px')}</Box>
                 <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '3px' }}>
                     <Box sx={{ pr: '26px', minWidth: 0 }}>{this.renderName('0.85rem', '0.72rem')}</Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
@@ -1310,6 +1320,8 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
 
     /** 2x1: name, state and IP, rates with the usage of the line, WLAN and telephony */
     renderWideTall(): JSX.Element {
+        const pad = (theme: Theme): string => (isNeumorphicTheme(theme) ? 'max(12px, 3.5cqi)' : 'max(14px, 4cqi)');
+
         return this.renderFrame(
             '2x1',
             theme => ({
@@ -1318,10 +1330,18 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 justifyContent: 'space-between',
                 gap: '6px',
                 height: '100%',
-                padding: isNeumorphicTheme(theme) ? 'max(12px, 3.5cqi)' : 'max(14px, 4cqi)',
+                padding: pad(theme),
             }),
             <>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 'max(10px, 3cqi)', minWidth: 0 }}>
+                <Box
+                    sx={theme => ({
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'max(10px, 3cqi)',
+                        minWidth: 0,
+                        mt: belowHostButtons(pad(theme)),
+                    })}
+                >
                     {this.renderIcon('max(30px, 9cqi)')}
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Box sx={{ pr: '26px', minWidth: 0 }}>
@@ -1388,6 +1408,8 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 </Box>
             ) : null;
 
+        const pad = (theme: Theme): string => (isNeumorphicTheme(theme) ? 'max(14px, 4.5cqi)' : 'max(16px, 5cqi)');
+
         return this.renderFrame(
             '2x2',
             theme => ({
@@ -1395,10 +1417,19 @@ export class FritzBoxComponent extends WidgetGeneric<FritzBoxComponentState, Fri
                 flexDirection: 'column',
                 gap: 'max(8px, 2.8cqi)',
                 aspectRatio: '1',
-                padding: isNeumorphicTheme(theme) ? 'max(14px, 4.5cqi)' : 'max(16px, 5cqi)',
+                padding: pad(theme),
             }),
             <>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 'max(10px, 3cqi)', minWidth: 0, pr: '26px' }}>
+                <Box
+                    sx={theme => ({
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'max(10px, 3cqi)',
+                        minWidth: 0,
+                        pr: '26px',
+                        mt: belowHostButtons(pad(theme)),
+                    })}
+                >
                     {this.renderIcon('max(36px, 11cqi)')}
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                         {this.renderName('max(0.95rem, 5cqi)', 'max(0.78rem, 3.8cqi)')}
