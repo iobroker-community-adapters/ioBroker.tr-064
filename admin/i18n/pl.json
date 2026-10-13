@@ -37,7 +37,7 @@
     "User": "Użytkownik",
     "Watch devices": "Oglądaj podłączone urządzenia (obecność)",
     "Write unchanged values too": "Zapisuj także niezmienione wartości",
-    "hint_persons": "Każda osoba otrzymuje obiekty w \"presence.persons\": obecna, ostatnie przyjście i wyjście, obecna/nieobecna od, sumy dnia oraz ostatnie przyjścia i wyjścia. Osoba jest obecna, jeśli jedno z jej urządzeń jest aktywne - wpisz adresy MAC lub IP wszystkich jej urządzeń oddzielone przecinkami (adres IP działa tylko wtedy, gdy FRITZ!Box zawsze przydziela urządzeniu ten sam adres) (przycisk \"Szukaj urządzeń\" w zakładce \"Urządzenia\" je pokazuje). Osoby z tej samej grupy są podsumowane w \"presence.groups\"",
+    "hint_persons": "Każda osoba otrzymuje obiekty w \"presence.persons\": obecna, ostatnie przyjście i wyjście, obecna/nieobecna od, sumy dnia oraz ostatnie przyjścia i wyjścia. Osoba jest obecna, gdy jedno z jej urządzeń jest aktywne - wybierz jej urządzenia w kolumnie \"MAC / IP\" po nazwie, MAC lub IP spośród urządzeń FRITZ!Box albo wpisz adres MAC lub IP (adres IP działa tylko wtedy, gdy urządzenie zawsze dostaje od FRITZ!Box ten sam adres). Osoby z tej samej grupy są podsumowane w \"presence.groups\"",
     "hint_phonebooksByNumber": "Jeśli numer znajduje się w kilku książkach telefonicznych, nazwa jest brana z książki przypisanej do własnego numeru połączenia. Wpisz własny numer (wystarczą ostatnie cyfry) i nazwę książki telefonicznej w FRITZ!Box",
     "hint_severalMacs": "Urządzenie z kilkoma adresami MAC (np. smartfon z prywatnym adresem Wi-Fi, innym dla każdej sieci Wi-Fi): wpisz wszystkie adresy oddzielone przecinkami. Urządzenie jest obecne, jeśli jeden z nich jest aktywny",
     "ip": "IP",

@@ -1,6 +1,6 @@
 {
-  "_Generic-52EKSE65.js": {
-    "file": "assets/Generic-52EKSE65.js",
+  "_Generic-CLkZgTjS.js": {
+    "file": "assets/Generic-CLkZgTjS.js",
     "name": "Generic",
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__177553934835196__loadShare__shared-D5UJCJr_.js",
@@ -15,13 +15,13 @@
       "_defineProperty-Bq_2caDm.js"
     ]
   },
-  "_PresenceSelect-Cd50hLc9.js": {
-    "file": "assets/PresenceSelect-Cd50hLc9.js",
+  "_PresenceSelect-Bg9g3GdN.js": {
+    "file": "assets/PresenceSelect-Bg9g3GdN.js",
     "name": "PresenceSelect",
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__177553934835196__loadShare__shared-D5UJCJr_.js",
       "_defineProperty-Bq_2caDm.js",
-      "_Generic-52EKSE65.js"
+      "_Generic-CLkZgTjS.js"
     ]
   },
   "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__177553934835196__loadShare__shared-D5UJCJr_.js": {
@@ -117,7 +117,7 @@
     "isEntry": true
   },
   "src/Tr064FritzBox.tsx": {
-    "file": "assets/Tr064FritzBox-B3aGWJo6.js",
+    "file": "assets/Tr064FritzBox-4AfJzkwO.js",
     "name": "Tr064FritzBox",
     "src": "src/Tr064FritzBox.tsx",
     "isEntry": true,
@@ -125,12 +125,12 @@
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__177553934835196__loadShare__shared-D5UJCJr_.js",
       "_defineProperty-Bq_2caDm.js",
       "_MeshView-Dj4X9qcJ.js",
-      "_Generic-52EKSE65.js",
+      "_Generic-CLkZgTjS.js",
       "_format-sGUrIYMZ.js"
     ]
   },
   "src/Tr064Mesh.tsx": {
-    "file": "assets/Tr064Mesh-gpe93P0s.js",
+    "file": "assets/Tr064Mesh-BsViRAm4.js",
     "name": "Tr064Mesh",
     "src": "src/Tr064Mesh.tsx",
     "isEntry": true,
@@ -138,32 +138,32 @@
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__177553934835196__loadShare__shared-D5UJCJr_.js",
       "_defineProperty-Bq_2caDm.js",
       "_MeshView-Dj4X9qcJ.js",
-      "_Generic-52EKSE65.js"
+      "_Generic-CLkZgTjS.js"
     ]
   },
   "src/Tr064Person.tsx": {
-    "file": "assets/Tr064Person-DcefO4XR.js",
+    "file": "assets/Tr064Person-CA0XhBom.js",
     "name": "Tr064Person",
     "src": "src/Tr064Person.tsx",
     "isEntry": true,
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__177553934835196__loadShare__shared-D5UJCJr_.js",
       "_defineProperty-Bq_2caDm.js",
-      "_PresenceSelect-Cd50hLc9.js",
-      "_Generic-52EKSE65.js",
+      "_PresenceSelect-Bg9g3GdN.js",
+      "_Generic-CLkZgTjS.js",
       "_format-sGUrIYMZ.js"
     ]
   },
   "src/Tr064Presence.tsx": {
-    "file": "assets/Tr064Presence-CrgmjnjP.js",
+    "file": "assets/Tr064Presence-CPmOPogC.js",
     "name": "Tr064Presence",
     "src": "src/Tr064Presence.tsx",
     "isEntry": true,
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__177553934835196__loadShare__shared-D5UJCJr_.js",
       "_defineProperty-Bq_2caDm.js",
-      "_PresenceSelect-Cd50hLc9.js",
-      "_Generic-52EKSE65.js",
+      "_PresenceSelect-Bg9g3GdN.js",
+      "_Generic-CLkZgTjS.js",
       "_format-sGUrIYMZ.js"
     ]
   },

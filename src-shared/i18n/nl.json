@@ -45,5 +45,8 @@
     "tr064_renameHint": "De FRITZ!Box gebruikt deze naam overal. Zolang de optie \"Geconfigureerde namen gebruiken\" uit staat, worden de objecten onder \"devices\" mee hernoemd.",
     "tr064_renameFailed": "De FRITZ!Box heeft het apparaat niet hernoemd: %s",
     "tr064_clickToRename": "Klik om te hernoemen",
-    "tr064_cancel": "Annuleren"
+    "tr064_cancel": "Annuleren",
+    "tr064_addressesPlaceholder": "MAC of IP - typ een naam, MAC of IP van een apparaat",
+    "tr064_usedBy": "gebruikt door %s",
+    "tr064_invalidAddress": "Geen MAC- en geen IP-adres"
 }

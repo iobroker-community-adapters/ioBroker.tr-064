@@ -45,5 +45,8 @@
     "tr064_renameHint": "La FRITZ!Box utilise ce nom partout. Tant que l'option « Utiliser les noms configurés » est désactivée, les objets sous « devices » sont renommés également.",
     "tr064_renameFailed": "La FRITZ!Box n'a pas renommé l'appareil : %s",
     "tr064_clickToRename": "Cliquer pour renommer",
-    "tr064_cancel": "Annuler"
+    "tr064_cancel": "Annuler",
+    "tr064_addressesPlaceholder": "MAC ou IP - saisissez le nom, la MAC ou l'IP d'un appareil",
+    "tr064_usedBy": "utilisé par %s",
+    "tr064_invalidAddress": "Ni une adresse MAC ni une adresse IP"
 }

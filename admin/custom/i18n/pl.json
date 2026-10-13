@@ -45,5 +45,8 @@
     "tr064_renameHint": "FRITZ!Box używa tej nazwy wszędzie. Dopóki opcja „Używaj skonfigurowanych nazw” jest wyłączona, obiekty w „devices” są zmieniane razem z nią.",
     "tr064_renameFailed": "FRITZ!Box nie zmienił nazwy urządzenia: %s",
     "tr064_clickToRename": "Kliknij, aby zmienić nazwę",
-    "tr064_cancel": "Anuluj"
+    "tr064_cancel": "Anuluj",
+    "tr064_addressesPlaceholder": "MAC lub IP - wpisz nazwę, MAC lub IP urządzenia",
+    "tr064_usedBy": "używany przez %s",
+    "tr064_invalidAddress": "Ani adres MAC, ani adres IP"
 }

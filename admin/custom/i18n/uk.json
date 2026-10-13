@@ -45,5 +45,8 @@
     "tr064_renameHint": "FRITZ!Box використовує це ім'я всюди. Поки опція «Використовувати налаштовані імена» вимкнена, об'єкти в «devices» перейменовуються разом із ним.",
     "tr064_renameFailed": "FRITZ!Box не перейменував пристрій: %s",
     "tr064_clickToRename": "Натисніть, щоб перейменувати",
-    "tr064_cancel": "Скасувати"
+    "tr064_cancel": "Скасувати",
+    "tr064_addressesPlaceholder": "MAC або IP - введіть ім'я, MAC або IP пристрою",
+    "tr064_usedBy": "вже у %s",
+    "tr064_invalidAddress": "Не MAC- і не IP-адреса"
 }

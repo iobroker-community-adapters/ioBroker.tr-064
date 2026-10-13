@@ -337,13 +337,17 @@
                             "default": ""
                         },
                         {
-                            "type": "text",
+                            "type": "custom",
                             "attr": "addresses",
                             "title": "MAC / IP",
                             "width": "38%",
                             "filter": false,
                             "sort": false,
-                            "default": ""
+                            "default": "",
+                            "i18n": true,
+                            "url": "custom/customComponents.js",
+                            "name": "ConfigCustomTr064Set/Components/PersonAddresses",
+                            "guiApi": 2
                         },
                         {
                             "type": "text",

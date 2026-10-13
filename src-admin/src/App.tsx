@@ -7,7 +7,8 @@ import { I18n, Theme, type IobTheme, type ThemeName } from '@iobroker/gui-compon
 import type { ConfigGenericProps } from '@iobroker/json-config';
 
 import MeshTopology from './MeshTopology';
-import { bigMeshMock, meshMock } from './mockData';
+import PersonAddresses from './PersonAddresses';
+import { bigMeshMock, discoveryMock, meshMock } from './mockData';
 
 import { meshTranslations } from './shared/i18n';
 
@@ -37,7 +38,8 @@ I18n.setLanguage(
 /**
  * Answers like the adapter: `?clients=100` for one box with many clients, `?error=not connected`, `?alive=false`.
  * `?width=320` limits the width of the component (phone), `?theme=dark`, `?lang=de`, `?vendor=false`
- * without the manufacturer, `?renameError=...` lets every rename fail.
+ * without the manufacturer, `?renameError=...` lets every rename fail. `?component=persons` shows the column
+ * "MAC / IP" of the tab "Persons" instead of the mesh.
  */
 const mockSocket = {
     getState: (): Promise<ioBroker.State> =>
@@ -45,7 +47,9 @@ const mockSocket = {
     sendTo: (_instance: string, command: string, _data: unknown): Promise<unknown> =>
         new Promise(resolve =>
             setTimeout(() => {
-                if (command === 'setHostName') {
+                if (command === 'discovery') {
+                    resolve(JSON.stringify(discoveryMock()));
+                } else if (command === 'setHostName') {
                     resolve({ error: params.get('renameError') || undefined });
                 } else if (params.get('error')) {
                     resolve({ error: params.get('error'), nodes: [], links: [] });
@@ -95,27 +99,86 @@ export default function App(): React.JSX.Element {
                     >
                         {themeName === 'dark' ? 'light' : 'dark'}
                     </Button>
-                    <MeshTopology
-                        key={themeName}
-                        oContext={oContext}
-                        alive
-                        changed={false}
-                        themeName={themeName}
-                        common={{}}
-                        attr="_mesh"
-                        data={{}}
-                        originalData={{}}
-                        onError={() => {}}
-                        onChange={() => {}}
-                        schema={{
-                            type: 'custom',
-                            url: '',
-                            i18n: true,
-                            name: 'ConfigCustomTr064Set/Components/MeshTopology',
-                        }}
-                    />
+                    {params.get('component') === 'persons' ? (
+                        <PersonsTable
+                            oContext={oContext}
+                            themeName={themeName}
+                        />
+                    ) : (
+                        <MeshTopology
+                            key={themeName}
+                            oContext={oContext}
+                            alive
+                            changed={false}
+                            themeName={themeName}
+                            common={{}}
+                            attr="_mesh"
+                            data={{}}
+                            originalData={{}}
+                            onError={() => {}}
+                            onChange={() => {}}
+                            schema={{
+                                type: 'custom',
+                                url: '',
+                                i18n: true,
+                                name: 'ConfigCustomTr064Set/Components/MeshTopology',
+                            }}
+                        />
+                    )}
                 </Box>
             </ThemeProvider>
         </StyledEngineProvider>
+    );
+}
+
+/** Rows of the tab "Persons" with the column "MAC / IP" as in the admin table (which sets `custom`), `addresses` is shown below */
+function PersonsTable(props: { oContext: ConfigGenericProps['oContext']; themeName: ThemeName }): React.JSX.Element {
+    const [persons, setPersons] = React.useState([
+        { name: 'Anna', addresses: 'AA:BB:CC:00:00:01' },
+        { name: 'Ben', addresses: '' },
+        { name: 'Guest', addresses: '192.168.178.77, nonsense' },
+    ]);
+    const globalData = { persons, devices: [{ name: 'Old phone', mac: '11:22:33:44:55:66', ip: '' }] };
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 700 }}>
+            {persons.map((person, index) => (
+                <Box
+                    key={person.name}
+                    sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}
+                >
+                    <Box sx={{ width: 80 }}>{person.name}</Box>
+                    <Box sx={{ flex: 1 }}>
+                        <PersonAddresses
+                            oContext={props.oContext}
+                            alive
+                            changed={false}
+                            themeName={props.themeName}
+                            common={{}}
+                            attr="addresses"
+                            data={person}
+                            globalData={globalData}
+                            arrayIndex={index}
+                            table
+                            custom
+                            originalData={{}}
+                            onError={() => {}}
+                            onChange={(_attr: unknown, value?: unknown) =>
+                                setPersons(
+                                    persons.map((p, i) => (i === index ? { ...p, addresses: String(value) } : p)),
+                                )
+                            }
+                            schema={{
+                                type: 'custom',
+                                url: '',
+                                i18n: true,
+                                name: 'ConfigCustomTr064Set/Components/PersonAddresses',
+                            }}
+                        />
+                    </Box>
+                </Box>
+            ))}
+            <pre id="addresses">{JSON.stringify(persons, null, 2)}</pre>
+        </Box>
     );
 }

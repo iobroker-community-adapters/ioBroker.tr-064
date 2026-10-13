@@ -239,3 +239,15 @@ export function bigMeshMock(count: number): MeshResponse {
     }
     return { ts: Date.now(), nodes, links, canRename: true };
 }
+
+/** Answer of `discovery` without `native`: the devices of the box */
+export function discoveryMock(): { name: string; ip: string; mac: string; active: boolean }[] {
+    return [
+        { name: 'iPhone-Anna', ip: '192.168.178.20', mac: 'AA:BB:CC:00:00:01', active: true },
+        { name: 'Galaxy-S24-Ben', ip: '192.168.178.21', mac: 'AA:BB:CC:00:00:02', active: true },
+        { name: 'Apple-Watch-Anna', ip: '192.168.178.22', mac: 'AA:BB:CC:00:00:03', active: false },
+        { name: 'MacBook-Ben', ip: '192.168.178.30', mac: 'AA:BB:CC:00:00:04', active: false },
+        { name: 'Guest-Laptop', ip: '192.168.178.77', mac: 'AA:BB:CC:00:00:05', active: true },
+        { name: 'Fernseher', ip: '192.168.178.40', mac: 'AA:BB:CC:00:00:06', active: true },
+    ];
+}
