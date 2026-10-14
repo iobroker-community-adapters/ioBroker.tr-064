@@ -72,3 +72,4 @@ nbproject
 # TypeScript build output
 build
 *.tsbuildinfo
+*.tgz

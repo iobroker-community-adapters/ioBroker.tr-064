@@ -46,7 +46,7 @@
     "tr064_renameFailed": "FRITZ!Box 未能重命名设备：%s",
     "tr064_clickToRename": "点击以重命名",
     "tr064_cancel": "取消",
-    "tr064_addressesPlaceholder": "MAC 或 IP - 输入设备的名称、MAC 或 IP",
+    "tr064_addressesPlaceholder": "MAC、IP 或主机名 - 输入设备的名称、MAC 或 IP",
     "tr064_usedBy": "已被 %s 使用",
-    "tr064_invalidAddress": "既不是 MAC 地址也不是 IP 地址"
+    "tr064_invalidAddress": "既不是 MAC 地址、IP 地址，也不是主机名"
 }

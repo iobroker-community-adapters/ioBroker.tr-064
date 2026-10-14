@@ -46,7 +46,7 @@
     "tr064_renameFailed": "FRITZ!Box nie zmienił nazwy urządzenia: %s",
     "tr064_clickToRename": "Kliknij, aby zmienić nazwę",
     "tr064_cancel": "Anuluj",
-    "tr064_addressesPlaceholder": "MAC lub IP - wpisz nazwę, MAC lub IP urządzenia",
+    "tr064_addressesPlaceholder": "MAC, IP lub nazwa hosta - wpisz nazwę, MAC lub IP urządzenia",
     "tr064_usedBy": "używany przez %s",
-    "tr064_invalidAddress": "Ani adres MAC, ani adres IP"
+    "tr064_invalidAddress": "Ani adres MAC, ani adres IP, ani nazwa hosta"
 }

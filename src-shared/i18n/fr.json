@@ -46,7 +46,7 @@
     "tr064_renameFailed": "La FRITZ!Box n'a pas renommé l'appareil : %s",
     "tr064_clickToRename": "Cliquer pour renommer",
     "tr064_cancel": "Annuler",
-    "tr064_addressesPlaceholder": "MAC ou IP - saisissez le nom, la MAC ou l'IP d'un appareil",
+    "tr064_addressesPlaceholder": "MAC, IP ou nom d'hôte - saisissez le nom, la MAC ou l'IP d'un appareil",
     "tr064_usedBy": "utilisé par %s",
-    "tr064_invalidAddress": "Ni une adresse MAC ni une adresse IP"
+    "tr064_invalidAddress": "Ni une adresse MAC, ni une adresse IP, ni un nom d'hôte"
 }

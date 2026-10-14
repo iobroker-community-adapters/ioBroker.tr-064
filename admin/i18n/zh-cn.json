@@ -37,7 +37,7 @@
     "User": "用户",
     "Watch devices": "看连接设备(存在)",
     "Write unchanged values too": "同时写入未更改的值",
-    "hint_persons": "每个人在 \"presence.persons\" 下获得以下对象：在场、最后到达和离开时间、在场/离开时长、当天的总计以及最近的到达和离开。只要某人的任一设备处于活动状态，此人即为在场 - 在 \"MAC / IP\" 列中按名称、MAC 或 IP 从 FRITZ!Box 的设备中选择其设备，或输入 MAC 或 IP 地址（只有当设备始终从 FRITZ!Box 获得相同地址时，IP 地址才有效）。同一组的人员汇总在 \"presence.groups\" 下",
+    "hint_persons": "每个人在 \"presence.persons\" 下获得以下对象：在场、最后到达和离开时间、在场/离开时长、当天的总计以及最近的到达和离开。只要某人的任一设备处于活动状态，此人即为在场 - 在 \"MAC / IP\" 列中按名称、MAC 或 IP 从 FRITZ!Box 的设备中选择其设备，或输入 MAC 地址、IP 地址或设备在 FRITZ!Box 中的主机名（只有当设备始终从 FRITZ!Box 获得相同地址时，IP 地址才有效；主机名仅在设备未在 FRITZ!Box 中重命名时有效）。同一组的人员汇总在 \"presence.groups\" 下",
     "hint_phonebooksByNumber": "如果一个号码存在于多个电话簿中，则从分配给该通话本机号码的电话簿中获取名称。请输入本机号码（最后几位即可）以及 FRITZ!Box 中电话簿的名称",
     "hint_severalMacs": "具有多个 MAC 地址的设备（例如使用私有 Wi-Fi 地址的智能手机，每个 Wi-Fi 网络的地址不同）：输入所有地址，用逗号分隔。只要其中一个地址处于活动状态，设备即视为在场",
     "ip": "IP",

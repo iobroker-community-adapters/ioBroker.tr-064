@@ -76,6 +76,8 @@ interface Person {
     macs: string[];
     /** IP addresses in lower case - only usable with the XML host list */
     ips: string[];
+    /** host names (`NewHostName`) in lower case - only usable with the XML host list */
+    names: string[];
     /** `null` until the presence was determined once */
     present: boolean | null;
     lastArrival: number;
@@ -131,6 +133,8 @@ export class Presence {
     private readonly values = new Map<string, ioBroker.StateValue>();
     private lastTick = 0;
     private noHostListLogged = false;
+    /** host names of persons which the box did not list, warned once */
+    private readonly unknownNamesLogged = new Set<string>();
     /** `init()` is through: the objects exist and the stored values are taken over */
     private initialized = false;
     private readonly delayMs: number;
@@ -151,14 +155,16 @@ export class Presence {
             if (!name || entry.enabled === false) {
                 continue;
             }
-            const { macs, ips, invalid } = splitAddresses(String(entry.addresses || ''));
+            const { macs, ips, names, invalid } = splitAddresses(String(entry.addresses || ''));
             if (invalid.length) {
                 adapter.log.warn(
-                    `Person "${name}": "${invalid.join('", "')}" is neither a MAC nor an IP address and is ignored`,
+                    `Person "${name}": "${invalid.join('", "')}" is neither a MAC address, an IP address nor a host name and is ignored`,
                 );
             }
-            if (!macs.length && !ips.length) {
-                adapter.log.warn(`Person "${name}" has no MAC or IP address in the tab "Persons" and is ignored`);
+            if (!macs.length && !ips.length && !names.length) {
+                adapter.log.warn(
+                    `Person "${name}" has no MAC address, IP address or host name in the tab "Persons" and is ignored`,
+                );
                 continue;
             }
             const group = String(entry.group || '').trim();
@@ -174,6 +180,7 @@ export class Presence {
                 channel: `${CHANNEL_PRESENCE}.persons.${uniqueId(name, adapter.FORBIDDEN_CHARS, usedPersons)}`,
                 macs,
                 ips,
+                names,
                 present: null,
                 lastArrival: 0,
                 lastDeparture: 0,
@@ -316,9 +323,9 @@ export class Presence {
                 this.adapter.log.debug(
                     `Presence: no host list (${err.message}), the devices of the persons are asked one by one`,
                 );
-                if (this.persons.some(person => person.ips.length)) {
+                if (this.persons.some(person => person.ips.length || person.names.length)) {
                     this.adapter.log.info(
-                        'The FritzBox does not deliver its host list - persons are detected only by their MAC addresses, not by IP addresses',
+                        'The FritzBox does not deliver its host list - persons are detected only by their MAC addresses, not by IP addresses or host names',
                     );
                 }
                 if (this.adapter.config.presenceGuests || this.adapter.config.presenceUnknown) {
@@ -378,6 +385,7 @@ export class Presence {
         const now = Date.now();
         const byMac = new Map<string, HostEntry>();
         const byIp = new Map<string, HostEntry>();
+        const byName = new Map<string, HostEntry>();
         for (const host of hosts) {
             const mac = normalizeMac(host.NewMACAddress || '');
             // a MAC address may be listed twice (e.g. LAN and WLAN) - the active entry wins
@@ -389,18 +397,30 @@ export class Presence {
             if (ip && (!byIp.has(ip) || isActive(host))) {
                 byIp.set(ip, host);
             }
+            // the same name may be listed for several entries (e.g. LAN and WLAN) - the active entry wins
+            const name = (host.NewHostName || '').toLowerCase();
+            if (name && (!byName.has(name) || isActive(host))) {
+                byName.set(name, host);
+            }
         }
         const delta = this.lastTick ? Math.min(Math.max(0, now - this.lastTick), MAX_GAP) : 0;
         this.lastTick = now;
 
         for (const person of this.persons) {
-            if (!complete && person.ips.length) {
-                // without the host list the IP addresses cannot be asked - the person stays as it is
+            if (!complete && (person.ips.length || person.names.length)) {
+                // without the host list IP addresses and host names cannot be asked - the person stays as it is
                 continue;
+            }
+            if (complete) {
+                this.checkNames(person, byName);
             }
             this.count(person, delta, now);
             const active = [
-                ...new Set([...person.macs.map(mac => byMac.get(mac)), ...person.ips.map(ip => byIp.get(ip))]),
+                ...new Set([
+                    ...person.macs.map(mac => byMac.get(mac)),
+                    ...person.ips.map(ip => byIp.get(ip)),
+                    ...person.names.map(name => byName.get(name)),
+                ]),
             ].filter(host => isActive(host)) as HostEntry[];
             person.devices = active.map(host => host.NewHostName || host.NewMACAddress);
 
@@ -443,6 +463,7 @@ export class Presence {
             }
             if (this.adapter.config.presenceUnknown) {
                 const knownIps = new Set(this.persons.flatMap(person => person.ips));
+                const knownNames = new Set(this.persons.flatMap(person => person.names));
                 const known = new Set<string>([
                     ...this.persons.flatMap(person => person.macs),
                     ...(this.adapter.config.devices || []).flatMap(entry =>
@@ -455,9 +476,27 @@ export class Presence {
                         host =>
                             !~~Number(host['NewX_AVM-DE_Guest']) &&
                             !known.has(normalizeMac(host.NewMACAddress || '')) &&
-                            !knownIps.has((host.NewIPAddress || '').toLowerCase()),
+                            !knownIps.has((host.NewIPAddress || '').toLowerCase()) &&
+                            !knownNames.has((host.NewHostName || '').toLowerCase()),
                     ),
                 );
+            }
+        }
+    }
+
+    /**
+     * Warns once about a host name which the box does not list - probably mistyped, or the device
+     * was renamed in the box
+     */
+    private checkNames(person: Person, byName: Map<string, HostEntry>): void {
+        for (const name of person.names) {
+            if (!byName.has(name) && !this.unknownNamesLogged.has(name)) {
+                this.unknownNamesLogged.add(name);
+                // host names only with silly (issue #632)
+                this.adapter.log.warn(
+                    `Person "${person.name}": the FritzBox has no device with one of its host names - check the spelling in the tab "Persons"`,
+                );
+                this.adapter.log.silly(`Presence: unknown host name "${name}"`);
             }
         }
     }

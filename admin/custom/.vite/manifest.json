@@ -1,6 +1,6 @@
 {
-  "_PersonAddresses-XObhApPz.js": {
-    "file": "assets/PersonAddresses-XObhApPz.js",
+  "_PersonAddresses-B8CbpfOB.js": {
+    "file": "assets/PersonAddresses-B8CbpfOB.js",
     "name": "PersonAddresses",
     "imports": [
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__80542807241481__loadShare___mf_0_iobroker_mf_1_gui_mf_2_components__loadShare__.js-DMDTAYvf.js",
@@ -62,14 +62,14 @@
     "name": "vite-preload-helper"
   },
   "index.html": {
-    "file": "assets/index-CHWVRb6j.js",
+    "file": "assets/index-DGw4R7wQ.js",
     "name": "index",
     "src": "index.html",
     "isEntry": true,
     "imports": [
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__80542807241481__loadShare___mf_0_iobroker_mf_1_gui_mf_2_components__loadShare__.js-DMDTAYvf.js",
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__80542807241481__loadShare__shared-DNfJWMMB.js",
-      "_PersonAddresses-XObhApPz.js"
+      "_PersonAddresses-B8CbpfOB.js"
     ]
   },
   "node_modules/@iobroker/gui-components/build/Components/IconLibrary/iconLibraryData.js": {
@@ -89,12 +89,12 @@
     ]
   },
   "src/Components.tsx": {
-    "file": "assets/Components-BGBhdWmA.js",
+    "file": "assets/Components-CLhHVnuX.js",
     "name": "Components",
     "src": "src/Components.tsx",
     "isEntry": true,
     "imports": [
-      "_PersonAddresses-XObhApPz.js"
+      "_PersonAddresses-B8CbpfOB.js"
     ]
   },
   "virtual:mf-REMOTE_ENTRY_ID:__mfe_internal__ConfigCustomTr064Set__customComponents_js": {
@@ -112,7 +112,7 @@
     ]
   },
   "virtual:mf-localSharedImportMap:__mfe_internal__ConfigCustomTr064Set__mf_owner__1": {
-    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__ConfigCustomTr064Set__mf_owner__1-8G0T6NBh.js",
+    "file": "assets/_virtual_mf-localSharedImportMap___mfe_internal__ConfigCustomTr064Set__mf_owner__1-B8CBvU0K.js",
     "name": "_virtual_mf-localSharedImportMap___mfe_internal__ConfigCustomTr064Set__mf_owner__1",
     "src": "virtual:mf-localSharedImportMap:__mfe_internal__ConfigCustomTr064Set__mf_owner__1",
     "isDynamicEntry": true,
@@ -122,13 +122,11 @@
     ],
     "dynamicImports": [
       "__virtual_mf___mfe_internal__ConfigCustomTr064Set__mf_owner__80542807241481__loadShare___mf_0_iobroker_mf_1_gui_mf_2_components__loadShare__.js-DMDTAYvf.js",
-      "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__80542807241481__prebuild__react_mf_1_jsx_mf_2_runtime__prebuild__.js",
-      "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__80542807241481__prebuild__react_mf_2_dom_mf_1_client__prebuild__.js",
       "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__80542807241481__prebuild___mf_0_iobroker_mf_1_json_mf_2_config__prebuild__.js"
     ]
   },
   "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js": {
-    "file": "assets/hostInit-BCcrtYAh.js",
+    "file": "assets/hostInit-CN9VYffN.js",
     "name": "hostInit",
     "src": "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
     "imports": [
@@ -141,7 +139,7 @@
     ]
   },
   "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js": {
-    "file": "assets/pendingShares-C8hAswhS.js",
+    "file": "assets/pendingShares-DtRI1d-t.js",
     "name": "pendingShares",
     "src": "virtual:mf:__mfe_internal__ConfigCustomTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js",
     "imports": [

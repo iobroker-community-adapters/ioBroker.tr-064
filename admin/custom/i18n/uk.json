@@ -46,7 +46,7 @@
     "tr064_renameFailed": "FRITZ!Box не перейменував пристрій: %s",
     "tr064_clickToRename": "Натисніть, щоб перейменувати",
     "tr064_cancel": "Скасувати",
-    "tr064_addressesPlaceholder": "MAC або IP - введіть ім'я, MAC або IP пристрою",
+    "tr064_addressesPlaceholder": "MAC, IP або ім'я хоста - введіть ім'я, MAC або IP пристрою",
     "tr064_usedBy": "вже у %s",
-    "tr064_invalidAddress": "Не MAC- і не IP-адреса"
+    "tr064_invalidAddress": "Не MAC-адреса, не IP-адреса і не ім'я хоста"
 }

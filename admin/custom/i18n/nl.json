@@ -46,7 +46,7 @@
     "tr064_renameFailed": "De FRITZ!Box heeft het apparaat niet hernoemd: %s",
     "tr064_clickToRename": "Klik om te hernoemen",
     "tr064_cancel": "Annuleren",
-    "tr064_addressesPlaceholder": "MAC of IP - typ een naam, MAC of IP van een apparaat",
+    "tr064_addressesPlaceholder": "MAC, IP of hostnaam - typ een naam, MAC of IP van een apparaat",
     "tr064_usedBy": "gebruikt door %s",
-    "tr064_invalidAddress": "Geen MAC- en geen IP-adres"
+    "tr064_invalidAddress": "Geen MAC-adres, IP-adres of hostnaam"
 }

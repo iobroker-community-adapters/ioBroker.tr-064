@@ -167,17 +167,25 @@ export function splitMacs(macs: string): string[] {
 }
 
 /**
- * Splits a list of MAC and IP addresses (separated by comma or semicolon) of the tab "Persons".
- * MACs are returned as `AA:BB:CC:DD:EE:FF`, IPs in lower case; anything else is `invalid`.
+ * Splits a list of MAC addresses, IP addresses and host names (separated by comma or semicolon) of
+ * the tab "Persons". MACs are returned as `AA:BB:CC:DD:EE:FF`, IPs and host names in lower case.
+ * A host name is the name of the device in the box (`NewHostName`); it cannot contain a colon, so a
+ * mistyped MAC or IPv6 address with colons is `invalid`.
  */
-export function splitAddresses(text: string): { macs: string[]; ips: string[]; invalid: string[] } {
-    const result = { macs: [] as string[], ips: [] as string[], invalid: [] as string[] };
+export function splitAddresses(text: string): { macs: string[]; ips: string[]; names: string[]; invalid: string[] } {
+    const result = { macs: [] as string[], ips: [] as string[], names: [] as string[], invalid: [] as string[] };
     for (const address of splitMacs(text)) {
         const hex = address.replace(/[^0-9a-fA-F]/g, '');
         if (hex.length === 12 && !address.includes('::') && /^[0-9a-fA-F:\-.\s]+$/.test(address)) {
             result.macs.push(normalizeMac(address));
-        } else if (/^(\d{1,3})(\.\d{1,3}){3}$/.test(address) || /^[0-9a-fA-F:]+$/.test(address)) {
+        } else if (
+            /^(\d{1,3})(\.\d{1,3}){3}$/.test(address) ||
+            // an IPv6 address needs a colon - otherwise a host name like "cafe" would be an IP
+            (/^[0-9a-fA-F:]+$/.test(address) && address.includes(':'))
+        ) {
             result.ips.push(address.toLowerCase());
+        } else if (!address.includes(':')) {
+            result.names.push(address.toLowerCase());
         } else {
             result.invalid.push(address);
         }

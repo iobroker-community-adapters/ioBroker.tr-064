@@ -78,7 +78,7 @@ The ioBroker community has published a script that uses this information of the 
 
 ### Persons, groups, guests (like fb-checkpresence)
 
-The tab "Persons" watches persons instead of single devices. Every row is one person with a name, an optional group and the MAC or IP addresses of all its devices. In the column "MAC / IP" type a part of the name, MAC or IP and choose the device from the list of the Fritz!Box (devices of the tab "Devices" are offered too); an address which is not in the list can simply be typed. The addresses are stored separated by commas (e.g. `AA:BB:CC:DD:EE:FF, 192.168.178.23`). An IP address only works if the Fritz!Box always gives the device the same address ("Always assign this IPv4 address" in the Fritz!Box); a smartphone with a private Wi-Fi address is better watched by IP than by its changing MAC. A person is present as soon as one of its devices is active. Everything is written below `tr-064.0.presence`:
+The tab "Persons" watches persons instead of single devices. Every row is one person with a name, an optional group and the MAC or IP addresses of all its devices. In the column "MAC / IP" type a part of the name, MAC or IP and choose the device from the list of the Fritz!Box (devices of the tab "Devices" are offered too); an address which is not in the list can simply be typed. Instead of an address the host name of the device in the Fritz!Box can be typed too (e.g. `Annas-iPhone`, upper and lower case do not matter) - it works as long as the device is not renamed in the Fritz!Box. The addresses are stored separated by commas (e.g. `AA:BB:CC:DD:EE:FF, 192.168.178.23, Annas-iPhone`). An IP address only works if the Fritz!Box always gives the device the same address ("Always assign this IPv4 address" in the Fritz!Box); a smartphone with a private Wi-Fi address is better watched by IP or host name than by its changing MAC. IP addresses and host names need the host list of the Fritz!Box; a box without it watches only MAC addresses. A person is present as soon as one of its devices is active. Everything is written below `tr-064.0.presence`:
 
 | State                                                                | Content                                                                                            |
 |----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
@@ -221,6 +221,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Tab "Persons": a device of a person can also be given by its host name in the Fritz!Box instead of a MAC or IP address
+
 ### 5.2.2 (2026-10-13)
 - (@GermanBluefox) Tab "Persons": the devices of a person are chosen by name, MAC or IP from the devices of the Fritz!Box (autocomplete), no need to copy MAC addresses from the tab "Devices" any more
 - (@GermanBluefox) New tab "Persons" with the presence of persons, groups, guests and unknown devices below `presence`, like the adapter fb-checkpresence: present, last arrival and departure, present/absent since, the sums of the day and the last comings and goings. A person is watched by MAC or IP addresses

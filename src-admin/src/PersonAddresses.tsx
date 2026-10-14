@@ -28,11 +28,17 @@ function isMac(address: string): boolean {
     );
 }
 
+/** MAC, IP or host name - a host name cannot contain a colon, an IPv6 address needs one */
 function isAddress(address: string): boolean {
-    return isMac(address) || /^(\d{1,3})(\.\d{1,3}){3}$/.test(address) || /^[0-9a-fA-F:]+$/.test(address);
+    return (
+        isMac(address) ||
+        /^(\d{1,3})(\.\d{1,3}){3}$/.test(address) ||
+        /^[0-9a-fA-F:]+$/.test(address) ||
+        !address.includes(':')
+    );
 }
 
-/** Compares MACs independent of their spelling, IPs as text */
+/** Compares MACs independent of their spelling, IPs and host names as text in lower case */
 function addressKey(address: string): string {
     return isMac(address) ? address.replace(/[^0-9a-fA-F]/g, '').toUpperCase() : address.trim().toLowerCase();
 }
@@ -53,7 +59,7 @@ let hostsInstance = '';
 
 /**
  * Column "MAC / IP" of the tab "Persons": the addresses as chips, chosen from the devices of the box
- * by name, MAC or IP. Stored as before - a text, separated by commas - so the adapter is unchanged.
+ * by name, MAC or IP. A typed text which is no MAC or IP is a host name of the box. Stored as before - a text, separated by commas - so the adapter is unchanged.
  */
 export default class PersonAddresses extends ConfigGeneric<ConfigGenericProps, PersonAddressesState> {
     constructor(props: ConfigGenericProps) {
@@ -136,6 +142,9 @@ export default class PersonAddresses extends ConfigGeneric<ConfigGenericProps, P
             byKey.set(addressKey(host.mac), host);
             if (host.ip) {
                 byKey.set(addressKey(host.ip), host);
+            }
+            if (host.name && !byKey.has(addressKey(host.name))) {
+                byKey.set(addressKey(host.name), host);
             }
         });
         const usedBy = this.getUsedBy();
