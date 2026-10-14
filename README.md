@@ -221,7 +221,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.2.3 (2026-10-14)
 - (@GermanBluefox) Tab "Persons": a device of a person can also be given by its host name in the Fritz!Box instead of a MAC or IP address
 
 ### 5.2.2 (2026-10-13)
@@ -240,15 +240,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 - (@GermanBluefox) `common.localLink` of `io-package.json`, the link to the web interface of the FRITZ!Box, is replaced by `common.localLinks` - the js-controller has removed the old attribute from its schema, which made the package test fail
 - (@GermanBluefox) A card of the mesh topology whose devices have no signal - a switch, a repeater with LAN devices only - uses compact devices: the manufacturer and the IP address stand next to each other below the name instead of below each other
 - (@GermanBluefox) The table of the mesh topology shows the same symbol in front of the name, and the bars of the signal carry the color of the band - only a signal below -80 dBm, or one which the box itself calls too far away, turns red
-
-### 5.1.2 (2026-10-01)
-- (@GermanBluefox) The mesh topology shows the signal strength of a WLAN device: four bars and the value in dBm (`rx_rcpi`/`tx_rcpi` of the mesh list), the signal to noise and the rating of the FRITZ!Box itself ("too far away from the access point", `client_position`) in the tooltip and in the new column "Signal" of the table
-- (@GermanBluefox) A device which is not connected any more shows when it was connected last (`last_connected`)
-- (@GermanBluefox) The manufacturer of a device is taken from the FRITZ!Box (`device_manufacturer`, which it knows from LLDP or the DHCP request) and only looked up in the IEEE registries if the box does not name one
-- (@GermanBluefox) The data rates of the mesh topology were shown as download and upload the wrong way round for every link whose first node is the access point - the FRITZ!Box reports `rx`/`tx` from the view of its own node 1, which is not always the upstream side
-- (@GermanBluefox) A click on the missed calls of the tiles ("FRITZ!Box" widget of vis-2 and of `ioBroker.devices`) asks whether the counter is reset and sets `calllists.missed.count` to 0. The counter belongs to the adapter, not to the FRITZ!Box - it counts every missed call since the installation, including the complete call list which is read on the first start. The adapter now confirms a written counter right away instead of at the next poll
-
-
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
