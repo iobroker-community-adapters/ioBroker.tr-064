@@ -12,7 +12,7 @@ import type { Action, ActionArguments, ActionResult, Device, Service, TR064Error
 import { Device as TR064DeviceClass } from 'tr-O64/lib/Device';
 
 import { refresh, ROOT as CALLLIST_ROOT } from './calllist';
-import { getJson, getXml, normalizeMac, parseXml, safeFunction, splitMacs } from './utils';
+import { getJson, getProp, getXml, normalizeMac, parseXml, safeFunction, splitMacs } from './utils';
 import type { MeshList } from './mesh';
 import { CHANNEL_STATES, STATES } from './states';
 import type {
@@ -259,29 +259,84 @@ export class TR064Client extends TR064 {
         );
     }
 
-    /**
-     * Checks with a first request that the box answers and accepts the login.
-     *
-     * `DeviceInfo:1 GetInfo` exists on every box and does not depend on a function which can be
-     * switched off. `GetInfo` of the WLAN, which was used before, answers with error 820 when the
-     * WLAN is off, so the adapter never connected (issue #527). A SOAP fault (the library reports
-     * every fault as 500) or "Credentials incorrect" of the library means that the box refused the
-     * login: wrong user or password, missing rights, or logins blocked after wrong attempts.
-     */
-    private checkLogin(device: Device, callback: (err?: TR064Error | string | null) => void): void {
+    /** Reads model and firmware of the box (`DeviceInfo:1 GetInfo`, needs the right "FRITZ!Box settings") */
+    private readBoxInfo(device: Device, callback: (err: TR064Error | null) => void): void {
         this.safe(
             device,
             'services.urn:dslforum-org:service:DeviceInfo:1.actions.GetInfo',
             true,
         )((err: TR064Error | null, info: ActionResult) => {
-            if (err && (err.code === 500 || err.code === 401 || /credentials/i.test(err.message))) {
-                (err as LoginError).loginRejected = true;
-            }
             if (!err && info) {
                 // shown as title of the widgets
                 this.boxInfo = { model: info.NewModelName || '', firmware: info.NewSoftwareVersion || '' };
             }
             callback(err);
+        });
+    }
+
+    /**
+     * Checks with the first authenticated requests that the box answers and accepts the login.
+     *
+     * `LANConfigSecurity:1 X_AVM-DE_GetCurrentUser` is allowed for every user with one of the
+     * rights App, Dial, Phone, NAS or HomeAuto (AVM: TR-064_LAN_Config_Security.pdf) and returns
+     * the rights of the user. `DeviceInfo:1 GetInfo` needs the right "FRITZ!Box settings": a user
+     * with only the rights for call lists and voice messages was refused there and never connected
+     * (issue #754). It is therefore only the check for a firmware without `X_AVM-DE_GetCurrentUser`
+     * or a user who has no other right than the settings. `GetInfo` of the WLAN, used before
+     * 5.1.0, answers with error 820 when the WLAN is off (issue #527).
+     *
+     * `tr-O64` drops the UPnP error code of a SOAP fault and reports HTTP 500 only, so a wrong
+     * password and a missing right cannot be told apart. The login counts as refused when the
+     * library reports "Credentials incorrect" or when none of the requests is accepted: wrong user
+     * or password, a user without any right, or logins blocked after wrong attempts.
+     */
+    private checkLogin(device: Device, callback: (err?: TR064Error | string | null) => void): void {
+        const done = (err: TR064Error | null): void => {
+            if (err && (err.code === 500 || err.code === 401 || /credentials/i.test(err.message))) {
+                (err as LoginError).loginRejected = true;
+            }
+            callback(err);
+        };
+
+        const getCurrentUser = getProp<Action>(
+            device,
+            'services.urn:dslforum-org:service:LANConfigSecurity:1.actions.X_AVM-DE_GetCurrentUser',
+        );
+        if (typeof getCurrentUser !== 'function') {
+            this.readBoxInfo(device, done);
+            return;
+        }
+
+        getCurrentUser((err, result) => {
+            if (err && /credentials/i.test(err.message)) {
+                done(err);
+                return;
+            }
+            if (err) {
+                // e.g. a user with only the right for the settings
+                this.adapter.log.debug(`X_AVM-DE_GetCurrentUser failed: ${err.message}`);
+                this.readBoxInfo(device, done);
+                return;
+            }
+
+            const rights = [
+                ...String(result?.['NewX_AVM-DE_CurrentUserRights'] || '').matchAll(
+                    /<path>([^<]*)<\/path>\s*<access>([^<]*)<\/access>/g,
+                ),
+            ].map(m => `${m[1]}=${m[2]}`);
+            this.adapter.log.debug(`Rights of the FritzBox user: ${rights.join(', ') || 'unknown'}`);
+
+            this.readBoxInfo(device, err => {
+                if (err) {
+                    this.adapter.log.warn(
+                        'The FritzBox user has no right for the FritzBox settings. Functions which need it (e.g. WLAN, devices, persons, mesh, event log) are not available.',
+                    );
+                    this.adapter.log.warn(
+                        'If you need them, enable "FRITZ!Box settings" for the user in the FritzBox under System > FRITZ!Box Users.',
+                    );
+                }
+                callback(null);
+            });
         });
     }
 

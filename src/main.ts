@@ -1281,7 +1281,7 @@ export class Tr064Adapter extends utils.Adapter {
                 // a restart of the box does not help here (issue #527)
                 this.log.error('~~ The FritzBox refused the login.');
                 this.log.error(
-                    '~~ Check user and password in the tab "Options" and that the user has the right for the FritzBox settings.',
+                    '~~ Check user and password in the tab "Options" and that the user has at least one right in the FritzBox.',
                 );
                 this.log.error('~~ After wrong logins the FritzBox blocks further logins for a while.');
             } else {

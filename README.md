@@ -221,6 +221,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) The adapter connects again with a FritzBox user without the right "FRITZ!Box settings" (e.g. only call list and voice messages); such a user gets a warning instead of "The FritzBox refused the login": https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754
+
 ### 5.2.3 (2026-10-14)
 - (@GermanBluefox) Tab "Persons": a device of a person can also be given by its host name in the Fritz!Box instead of a MAC or IP address
 

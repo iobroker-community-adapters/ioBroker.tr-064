@@ -111,11 +111,18 @@ reason to stop the adapter: the attempt is repeated every `RECONNECT_INTERVAL` (
 works, and only then the objects are created, the polling starts and `subscribeStates()` runs. The
 detailed error block is logged once, the following attempts only at debug level.
 
-The last step of `init()` is `checkLogin()`: the first authenticated request, `DeviceInfo:1 GetInfo`.
-It must be an action which every box has and which cannot be switched off - it was `GetInfo` of the
-2.4 GHz WLAN, which answers with error 820 when the WLAN is off, so such a box never connected
-(issue #527). A fault of that request or "Credentials incorrect" of `tr-O64` sets `loginRejected`,
-and the error block then points to user, password and rights instead of a restart of the box.
+The last step of `init()` is `checkLogin()`: the first authenticated request,
+`LANConfigSecurity:1 X_AVM-DE_GetCurrentUser`. It must be an action which every box has, which
+cannot be switched off (`GetInfo` of the 2.4 GHz WLAN answers with error 820 when the WLAN is off,
+issue #527) **and which every user may call**: it needs one of App, Dial, Phone, NAS or HomeAuto
+and returns the rights of the user. `DeviceInfo:1 GetInfo` (model and firmware) needs the right
+"FRITZ!Box settings"; as login check it locked out users with only call list and voice message
+rights (issue #754). It is now read after the check, a failure only warns, and it is the check
+itself only without `X_AVM-DE_GetCurrentUser` or after a fault of it (a user with only the
+settings right). `tr-O64` reports every SOAP fault as HTTP 500 without the UPnP code, so wrong
+password and missing right look the same: `loginRejected` is set for "Credentials incorrect" or
+when no request was accepted, and the error block then points to user, password and rights
+instead of a restart of the box.
 
 `info.connection` shows whether the box answers. It is written by `setConnected()`, which is called
 on a failed connection, on the first successful one and after every poll cycle in `updateAll()` -
