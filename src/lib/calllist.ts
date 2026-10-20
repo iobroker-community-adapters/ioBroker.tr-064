@@ -15,15 +15,15 @@ import type { SystemData } from './systemdata';
 const LINESTART = '<!!--Entry-->';
 const LINEEND = '<!!--EntryEnd-->';
 /** `type` of a call in the XML of the box to the name of the list */
-const NO2NAME: Record<number, CallListName> = { 0: 'all', 1: 'inbound', 2: 'missed', 3: 'outbound' };
+const NO2NAME: Record<number, CallListName> = { 0: 'all', 1: 'inbound', 2: 'missed', 3: 'outbound', 10: 'missed' };
 const TYPES: CallListName[] = ['all', 'inbound', 'missed', 'outbound'];
 const SYMS: Record<number, string> = {
     1: '>' /* blue */,
     2: 'x' /* red */,
     3: '<' /* green */, // completed entries
     9: '>' /* blue */,
-    10: 'x' /* red */,
-    11: '<' /* green */, // currently running (10 = blocked)
+    10: 'x' /* red */, // rejected, completed
+    11: '<' /* green */, // currently running (9 and 11)
 };
 
 /** Channel below which the call lists are created */
@@ -287,17 +287,21 @@ export class CallLists {
             this.ports[String(call.port)] = String(call.device);
         }
 
-        if ((call.type as number) > 3) {
-            this.#adapter.log.debug(
-                `Ignoring call ID${call.id} because call still active or blocked (call.type = ${call.type})`,
-            );
+        if (isActive(call)) {
+            this.#adapter.log.debug(`Ignoring call ID${call.id} because call still active (call.type = ${call.type})`);
+            return;
+        }
+
+        const listName = NO2NAME[~~call.type];
+        if (!listName) {
+            this.#adapter.log.debug(`Ignoring call ID${call.id} because of unknown call.type = ${call.type}`);
             return;
         }
 
         this.#adapter.log.debug(`Processing call ID${call.id} (call.type = ${call.type})`);
         call.sym = SYMS[~~call.type];
         call.external = ~~call.type === 3 ? call.called : call.caller;
-        this.addCall2List(call, NO2NAME[~~call.type] || call.type, counted);
+        this.addCall2List(call, listName, counted);
         this.addCall2List(call, 'all', counted);
     }
 
