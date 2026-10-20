@@ -221,7 +221,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.2.4 (2026-10-20)
 - (@GermanBluefox) The adapter connects again with a FritzBox user without the right "FRITZ!Box settings" (e.g. only call list and voice messages); such a user gets a warning instead of "The FritzBox refused the login": https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754
 
 ### 5.2.3 (2026-10-14)
@@ -237,12 +237,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 
 ### 5.1.5 (2026-10-07)
 - (@GermanBluefox) Updated packages
-
-### 5.1.4 (2026-10-02)
-- (@GermanBluefox) New look of the devices in the mesh topology: every device carries the symbol of its kind (computer, smartphone, camera, lamp, printer, ...) next to its name, below it the manufacturer and the IP address, and on the right side the band and the signal. The kind comes from the FRITZ!Box (`device_class`, or the kind which was set for the device in the box), an unknown one gets a generic symbol
-- (@GermanBluefox) `common.localLink` of `io-package.json`, the link to the web interface of the FRITZ!Box, is replaced by `common.localLinks` - the js-controller has removed the old attribute from its schema, which made the package test fail
-- (@GermanBluefox) A card of the mesh topology whose devices have no signal - a switch, a repeater with LAN devices only - uses compact devices: the manufacturer and the IP address stand next to each other below the name instead of below each other
-- (@GermanBluefox) The table of the mesh topology shows the same symbol in front of the name, and the bars of the signal carry the color of the band - only a signal below -80 dBm, or one which the box itself calls too far away, turns red
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
