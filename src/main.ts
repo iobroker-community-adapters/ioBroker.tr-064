@@ -320,8 +320,16 @@ export class Tr064Adapter extends utils.Adapter {
                             });
                             return;
                         }
-                        this.meshTopology = buildMeshTopology(list, this.config.devices, text => this.log.info(text));
-                        answer({ ...this.meshTopology, canRename });
+                        // most boxes have no IP in the mesh list, the host list has it (issue #755)
+                        this.getHostIps(hostIps => {
+                            this.meshTopology = buildMeshTopology(
+                                list,
+                                this.config.devices,
+                                text => this.log.info(text),
+                                hostIps,
+                            );
+                            answer({ ...this.meshTopology, canRename });
+                        });
                     }),
                 );
                 return;
@@ -828,6 +836,31 @@ export class Tr064Adapter extends utils.Adapter {
         if (this.config.useDeviceLog) {
             this.refreshDeviceLog();
         }
+    }
+
+    /**
+     * Reads the IPv4 addresses of the host list by MAC address (upper case). `callback` is called
+     * exactly once; if the list cannot be read, the map is empty.
+     */
+    private getHostIps(callback: (hostIps: Map<string, string>) => void): void {
+        this.tr064Client.getHostListXml(
+            this.callbackTimers.wrap<HostEntry[]>(10_000, (err, hosts) => {
+                const hostIps = new Map<string, string>();
+                if (err) {
+                    this.log.debug(`Cannot read the host list for the IP addresses of the mesh: ${errorText(err)}`);
+                }
+                for (const host of hosts || []) {
+                    const mac = String(host.NewMACAddress || '')
+                        .trim()
+                        .toUpperCase();
+                    const ip = String(host.NewIPAddress || '').trim();
+                    if (mac && ip) {
+                        hostIps.set(mac, ip);
+                    }
+                }
+                callback(hostIps);
+            }),
+        );
     }
 
     /**

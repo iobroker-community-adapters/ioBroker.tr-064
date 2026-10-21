@@ -36,6 +36,7 @@ interface MeshListInterface {
     uid?: string;
     name?: string;
     type?: string;
+    mac_address?: string;
     node_links?: MeshListLink[];
     /** WLAN: how the box rates the RCPI of the uplink */
     client_position?: string;
@@ -120,6 +121,36 @@ function positionOf(node: MeshListNode): MeshNodeInfo['position'] {
     return undefined;
 }
 
+/**
+ * IPv4 address of a node: from `ip_addresses` of the mesh list or - as most boxes do not fill it
+ * (issue #755) - from the host list by the MAC address of the device or of one of its interfaces.
+ *
+ * @param node the node of the mesh list
+ * @param hostIps MAC address in upper case -> IPv4 address of the host list
+ */
+function ipOf(node: MeshListNode, hostIps?: Map<string, string>): string | undefined {
+    for (const address of node.ip_addresses || []) {
+        const value = String(address.value || '')
+            .split('/')[0]
+            .trim();
+        const version = String(address.version || '').toUpperCase();
+        if (value && (version === 'V4' || version === 'IPV4' || /^\d{1,3}(\.\d{1,3}){3}$/.test(value))) {
+            return value;
+        }
+    }
+    if (!hostIps?.size) {
+        return undefined;
+    }
+    const macs = [node.device_mac_address, ...(node.node_interfaces || []).map(iface => iface.mac_address)];
+    for (const mac of macs) {
+        const ip = mac ? hostIps.get(mac.trim().toUpperCase()) : undefined;
+        if (ip) {
+            return ip;
+        }
+    }
+    return undefined;
+}
+
 function roleOf(node: MeshListNode): MeshNodeInfo['role'] {
     if (node.is_meshed) {
         return node.mesh_role === 'master' ? 'master' : 'slave';
@@ -136,11 +167,13 @@ function roleOf(node: MeshListNode): MeshNodeInfo['role'] {
  * @param list the JSON list of the box
  * @param configured the devices of the tab "Devices", they are marked with their name
  * @param onError called once if the manufacturer list cannot be read
+ * @param hostIps MAC address in upper case -> IPv4 address of the host list, for the nodes without IP
  */
 export function buildMeshTopology(
     list: MeshList,
     configured: DeviceConfigEntry[],
     onError?: (error: string) => void,
+    hostIps?: Map<string, string>,
 ): MeshResponse {
     const nodes: MeshNodeInfo[] = [];
     const byUid = new Map<string, MeshNodeInfo>();
@@ -152,7 +185,7 @@ export function buildMeshTopology(
             continue;
         }
         const mac = node.device_mac_address || '';
-        const ip = node.ip_addresses?.find(a => a.version === 'V4' && a.value)?.value?.split('/')[0];
+        const ip = ipOf(node, hostIps);
         const entry = mac ? configured.find(dev => macsOverlap(dev.mac || '', mac)) : undefined;
         const info: MeshNodeInfo = {
             uid: node.uid,
