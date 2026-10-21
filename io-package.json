@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "5.2.4",
+    "version": "5.2.5",
     "news": {
+      "5.2.5": {
+        "en": "Rejected calls (type 10) are now added to the call lists \"all\" and \"missed\" (#757)\nFixed: IP addresses were missing in the mesh table view (#755)",
+        "de": "Abgelehnte Anrufe (Typ 10) gehören nun zu den Listen „Alle“ und „Verpasst“ (#757)\nBehoben: IP-Adressen fehlten in der Mesh-Tabelle (#755)",
+        "ru": "Отклоненные вызовы (тип 10) теперь добавляются в списки вызовов «все» и «пропущенные» (#757)\nИсправлено: IP-адреса отсутствовали в представлении таблицы сетки (#755)",
+        "pt": "As chamadas rejeitadas (tipo 10) agora são “todas” e “perdidas” (#757)\nCorrigido: faltavam endereços IP na tabela mesh (#755)",
+        "nl": "Geweigerde oproepen (type 10) worden nu toegevoegd aan de oproeplijsten „alle” en „gemiste” (#757)\nOpgelost: IP-adressen ontbraken in de nettabelweergave (#755)",
+        "fr": "Les appels rejetés (type 10) sont désormais ajoutés aux listes « tous » et « manqués » (#757)\nCorrigé : il manquait des adresses IP dans le maillage (#755)",
+        "it": "Le chiamate rifiutate (tipo 10) sono ora aggiunte a «tutte» e «perse» (#757)\nRisolto: mancavano indirizzi IP nella tabella mesh (#755)",
+        "es": "Las llamadas rechazadas (tipo 10) se añaden ahora a las listas «todas» y «perdidas» (#757)\nCorregido: faltaban direcciones IP en la tabla en malla (#755)",
+        "pl": "Odrzucone połączenia (typ 10) są teraz dodawane do list połączeń „wszystkie” i „nieodebrane” (#757)\nNaprawiono: brakowało adresów IP w widoku tabeli siatki (#755)",
+        "uk": "Відхилені дзвінки (тип 10) тепер додаються до списків викликів «всі» та «пропущені» (#757)\nВиправлено: IP-адреси були відсутні у вигляді таблиці сітки (#755)",
+        "zh-cn": "已拒绝的来电（类型 10）现已添加到通话列表中 “全部” 和 “未接通话” (#757)\n修复：网格表视图中缺少 IP 地址 (#755)"
+      },
       "5.2.4": {
         "en": "The adapter connects again with a FritzBox user without the right \"FRITZ!Box settings\" (e.g. only call list and voice messages); such a user gets a warning instead of \"The FritzBox refused the login\": https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754",
         "de": "Der Adapter verbindet sich wieder mit einem FRITZBox-Nutzer ohne „FRITZ! Boxeinstellungen“ (z. B. nur Anrufliste und Sprachnachrichten); ein Nutzer wird gewarnt statt „Die FritzBox hat den Login verweigert“: https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754",
@@ -80,19 +93,6 @@
         "pl": "Okna dialogowe „Zmień nazwę urządzenia” topologii siatki i „Resetuj nieodebrane połączenia” widżetu i karty urządzenia pokazują przycisk „Anuluj” po prawej stronie, szary i z ikoną zamknięcia, jak wszędzie w iOBrokerze",
         "uk": "Діалоги «Перейменувати пристрій» сітчастої топології та «Скинути пропущені дзвінки» віджета та карти пристрою показують кнопку «Скасувати» з правого боку, сіру та з піктограмою закриття, як скрізь у IObroker",
         "zh-cn": "网状拓扑的 “重命名设备” 对话框以及控件和设备卡的 “重置未接来电” 对话框在右侧显示 “取消” 按钮，呈灰色并带有关闭图标，就像IOBroker中的任何地方一样"
-      },
-      "5.1.5": {
-        "en": "Updated packages",
-        "de": "Neue Pakete",
-        "ru": "Обновленные пакеты",
-        "pt": "Pacotes novos",
-        "nl": "Bijgewerkte pakketten",
-        "fr": "Packages mis à jour",
-        "it": "Pacchi nuovi",
-        "es": "Paquetes nuevos",
-        "pl": "Zaktualizowane pakiety",
-        "uk": "Оновлені пакети",
-        "zh-cn": "更新的软件包"
       }
     },
     "titleLang": {

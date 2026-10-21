@@ -1,6 +1,6 @@
 {
-  "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-4SQSrCDF.js": {
-    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-4SQSrCDF.js",
+  "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-Bm6voogs.js": {
+    "file": "assets/_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-Bm6voogs.js",
     "name": "_virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared",
     "imports": [
       "_react-pcwjPi4V.js",
@@ -40,17 +40,17 @@
     "name": "vite-preload-helper"
   },
   "src/Components.tsx": {
-    "file": "assets/Components-D7dlXwfS.js",
+    "file": "assets/Components-zZYa9Itp.js",
     "name": "Components",
     "src": "src/Components.tsx",
     "isEntry": true,
     "imports": [
       "_react-pcwjPi4V.js",
-      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-4SQSrCDF.js"
+      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-Bm6voogs.js"
     ]
   },
   "src/no-page.ts": {
-    "file": "assets/no-page-DXBOpctw.js",
+    "file": "assets/no-page-BBQKezHg.js",
     "name": "no-page",
     "src": "src/no-page.ts",
     "isEntry": true,
@@ -104,7 +104,7 @@
     ]
   },
   "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js": {
-    "file": "assets/hostInit-DEK6nxUq.js",
+    "file": "assets/hostInit-DPWykudz.js",
     "name": "hostInit",
     "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__H_A_I__hostAutoInit__H_A_I__.js",
     "imports": [
@@ -117,14 +117,14 @@
     ]
   },
   "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js": {
-    "file": "assets/pendingShares-BZTJ8U1k.js",
+    "file": "assets/pendingShares-fB2Tl_Yx.js",
     "name": "pendingShares",
     "src": "virtual:mf:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1__P_S__pendingShares__P_S__.js",
     "imports": [
       "_vite-preload-helper-BbbETgeG.js"
     ],
     "dynamicImports": [
-      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-4SQSrCDF.js",
+      "__virtual_mf___mfe_internal__DevicesWidgetTr064Set__mf_owner__212620212104624__loadShare__shared-Bm6voogs.js",
       "virtual:mf-localSharedImportMap:__mfe_internal__DevicesWidgetTr064Set__mf_owner__1"
     ]
   },

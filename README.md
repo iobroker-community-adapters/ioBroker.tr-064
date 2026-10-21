@@ -221,7 +221,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.2.5 (2026-10-21)
 - (@GermanBluefox) Rejected calls (type 10) are now added to the call lists "all" and "missed" (#757)
 - (@GermanBluefox) Fixed: IP addresses were missing in the mesh table view (#755)
 
@@ -238,9 +238,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 
 ### 5.1.6 (2026-10-07)
 - (@GermanBluefox) The dialogs "Rename device" of the mesh topology and "Reset missed calls" of the widget and the device card show the button "Cancel" on the right side, grey and with a close icon, like everywhere in ioBroker
-
-### 5.1.5 (2026-10-07)
-- (@GermanBluefox) Updated packages
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
