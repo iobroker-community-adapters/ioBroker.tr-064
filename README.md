@@ -221,6 +221,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (GermanBluefox) Widget "FRITZ!Box Person": the comings and goings can be exported as a CSV file for Excel (#763)
+
 ### 5.2.5 (2026-10-21)
 - (@GermanBluefox) Rejected calls (type 10) are now added to the call lists "all" and "missed" (#757)
 - (@GermanBluefox) Fixed: IP addresses were missing in the mesh table view (#755)
