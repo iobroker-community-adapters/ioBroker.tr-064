@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { alpha, Box, type Theme } from '@mui/material';
-import { Person as IconPerson, PersonOff as IconAway } from '@mui/icons-material';
+import { alpha, Box, IconButton, type Theme } from '@mui/material';
+import { FileDownload as IconExport, Person as IconPerson, PersonOff as IconAway } from '@mui/icons-material';
 
 import type { RxRenderWidgetProps, RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
@@ -48,6 +48,8 @@ interface Tr064PersonRxData {
     showHistory: boolean;
     historyCount: number | string;
     historyDays: number | string;
+    /** button in the header of the history which downloads the comings and goings as a CSV file for Excel */
+    showExport: boolean;
 }
 
 interface Tr064PersonState extends VisRxWidgetState {
@@ -83,6 +85,8 @@ const GAP = 8;
 /** Height of a row of the history and of its header */
 const HISTORY_ROW = 28;
 const HISTORY_HEAD = 22;
+/** Events of the export at most */
+const EXPORT_COUNT = 10_000;
 
 /**
  * - `compact`: narrow - picture, name and status below each other, centered
@@ -128,6 +132,15 @@ function isSvg(src: string): boolean {
     return /^data:image\/svg\+xml/i.test(src) || /\.svg(?:[?#].*)?$/i.test(src);
 }
 
+function pad(value: number): string {
+    return String(value).padStart(2, '0');
+}
+
+/** A field of the CSV file, quoted if it contains the separator, a quote or a line break */
+function csvField(value: string | number, separator: string): string {
+    const text = String(value);
+    return text.includes(separator) || /["\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
 /** One person of the presence detection (tab "Persons"): present or absent, since when, and the last comings and goings */
 export default class Tr064Person extends Generic<Tr064PersonRxData, Tr064PersonState> {
     private watcher: StateWatcher | null = null;
@@ -257,6 +270,14 @@ export default class Tr064Person extends Generic<Tr064PersonRxData, Tr064PersonS
                             tooltip: 'history_days_tooltip',
                             hidden: 'data.showHistory === false',
                         },
+                        {
+                            name: 'showExport',
+                            type: 'checkbox',
+                            default: true,
+                            label: 'show_export',
+                            tooltip: 'show_export_tooltip',
+                            hidden: 'data.showHistory === false',
+                        },
                     ],
                 },
             ],
@@ -338,6 +359,52 @@ export default class Tr064Person extends Generic<Tr064PersonRxData, Tr064PersonS
             this.setState({ history });
         }
     }
+
+    /**
+     * Downloads the comings and goings of the last `historyDays` days as a CSV file which Excel opens directly:
+     * UTF-8 with BOM, `;` as separator for the languages whose Excel expects it, the oldest event first
+     */
+    private exportHistory = async (): Promise<void> => {
+        const person = this.getPerson();
+        if (!person) {
+            return;
+        }
+        const history = await loadPresenceHistory(this.getPresenceSocket(), person.id, {
+            count: EXPORT_COUNT,
+            days: clamp(Math.round(Number(this.state.rxData.historyDays) || 7), 1, 365),
+        });
+        const lang = Generic.getLanguage();
+        const separator = lang === 'en' || lang === 'zh-cn' ? ',' : ';';
+        const present = this.isPresent();
+        const events = [...history.events].reverse();
+        const rows = [
+            [Generic.t('date'), Generic.t('time'), Generic.t('event'), Generic.t('duration_minutes')],
+            ...events.map((event, i) => {
+                // how long the state of the event lasted: until the next event, the newest one until now
+                const end = i < events.length - 1 ? events[i + 1].ts : event.present === present ? Date.now() : 0;
+                const date = new Date(event.ts);
+                return [
+                    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
+                    `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`,
+                    Generic.t(event.present ? 'arrived' : 'departed'),
+                    end > event.ts ? Math.round((end - event.ts) / 60_000) : '',
+                ];
+            }),
+        ];
+        const csv = rows.map(row => row.map(value => csvField(value, separator)).join(separator)).join('\r\n');
+        const now = new Date();
+        const fileName = `${person.name.replace(/[\\/:*?"<>|]+/g, '_')}_${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.csv`;
+        // the byte order mark tells Excel that the file is UTF-8
+        const bom = String.fromCharCode(0xfeff);
+        const url = URL.createObjectURL(new Blob([`${bom}${csv}\r\n`], { type: 'text/csv;charset=utf-8' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
 
     /** New values: a coming or going reloads the history - a little later, so a history instance has it */
     private onValues(personValues: StateValues): void {
@@ -910,10 +977,32 @@ export default class Tr064Person extends Generic<Tr064PersonRxData, Tr064PersonS
                     {history?.source === 'history' && history.instance ? (
                         <Box
                             component="span"
-                            sx={theme => ({ fontSize: 11, fontWeight: 400, color: faint(theme), flex: '0 0 auto' })}
+                            sx={theme => ({
+                                fontSize: 11,
+                                fontWeight: 400,
+                                color: faint(theme),
+                                flex: '0 0 auto',
+                                ml: 'auto',
+                            })}
                         >
                             {history.instance}
                         </Box>
+                    ) : null}
+                    {this.state.rxData.showExport !== false && events.length ? (
+                        <IconButton
+                            size="small"
+                            title={Generic.t('export_excel')}
+                            disabled={this.state.editMode}
+                            onClick={() => void this.exportHistory()}
+                            sx={{
+                                flex: '0 0 auto',
+                                p: '2px',
+                                color: 'inherit',
+                                '& .MuiSvgIcon-root': { fontSize: 16 },
+                            }}
+                        >
+                            <IconExport />
+                        </IconButton>
                     ) : null}
                 </Box>
                 <Box sx={{ flex: '1 1 auto', minHeight: 0, overflowY: scroll ? 'auto' : 'visible' }}>
