@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "5.2.5",
+    "version": "5.2.6",
     "news": {
+      "5.2.6": {
+        "en": "Widget \"FRITZ!Box Person\": the comings and goings can be exported as a CSV file for Excel (#763)",
+        "de": "Widget „FRITZ! Box Person“: Alles kann als CSV-Datei für Excel exportiert werden (#763)",
+        "ru": "Виджет «FRITZ! Box Person»: все, что происходит, можно экспортировать в виде CSV-файла для Excel (#763)",
+        "pt": "Widget FRITZ! Box Person”: as idas e vindas podem ser exportadas em CSV para Excel (#763)",
+        "nl": "Widget „FRITZ! Box Person”: het reilen en zeilen kan worden geëxporteerd als een CSV-bestand voor Excel (#763)",
+        "fr": "Widget « FRITZ ! Box Person » : les allées et venues peuvent être exportées au format CSV pour Excel (#763)",
+        "it": "Widget FRITZ! Box Person»: l'andirivieni è esportabile in formato CSV per Excel (#763)",
+        "es": "Widget «FRITZ! Box Person»: las idas y venidas se pueden exportar como un archivo CSV para Excel (#763)",
+        "pl": "Widżet „FRITZ! Box Person”: przyjścia i wyjścia można wyeksportować jako plik CSV dla programu Excel (#763)",
+        "uk": "Віджет «ФРІЦ! Box Person»: приїзди та під'їзди можна експортувати як файл CSV для Excel (#763)",
+        "zh-cn": "小工具 “FRITZ！Box Person”：来来往可以导出为 Excel 的 CSV 文件 (#763)"
+      },
       "5.2.5": {
         "en": "Rejected calls (type 10) are now added to the call lists \"all\" and \"missed\" (#757)\nFixed: IP addresses were missing in the mesh table view (#755)",
         "de": "Abgelehnte Anrufe (Typ 10) gehören nun zu den Listen „Alle“ und „Verpasst“ (#757)\nBehoben: IP-Adressen fehlten in der Mesh-Tabelle (#755)",
@@ -80,19 +93,6 @@
         "pl": "Nowa zakładka „Osoby” z obecnością osób, grup, gości i nieznanych urządzeń poniżej `obecności`, jak adapter fb-checkattendance: obecny, ostatni przyjazd i wyjazd, obecny/nieobecny od tego czasu, sumy dnia i ostatnich przychodów i wyjazdów. Osoba jest obserwowana przez adresy MAC lub IP\nNowy widget „Osoba” dla vis-2 i `IOBroker.devices`, osoba jest wybierana według nazwy; widżet vis-2 „Obecność” może wyświetlać osoby",
         "uk": "Нова вкладка «Персони» з присутністю осіб, груп, гостей та невідомих пристроїв нижче `присутності`, на зразок адаптера fb-checkpresent: присутність, останній прибуття та виїзд, присутній/відсутній з моменту, суми дня та останніх приїздів та відходів. Спостерігається за людиною за MAC або IP-адресами\nНовий віджет «Особа» для vis-2 та `ioBroker.devices`, особа вибирається за іменем; віджет vis-2 «Присутність» може перелічити осіб",
         "zh-cn": "新的 “人员” 选项卡，在 “在场” 下方显示人员、团体、访客和未知设备，例如适配器 fb-checkPresence：当下、最后一次到达和离开、此后在场/缺席、当天总和以及最后一次来去去。一个人被 MAC 或 IP 地址监视\nvis-2 和 `iobroker.devices` 的新插件 “人物”，按姓名选择此人；vis-2 控件 “Presence” 可以列出人员"
-      },
-      "5.1.6": {
-        "en": "The dialogs \"Rename device\" of the mesh topology and \"Reset missed calls\" of the widget and the device card show the button \"Cancel\" on the right side, grey and with a close icon, like everywhere in ioBroker",
-        "de": "Die Dialoge „Gerät umbenennen“ der Mesh-Topologie und „Verpasste Anrufe zurücksetzen“ des Widgets und der Gerätekarte zeigen rechts den Button „Abbrechen“, grau mit Schließensymbol, wie überall in ioBroker",
-        "ru": "В диалоговых окнах «Переименовать устройство» сетчатой топологии и «Сбросить пропущенные вызовы» виджета и карты устройства справа отображается кнопка «Отмена», серая и со значком закрытия, как и везде в IOBroker",
-        "pt": "Os diálogos “Renomear dispositivo” da topologia de malha e “Redefinir chamadas perdidas” do widget e da placa mostram o botão “Cancelar” no lado direito, cinza e com um ícone de fechar, como no IOBroker",
-        "nl": "In de dialoogvensters „Apparaat hernoemen” van de mesh-topologie en „Gemiste oproepen opnieuw instellen” van de widget en de toestelkaart wordt aan de rechterkant de knop „Annuleren” weergegeven, grijs en met een sluitingspictogram, zoals overal in IOBroker",
-        "fr": "Les boîtes de dialogue « Renommer l'appareil » de la topologie maillée et « Réinitialiser les appels manqués » du widget et de la fiche de l'appareil comportent le bouton « Annuler » sur le côté droit, gris et fermé, comme partout dans IOBroker",
-        "it": "I dialoghi «Rinomina dispositivo» della topologia mesh e «Reimposta chiamate perse» del widget e della scheda mostrano il pulsante «Annulla» a destra, grigio e chiuso, come ovunque in IOBroker",
-        "es": "Los cuadros de diálogo «Cambiar nombre del dispositivo» de la topología en malla y «Restablecer llamadas perdidas» del widget y la tarjeta del dispositivo muestran el botón «Cancelar» en el lado derecho, gris y con un icono de cerrar, como en IOBroker",
-        "pl": "Okna dialogowe „Zmień nazwę urządzenia” topologii siatki i „Resetuj nieodebrane połączenia” widżetu i karty urządzenia pokazują przycisk „Anuluj” po prawej stronie, szary i z ikoną zamknięcia, jak wszędzie w iOBrokerze",
-        "uk": "Діалоги «Перейменувати пристрій» сітчастої топології та «Скинути пропущені дзвінки» віджета та карти пристрою показують кнопку «Скасувати» з правого боку, сіру та з піктограмою закриття, як скрізь у IObroker",
-        "zh-cn": "网状拓扑的 “重命名设备” 对话框以及控件和设备卡的 “重置未接来电” 对话框在右侧显示 “取消” 按钮，呈灰色并带有关闭图标，就像IOBroker中的任何地方一样"
       }
     },
     "titleLang": {
