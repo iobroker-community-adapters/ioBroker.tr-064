@@ -21,6 +21,7 @@ const config = {
                 './Tr064Mesh': './src/Tr064Mesh',
                 './Tr064Presence': './src/Tr064Presence',
                 './Tr064Person': './src/Tr064Person',
+                './Tr064GuestWlan': './src/Tr064GuestWlan',
                 './translations': './src/translations.ts',
             },
             remotes: {},

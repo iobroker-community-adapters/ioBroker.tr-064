@@ -125,5 +125,18 @@
     "show_guests": "显示访客",
     "show_guests_tooltip": "访客网络中活动设备的数量（如果实例统计它们）",
     "guests_count": "访客：%s",
-    "no_persons": "没有人员。请在实例的“人员”选项卡中添加。"
+    "no_persons": "没有人员。请在实例的“人员”选项卡中添加。",
+    "guest_qr": "访客 Wi-Fi 二维码",
+    "guest_qr_help": "访客 Wi-Fi 的二维码：手机用相机扫描即可连接。显示在小部件上，或点击后在对话框中显示 - 可选需先输入 PIN。",
+    "guest_mode": "显示二维码",
+    "guest_mode_tile": "在小部件上",
+    "guest_mode_dialog": "点击后在对话框中",
+    "guest_mode_pin": "输入 PIN 后在对话框中",
+    "guest_pin": "PIN",
+    "guest_pin_tooltip": "显示二维码前询问。它保存在 vis 项目中：可防止访客看到二维码，但不能防范能编辑项目的人",
+    "guest_auto_close": "对话框自动关闭（秒）",
+    "guest_auto_close_tooltip": "二维码不会一直留在屏幕上。0 = 从不",
+    "guest_title_tooltip": "留空 = 访客 Wi-Fi",
+    "guest_show_ssid": "显示网络名称",
+    "guest_show_password": "显示密码"
 }

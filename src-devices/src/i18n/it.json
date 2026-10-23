@@ -78,5 +78,17 @@
     "fritzdm_noHistory": "Nessun arrivo o uscita ancora registrati",
     "fritzdm_historyFrom": "Da %s",
     "fritzdm_historyFromAdapter": "Registrato dall'adattatore",
-    "fritzdm_refresh": "Aggiorna"
+    "fritzdm_refresh": "Aggiorna",
+    "fritzdm_guestWidgetName": "Codice QR del Wi-Fi ospiti",
+    "fritzdm_guestNameHelp": "Vuoto: Wi-Fi ospiti",
+    "fritzdm_guestMode": "Mostra il codice",
+    "fritzdm_guestModeTile": "Sul riquadro",
+    "fritzdm_guestModeDialog": "In una finestra dopo un clic",
+    "fritzdm_guestModePin": "In una finestra dopo il PIN",
+    "fritzdm_guestPin": "PIN",
+    "fritzdm_guestPinHelp": "Richiesto prima che appaia il codice. Tiene gli ospiti lontani dal codice - è salvato nelle impostazioni del riquadro",
+    "fritzdm_guestAutoClose": "Chiudi la finestra dopo (s)",
+    "fritzdm_guestAutoCloseHelp": "Il codice non resta sullo schermo. 0 = mai",
+    "fritzdm_guestShowSsid": "Mostra il nome della rete",
+    "fritzdm_guestShowPassword": "Mostra la password"
 }

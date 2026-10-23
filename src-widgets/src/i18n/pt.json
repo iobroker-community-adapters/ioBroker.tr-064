@@ -125,5 +125,18 @@
     "show_guests": "Mostrar convidados",
     "show_guests_tooltip": "O número de dispositivos ativos na rede de convidados, se a instância os contar",
     "guests_count": "Convidados: %s",
-    "no_persons": "Sem pessoas. Adicione-as na aba \"Pessoas\" da instância."
+    "no_persons": "Sem pessoas. Adicione-as na aba \"Pessoas\" da instância.",
+    "guest_qr": "Código QR do Wi-Fi de convidados",
+    "guest_qr_help": "Código QR do Wi-Fi de convidados: um telemóvel liga-se ao lê-lo com a câmera. Mostrado no widget ou num diálogo após um clique - opcionalmente só após um PIN.",
+    "guest_mode": "Mostrar o código",
+    "guest_mode_tile": "No widget",
+    "guest_mode_dialog": "Num diálogo após um clique",
+    "guest_mode_pin": "Num diálogo após o PIN",
+    "guest_pin": "PIN",
+    "guest_pin_tooltip": "Pedido antes de o código aparecer. Fica guardado no projeto vis: afasta os convidados do código, mas não protege contra quem pode editar o projeto",
+    "guest_auto_close": "Fechar o diálogo após (s)",
+    "guest_auto_close_tooltip": "O código não fica no ecrã. 0 = nunca",
+    "guest_title_tooltip": "Vazio = Wi-Fi de convidados",
+    "guest_show_ssid": "Mostrar nome da rede",
+    "guest_show_password": "Mostrar senha"
 }

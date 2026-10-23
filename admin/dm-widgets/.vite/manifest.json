@@ -40,7 +40,7 @@
     "name": "vite-preload-helper"
   },
   "src/Components.tsx": {
-    "file": "assets/Components-zZYa9Itp.js",
+    "file": "assets/Components-Dd6pKEnY.js",
     "name": "Components",
     "src": "src/Components.tsx",
     "isEntry": true,
@@ -70,7 +70,7 @@
     "isDynamicEntry": true
   },
   "src/translations.ts": {
-    "file": "assets/translations-v9w74uqb.js",
+    "file": "assets/translations-a5_DxX-a.js",
     "name": "translations",
     "src": "src/translations.ts",
     "isEntry": true

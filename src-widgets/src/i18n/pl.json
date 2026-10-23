@@ -125,5 +125,18 @@
     "show_guests": "Pokaż gości",
     "show_guests_tooltip": "Liczba aktywnych urządzeń w sieci gościnnej, jeśli instancja je liczy",
     "guests_count": "Goście: %s",
-    "no_persons": "Brak osób. Dodaj je w zakładce „Osoby” instancji."
+    "no_persons": "Brak osób. Dodaj je w zakładce „Osoby” instancji.",
+    "guest_qr": "Kod QR Wi-Fi dla gości",
+    "guest_qr_help": "Kod QR Wi-Fi dla gości: telefon łączy się, skanując go aparatem. Wyświetlany na widżecie lub w oknie po kliknięciu - opcjonalnie dopiero po podaniu PIN.",
+    "guest_mode": "Pokaż kod",
+    "guest_mode_tile": "Na widżecie",
+    "guest_mode_dialog": "W oknie po kliknięciu",
+    "guest_mode_pin": "W oknie po PIN",
+    "guest_pin": "PIN",
+    "guest_pin_tooltip": "Pytany przed pokazaniem kodu. Jest zapisany w projekcie vis: trzyma gości z dala od kodu, ale nie chroni przed kimś, kto może edytować projekt",
+    "guest_auto_close": "Zamknij okno po (s)",
+    "guest_auto_close_tooltip": "Kod nie zostaje na ekranie. 0 = nigdy",
+    "guest_title_tooltip": "Puste = Wi-Fi dla gości",
+    "guest_show_ssid": "Pokaż nazwę sieci",
+    "guest_show_password": "Pokaż hasło"
 }

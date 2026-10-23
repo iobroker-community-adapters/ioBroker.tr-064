@@ -125,5 +125,18 @@
     "show_guests": "Mostra ospiti",
     "show_guests_tooltip": "Il numero di dispositivi attivi nella rete ospiti, se l'istanza li conta",
     "guests_count": "Ospiti: %s",
-    "no_persons": "Nessuna persona. Aggiungile nella scheda \"Persone\" dell'istanza."
+    "no_persons": "Nessuna persona. Aggiungile nella scheda \"Persone\" dell'istanza.",
+    "guest_qr": "Codice QR del Wi-Fi ospiti",
+    "guest_qr_help": "Codice QR del Wi-Fi ospiti: un telefono si collega scansionandolo con la fotocamera. Mostrato sul widget o in una finestra dopo un clic - facoltativamente solo dopo un PIN.",
+    "guest_mode": "Mostra il codice",
+    "guest_mode_tile": "Sul widget",
+    "guest_mode_dialog": "In una finestra dopo un clic",
+    "guest_mode_pin": "In una finestra dopo il PIN",
+    "guest_pin": "PIN",
+    "guest_pin_tooltip": "Richiesto prima che appaia il codice. È salvato nel progetto vis: tiene gli ospiti lontani dal codice, ma non protegge da chi può modificare il progetto",
+    "guest_auto_close": "Chiudi la finestra dopo (s)",
+    "guest_auto_close_tooltip": "Il codice non resta sullo schermo. 0 = mai",
+    "guest_title_tooltip": "Vuoto = Wi-Fi ospiti",
+    "guest_show_ssid": "Mostra nome della rete",
+    "guest_show_password": "Mostra password"
 }

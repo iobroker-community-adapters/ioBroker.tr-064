@@ -78,5 +78,17 @@
     "fritzdm_noHistory": "Приходи та відходи ще не записані",
     "fritzdm_historyFrom": "З %s",
     "fritzdm_historyFromAdapter": "Записано адаптером",
-    "fritzdm_refresh": "Оновити"
+    "fritzdm_refresh": "Оновити",
+    "fritzdm_guestWidgetName": "QR-код гостьового Wi-Fi",
+    "fritzdm_guestNameHelp": "Порожньо: Гостьовий Wi-Fi",
+    "fritzdm_guestMode": "Показувати код",
+    "fritzdm_guestModeTile": "На плитці",
+    "fritzdm_guestModeDialog": "У діалозі після натискання",
+    "fritzdm_guestModePin": "У діалозі після PIN",
+    "fritzdm_guestPin": "PIN",
+    "fritzdm_guestPinHelp": "Запитується перед показом коду. Захищає код від гостей - зберігається в налаштуваннях плитки",
+    "fritzdm_guestAutoClose": "Закрити діалог через (с)",
+    "fritzdm_guestAutoCloseHelp": "Код не залишається на екрані. 0 = ніколи",
+    "fritzdm_guestShowSsid": "Показувати назву мережі",
+    "fritzdm_guestShowPassword": "Показувати пароль"
 }

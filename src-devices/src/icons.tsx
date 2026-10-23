@@ -47,3 +47,5 @@ export const DepartureIcon = bridgedIcon('Logout', '←');
 export const HistoryIcon = bridgedIcon('History', '↺');
 export const RefreshIcon = bridgedIcon('Refresh', '↻');
 export const DevicesIcon = bridgedIcon('Smartphone', '▯');
+export const QrIcon = bridgedIcon('QrCode2', '▦');
+export const LockIcon = bridgedIcon('Lock', '⚿');

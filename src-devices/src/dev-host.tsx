@@ -8,7 +8,17 @@
 
 /* eslint-disable class-methods-use-this, react/no-unused-class-component-methods -- a mirror of the host class */
 import React from 'react';
-import { alpha, Box, Tooltip, type SxProps, type Theme } from '@mui/material';
+import {
+    alpha,
+    Box,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    TextField,
+    Tooltip,
+    type SxProps,
+    type Theme,
+} from '@mui/material';
 import { LinkOff, Settings } from '@mui/icons-material';
 
 import type { IndicatorValues, WidgetGenericProps, WidgetGenericState, WidgetSettingsBase } from '@iobroker/dm-widgets';
@@ -299,18 +309,69 @@ export class WidgetGeneric<
         return this.renderWideTall();
     }
 
+    // ---- PIN pad: a text field instead of the keypad of ioBroker.devices -----------------
+
+    protected showPinPad(pin: string): void {
+        this.setState({ pinPadOpen: true, pinPadPin: pin } as Partial<TState> as TState);
+    }
+
+    protected onPinPadSuccess(): void {
+        // override in subclass
+    }
+
+    protected renderPinPad(): React.JSX.Element | null {
+        const state = this.state as unknown as WidgetGenericState;
+        if (!state.pinPadOpen) {
+            return null;
+        }
+        const close = (): void => this.setState({ pinPadOpen: false } as Partial<TState> as TState);
+        return (
+            <Dialog
+                open
+                onClose={close}
+                maxWidth="xs"
+            >
+                <DialogTitle>PIN</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        type="password"
+                        variant="standard"
+                        slotProps={{ htmlInput: { 'data-testid': 'sim-pin' } }}
+                        onChange={e => {
+                            if (e.target.value === state.pinPadPin) {
+                                close();
+                                this.onPinPadSuccess();
+                            }
+                        }}
+                    />
+                </DialogContent>
+            </Dialog>
+        );
+    }
+
     render(): React.JSX.Element {
         const size = this.props.settings?.size || '1x1';
+        let widget: React.JSX.Element;
         if (size === '2x0.5') {
-            return this.renderWide();
+            widget = this.renderWide();
+        } else if (size === '2x1') {
+            widget = this.renderWideTall();
+        } else if (size === '2x2') {
+            widget = this.renderHuge();
+        } else {
+            widget = this.renderCompact();
         }
-        if (size === '2x1') {
-            return this.renderWideTall();
-        }
-        if (size === '2x2') {
-            return this.renderHuge();
-        }
-        return this.renderCompact();
+        // like the host: the PIN pad next to the tile
+        const pinPad = this.renderPinPad();
+        return pinPad ? (
+            <>
+                {widget}
+                {pinPad}
+            </>
+        ) : (
+            widget
+        );
     }
 }
 

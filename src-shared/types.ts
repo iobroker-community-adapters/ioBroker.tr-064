@@ -15,6 +15,23 @@ export interface RenameResponse {
     error?: string;
 }
 
+/** Encryption of a WLAN as the `T:` of a `WIFI:` QR code: WPA/WPA2/WPA3, WEP or an open network */
+export type WlanSecurity = 'WPA' | 'WEP' | 'nopass';
+
+/** Answer of the message `guestWlan` (see `src/lib/types.ts` of the adapter) */
+export interface GuestWlanResponse {
+    /** `not connected`, `not supported` or the error text of the box */
+    error?: string;
+    /** The guest WLAN is switched on */
+    enabled?: boolean;
+    ssid?: string;
+    /** Empty for an open network */
+    password?: string;
+    security?: WlanSecurity;
+    /** The box does not send the SSID */
+    hidden?: boolean;
+}
+
 export type MeshRole = 'master' | 'slave' | 'switch' | 'client';
 
 /** Node of the mesh topology */

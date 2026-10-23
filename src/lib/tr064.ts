@@ -19,10 +19,12 @@ import type {
     DeviceConfigEntry,
     DeviceLogEvent,
     DeviceLogXml,
+    GuestWlanInfo,
     HostEntry,
     HostListXml,
     TamListXml,
     TamMessageListXml,
+    WlanSecurity,
 } from './types';
 import type { Tr064Adapter } from '../main';
 
@@ -80,6 +82,8 @@ interface WlanFunctions {
     getInfo?: Action;
     getSecurityKeys?: Action;
     setSecurityKeys?: Action;
+    /** `NewBeaconAdvertisementEnabled`: `0` if the SSID is hidden */
+    getBeaconAdvertisement?: Action;
 }
 
 /** A WLAN band which not every box has - also the name of the attribute of this class */
@@ -216,6 +220,7 @@ export class TR064Client extends TR064 {
             getInfo: service?.actions?.GetInfo,
             getSecurityKeys: service?.actions?.GetSecurityKeys,
             setSecurityKeys: service?.actions?.SetSecurityKeys,
+            getBeaconAdvertisement: service?.actions?.GetBeaconAdvertisement,
         });
         const bands = configs.slice(1, -1);
 
@@ -1269,5 +1274,63 @@ export class TR064Client extends TR064 {
 
     public getWLANGuest(callback: (err: TR064Error | null, result: ActionResult) => void): void {
         this.safe(this.wlanGuest, 'getInfo', true)(callback);
+    }
+
+    /**
+     * Reads SSID, password and encryption of the guest WLAN for the QR code of the widgets.
+     *
+     * `GetSecurityKeys` needs the right "FRITZ!Box settings". `NewBeaconType` is `None` for an open
+     * network, `Basic` for WEP and one of the WPA types otherwise (`WPA`, `11i`, `WPAand11i`,
+     * `11iandWPA3`, `WPA3`) - the QR code knows only `WPA` for all of them. The password and the
+     * SSID must not be logged.
+     *
+     * @param callback `not supported` if the box has no guest WLAN (only one WLAN configuration)
+     */
+    public getGuestWlanInfo(callback: (err: TR064Error | null, info?: GuestWlanInfo) => void): void {
+        const wlan = this.wlanGuest;
+        if (!wlan.getInfo || !wlan.getSecurityKeys) {
+            callback(new Error('not supported'));
+            return;
+        }
+        wlan.getInfo((err, info) => {
+            if (err || !info) {
+                callback(err || new Error('no answer'));
+                return;
+            }
+            wlan.getSecurityKeys!((err, keys) => {
+                if (err || !keys) {
+                    callback(err || new Error('no answer'));
+                    return;
+                }
+                const beaconType = String(info.NewBeaconType ?? '');
+                const password = String(keys.NewKeyPassphrase ?? '');
+                let security: WlanSecurity = 'WPA';
+                if (beaconType === 'None' || (!password && beaconType !== 'Basic')) {
+                    security = 'nopass';
+                } else if (beaconType === 'Basic') {
+                    security = 'WEP';
+                }
+                const result: GuestWlanInfo = {
+                    enabled: !!~~Number(info.NewEnable),
+                    ssid: String(info.NewSSID ?? ''),
+                    // WEP has its own keys, `NewKeyPassphrase` is the one of WPA
+                    password:
+                        security === 'nopass' ? '' : security === 'WEP' ? String(keys.NewWEPKey0 ?? '') : password,
+                    security,
+                    hidden: false,
+                };
+                if (!wlan.getBeaconAdvertisement) {
+                    callback(null, result);
+                    return;
+                }
+                // optional: a firmware without the action or an error means a visible SSID
+                wlan.getBeaconAdvertisement((err, beacon) => {
+                    if (!err && beacon?.NewBeaconAdvertisementEnabled !== undefined) {
+                        result.hidden = !~~Number(beacon.NewBeaconAdvertisementEnabled);
+                    }
+                    callback(null, result);
+                });
+            });
+        });
     }
 }

@@ -125,5 +125,18 @@
     "show_guests": "Mostrar invitados",
     "show_guests_tooltip": "El número de dispositivos activos en la red de invitados, si la instancia los cuenta",
     "guests_count": "Invitados: %s",
-    "no_persons": "No hay personas. Añádalas en la pestaña \"Personas\" de la instancia."
+    "no_persons": "No hay personas. Añádalas en la pestaña \"Personas\" de la instancia.",
+    "guest_qr": "Código QR del Wi-Fi de invitados",
+    "guest_qr_help": "Código QR del Wi-Fi de invitados: un móvil se conecta escaneándolo con la cámara. Se muestra en el widget o en un diálogo tras un clic - opcionalmente solo tras un PIN.",
+    "guest_mode": "Mostrar el código",
+    "guest_mode_tile": "En el widget",
+    "guest_mode_dialog": "En un diálogo tras un clic",
+    "guest_mode_pin": "En un diálogo tras el PIN",
+    "guest_pin": "PIN",
+    "guest_pin_tooltip": "Se pide antes de mostrar el código. Se guarda en el proyecto vis: mantiene a los invitados lejos del código, pero no protege contra quien puede editar el proyecto",
+    "guest_auto_close": "Cerrar el diálogo tras (s)",
+    "guest_auto_close_tooltip": "El código no se queda en la pantalla. 0 = nunca",
+    "guest_title_tooltip": "Vacío = Wi-Fi de invitados",
+    "guest_show_ssid": "Mostrar nombre de la red",
+    "guest_show_password": "Mostrar contraseña"
 }

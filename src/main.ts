@@ -39,6 +39,8 @@ import type {
     DeviceConfigEntry,
     DeviceLogEvent,
     DiscoveredDevice,
+    GuestWlanInfo,
+    GuestWlanResponse,
     HostEntry,
     MeshResponse,
     PresenceResponse,
@@ -376,6 +378,34 @@ export class Tr064Adapter extends utils.Adapter {
                     this.log.silly(`setHostName: ${mac} -> ${name}`);
                     answer({});
                 });
+                return;
+            }
+
+            case 'guestWlan': {
+                // access data of the guest WLAN for the QR code of the widgets - never into a state, never logged
+                if (!obj.callback) {
+                    return;
+                }
+                const answer = (response: GuestWlanResponse): void => {
+                    this.sendTo(obj.from, obj.command, response, obj.callback);
+                };
+                if (!this.boxConnected || !this.tr064Client) {
+                    answer({ error: 'not connected' });
+                    return;
+                }
+                this.tr064Client.getGuestWlanInfo(
+                    this.callbackTimers.wrap<GuestWlanInfo | undefined>(15_000, (err, info) => {
+                        if (err || !info) {
+                            const error = err ? errorText(err) : 'no answer';
+                            if (error !== 'not supported') {
+                                this.log.warn(`Cannot read the guest WLAN for the QR code: ${error}`);
+                            }
+                            answer({ error });
+                            return;
+                        }
+                        answer(info);
+                    }),
+                );
                 return;
             }
 

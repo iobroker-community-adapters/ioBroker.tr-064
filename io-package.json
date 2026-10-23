@@ -184,7 +184,8 @@
           "Tr064FritzBox",
           "Tr064Mesh",
           "Tr064Presence",
-          "Tr064Person"
+          "Tr064Person",
+          "Tr064GuestWlan"
         ]
       }
     },
@@ -226,6 +227,24 @@
             "zh-cn": "人员在家状态：在家或离开、持续时间、最近到达和离开，点击显示到达与离开记录"
           },
           "icon": "person.svg"
+        },
+        {
+          "name": "GuestWlanComponent",
+          "label": "Guest Wi-Fi",
+          "description": {
+            "en": "QR code of the guest Wi-Fi to join it with the phone camera: on the tile, in a dialog after a click or after a PIN",
+            "de": "QR-Code des Gast-WLANs zum Verbinden mit der Handykamera: auf der Kachel, im Dialog nach einem Klick oder nach einer PIN",
+            "ru": "QR-код гостевого Wi-Fi для подключения камерой телефона: на плитке, в диалоге по нажатию или после PIN",
+            "pt": "Código QR do Wi-Fi de convidados para entrar com a câmera do telemóvel: no mosaico, num diálogo após um clique ou após um PIN",
+            "nl": "QR-code van de gastwifi om met de telefooncamera te verbinden: op de tegel, in een dialoog na een klik of na een PIN",
+            "fr": "Code QR du Wi-Fi invités pour s'y connecter avec l'appareil photo du téléphone : sur la tuile, dans une boîte de dialogue après un clic ou après un PIN",
+            "it": "Codice QR del Wi-Fi ospiti per collegarsi con la fotocamera del telefono: sul riquadro, in una finestra dopo un clic o dopo un PIN",
+            "es": "Código QR del Wi-Fi de invitados para conectarse con la cámara del móvil: en el mosaico, en un diálogo tras un clic o tras un PIN",
+            "pl": "Kod QR Wi-Fi dla gości do połączenia aparatem telefonu: na kafelku, w oknie po kliknięciu lub po PIN",
+            "uk": "QR-код гостьового Wi-Fi для підключення камерою телефона: на плитці, у діалозі після натискання або після PIN",
+            "zh-cn": "访客 Wi-Fi 的二维码，用手机相机扫描即可连接：显示在磁贴上、点击后在对话框中或输入 PIN 后显示"
+          },
+          "icon": "guest-wlan.svg"
         }
       ]
     },

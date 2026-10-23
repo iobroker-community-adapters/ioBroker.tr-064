@@ -39,4 +39,5 @@ export const {
     Tv,
     Videocam,
     Watch,
+    WifiOff,
 } = Icons;

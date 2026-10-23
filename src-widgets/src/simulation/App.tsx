@@ -11,12 +11,14 @@
 //   ?view=table ?onlyConfigured=1 ?showDisconnected=1 ?title=Mesh   attributes of the mesh widget
 //   ?person=Anna ?group=Family ?image=<url> ?showToday=1 ?showHistory=0   attributes of the person widget
 //   ?box=offline|stopped|minimal ?ringing=1 ?live=1 ?meshError=timeout ?clients=100    data
+//   ?scene=guest ?mode=tile|dialog|pin ?pin=1234 ?guestOff=1 ?guestError=not%20supported   guest Wi-Fi widget
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 
 import Tr064FritzBox from '../Tr064FritzBox';
+import Tr064GuestWlan from '../Tr064GuestWlan';
 import Tr064Mesh from '../Tr064Mesh';
 import Tr064Person from '../Tr064Person';
 import Tr064Presence from '../Tr064Presence';
@@ -141,6 +143,18 @@ function personData(): Record<string, unknown> {
         showHistory: params.get('showHistory') !== '0',
         historyCount: 10,
         historyDays: 7,
+    };
+}
+
+function guestData(mode?: string): Record<string, unknown> {
+    return {
+        mode: mode || params.get('mode') || 'dialog',
+        pin: params.get('pin') || '1234',
+        widgetTitle: params.get('title') || '',
+        noCard: params.get('noCard') === '1',
+        showSsid: params.get('showSsid') !== '0',
+        showPassword: params.get('showPassword') !== '0',
+        autoClose: 0,
     };
 }
 
@@ -311,6 +325,45 @@ function Scene(): React.JSX.Element {
                 width={size('w', 300)}
                 height={size('h', 360)}
             />
+        );
+    }
+    if (scene === 'guest') {
+        if (params.get('w')) {
+            return (
+                <Widget
+                    widget={Tr064GuestWlan}
+                    data={guestData()}
+                    width={size('w', 220)}
+                    height={size('h', 280)}
+                />
+            );
+        }
+        const sizes: [number, number][] = [
+            [120, 120],
+            [220, 280],
+            [380, 180],
+            [300, 90],
+        ];
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {['tile', 'dialog', 'pin'].map(mode => (
+                    <Box
+                        key={mode}
+                        sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'flex-start' }}
+                    >
+                        {sizes.map(([w, h]) => (
+                            <Widget
+                                key={`${mode}${w}x${h}`}
+                                widget={Tr064GuestWlan}
+                                data={guestData(mode)}
+                                width={w}
+                                height={h}
+                                label={`${mode} ${w}×${h}`}
+                            />
+                        ))}
+                    </Box>
+                ))}
+            </Box>
         );
     }
     if (scene === 'person') {

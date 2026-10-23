@@ -125,5 +125,18 @@
     "show_guests": "Afficher les invités",
     "show_guests_tooltip": "Le nombre d'appareils actifs dans le réseau invité, si l'instance les compte",
     "guests_count": "Invités : %s",
-    "no_persons": "Aucune personne. Ajoutez-les dans l'onglet « Personnes » de l'instance."
+    "no_persons": "Aucune personne. Ajoutez-les dans l'onglet « Personnes » de l'instance.",
+    "guest_qr": "Code QR du Wi-Fi invités",
+    "guest_qr_help": "Code QR du Wi-Fi invités : un téléphone se connecte en le scannant avec l'appareil photo. Affiché sur le widget ou dans une boîte de dialogue après un clic - éventuellement seulement après un PIN.",
+    "guest_mode": "Afficher le code",
+    "guest_mode_tile": "Sur le widget",
+    "guest_mode_dialog": "Dans une boîte de dialogue après un clic",
+    "guest_mode_pin": "Dans une boîte de dialogue après le PIN",
+    "guest_pin": "PIN",
+    "guest_pin_tooltip": "Demandé avant l'affichage du code. Il est enregistré dans le projet vis : il éloigne les invités du code, mais ne protège pas contre quelqu'un qui peut modifier le projet",
+    "guest_auto_close": "Fermer la boîte de dialogue après (s)",
+    "guest_auto_close_tooltip": "Le code ne reste pas à l'écran. 0 = jamais",
+    "guest_title_tooltip": "Vide = Wi-Fi invités",
+    "guest_show_ssid": "Afficher le nom du réseau",
+    "guest_show_password": "Afficher le mot de passe"
 }

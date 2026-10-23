@@ -78,5 +78,17 @@
     "fritzdm_noHistory": "Nog geen komen en gaan vastgelegd",
     "fritzdm_historyFrom": "Uit %s",
     "fritzdm_historyFromAdapter": "Vastgelegd door de adapter",
-    "fritzdm_refresh": "Vernieuwen"
+    "fritzdm_refresh": "Vernieuwen",
+    "fritzdm_guestWidgetName": "QR-code gastwifi",
+    "fritzdm_guestNameHelp": "Leeg: Gastwifi",
+    "fritzdm_guestMode": "Code tonen",
+    "fritzdm_guestModeTile": "Op de tegel",
+    "fritzdm_guestModeDialog": "In een dialoog na een klik",
+    "fritzdm_guestModePin": "In een dialoog na de PIN",
+    "fritzdm_guestPin": "PIN",
+    "fritzdm_guestPinHelp": "Wordt gevraagd voordat de code verschijnt. Hij houdt gasten bij de code weg - hij staat in de instellingen van de tegel",
+    "fritzdm_guestAutoClose": "Dialoog sluiten na (s)",
+    "fritzdm_guestAutoCloseHelp": "De code blijft niet op het scherm staan. 0 = nooit",
+    "fritzdm_guestShowSsid": "Netwerknaam tonen",
+    "fritzdm_guestShowPassword": "Wachtwoord tonen"
 }

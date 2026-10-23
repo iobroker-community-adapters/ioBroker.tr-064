@@ -4,7 +4,8 @@
 // grid like the one of ioBroker.devices (columns of at least 135 px, 12 px gap, the 2x1 wrapper of
 // `WidgetPlugin`). URL parameters:
 //   ?theme=light|dark|neumorphic   ?lang=de   ?view=tiles|dialog   ?scenario=full|ringing|minimal|offline
-//   ?width=<px of the grid>        ?live=1 (changing rates)   ?tile=fritzbox|person (default both)
+//   ?width=<px of the grid>        ?live=1 (changing rates)   ?tile=fritzbox|person|guest (default all)
+//   ?guestOff=1 ?guestError=<code> answer of `sendTo('guestWlan')`    ?pin=<PIN of the guest tiles, default 1234>
 // `#dialog=<id>` in the URL keeps an open dialog over a reload, like ioBroker.devices does.
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -13,6 +14,7 @@ import { I18n, type Connection, type ThemeType } from '@iobroker/gui-components'
 import type { IStateContext, ObjectChangeListener, StateChangeListener } from '@iobroker/dm-widgets';
 
 import FritzBoxComponent from './FritzBoxComponent';
+import GuestWlanComponent from './GuestWlanComponent';
 import PersonComponent from './PersonComponent';
 import translations from './translations';
 import {
@@ -215,6 +217,19 @@ class MockStateContext implements IStateContext {
             sendTo: async (instance: string, command: string): Promise<unknown> => {
                 console.debug(`[sim] sendTo ${instance} ${command}`);
                 await new Promise(resolve => setTimeout(resolve, 600));
+                if (instance === INSTANCE && command === 'guestWlan') {
+                    const error = params.get('guestError');
+                    if (error) {
+                        return { error };
+                    }
+                    return {
+                        enabled: params.get('guestOff') !== '1',
+                        ssid: 'FRITZ!Box Gastzugang',
+                        password: 'Willkommen; im Garten!',
+                        security: 'WPA',
+                        hidden: false,
+                    };
+                }
                 if (instance === INSTANCE && command === 'personList') {
                     return mockPersons().map(person => ({ label: person.name, value: person.name }));
                 }
@@ -359,6 +374,70 @@ function PersonTiles(props: {
     );
 }
 
+const GUEST_MODES = ['tile', 'dialog', 'pin'] as const;
+
+/** The guest WLAN tile in every mode and size */
+function GuestTiles(props: {
+    context: MockStateContext;
+    openDialogId: string | null;
+    onOpen: (id: string) => void;
+    onClose: () => void;
+}): React.JSX.Element {
+    return (
+        <>
+            {GUEST_MODES.map(mode => (
+                <Box
+                    key={mode}
+                    sx={{ mb: 2 }}
+                >
+                    <Box sx={{ mb: 1, fontSize: 12, color: 'text.secondary' }}>{`mode: ${mode}`}</Box>
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(135px, 1fr))',
+                            gap: 1.5,
+                            alignItems: 'start',
+                            width: GRID_WIDTH ? `${GRID_WIDTH}px` : '100%',
+                        }}
+                    >
+                        {PERSON_SIZES.map(size => {
+                            const id = `guest_${mode}_${size.replace('.', '_')}`;
+                            return (
+                                <div
+                                    key={id}
+                                    className={id}
+                                    style={gridSpan(size)}
+                                >
+                                    <PluginFrame size={size}>
+                                        <GuestWlanComponent
+                                            widget={widgetInfo(id)}
+                                            stateContext={props.context}
+                                            settings={{
+                                                ...baseSettings,
+                                                pluginComponent: 'GuestWlanComponent',
+                                                id,
+                                                size,
+                                                mode,
+                                                pin: params.get('pin') || '1234',
+                                                autoClose: 0,
+                                            }}
+                                            onOpenSettings={() => console.log(`settings of ${id}`)}
+                                            openDialogId={props.openDialogId}
+                                            onOpenWidgetDialog={props.onOpen}
+                                            onCloseWidgetDialog={props.onClose}
+                                            onHide={() => {}}
+                                        />
+                                    </PluginFrame>
+                                </div>
+                            );
+                        })}
+                    </Box>
+                </Box>
+            ))}
+        </>
+    );
+}
+
 function Tiles(props: {
     component: TileClass;
     scenario: Scenario;
@@ -473,7 +552,20 @@ export default function App(props: {
                 {props.banner ? (
                     <Box sx={{ mb: 2, fontSize: 13, color: 'success.main', fontWeight: 600 }}>{props.banner}</Box>
                 ) : null}
-                {TILE === 'person'
+                {TILE === 'guest' ? (
+                    <Box sx={{ mb: 3 }}>
+                        <Box sx={{ mb: 1, fontSize: 13, color: 'text.secondary', fontWeight: 600 }}>
+                            {`Guest Wi-Fi - ${THEME}, ${LANG}`}
+                        </Box>
+                        <GuestTiles
+                            context={contexts.full}
+                            openDialogId={openDialogId}
+                            onOpen={onOpen}
+                            onClose={onClose}
+                        />
+                    </Box>
+                ) : null}
+                {TILE === 'person' || TILE === 'guest'
                     ? null
                     : scenarios
                           .filter(item => !only || item.id === only)
@@ -496,7 +588,7 @@ export default function App(props: {
                                   />
                               </Box>
                           ))}
-                {TILE === 'fritzbox' || VIEW === 'dialog' ? null : (
+                {TILE === 'fritzbox' || TILE === 'guest' || VIEW === 'dialog' ? null : (
                     <Box sx={{ mb: 3 }}>
                         <Box sx={{ mb: 1, fontSize: 13, color: 'text.secondary', fontWeight: 600 }}>
                             {`Persons: initials, own icons and texts, photo - ${THEME}, ${LANG}`}

@@ -274,6 +274,30 @@ export interface RenameResponse {
     error?: string;
 }
 
+/** Encryption of a WLAN as the `T:` of a `WIFI:` QR code: WPA/WPA2/WPA3, WEP or an open network */
+export type WlanSecurity = 'WPA' | 'WEP' | 'nopass';
+
+/** Access data of the guest WLAN */
+export interface GuestWlanInfo {
+    /** The guest WLAN is switched on */
+    enabled: boolean;
+    ssid: string;
+    /** Empty for an open network */
+    password: string;
+    security: WlanSecurity;
+    /** The box does not send the SSID */
+    hidden: boolean;
+}
+
+/**
+ * Answer of the message `guestWlan` - the access data for the QR code of the widgets. Only an
+ * answer to a request: the password is never written into a state and never logged.
+ */
+export interface GuestWlanResponse extends Partial<GuestWlanInfo> {
+    /** `not connected`, `not supported` or the error text of the box */
+    error?: string;
+}
+
 /** One answering machine of `X_AVM-DE_TAM:GetList` */
 export interface TamListItem {
     index: string;

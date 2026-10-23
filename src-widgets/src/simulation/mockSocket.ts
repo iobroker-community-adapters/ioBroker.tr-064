@@ -281,7 +281,21 @@ export default class MockSocket {
     sendTo(_instance: string, command: string, _data?: unknown): Promise<unknown> {
         return new Promise(resolve =>
             setTimeout(() => {
-                if (command !== 'mesh') {
+                if (command === 'guestWlan') {
+                    const params = new URLSearchParams(window.location.search);
+                    const error = params.get('guestError');
+                    resolve(
+                        error
+                            ? { error }
+                            : {
+                                  enabled: params.get('guestOff') !== '1',
+                                  ssid: 'FRITZ!Box Gastzugang',
+                                  password: 'Willkommen; im Garten!',
+                                  security: 'WPA',
+                                  hidden: false,
+                              },
+                    );
+                } else if (command !== 'mesh') {
                     resolve(null);
                 } else if (this.options.meshError) {
                     resolve({ error: this.options.meshError, nodes: [], links: [] });
