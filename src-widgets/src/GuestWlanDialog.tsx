@@ -8,11 +8,14 @@ import GuestWlanView from './shared/GuestWlanView';
 import { useGuestWlanLoader } from './shared/guestWlanApi';
 import type { MeshSocket } from './shared/meshApi';
 import type { MeshTranslate } from './shared/MeshView';
+import type { WlanQrKind } from './shared/types';
 
 interface GuestWlanDialogProps {
     socket: MeshSocket;
     /** e.g. `tr-064.0` */
     instanceId: string;
+    /** the guest WLAN or one band of the own WLAN */
+    wlan: WlanQrKind;
     title: string;
     /** Asked before the code is shown; empty = no PIN */
     pin: string;
@@ -28,7 +31,7 @@ interface GuestWlanDialogProps {
 function GuestWlanContent(
     props: Omit<GuestWlanDialogProps, 'title' | 'pin' | 'autoClose' | 'onClose'>,
 ): React.JSX.Element {
-    const { data, loading, error } = useGuestWlanLoader(props.socket, props.instanceId);
+    const { data, loading, error } = useGuestWlanLoader(props.socket, props.instanceId, props.wlan);
     const showHint = !!data && !data.error && data.enabled !== false;
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
@@ -37,6 +40,7 @@ function GuestWlanContent(
                 loading={loading}
                 error={error}
                 t={props.t}
+                wlan={props.wlan}
                 showSsid={props.showSsid}
                 showPassword={props.showPassword}
                 qrSize="min(68vw, 300px)"
@@ -44,7 +48,7 @@ function GuestWlanContent(
             />
             {showHint ? (
                 <Box sx={theme => ({ fontSize: 13, textAlign: 'center', color: theme.palette.text.secondary })}>
-                    {props.t('tr064_guestScan')}
+                    {props.t(props.wlan === 'guest' ? 'tr064_guestScan' : 'tr064_wlanScan')}
                 </Box>
             ) : null}
         </Box>
@@ -52,7 +56,7 @@ function GuestWlanContent(
 }
 
 /**
- * QR code of the guest WLAN in a dialog, after the PIN if one is given. Render it only while it is
+ * QR code of a WLAN in a dialog, after the PIN if one is given. Render it only while it is
  * open - the access data is read only then and forgotten when it closes.
  *
  * @param props properties
@@ -119,6 +123,7 @@ export default function GuestWlanDialog(props: GuestWlanDialogProps): React.JSX.
                     <GuestWlanContent
                         socket={props.socket}
                         instanceId={props.instanceId}
+                        wlan={props.wlan}
                         showSsid={props.showSsid}
                         showPassword={props.showPassword}
                         t={props.t}

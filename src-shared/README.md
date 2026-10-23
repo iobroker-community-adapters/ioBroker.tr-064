@@ -24,7 +24,7 @@ The copies are gitignored - **edit only `src-shared/`**, a change of a copy is o
 | --- | --- |
 | `types.ts` | `MeshResponse`, `MeshNodeInfo`, `MeshLinkInfo` - answer of `sendTo('<instance>', 'mesh', {})`, same as `src/lib/types.ts` of the adapter |
 | `meshApi.ts` | `fetchMesh()`, `renameDevice()`, `MeshLoader`, `useMeshLoader()`, error codes |
-| `guestWlanApi.ts` | guest WLAN for the QR code: `fetchGuestWlan()` (`sendTo('guestWlan')`), `GuestWlanLoader`, `useGuestWlanLoader()`, `wifiQrText()`, `qrPath()` (needs `qrcode-generator` in the project) |
+| `guestWlanApi.ts` | a WLAN (guest or one band) for the QR code: `fetchGuestWlan()` (`sendTo('guestWlan', { wlan })`), `GuestWlanLoader`, `useGuestWlanLoader()`, `WLAN_QR_KINDS`/`WLAN_QR_STATES`/`wlanTitleKey()`, `wifiQrText()`, `qrPath()` (needs `qrcode-generator` in the project) |
 | `GuestWlanView.tsx` | the QR code with network name and password, or why there is none (`layout`: `column`, `row`, `qr`) |
 | `presenceApi.ts` | persons of `presence.persons`: `loadPersons()`, `findPerson()` (by name), `loadPresenceHistory()` (history instance or the JSON `history`), `formatDuration()`, `formatEventTime()` - no React |
 | `MeshView.tsx` | the React component: toolbar, SVG graph, table |

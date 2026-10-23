@@ -18,6 +18,9 @@ export interface RenameResponse {
 /** Encryption of a WLAN as the `T:` of a `WIFI:` QR code: WPA/WPA2/WPA3, WEP or an open network */
 export type WlanSecurity = 'WPA' | 'WEP' | 'nopass';
 
+/** `wlan` of the message `guestWlan`: the guest WLAN (default) or one band of the own WLAN */
+export type WlanQrKind = 'guest' | 'wlan24' | 'wlan50' | 'wlan52' | 'wlan60';
+
 /** Answer of the message `guestWlan` (see `src/lib/types.ts` of the adapter) */
 export interface GuestWlanResponse {
     /** `not connected`, `not supported` or the error text of the box */

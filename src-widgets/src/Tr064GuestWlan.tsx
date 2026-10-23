@@ -9,7 +9,16 @@ import Generic, { faint, muted, StateWatcher, type StateValues } from './Generic
 import GuestWlanDialog from './GuestWlanDialog';
 import { toBool } from './format';
 import GuestWlanView from './shared/GuestWlanView';
-import { GUEST_WLAN_REFRESH_INTERVAL, GuestWlanLoader, type GuestWlanState } from './shared/guestWlanApi';
+import {
+    GUEST_WLAN_REFRESH_INTERVAL,
+    GuestWlanLoader,
+    WLAN_QR_KINDS,
+    WLAN_QR_STATES,
+    wlanQrKind,
+    wlanTitleKey,
+    type GuestWlanState,
+} from './shared/guestWlanApi';
+import type { WlanQrKind } from './shared/types';
 
 /**
  * - `tile`: the code is always shown in the widget
@@ -21,17 +30,16 @@ type ShowMode = 'tile' | 'dialog' | 'pin';
 /** Seconds after which the dialog closes by itself, if the attribute is empty */
 const DEFAULT_AUTO_CLOSE = 60;
 
-/** Milliseconds after a new password was written into `states.wlanGuestPassword` until the box has it */
+/** Milliseconds after a new password was written into `states.wlan*Password` until the box has it */
 const PASSWORD_DELAY = 3000;
-
-/** Relative IDs below `tr-064.<n>`: a change of one of them reads the code again */
-const STATE_NAMES = ['info.connection', 'states.wlanGuest', 'states.wlanGuestPassword'] as const;
 
 interface Tr064GuestWlanRxData {
     instance: string;
+    /** the guest WLAN (default, also for widgets of 5.3.0 without it) or one band of the own WLAN */
+    wlan: WlanQrKind;
     mode: ShowMode;
     pin: string;
-    /** shown instead of "Guest Wi-Fi"; not `name`, that is the name of the widget in the vis-2 editor */
+    /** shown instead of the name of the WLAN; not `name`, that is the name of the widget in the vis-2 editor */
     widgetTitle: string;
     noCard: boolean;
     showSsid: boolean;
@@ -49,7 +57,8 @@ interface Tr064GuestWlanState extends VisRxWidgetState {
 }
 
 /**
- * QR code of the guest WLAN: on the widget, or in a dialog after a click - with or without PIN.
+ * QR code of a WLAN - the guest WLAN or one band of the own WLAN: on the widget, or in a dialog
+ * after a click - with or without PIN.
  *
  * The adapter answers `sendTo('guestWlan')` with SSID and password; nothing of it is in a state. In
  * the modes with dialog the password is read only while the dialog is open.
@@ -82,7 +91,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
             visSet: 'tr-064',
             visSetLabel: 'set_label',
             visSetColor: '#e2001a',
-            visName: 'FRITZ!Box Guest Wi-Fi',
+            visName: 'FRITZ!Box Wi-Fi QR code',
             visWidgetLabel: 'guest_qr',
             visHelp: 'guest_qr_help',
             visAttrs: [
@@ -95,6 +104,14 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
                             adapter: 'tr-064',
                             default: 'tr-064.0',
                             label: 'instance',
+                        },
+                        {
+                            name: 'wlan',
+                            type: 'select',
+                            options: WLAN_QR_KINDS.map(kind => ({ value: kind, label: `qr_wlan_${kind}` })),
+                            default: 'guest',
+                            label: 'qr_wlan',
+                            tooltip: 'qr_wlan_tooltip',
                         },
                         {
                             name: 'mode',
@@ -170,17 +187,30 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
 
     onRxDataChanged(prevRxData: Tr064GuestWlanRxData): void {
         const rxData = this.state.rxData;
-        if (prevRxData.instance !== rxData.instance) {
+        const wlanChanged = wlanQrKind(prevRxData.wlan) !== this.getWlan();
+        if (prevRxData.instance !== rxData.instance || wlanChanged) {
             this.watcher?.watch(this.getStateIds());
         }
-        if (prevRxData.instance !== rxData.instance || prevRxData.mode !== rxData.mode) {
+        if (prevRxData.instance !== rxData.instance || prevRxData.mode !== rxData.mode || wlanChanged) {
             this.setState({ dialogOpen: false }, () => this.startLoader());
         }
     }
 
+    private getWlan(): WlanQrKind {
+        return wlanQrKind(this.state.rxData.wlan);
+    }
+
+    /** Relative IDs below `tr-064.<n>`: a change of one of them reads the code again */
+    private getStateNames(): { connection: string; on: string; password: string } {
+        return { connection: 'info.connection', ...WLAN_QR_STATES[this.getWlan()] };
+    }
+
     private getStateIds(): string[] {
         const instanceId = this.getInstanceId();
-        return [`system.adapter.${instanceId}.alive`, ...STATE_NAMES.map(name => `${instanceId}.${name}`)];
+        return [
+            `system.adapter.${instanceId}.alive`,
+            ...Object.values(this.getStateNames()).map(name => `${instanceId}.${name}`),
+        ];
     }
 
     private getMode(): ShowMode {
@@ -197,7 +227,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
     }
 
     private getTitle(): string {
-        return String(this.state.rxData.widgetTitle || '').trim() || Generic.meshT()('tr064_guestWlan');
+        return String(this.state.rxData.widgetTitle || '').trim() || Generic.meshT()(wlanTitleKey(this.getWlan()));
     }
 
     private getAutoClose(): number {
@@ -215,6 +245,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
         this.loader = new GuestWlanLoader({
             socket: this.getMeshSocket(),
             instanceId: this.getInstanceId(),
+            wlan: this.getWlan(),
             // the editor reads once
             interval: this.state.editMode ? 0 : GUEST_WLAN_REFRESH_INTERVAL,
             onChange: guest => this.setState({ guest }),
@@ -234,7 +265,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
         }
     }
 
-    /** The guest WLAN was switched, the box connected or a new password written: read the code again */
+    /** The WLAN was switched, the box connected or a new password written: read the code again */
     private onValues(values: StateValues): void {
         const prev = this.state.fb;
         this.setState({ fb: values });
@@ -242,9 +273,10 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
             return;
         }
         const instanceId = this.getInstanceId();
-        const changed = (name: (typeof STATE_NAMES)[number]): boolean =>
+        const names = this.getStateNames();
+        const changed = (name: string): boolean =>
             `${instanceId}.${name}` in prev && prev[`${instanceId}.${name}`] !== values[`${instanceId}.${name}`];
-        if (changed('states.wlanGuestPassword')) {
+        if (changed(names.password)) {
             if (this.refreshTimer) {
                 clearTimeout(this.refreshTimer);
             }
@@ -252,7 +284,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
                 this.refreshTimer = null;
                 void this.loader?.refresh();
             }, PASSWORD_DELAY);
-        } else if (changed('states.wlanGuest') || changed('info.connection')) {
+        } else if (changed(names.on) || changed(names.connection)) {
             void this.loader.refresh();
         }
     }
@@ -326,6 +358,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
                         loading={this.state.guest.loading}
                         error={this.state.guest.error}
                         t={Generic.meshT()}
+                        wlan={this.getWlan()}
                         showSsid={rxData.showSsid !== false}
                         showPassword={rxData.showPassword !== false}
                         layout={wide ? 'row' : small ? 'qr' : 'column'}
@@ -358,7 +391,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
     private renderButton(): React.JSX.Element {
         const instanceId = this.getInstanceId();
         const values = this.state.fb;
-        const on = toBool(values[`${instanceId}.states.wlanGuest`]);
+        const on = toBool(values[`${instanceId}.${this.getStateNames().on}`]);
         const alive = toBool(values[`system.adapter.${instanceId}.alive`]);
         const { width, height } = this.state.size;
         const row = height > 0 && height < 110 && width >= 180;
@@ -519,6 +552,7 @@ export default class Tr064GuestWlan extends Generic<Tr064GuestWlanRxData, Tr064G
                     <GuestWlanDialog
                         socket={this.getMeshSocket()}
                         instanceId={this.getInstanceId()}
+                        wlan={this.getWlan()}
                         title={this.getTitle()}
                         pin={mode === 'pin' ? this.getPin() : ''}
                         showSsid={this.state.rxData.showSsid !== false}

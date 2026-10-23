@@ -67,5 +67,14 @@
     "tr064_guestPinWrong": "Неверный PIN",
     "tr064_guestPinDelete": "Удалить",
     "tr064_guestPinClear": "Очистить",
-    "tr064_close": "Закрыть"
+    "tr064_close": "Закрыть",
+    "tr064_wlan24": "Wi-Fi 2,4 ГГц",
+    "tr064_wlan50": "Wi-Fi 5 ГГц",
+    "tr064_wlan52": "Wi-Fi 5 ГГц (2)",
+    "tr064_wlan60": "Wi-Fi 6 ГГц",
+    "tr064_wlanOff": "Эта сеть Wi-Fi выключена",
+    "tr064_wlanNotAlive": "Запустите экземпляр tr-064, чтобы увидеть Wi-Fi",
+    "tr064_wlanNotSupported": "У FRITZ!Box нет такой сети Wi-Fi",
+    "tr064_wlanError": "Не удаётся прочитать Wi-Fi: %s",
+    "tr064_wlanScan": "Отсканируйте код камерой телефона, чтобы подключиться к этой сети Wi-Fi"
 }

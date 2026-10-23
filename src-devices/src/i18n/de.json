@@ -79,8 +79,8 @@
     "fritzdm_historyFrom": "Aus %s",
     "fritzdm_historyFromAdapter": "Vom Adapter aufgezeichnet",
     "fritzdm_refresh": "Aktualisieren",
-    "fritzdm_guestWidgetName": "Gast-WLAN QR-Code",
-    "fritzdm_guestNameHelp": "Leer: Gast-WLAN",
+    "fritzdm_guestWidgetName": "WLAN QR-Code",
+    "fritzdm_guestNameHelp": "Leer: Name des WLANs",
     "fritzdm_guestMode": "Code zeigen",
     "fritzdm_guestModeTile": "Auf der Kachel",
     "fritzdm_guestModeDialog": "Im Dialog nach einem Klick",
@@ -90,5 +90,7 @@
     "fritzdm_guestAutoClose": "Dialog schließen nach (s)",
     "fritzdm_guestAutoCloseHelp": "Der Code bleibt nicht auf dem Bildschirm stehen. 0 = nie",
     "fritzdm_guestShowSsid": "Netzwerknamen zeigen",
-    "fritzdm_guestShowPassword": "Passwort zeigen"
+    "fritzdm_guestShowPassword": "Passwort zeigen",
+    "fritzdm_qrWlan": "WLAN",
+    "fritzdm_qrWlanHelp": "Das eigene WLAN gibt Zugang zum Heimnetz - am besten mit PIN"
 }

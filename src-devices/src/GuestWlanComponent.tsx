@@ -1,6 +1,7 @@
-// Guest WLAN tile for ioBroker.devices.
+// WLAN QR code tile for ioBroker.devices.
 //
-// Shows the QR code of the guest WLAN, with which a phone joins by its camera: on the tile, or in a
+// Shows the QR code of the guest WLAN or of one band of the own WLAN, with which a phone joins by its
+// camera: on the tile, or in a
 // dialog after a click - optionally only after the PIN pad of the host. The access data comes from
 // `sendTo('<instance>', 'guestWlan')`; the adapter writes it into no state. In the modes with dialog
 // it is read only while the dialog is open, and the open dialog is not stored in the URL hash - a
@@ -36,8 +37,13 @@ import {
     GUEST_WLAN_REFRESH_INTERVAL,
     GuestWlanLoader,
     useGuestWlanLoader,
+    WLAN_QR_KINDS,
+    WLAN_QR_STATES,
+    wlanQrKind,
+    wlanTitleKey,
     type GuestWlanState,
 } from './shared/guestWlanApi';
+import type { WlanQrKind } from './shared/types';
 import type { MeshSocket } from './shared/meshApi';
 import { normalizeInstance } from './utils';
 import { CloseIcon, LockIcon, QrIcon } from './icons';
@@ -61,23 +67,28 @@ type ShowMode = 'tile' | 'dialog' | 'pin';
 /** Seconds after which the dialog closes by itself, if nothing is configured */
 const DEFAULT_AUTO_CLOSE = 60;
 
-/** Milliseconds after a new password was written into `states.wlanGuestPassword` until the box has it */
+/** Milliseconds after a new password was written into `states.wlan*Password` until the box has it */
 const PASSWORD_DELAY = 3000;
 
-/** States of the instance the tile reads, relative to `tr-064.<n>`: a change reads the code again */
-const STATE_IDS = {
-    connection: 'info.connection',
-    wlanGuest: 'states.wlanGuest',
-    password: 'states.wlanGuestPassword',
-} as const;
+/** States the tile reads: the connection, the switch of the WLAN and the state of its password */
+type StateKey = 'connection' | 'on' | 'password';
 
-type StateKey = keyof typeof STATE_IDS;
+const STATE_KEYS: StateKey[] = ['connection', 'on', 'password'];
 
-const STATE_KEYS = Object.keys(STATE_IDS) as StateKey[];
+/**
+ * IDs of the states below `tr-064.<n>`: a change of one of them reads the code again
+ *
+ * @param wlan the WLAN of the code
+ */
+function stateIds(wlan: WlanQrKind): Record<StateKey, string> {
+    return { connection: 'info.connection', ...WLAN_QR_STATES[wlan] };
+}
 
 interface GuestWlanSettings extends CustomWidgetPlugin {
     /** tr-064 instance, e.g. `tr-064.0` */
     instance?: string;
+    /** the guest WLAN (default, also for tiles of 5.3.0 without it) or one band of the own WLAN */
+    wlan?: WlanQrKind;
     mode?: ShowMode;
     /** asked before the code is shown in the mode `pin` */
     pin?: string;
@@ -106,10 +117,11 @@ function sharedT(key: string, ...args: (string | number)[]): string {
 function DialogCode(props: {
     socket: MeshSocket;
     instanceId: string;
+    wlan: WlanQrKind;
     showSsid: boolean;
     showPassword: boolean;
 }): JSX.Element {
-    const { data, loading, error } = useGuestWlanLoader(props.socket, props.instanceId);
+    const { data, loading, error } = useGuestWlanLoader(props.socket, props.instanceId, props.wlan);
     const showHint = !!data && !data.error && data.enabled !== false;
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
@@ -118,6 +130,7 @@ function DialogCode(props: {
                 loading={loading}
                 error={error}
                 t={sharedT}
+                wlan={props.wlan}
                 showSsid={props.showSsid}
                 showPassword={props.showPassword}
                 qrSize="min(68vw, 300px)"
@@ -128,7 +141,7 @@ function DialogCode(props: {
                     variant="body2"
                     sx={{ color: 'text.secondary', textAlign: 'center' }}
                 >
-                    {I18n.t('tr064_guestScan')}
+                    {I18n.t(props.wlan === 'guest' ? 'tr064_guestScan' : 'tr064_wlanScan')}
                 </Typography>
             ) : null}
         </Box>
@@ -180,6 +193,16 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
                     type: 'text',
                     label: 'fritzdm_nameOverride',
                     help: 'fritzdm_guestNameHelp',
+                    sm: 12,
+                    md: 6,
+                },
+                wlan: {
+                    type: 'select',
+                    label: 'fritzdm_qrWlan',
+                    help: 'fritzdm_qrWlanHelp',
+                    options: WLAN_QR_KINDS.map(kind => ({ value: kind, label: wlanTitleKey(kind) })),
+                    default: 'guest',
+                    newLine: true,
                     sm: 12,
                     md: 6,
                 },
@@ -259,7 +282,11 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
     }
 
     private get displayName(): string {
-        return this.props.settings?.name || I18n.t('tr064_guestWlan');
+        return this.props.settings?.name || I18n.t(wlanTitleKey(this.wlan));
+    }
+
+    private get wlan(): WlanQrKind {
+        return wlanQrKind(this.props.settings.wlan);
     }
 
     private get socket(): MeshSocket {
@@ -281,12 +308,14 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
     ): void {
         super.componentDidUpdate?.(prevProps, prevState, snapshot);
 
-        const instanceChanged = normalizeInstance(prevProps.settings.instance) !== this.instance;
-        if (instanceChanged) {
+        const sourceChanged =
+            normalizeInstance(prevProps.settings.instance) !== this.instance ||
+            wlanQrKind(prevProps.settings.wlan) !== this.wlan;
+        if (sourceChanged) {
             this.unsubscribe();
             this.setState({ values: {} }, () => this.subscribe());
         }
-        if (instanceChanged || prevProps.settings.mode !== this.props.settings.mode) {
+        if (sourceChanged || prevProps.settings.mode !== this.props.settings.mode) {
             this.closeDialog();
             this.startLoader();
         }
@@ -301,8 +330,9 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
 
     private subscribe(): void {
         const context = this.props.stateContext;
+        const ids = stateIds(this.wlan);
         for (const key of STATE_KEYS) {
-            const id = `${this.instance}.${STATE_IDS[key]}`;
+            const id = `${this.instance}.${ids[key]}`;
             const handler = (_id: string, state: ioBroker.State | null): void => this.onValue(key, state);
             context.getState(id, handler);
             this.subscriptions.push({ id, handler });
@@ -359,6 +389,7 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
         const loader = new GuestWlanLoader({
             socket: this.socket,
             instanceId: this.instance,
+            wlan: this.wlan,
             interval: GUEST_WLAN_REFRESH_INTERVAL,
             onChange: guest => {
                 if (this.loader === loader) {
@@ -432,9 +463,9 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
         this.showDialog();
     }
 
-    /** The tile lights up while the guest WLAN is on */
+    /** The tile lights up while the WLAN is on */
     protected isTileActive(): boolean {
-        return this.state.values.wlanGuest === true || this.state.values.wlanGuest === 'true';
+        return this.wlanOn === true;
     }
 
     protected hasTileAction(): boolean {
@@ -456,8 +487,8 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
     }
 
     /** `true`/`false` while the state is known */
-    private get guestOn(): boolean | undefined {
-        const value = this.state.values.wlanGuest;
+    private get wlanOn(): boolean | undefined {
+        const value = this.state.values.on;
         if (value === null || value === undefined || value === '') {
             return undefined;
         }
@@ -466,7 +497,7 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
 
     /** QR symbol, with a lock in the mode `pin` */
     private renderIcon(fontSize: string): JSX.Element {
-        const off = this.guestOn === false;
+        const off = this.wlanOn === false;
         return (
             <Box
                 component="span"
@@ -503,9 +534,9 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
         );
     }
 
-    /** `● On` / `● Off` of the guest WLAN, nothing while it is unknown */
+    /** `● On` / `● Off` of the WLAN, nothing while it is unknown */
     private renderStatus(fontSize: string): JSX.Element | null {
-        const on = this.guestOn;
+        const on = this.wlanOn;
         if (on === undefined) {
             return null;
         }
@@ -574,6 +605,7 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
                 loading={this.state.guest.loading}
                 error={this.state.guest.error}
                 t={sharedT}
+                wlan={this.wlan}
                 showSsid={this.props.settings.showSsid !== false}
                 showPassword={this.props.settings.showPassword !== false}
                 layout={layout}
@@ -718,6 +750,7 @@ export class GuestWlanComponent extends WidgetGeneric<GuestWlanComponentState, G
                     <DialogCode
                         socket={this.socket}
                         instanceId={this.instance}
+                        wlan={this.wlan}
                         showSsid={this.props.settings.showSsid !== false}
                         showPassword={this.props.settings.showPassword !== false}
                     />

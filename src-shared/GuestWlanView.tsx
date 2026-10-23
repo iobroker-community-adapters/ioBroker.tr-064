@@ -1,5 +1,5 @@
 /**
- * QR code of the guest WLAN with network name and password.
+ * QR code of a WLAN (the guest WLAN or one band of the own WLAN) with network name and password.
  *
  * Host independent like `MeshView`: it does not fetch anything (see `guestWlanApi.ts`) and gets
  * its texts by `t`. The code is always black on white - most phone cameras do not read an
@@ -18,7 +18,7 @@ import {
     MESH_ERROR_TIMEOUT,
 } from './meshApi';
 import type { MeshTranslate } from './MeshView';
-import type { GuestWlanResponse } from './types';
+import type { GuestWlanResponse, WlanQrKind } from './types';
 
 /** Light modules around the code (the standard asks for 4, the white card adds its own margin) */
 const QUIET_ZONE = 2;
@@ -32,6 +32,8 @@ export interface GuestWlanViewProps {
     error: string | null;
     /** Translation of the `tr064_guest*` keys */
     t: MeshTranslate;
+    /** The WLAN of the code, for the texts. Default: the guest WLAN */
+    wlan?: WlanQrKind;
     /** The network name below/next to the code, default `true` */
     showSsid?: boolean;
     /** The password below/next to the code, default `true` */
@@ -49,19 +51,21 @@ export interface GuestWlanViewProps {
  *
  * @param error error code or text of `fetchGuestWlan()`
  * @param t translation
+ * @param wlan the WLAN of the code - the texts of the guest WLAN name it
  */
-export function guestWlanErrorText(error: string, t: MeshTranslate): string {
+export function guestWlanErrorText(error: string, t: MeshTranslate, wlan: WlanQrKind = 'guest'): string {
+    const guest = wlan === 'guest';
     switch (error) {
         case MESH_ERROR_NOT_ALIVE:
-            return t('tr064_guestNotAlive');
+            return t(guest ? 'tr064_guestNotAlive' : 'tr064_wlanNotAlive');
         case MESH_ERROR_NOT_CONNECTED:
             return t('tr064_guestNotConnected');
         case MESH_ERROR_NOT_SUPPORTED:
-            return t('tr064_guestNotSupported');
+            return t(guest ? 'tr064_guestNotSupported' : 'tr064_wlanNotSupported');
         case MESH_ERROR_TIMEOUT:
             return t('tr064_timeout');
         default:
-            return t('tr064_guestError', error);
+            return t(guest ? 'tr064_guestError' : 'tr064_wlanError', error);
     }
 }
 
@@ -139,14 +143,14 @@ export default function GuestWlanView(props: GuestWlanViewProps): React.JSX.Elem
         if (props.loading || !props.error) {
             return center(<CircularProgress size={28} />);
         }
-        return center(guestWlanErrorText(props.error, t));
+        return center(guestWlanErrorText(props.error, t, props.wlan));
     }
 
     if (data.enabled === false) {
         return center(
             <>
                 <IconWifiOff sx={{ fontSize: '2.2em', opacity: 0.7 }} />
-                <span>{t('tr064_guestOff')}</span>
+                <span>{t(!props.wlan || props.wlan === 'guest' ? 'tr064_guestOff' : 'tr064_wlanOff')}</span>
             </>,
         );
     }

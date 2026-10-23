@@ -67,5 +67,14 @@
     "tr064_guestPinWrong": "PIN errato",
     "tr064_guestPinDelete": "Cancella",
     "tr064_guestPinClear": "Svuota",
-    "tr064_close": "Chiudi"
+    "tr064_close": "Chiudi",
+    "tr064_wlan24": "Wi-Fi 2,4 GHz",
+    "tr064_wlan50": "Wi-Fi 5 GHz",
+    "tr064_wlan52": "Wi-Fi 5 GHz (2)",
+    "tr064_wlan60": "Wi-Fi 6 GHz",
+    "tr064_wlanOff": "Questo Wi-Fi è spento",
+    "tr064_wlanNotAlive": "Avvia l'istanza tr-064 per vedere il Wi-Fi",
+    "tr064_wlanNotSupported": "La FRITZ!Box non ha questo Wi-Fi",
+    "tr064_wlanError": "Impossibile leggere il Wi-Fi: %s",
+    "tr064_wlanScan": "Scansiona il codice con la fotocamera del telefono per collegarti a questo Wi-Fi"
 }

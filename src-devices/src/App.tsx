@@ -5,7 +5,7 @@
 // `WidgetPlugin`). URL parameters:
 //   ?theme=light|dark|neumorphic   ?lang=de   ?view=tiles|dialog   ?scenario=full|ringing|minimal|offline
 //   ?width=<px of the grid>        ?live=1 (changing rates)   ?tile=fritzbox|person|guest (default all)
-//   ?guestOff=1 ?guestError=<code> answer of `sendTo('guestWlan')`    ?pin=<PIN of the guest tiles, default 1234>
+//   ?guestOff=1 ?guestError=<code> answer of `sendTo('guestWlan')`    ?pin=<PIN of the guest tiles, default 1234>   ?wlan=guest|wlan24|wlan50
 // `#dialog=<id>` in the URL keeps an open dialog over a reload, like ioBroker.devices does.
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -214,7 +214,7 @@ class MockStateContext implements IStateContext {
             // no history adapter: the dialog falls back to the state `history`
             getObject: (_id: string): Promise<ioBroker.Object | null> => Promise.resolve(null),
             getHistory: (): Promise<ioBroker.GetHistoryResult> => Promise.resolve([]),
-            sendTo: async (instance: string, command: string): Promise<unknown> => {
+            sendTo: async (instance: string, command: string, data?: { wlan?: string }): Promise<unknown> => {
                 console.debug(`[sim] sendTo ${instance} ${command}`);
                 await new Promise(resolve => setTimeout(resolve, 600));
                 if (instance === INSTANCE && command === 'guestWlan') {
@@ -224,8 +224,9 @@ class MockStateContext implements IStateContext {
                     }
                     return {
                         enabled: params.get('guestOff') !== '1',
-                        ssid: 'FRITZ!Box Gastzugang',
-                        password: 'Willkommen; im Garten!',
+                        ...(data?.wlan === 'guest'
+                            ? { ssid: 'FRITZ!Box Gastzugang', password: 'Willkommen; im Garten!' }
+                            : { ssid: 'FRITZ!Box 7590 AX', password: 'Heimnetz-Geheim-2026' }),
                         security: 'WPA',
                         hidden: false,
                     };
@@ -418,6 +419,7 @@ function GuestTiles(props: {
                                                 id,
                                                 size,
                                                 mode,
+                                                wlan: (params.get('wlan') || 'guest') as 'guest',
                                                 pin: params.get('pin') || '1234',
                                                 autoClose: 0,
                                             }}

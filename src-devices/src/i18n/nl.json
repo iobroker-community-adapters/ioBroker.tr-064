@@ -79,8 +79,8 @@
     "fritzdm_historyFrom": "Uit %s",
     "fritzdm_historyFromAdapter": "Vastgelegd door de adapter",
     "fritzdm_refresh": "Vernieuwen",
-    "fritzdm_guestWidgetName": "QR-code gastwifi",
-    "fritzdm_guestNameHelp": "Leeg: Gastwifi",
+    "fritzdm_guestWidgetName": "Wifi QR-code",
+    "fritzdm_guestNameHelp": "Leeg: naam van de wifi",
     "fritzdm_guestMode": "Code tonen",
     "fritzdm_guestModeTile": "Op de tegel",
     "fritzdm_guestModeDialog": "In een dialoog na een klik",
@@ -90,5 +90,7 @@
     "fritzdm_guestAutoClose": "Dialoog sluiten na (s)",
     "fritzdm_guestAutoCloseHelp": "De code blijft niet op het scherm staan. 0 = nooit",
     "fritzdm_guestShowSsid": "Netwerknaam tonen",
-    "fritzdm_guestShowPassword": "Wachtwoord tonen"
+    "fritzdm_guestShowPassword": "Wachtwoord tonen",
+    "fritzdm_qrWlan": "Wifi",
+    "fritzdm_qrWlanHelp": "De eigen wifi geeft toegang tot het thuisnetwerk - liefst met PIN"
 }

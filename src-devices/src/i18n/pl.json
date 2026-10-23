@@ -79,8 +79,8 @@
     "fritzdm_historyFrom": "Z %s",
     "fritzdm_historyFromAdapter": "Zarejestrowane przez adapter",
     "fritzdm_refresh": "Odśwież",
-    "fritzdm_guestWidgetName": "Kod QR Wi-Fi dla gości",
-    "fritzdm_guestNameHelp": "Puste: Wi-Fi dla gości",
+    "fritzdm_guestWidgetName": "Kod QR Wi-Fi",
+    "fritzdm_guestNameHelp": "Puste: nazwa sieci Wi-Fi",
     "fritzdm_guestMode": "Pokaż kod",
     "fritzdm_guestModeTile": "Na kafelku",
     "fritzdm_guestModeDialog": "W oknie po kliknięciu",
@@ -90,5 +90,7 @@
     "fritzdm_guestAutoClose": "Zamknij okno po (s)",
     "fritzdm_guestAutoCloseHelp": "Kod nie zostaje na ekranie. 0 = nigdy",
     "fritzdm_guestShowSsid": "Pokaż nazwę sieci",
-    "fritzdm_guestShowPassword": "Pokaż hasło"
+    "fritzdm_guestShowPassword": "Pokaż hasło",
+    "fritzdm_qrWlan": "Wi-Fi",
+    "fritzdm_qrWlanHelp": "Własna sieć Wi-Fi daje dostęp do sieci domowej - najlepiej z PIN"
 }

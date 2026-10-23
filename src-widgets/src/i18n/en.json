@@ -126,8 +126,8 @@
     "show_guests_tooltip": "The number of active devices in the guest network, if the instance counts them",
     "guests_count": "Guests: %s",
     "no_persons": "No persons. Add them in the tab \"Persons\" of the instance.",
-    "guest_qr": "Guest Wi-Fi QR code",
-    "guest_qr_help": "QR code of the guest Wi-Fi: a phone joins by scanning it with the camera. Shown on the widget, or in a dialog after a click - optionally only after a PIN.",
+    "guest_qr": "Wi-Fi QR code",
+    "guest_qr_help": "QR code of the guest Wi-Fi or of the own Wi-Fi (2.4 / 5 / 6 GHz): a phone joins by scanning it with the camera. Shown on the widget, or in a dialog after a click - optionally only after a PIN.",
     "guest_mode": "Show the code",
     "guest_mode_tile": "On the widget",
     "guest_mode_dialog": "In a dialog after a click",
@@ -136,7 +136,14 @@
     "guest_pin_tooltip": "Asked before the code is shown. It is stored in the vis project: it keeps guests away from the code, it is no protection against somebody who can edit the project",
     "guest_auto_close": "Close the dialog after (s)",
     "guest_auto_close_tooltip": "The code does not stay on the screen. 0 = never",
-    "guest_title_tooltip": "Empty = Guest Wi-Fi",
+    "guest_title_tooltip": "Empty = name of the Wi-Fi",
     "guest_show_ssid": "Show network name",
-    "guest_show_password": "Show password"
+    "guest_show_password": "Show password",
+    "qr_wlan": "Wi-Fi",
+    "qr_wlan_tooltip": "The own Wi-Fi gives access to the home network - best with a PIN",
+    "qr_wlan_guest": "Guest Wi-Fi",
+    "qr_wlan_wlan24": "Wi-Fi 2.4 GHz",
+    "qr_wlan_wlan50": "Wi-Fi 5 GHz",
+    "qr_wlan_wlan52": "Wi-Fi 5 GHz (second)",
+    "qr_wlan_wlan60": "Wi-Fi 6 GHz"
 }

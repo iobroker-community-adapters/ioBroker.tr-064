@@ -67,5 +67,14 @@
     "tr064_guestPinWrong": "Verkeerde PIN",
     "tr064_guestPinDelete": "Wissen",
     "tr064_guestPinClear": "Leegmaken",
-    "tr064_close": "Sluiten"
+    "tr064_close": "Sluiten",
+    "tr064_wlan24": "Wifi 2,4 GHz",
+    "tr064_wlan50": "Wifi 5 GHz",
+    "tr064_wlan52": "Wifi 5 GHz (2)",
+    "tr064_wlan60": "Wifi 6 GHz",
+    "tr064_wlanOff": "Deze wifi is uitgeschakeld",
+    "tr064_wlanNotAlive": "Start de tr-064-instantie om de wifi te zien",
+    "tr064_wlanNotSupported": "De FRITZ!Box heeft deze wifi niet",
+    "tr064_wlanError": "De wifi kan niet worden gelezen: %s",
+    "tr064_wlanScan": "Scan de code met de camera van je telefoon om met deze wifi te verbinden"
 }

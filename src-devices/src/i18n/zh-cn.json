@@ -79,8 +79,8 @@
     "fritzdm_historyFrom": "来自 %s",
     "fritzdm_historyFromAdapter": "由适配器记录",
     "fritzdm_refresh": "刷新",
-    "fritzdm_guestWidgetName": "访客 Wi-Fi 二维码",
-    "fritzdm_guestNameHelp": "留空：访客 Wi-Fi",
+    "fritzdm_guestWidgetName": "Wi-Fi 二维码",
+    "fritzdm_guestNameHelp": "留空：Wi-Fi 名称",
     "fritzdm_guestMode": "显示二维码",
     "fritzdm_guestModeTile": "在磁贴上",
     "fritzdm_guestModeDialog": "点击后在对话框中",
@@ -90,5 +90,7 @@
     "fritzdm_guestAutoClose": "对话框自动关闭（秒）",
     "fritzdm_guestAutoCloseHelp": "二维码不会一直留在屏幕上。0 = 从不",
     "fritzdm_guestShowSsid": "显示网络名称",
-    "fritzdm_guestShowPassword": "显示密码"
+    "fritzdm_guestShowPassword": "显示密码",
+    "fritzdm_qrWlan": "Wi-Fi",
+    "fritzdm_qrWlanHelp": "自家 Wi-Fi 可访问家庭网络 - 建议设置 PIN"
 }

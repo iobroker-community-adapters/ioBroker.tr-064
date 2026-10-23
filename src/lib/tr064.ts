@@ -90,7 +90,7 @@ interface WlanFunctions {
 type OptionalBand = 'wlan50' | 'wlan52' | 'wlan60';
 
 /** Name of a WLAN configuration - also the name of the attribute of this class */
-type WlanKind = 'wlan24' | OptionalBand | 'wlanGuest';
+export type WlanKind = 'wlan24' | OptionalBand | 'wlanGuest';
 
 /** Readable names of the optional bands for log messages */
 const BAND_NAMES: Record<OptionalBand, string> = {
@@ -1277,18 +1277,19 @@ export class TR064Client extends TR064 {
     }
 
     /**
-     * Reads SSID, password and encryption of the guest WLAN for the QR code of the widgets.
+     * Reads SSID, password and encryption of a WLAN for the QR code of the widgets.
      *
      * `GetSecurityKeys` needs the right "FRITZ!Box settings". `NewBeaconType` is `None` for an open
      * network, `Basic` for WEP and one of the WPA types otherwise (`WPA`, `11i`, `WPAand11i`,
      * `11iandWPA3`, `WPA3`) - the QR code knows only `WPA` for all of them. The password and the
      * SSID must not be logged.
      *
-     * @param callback `not supported` if the box has no guest WLAN (only one WLAN configuration)
+     * @param kind the guest WLAN or one band
+     * @param callback `not supported` if the box has no such WLAN (no guest WLAN, no such band)
      */
-    public getGuestWlanInfo(callback: (err: TR064Error | null, info?: GuestWlanInfo) => void): void {
-        const wlan = this.wlanGuest;
-        if (!wlan.getInfo || !wlan.getSecurityKeys) {
+    public getWlanInfo(kind: WlanKind, callback: (err: TR064Error | null, info?: GuestWlanInfo) => void): void {
+        const wlan = this[kind];
+        if (!wlan?.getInfo || !wlan.getSecurityKeys) {
             callback(new Error('not supported'));
             return;
         }

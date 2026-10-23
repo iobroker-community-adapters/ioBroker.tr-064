@@ -11,7 +11,7 @@
 //   ?view=table ?onlyConfigured=1 ?showDisconnected=1 ?title=Mesh   attributes of the mesh widget
 //   ?person=Anna ?group=Family ?image=<url> ?showToday=1 ?showHistory=0   attributes of the person widget
 //   ?box=offline|stopped|minimal ?ringing=1 ?live=1 ?meshError=timeout ?clients=100    data
-//   ?scene=guest ?mode=tile|dialog|pin ?pin=1234 ?guestOff=1 ?guestError=not%20supported   guest Wi-Fi widget
+//   ?scene=guest ?wlan=guest|wlan24|wlan50 ?mode=tile|dialog|pin ?pin=1234 ?guestOff=1 ?guestError=not%20supported   guest Wi-Fi widget
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -148,6 +148,7 @@ function personData(): Record<string, unknown> {
 
 function guestData(mode?: string): Record<string, unknown> {
     return {
+        wlan: params.get('wlan') || 'guest',
         mode: mode || params.get('mode') || 'dialog',
         pin: params.get('pin') || '1234',
         widgetTitle: params.get('title') || '',

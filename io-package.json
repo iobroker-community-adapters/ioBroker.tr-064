@@ -230,19 +230,19 @@
         },
         {
           "name": "GuestWlanComponent",
-          "label": "Guest Wi-Fi",
+          "label": "Wi-Fi QR code",
           "description": {
-            "en": "QR code of the guest Wi-Fi to join it with the phone camera: on the tile, in a dialog after a click or after a PIN",
-            "de": "QR-Code des Gast-WLANs zum Verbinden mit der Handykamera: auf der Kachel, im Dialog nach einem Klick oder nach einer PIN",
-            "ru": "QR-код гостевого Wi-Fi для подключения камерой телефона: на плитке, в диалоге по нажатию или после PIN",
-            "pt": "Código QR do Wi-Fi de convidados para entrar com a câmera do telemóvel: no mosaico, num diálogo após um clique ou após um PIN",
-            "nl": "QR-code van de gastwifi om met de telefooncamera te verbinden: op de tegel, in een dialoog na een klik of na een PIN",
-            "fr": "Code QR du Wi-Fi invités pour s'y connecter avec l'appareil photo du téléphone : sur la tuile, dans une boîte de dialogue après un clic ou après un PIN",
-            "it": "Codice QR del Wi-Fi ospiti per collegarsi con la fotocamera del telefono: sul riquadro, in una finestra dopo un clic o dopo un PIN",
-            "es": "Código QR del Wi-Fi de invitados para conectarse con la cámara del móvil: en el mosaico, en un diálogo tras un clic o tras un PIN",
-            "pl": "Kod QR Wi-Fi dla gości do połączenia aparatem telefonu: na kafelku, w oknie po kliknięciu lub po PIN",
-            "uk": "QR-код гостьового Wi-Fi для підключення камерою телефона: на плитці, у діалозі після натискання або після PIN",
-            "zh-cn": "访客 Wi-Fi 的二维码，用手机相机扫描即可连接：显示在磁贴上、点击后在对话框中或输入 PIN 后显示"
+            "en": "QR code of the guest Wi-Fi or of the own Wi-Fi (2.4 / 5 / 6 GHz) to join it with the phone camera: on the tile, in a dialog after a click or after a PIN",
+            "de": "QR-Code des Gast-WLANs oder des eigenen WLANs (2,4 / 5 / 6 GHz) zum Verbinden mit der Handykamera: auf der Kachel, im Dialog nach einem Klick oder nach einer PIN",
+            "ru": "QR-код гостевого или собственного Wi-Fi (2,4 / 5 / 6 ГГц) для подключения камерой телефона: на плитке, в диалоге по нажатию или после PIN",
+            "pt": "Código QR do Wi-Fi de convidados ou do próprio Wi-Fi (2,4 / 5 / 6 GHz) para entrar com a câmera do telemóvel: no mosaico, num diálogo após um clique ou após um PIN",
+            "nl": "QR-code van de gastwifi of de eigen wifi (2,4 / 5 / 6 GHz) om met de telefooncamera te verbinden: op de tegel, in een dialoog na een klik of na een PIN",
+            "fr": "Code QR du Wi-Fi invités ou du Wi-Fi principal (2,4 / 5 / 6 GHz) pour s'y connecter avec l'appareil photo du téléphone : sur la tuile, dans une boîte de dialogue après un clic ou après un PIN",
+            "it": "Codice QR del Wi-Fi ospiti o del proprio Wi-Fi (2,4 / 5 / 6 GHz) per collegarsi con la fotocamera del telefono: sul riquadro, in una finestra dopo un clic o dopo un PIN",
+            "es": "Código QR del Wi-Fi de invitados o del propio Wi-Fi (2,4 / 5 / 6 GHz) para conectarse con la cámara del móvil: en el mosaico, en un diálogo tras un clic o tras un PIN",
+            "pl": "Kod QR Wi-Fi dla gości lub własnej sieci Wi-Fi (2,4 / 5 / 6 GHz) do połączenia aparatem telefonu: na kafelku, w oknie po kliknięciu lub po PIN",
+            "uk": "QR-код гостьового або власного Wi-Fi (2,4 / 5 / 6 ГГц) для підключення камерою телефона: на плитці, у діалозі після натискання або після PIN",
+            "zh-cn": "访客 Wi-Fi 或自家 Wi-Fi（2.4 / 5 / 6 GHz）的二维码，用手机相机扫描即可连接：显示在磁贴上、点击后在对话框中或输入 PIN 后显示"
           },
           "icon": "guest-wlan.svg"
         }

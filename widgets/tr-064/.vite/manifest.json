@@ -1,6 +1,6 @@
 {
-  "_Generic-P-vbobU3.js": {
-    "file": "assets/Generic-P-vbobU3.js",
+  "_Generic-SD_4B24g.js": {
+    "file": "assets/Generic-SD_4B24g.js",
     "name": "Generic",
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__115545647386713__loadShare__shared-BSqS7eqW.js",
@@ -16,13 +16,13 @@
       "_meshApi-CaUap0Iz.js"
     ]
   },
-  "_PresenceSelect-eUFwER1B.js": {
-    "file": "assets/PresenceSelect-eUFwER1B.js",
+  "_PresenceSelect-DkDyyZbQ.js": {
+    "file": "assets/PresenceSelect-DkDyyZbQ.js",
     "name": "PresenceSelect",
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__115545647386713__loadShare__shared-BSqS7eqW.js",
       "_defineProperty-CpwnwgLG.js",
-      "_Generic-P-vbobU3.js"
+      "_Generic-SD_4B24g.js"
     ]
   },
   "_WifiOff-BJNg6ME-.js": {
@@ -134,7 +134,7 @@
     "isEntry": true
   },
   "src/Tr064FritzBox.tsx": {
-    "file": "assets/Tr064FritzBox-IkYVBhnK.js",
+    "file": "assets/Tr064FritzBox-D8rv6nP9.js",
     "name": "Tr064FritzBox",
     "src": "src/Tr064FritzBox.tsx",
     "isEntry": true,
@@ -144,12 +144,12 @@
       "_MeshView-Bh4vMN6B.js",
       "_meshApi-CaUap0Iz.js",
       "_WifiOff-BJNg6ME-.js",
-      "_Generic-P-vbobU3.js",
+      "_Generic-SD_4B24g.js",
       "_format-sGUrIYMZ.js"
     ]
   },
   "src/Tr064GuestWlan.tsx": {
-    "file": "assets/Tr064GuestWlan-y9BdOroX.js",
+    "file": "assets/Tr064GuestWlan-BgyHoBs_.js",
     "name": "Tr064GuestWlan",
     "src": "src/Tr064GuestWlan.tsx",
     "isEntry": true,
@@ -158,12 +158,12 @@
       "_defineProperty-CpwnwgLG.js",
       "_meshApi-CaUap0Iz.js",
       "_WifiOff-BJNg6ME-.js",
-      "_Generic-P-vbobU3.js",
+      "_Generic-SD_4B24g.js",
       "_format-sGUrIYMZ.js"
     ]
   },
   "src/Tr064Mesh.tsx": {
-    "file": "assets/Tr064Mesh-eL7MKhP6.js",
+    "file": "assets/Tr064Mesh-kAjUJ4az.js",
     "name": "Tr064Mesh",
     "src": "src/Tr064Mesh.tsx",
     "isEntry": true,
@@ -172,37 +172,37 @@
       "_defineProperty-CpwnwgLG.js",
       "_MeshView-Bh4vMN6B.js",
       "_meshApi-CaUap0Iz.js",
-      "_Generic-P-vbobU3.js"
+      "_Generic-SD_4B24g.js"
     ]
   },
   "src/Tr064Person.tsx": {
-    "file": "assets/Tr064Person-Crf3pOl_.js",
+    "file": "assets/Tr064Person-BKNBdjhc.js",
     "name": "Tr064Person",
     "src": "src/Tr064Person.tsx",
     "isEntry": true,
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__115545647386713__loadShare__shared-BSqS7eqW.js",
       "_defineProperty-CpwnwgLG.js",
-      "_PresenceSelect-eUFwER1B.js",
-      "_Generic-P-vbobU3.js",
+      "_PresenceSelect-DkDyyZbQ.js",
+      "_Generic-SD_4B24g.js",
       "_format-sGUrIYMZ.js"
     ]
   },
   "src/Tr064Presence.tsx": {
-    "file": "assets/Tr064Presence-CeXc8_Ut.js",
+    "file": "assets/Tr064Presence-BOpe40BO.js",
     "name": "Tr064Presence",
     "src": "src/Tr064Presence.tsx",
     "isEntry": true,
     "imports": [
       "__virtual_mf___mfe_internal__vis2Tr064Widgets__mf_owner__115545647386713__loadShare__shared-BSqS7eqW.js",
       "_defineProperty-CpwnwgLG.js",
-      "_PresenceSelect-eUFwER1B.js",
-      "_Generic-P-vbobU3.js",
+      "_PresenceSelect-DkDyyZbQ.js",
+      "_Generic-SD_4B24g.js",
       "_format-sGUrIYMZ.js"
     ]
   },
   "src/translations.ts": {
-    "file": "assets/translations-DV0F98nb.js",
+    "file": "assets/translations-DducT5D3.js",
     "name": "translations",
     "src": "src/translations.ts",
     "isEntry": true

@@ -126,8 +126,8 @@
     "show_guests_tooltip": "Il numero di dispositivi attivi nella rete ospiti, se l'istanza li conta",
     "guests_count": "Ospiti: %s",
     "no_persons": "Nessuna persona. Aggiungile nella scheda \"Persone\" dell'istanza.",
-    "guest_qr": "Codice QR del Wi-Fi ospiti",
-    "guest_qr_help": "Codice QR del Wi-Fi ospiti: un telefono si collega scansionandolo con la fotocamera. Mostrato sul widget o in una finestra dopo un clic - facoltativamente solo dopo un PIN.",
+    "guest_qr": "Codice QR del Wi-Fi",
+    "guest_qr_help": "Codice QR del Wi-Fi ospiti o del proprio Wi-Fi (2,4 / 5 / 6 GHz): un telefono si collega scansionandolo con la fotocamera. Mostrato sul widget o in una finestra dopo un clic - facoltativamente solo dopo un PIN.",
     "guest_mode": "Mostra il codice",
     "guest_mode_tile": "Sul widget",
     "guest_mode_dialog": "In una finestra dopo un clic",
@@ -136,7 +136,14 @@
     "guest_pin_tooltip": "Richiesto prima che appaia il codice. È salvato nel progetto vis: tiene gli ospiti lontani dal codice, ma non protegge da chi può modificare il progetto",
     "guest_auto_close": "Chiudi la finestra dopo (s)",
     "guest_auto_close_tooltip": "Il codice non resta sullo schermo. 0 = mai",
-    "guest_title_tooltip": "Vuoto = Wi-Fi ospiti",
+    "guest_title_tooltip": "Vuoto = nome del Wi-Fi",
     "guest_show_ssid": "Mostra nome della rete",
-    "guest_show_password": "Mostra password"
+    "guest_show_password": "Mostra password",
+    "qr_wlan": "Wi-Fi",
+    "qr_wlan_tooltip": "Il proprio Wi-Fi dà accesso alla rete di casa - meglio con un PIN",
+    "qr_wlan_guest": "Wi-Fi ospiti",
+    "qr_wlan_wlan24": "Wi-Fi 2,4 GHz",
+    "qr_wlan_wlan50": "Wi-Fi 5 GHz",
+    "qr_wlan_wlan52": "Wi-Fi 5 GHz (secondo)",
+    "qr_wlan_wlan60": "Wi-Fi 6 GHz"
 }

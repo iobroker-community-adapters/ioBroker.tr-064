@@ -21,7 +21,7 @@ import { Phonebook } from './lib/phonebook';
 import { Presence } from './lib/presence';
 import { SystemData } from './lib/systemdata';
 import { TR064Client } from './lib/tr064';
-import type { LoginError } from './lib/tr064';
+import type { LoginError, WlanKind } from './lib/tr064';
 import { CallbackTimers, macsOverlap, normalizedName } from './lib/utils';
 import { buildMeshTopology, findAccessPoint } from './lib/mesh';
 import type { MeshList } from './lib/mesh';
@@ -41,6 +41,7 @@ import type {
     DiscoveredDevice,
     GuestWlanInfo,
     GuestWlanResponse,
+    WlanQrKind,
     HostEntry,
     MeshResponse,
     PresenceResponse,
@@ -85,6 +86,15 @@ interface PollEntry {
     /** Further states which are written from the same answer */
     more?: { state: string; result: string; format: (val: string) => ioBroker.StateValue }[];
 }
+
+/** `wlan` of the message `guestWlan` -> WLAN configuration of `TR064Client` */
+const WLAN_QR_KINDS: Record<WlanQrKind, WlanKind> = {
+    guest: 'wlanGuest',
+    wlan24: 'wlan24',
+    wlan50: 'wlan50',
+    wlan52: 'wlan52',
+    wlan60: 'wlan60',
+};
 
 const toBoolean = (val: string): boolean => !!~~Number(val);
 const toNumber = (val: string): number => Number(val) || 0;
@@ -382,23 +392,38 @@ export class Tr064Adapter extends utils.Adapter {
             }
 
             case 'guestWlan': {
-                // access data of the guest WLAN for the QR code of the widgets - never into a state, never logged
+                // access data of a WLAN for the QR code of the widgets - never into a state, never logged.
+                // `{ wlan }` selects the WLAN, the guest WLAN without it (5.3.0 knew only that one)
                 if (!obj.callback) {
                     return;
                 }
                 const answer = (response: GuestWlanResponse): void => {
                     this.sendTo(obj.from, obj.command, response, obj.callback);
                 };
+                const requested =
+                    typeof obj.message === 'object' && obj.message !== null
+                        ? (obj.message as { wlan?: unknown }).wlan
+                        : undefined;
+                const name = requested === undefined || requested === null || requested === '' ? 'guest' : requested;
+                const kind =
+                    typeof name === 'string' && Object.hasOwn(WLAN_QR_KINDS, name)
+                        ? WLAN_QR_KINDS[name as WlanQrKind]
+                        : undefined;
+                if (!kind) {
+                    answer({ error: 'unknown wlan' });
+                    return;
+                }
                 if (!this.boxConnected || !this.tr064Client) {
                     answer({ error: 'not connected' });
                     return;
                 }
-                this.tr064Client.getGuestWlanInfo(
+                this.tr064Client.getWlanInfo(
+                    kind,
                     this.callbackTimers.wrap<GuestWlanInfo | undefined>(15_000, (err, info) => {
                         if (err || !info) {
                             const error = err ? errorText(err) : 'no answer';
                             if (error !== 'not supported') {
-                                this.log.warn(`Cannot read the guest WLAN for the QR code: ${error}`);
+                                this.log.warn(`Cannot read the WLAN (${kind}) for the QR code: ${error}`);
                             }
                             answer({ error });
                             return;

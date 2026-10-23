@@ -160,11 +160,11 @@ vis-2 (widget set "FRITZ!Box"):
 - **Mesh topology** (`Tr064Mesh`): the mesh topology as a graphic or table which fills the widget, refreshed while it is visible.
 - **Presence** (`Tr064Presence`): the configured devices with present/away, access point and band - or, with "Mode" = persons, the persons of the tab "Persons" (optionally of one group) with since when they are at home or away, and the number of guests.
 - **Person** (`Tr064Person`): one person, selected by its name. Icon, picture and text for present and for absent are free to choose, as well as the colors. It shows since when the person is at home or away, when it came and left the last time, the sums of today and - if the widget is high enough - the last comings and goings. They come from a history instance (history, sql, influxdb) if one logs `present`, otherwise from the state `history` of the adapter.
-- **Guest Wi-Fi QR code** (`Tr064GuestWlan`): the QR code of the guest WLAN with network name and password - a phone joins by scanning it with the camera. "Show the code": on the widget, in a dialog after a click, or in a dialog after a PIN. The dialog closes by itself after 60 seconds (adjustable, 0 = never).
+- **Wi-Fi QR code** (`Tr064GuestWlan`): the QR code of the guest WLAN or of the own WLAN (2.4 GHz, 5 GHz, and if the box has it the second 5 GHz or 6 GHz) with network name and password - a phone joins by scanning it with the camera. "Show the code": on the widget, in a dialog after a click, or in a dialog after a PIN. The dialog closes by itself after 60 seconds (adjustable, 0 = never).
 
-ioBroker.devices: the widget **FRITZ!Box** can be added to a category in all four sizes (1x1, 2x0.5, 2x1, 2x2); in the settings of the widget the instance of the adapter is selected. The widget **Person** shows one person (selected by its name) with photo or icon, the texts and colors of the settings, since when and the last arrival and departure; a click opens the comings and goings of the last days. The widget **Guest Wi-Fi** shows the QR code of the guest WLAN with the same three modes as in vis-2; the PIN is asked with the PIN pad of ioBroker.devices.
+ioBroker.devices: the widget **FRITZ!Box** can be added to a category in all four sizes (1x1, 2x0.5, 2x1, 2x2); in the settings of the widget the instance of the adapter is selected. The widget **Person** shows one person (selected by its name) with photo or icon, the texts and colors of the settings, since when and the last arrival and departure; a click opens the comings and goings of the last days. The widget **Wi-Fi QR code** shows the QR code of the guest WLAN or of one band of the own WLAN with the same three modes as in vis-2; the PIN is asked with the PIN pad of ioBroker.devices.
 
-The QR code needs a FritzBox user with the right "FRITZ!Box settings" (`GetSecurityKeys`). The adapter reads SSID and password only on request of a widget (message `guestWlan`), writes them into no state and does not log them. In the modes with dialog the password is read only while the dialog is open. The PIN is stored in the vis project or the settings of the tile: it keeps guests away from the code, it does not protect against somebody who can edit the project.
+The QR code needs a FritzBox user with the right "FRITZ!Box settings" (`GetSecurityKeys`). The adapter reads SSID and password only on request of a widget (message `guestWlan`, `{ wlan: "guest" | "wlan24" | "wlan50" | "wlan52" | "wlan60" }`, the guest WLAN without it), writes them into no state and does not log them. The QR code of the own WLAN gives access to the home network: show it with a PIN or only in the dialog. In the modes with dialog the password is read only while the dialog is open. The PIN is stored in the vis project or the settings of the tile: it keeps guests away from the code, it does not protect against somebody who can edit the project.
 
 The widgets need the states of the adapter version with these widgets (`states.boxModel`, `states.wan*`, ...) and the running instance for the mesh topology.
 
@@ -224,6 +224,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (GermanBluefox) Widget "Wi-Fi QR code": the QR code can also show the own WLAN (2.4 GHz, 5 GHz, second 5 GHz, 6 GHz) instead of the guest WLAN
+
 ### 5.3.0 (2026-10-23)
 * (GermanBluefox) New widget "Guest Wi-Fi QR code" for vis-2 and `ioBroker.devices`: the QR code of the guest WLAN on the tile, in a dialog after a click or in a dialog after a PIN
 

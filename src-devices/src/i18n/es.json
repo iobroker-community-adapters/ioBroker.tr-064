@@ -79,8 +79,8 @@
     "fritzdm_historyFrom": "De %s",
     "fritzdm_historyFromAdapter": "Registrado por el adaptador",
     "fritzdm_refresh": "Actualizar",
-    "fritzdm_guestWidgetName": "Código QR del Wi-Fi de invitados",
-    "fritzdm_guestNameHelp": "Vacío: Wi-Fi de invitados",
+    "fritzdm_guestWidgetName": "Código QR del Wi-Fi",
+    "fritzdm_guestNameHelp": "Vacío: nombre del Wi-Fi",
     "fritzdm_guestMode": "Mostrar el código",
     "fritzdm_guestModeTile": "En el mosaico",
     "fritzdm_guestModeDialog": "En un diálogo tras un clic",
@@ -90,5 +90,7 @@
     "fritzdm_guestAutoClose": "Cerrar el diálogo tras (s)",
     "fritzdm_guestAutoCloseHelp": "El código no se queda en la pantalla. 0 = nunca",
     "fritzdm_guestShowSsid": "Mostrar el nombre de la red",
-    "fritzdm_guestShowPassword": "Mostrar la contraseña"
+    "fritzdm_guestShowPassword": "Mostrar la contraseña",
+    "fritzdm_qrWlan": "Wi-Fi",
+    "fritzdm_qrWlanHelp": "El propio Wi-Fi da acceso a la red de casa - mejor con un PIN"
 }

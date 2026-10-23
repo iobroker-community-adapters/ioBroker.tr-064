@@ -277,9 +277,12 @@ export interface RenameResponse {
 /** Encryption of a WLAN as the `T:` of a `WIFI:` QR code: WPA/WPA2/WPA3, WEP or an open network */
 export type WlanSecurity = 'WPA' | 'WEP' | 'nopass';
 
-/** Access data of the guest WLAN */
+/** `wlan` of the message `guestWlan`: the guest WLAN (default) or one band of the own WLAN */
+export type WlanQrKind = 'guest' | 'wlan24' | 'wlan50' | 'wlan52' | 'wlan60';
+
+/** Access data of a WLAN for the QR code */
 export interface GuestWlanInfo {
-    /** The guest WLAN is switched on */
+    /** The WLAN is switched on */
     enabled: boolean;
     ssid: string;
     /** Empty for an open network */
@@ -290,7 +293,7 @@ export interface GuestWlanInfo {
 }
 
 /**
- * Answer of the message `guestWlan` - the access data for the QR code of the widgets. Only an
+ * Answer of the message `guestWlan` (`{ wlan?: WlanQrKind }`) - the access data for the QR code of the widgets. Only an
  * answer to a request: the password is never written into a state and never logged.
  */
 export interface GuestWlanResponse extends Partial<GuestWlanInfo> {

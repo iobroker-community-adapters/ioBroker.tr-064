@@ -67,5 +67,14 @@
     "tr064_guestPinWrong": "Błędny PIN",
     "tr064_guestPinDelete": "Usuń",
     "tr064_guestPinClear": "Wyczyść",
-    "tr064_close": "Zamknij"
+    "tr064_close": "Zamknij",
+    "tr064_wlan24": "Wi-Fi 2,4 GHz",
+    "tr064_wlan50": "Wi-Fi 5 GHz",
+    "tr064_wlan52": "Wi-Fi 5 GHz (2)",
+    "tr064_wlan60": "Wi-Fi 6 GHz",
+    "tr064_wlanOff": "Ta sieć Wi-Fi jest wyłączona",
+    "tr064_wlanNotAlive": "Uruchom instancję tr-064, aby zobaczyć Wi-Fi",
+    "tr064_wlanNotSupported": "FRITZ!Box nie ma takiej sieci Wi-Fi",
+    "tr064_wlanError": "Nie można odczytać Wi-Fi: %s",
+    "tr064_wlanScan": "Zeskanuj kod aparatem telefonu, aby połączyć się z tą siecią Wi-Fi"
 }

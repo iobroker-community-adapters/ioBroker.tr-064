@@ -1,7 +1,7 @@
 /**
- * Access data of the guest WLAN and its QR code.
+ * Access data of a WLAN - the guest WLAN or one band of the own WLAN - and its QR code.
  *
- * - `fetchGuestWlan()` - one request `sendTo('<instance>', 'guestWlan')`, never throws
+ * - `fetchGuestWlan()` - one request `sendTo('<instance>', 'guestWlan', { wlan })`, never throws
  * - `GuestWlanLoader` - reads on `start()`/`refresh()` and periodically, for class components
  * - `useGuestWlanLoader()` - the same as React hook, e.g. for a dialog
  * - `wifiQrText()` - the `WIFI:` text which phone cameras understand
@@ -13,13 +13,46 @@ import { useEffect, useRef, useState } from 'react';
 import qrcode from 'qrcode-generator';
 
 import { MESH_ERROR_NOT_ALIVE, MESH_ERROR_TIMEOUT, type MeshSocket } from './meshApi';
-import type { GuestWlanResponse } from './types';
+import type { GuestWlanResponse, WlanQrKind } from './types';
 
 /** Seconds between two refreshes of the QR code which is shown on a tile */
 export const GUEST_WLAN_REFRESH_INTERVAL = 600;
 
+/** The WLANs a QR code can be shown for, in the order of the selection */
+export const WLAN_QR_KINDS: WlanQrKind[] = ['guest', 'wlan24', 'wlan50', 'wlan52', 'wlan60'];
+
 /**
- * Asks the instance for the access data of the guest WLAN.
+ * States of a WLAN below `tr-064.<n>`: `on` is the switch, `password` the state which sets a new
+ * password - a change of one of them reads the code again
+ */
+export const WLAN_QR_STATES: Record<WlanQrKind, { on: string; password: string }> = {
+    guest: { on: 'states.wlanGuest', password: 'states.wlanGuestPassword' },
+    wlan24: { on: 'states.wlan24', password: 'states.wlan24Password' },
+    wlan50: { on: 'states.wlan50', password: 'states.wlan50Password' },
+    wlan52: { on: 'states.wlan52', password: 'states.wlan52Password' },
+    wlan60: { on: 'states.wlan60', password: 'states.wlan60Password' },
+};
+
+/**
+ * A valid `WlanQrKind`, the guest WLAN for anything else (widgets of 5.3.0 have no setting)
+ *
+ * @param value setting of the widget
+ */
+export function wlanQrKind(value: unknown): WlanQrKind {
+    return WLAN_QR_KINDS.includes(value as WlanQrKind) ? (value as WlanQrKind) : 'guest';
+}
+
+/**
+ * Key of the name of a WLAN in the `tr064_*` texts, e.g. `Guest Wi-Fi` or `Wi-Fi 5 GHz`
+ *
+ * @param wlan the WLAN
+ */
+export function wlanTitleKey(wlan: WlanQrKind): string {
+    return wlan === 'guest' ? 'tr064_guestWlan' : `tr064_${wlan}`;
+}
+
+/**
+ * Asks the instance for the access data of a WLAN.
  *
  * Resolves always, errors are in `error`: `not alive` if the instance does not run, `timeout` if
  * it did not answer within `timeoutMs`, `not connected`/`not supported` from the adapter, or the
@@ -27,11 +60,13 @@ export const GUEST_WLAN_REFRESH_INTERVAL = 600;
  *
  * @param socket connection of the host (vis-2, devices)
  * @param instanceId e.g. `tr-064.0`
+ * @param wlan the guest WLAN or one band of the own WLAN
  * @param timeoutMs time limit of the request
  */
 export async function fetchGuestWlan(
     socket: MeshSocket,
     instanceId: string,
+    wlan: WlanQrKind = 'guest',
     timeoutMs = 20_000,
 ): Promise<GuestWlanResponse> {
     try {
@@ -44,7 +79,7 @@ export async function fetchGuestWlan(
         const timeout = new Promise<typeof MESH_ERROR_TIMEOUT>(resolve => {
             timer = setTimeout(() => resolve(MESH_ERROR_TIMEOUT), timeoutMs);
         });
-        const request = socket.sendTo(instanceId, 'guestWlan', {}) as Promise<GuestWlanResponse | null>;
+        const request = socket.sendTo(instanceId, 'guestWlan', { wlan }) as Promise<GuestWlanResponse | null>;
         const answer = await Promise.race([request, timeout]);
         clearTimeout(timer);
 
@@ -79,6 +114,8 @@ export interface GuestWlanLoaderOptions {
     socket: MeshSocket;
     /** e.g. `tr-064.0` */
     instanceId: string;
+    /** Default: the guest WLAN */
+    wlan?: WlanQrKind;
     /** Seconds between two refreshes, 0 = only on `refresh()`. Default `GUEST_WLAN_REFRESH_INTERVAL` */
     interval?: number;
     /** Called on every change of the state */
@@ -138,7 +175,7 @@ export class GuestWlanLoader {
         this.running = true;
         this.update({ loading: true });
 
-        const response = await fetchGuestWlan(this.options.socket, this.options.instanceId);
+        const response = await fetchGuestWlan(this.options.socket, this.options.instanceId, this.options.wlan);
         this.running = false;
         if (this.stopped) {
             return;
@@ -170,11 +207,13 @@ export class GuestWlanLoader {
  *
  * @param socket connection of the host, `null` until it is available
  * @param instanceId e.g. `tr-064.0`
+ * @param wlan the guest WLAN or one band of the own WLAN
  * @param interval seconds between two refreshes, 0 = only on `refresh()`
  */
 export function useGuestWlanLoader(
     socket: MeshSocket | null | undefined,
     instanceId: string,
+    wlan: WlanQrKind = 'guest',
     interval = 0,
 ): GuestWlanState & { refresh: () => void } {
     const [state, setState] = useState<GuestWlanState>({ data: null, loading: true, error: null });
@@ -184,14 +223,14 @@ export function useGuestWlanLoader(
         if (!socket || !instanceId) {
             return undefined;
         }
-        const guestLoader = new GuestWlanLoader({ socket, instanceId, interval, onChange: setState });
+        const guestLoader = new GuestWlanLoader({ socket, instanceId, wlan, interval, onChange: setState });
         loader.current = guestLoader;
         guestLoader.start();
         return () => {
             guestLoader.stop();
             loader.current = null;
         };
-    }, [socket, instanceId, interval]);
+    }, [socket, instanceId, wlan, interval]);
 
     return { ...state, refresh: () => void loader.current?.refresh() };
 }

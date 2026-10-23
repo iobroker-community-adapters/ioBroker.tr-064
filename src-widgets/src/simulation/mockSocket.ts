@@ -278,7 +278,7 @@ export default class MockSocket {
         return Promise.resolve((this.history[id] || []).filter(entry => entry.ts >= start && entry.ts <= end));
     }
 
-    sendTo(_instance: string, command: string, _data?: unknown): Promise<unknown> {
+    sendTo(_instance: string, command: string, data?: unknown): Promise<unknown> {
         return new Promise(resolve =>
             setTimeout(() => {
                 if (command === 'guestWlan') {
@@ -289,8 +289,9 @@ export default class MockSocket {
                             ? { error }
                             : {
                                   enabled: params.get('guestOff') !== '1',
-                                  ssid: 'FRITZ!Box Gastzugang',
-                                  password: 'Willkommen; im Garten!',
+                                  ...((data as { wlan?: string } | undefined)?.wlan === 'guest'
+                                      ? { ssid: 'FRITZ!Box Gastzugang', password: 'Willkommen; im Garten!' }
+                                      : { ssid: 'FRITZ!Box 7590 AX', password: 'Heimnetz-Geheim-2026' }),
                                   security: 'WPA',
                                   hidden: false,
                               },
