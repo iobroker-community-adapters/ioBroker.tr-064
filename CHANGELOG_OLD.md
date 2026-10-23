@@ -1,9 +1,12 @@
 # Older changes
+## 5.2.3 (2026-10-14)
+- (@GermanBluefox) Tab "Persons": a device of a person can also be given by its host name in the Fritz!Box instead of a MAC or IP address
+
+
 ## 5.2.2 (2026-10-13)
 - (@GermanBluefox) Tab "Persons": the devices of a person are chosen by name, MAC or IP from the devices of the Fritz!Box (autocomplete), no need to copy MAC addresses from the tab "Devices" any more
 - (@GermanBluefox) New tab "Persons" with the presence of persons, groups, guests and unknown devices below `presence`, like the adapter fb-checkpresence: present, last arrival and departure, present/absent since, the sums of the day and the last comings and goings. A person is watched by MAC or IP addresses
 - (@GermanBluefox) New widget "Person" for vis-2 and `ioBroker.devices`, the person is selected by name; the vis-2 widget "Presence" can list persons
-
 
 ## 5.1.6 (2026-10-07)
 - (@GermanBluefox) The dialogs "Rename device" of the mesh topology and "Reset missed calls" of the widget and the device card show the button "Cancel" on the right side, grey and with a close icon, like everywhere in ioBroker
