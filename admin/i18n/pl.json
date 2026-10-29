@@ -42,7 +42,7 @@
     "hint_severalMacs": "Urządzenie z kilkoma adresami MAC (np. smartfon z prywatnym adresem Wi-Fi, innym dla każdej sieci Wi-Fi): wpisz wszystkie adresy oddzielone przecinkami. Urządzenie jest obecne, jeśli jeden z nich jest aktywny",
     "ip": "IP",
     "max Entries": "max Wpisy",
-    "name": "Imię",
+    "name": "Nazwa",
     "tooltip_ip": "Adres IP Fritz!Box",
     "tooltip_presenceDelay": "Smartfon w trybie czuwania wyłącza Wi-Fi. Osoba jest uznawana za nieobecną dopiero, gdy wszystkie jej urządzenia są nieaktywne przez tyle minut. Czasem wyjścia jest moment, w którym ostatnie urządzenie przeszło w tryb offline. 0 = od razu",
     "tooltip_presenceGuests": "Zapisuje aktywne urządzenia sieci gościnnej w \"presence.guests\"",
