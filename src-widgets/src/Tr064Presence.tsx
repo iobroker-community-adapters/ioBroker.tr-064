@@ -217,23 +217,40 @@ export default class Tr064Presence extends Generic<Tr064PresenceRxData, Tr064Pre
         this.setState({ devices: persons.map(person => ({ id: person.id, name: person.name })) });
     }
 
-    /** The channels below `devices` (or the persons), sorted by name */
+    /**
+     * The devices below `devices` (or the persons), sorted by name.
+     *
+     * The adapter writes `active` also into the object of the device itself
+     * (`tr-064.0.devices.Handy_Anna` = true), so that object is a `state`, not a `channel` -
+     * scripts read it, it stays that way (issue #777). A device is therefore a direct child of
+     * `devices` with an `active` below it, whatever its type is.
+     */
     private async loadDevices(): Promise<void> {
         if (this.isPersonMode()) {
             return this.loadPersonList();
         }
         const prefix = `${this.getInstanceId()}.devices.`;
+        const end = `${prefix}香`;
         let devices: PresenceDevice[] = [];
         try {
-            const channels: Record<string, ioBroker.Object> =
-                (await this.props.context.socket.getObjectViewSystem('channel', prefix, `${prefix}香`)) || {};
-            devices = Object.keys(channels)
-                // only direct children
-                .filter(id => id.length > prefix.length && !id.substring(prefix.length).includes('.'))
+            const socket = this.props.context.socket;
+            const [states, channels] = await Promise.all([
+                socket.getObjectViewSystem('state', prefix, end),
+                socket.getObjectViewSystem('channel', prefix, end),
+            ]);
+            const objects: Record<string, ioBroker.Object> = { ...(channels || {}), ...(states || {}) };
+            devices = Object.keys(objects)
+                // only direct children which are devices (not `jsonDeviceList`)
+                .filter(
+                    id =>
+                        id.length > prefix.length &&
+                        !id.substring(prefix.length).includes('.') &&
+                        !!objects[`${id}.active`],
+                )
                 .map(id => ({
                     id,
                     name:
-                        deviceName(Generic.getText(channels[id]?.common?.name || '')) ||
+                        deviceName(Generic.getText(objects[id]?.common?.name || '')) ||
                         id.substring(prefix.length).replace(/_/g, ' '),
                 }))
                 .sort((a, b) => a.name.localeCompare(b.name));

@@ -224,6 +224,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (GermanBluefox) Widget "FRITZ!Box Presence" in the mode "Devices" shows the devices again instead of "0 of 0": the object of a device below `devices` is a state, not a channel (#777)
+
 ### 5.3.1 (2026-10-23)
 * (GermanBluefox) Widget "Wi-Fi QR code": the QR code can also show the own WLAN (2.4 GHz, 5 GHz, second 5 GHz, 6 GHz) instead of the guest WLAN
 
