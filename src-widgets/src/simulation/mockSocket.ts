@@ -129,12 +129,20 @@ export default class MockSocket {
         const values = options.box === 'minimal' ? minimalStates() : fullStates(options);
         for (const device of DEVICES) {
             const id = `${NS}.devices.${device.channel}`;
+            // like the adapter: the device itself is a state with the value of `active` (issue #777)
             this.objects[id] = {
                 _id: id,
-                type: 'channel',
-                common: { name: device.name },
+                type: 'state',
+                common: { name: device.name, type: 'boolean', role: 'channel', read: true, write: false },
+                native: { mac: '' },
+            };
+            this.objects[`${id}.active`] = {
+                _id: `${id}.active`,
+                type: 'state',
+                common: { name: 'active', type: 'boolean', role: 'state', read: true, write: false },
                 native: {},
             };
+            values[id] = device.active;
             values[`${id}.active`] = device.active;
             values[`${id}.accessPoint`] = device.accessPoint;
             values[`${id}.connection`] = device.connection;
