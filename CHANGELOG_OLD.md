@@ -1,7 +1,9 @@
 # Older changes
+## 5.2.4 (2026-10-20)
+- (@GermanBluefox) The adapter connects again with a FritzBox user without the right "FRITZ!Box settings" (e.g. only call list and voice messages); such a user gets a warning instead of "The FritzBox refused the login": https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754
+
 ## 5.2.3 (2026-10-14)
 - (@GermanBluefox) Tab "Persons": a device of a person can also be given by its host name in the Fritz!Box instead of a MAC or IP address
-
 
 ## 5.2.2 (2026-10-13)
 - (@GermanBluefox) Tab "Persons": the devices of a person are chosen by name, MAC or IP from the devices of the Fritz!Box (autocomplete), no need to copy MAC addresses from the tab "Devices" any more
