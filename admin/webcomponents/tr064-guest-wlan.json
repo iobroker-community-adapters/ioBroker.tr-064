@@ -1,0 +1,365 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ioBroker/web-components/main/schemas/manifest.json",
+    "manifestVersion": 1,
+    "tag": "iob-tr064-guest-wlan",
+    "module": "tr064-guest-wlan.js",
+    "name": {
+        "en": "Wi-Fi QR code",
+        "de": "Wi-Fi QR code",
+        "ru": "Wi-Fi QR code",
+        "pt": "Wi-Fi QR code",
+        "nl": "Wi-Fi QR code",
+        "fr": "Wi-Fi QR code",
+        "it": "Wi-Fi QR code",
+        "es": "Wi-Fi QR code",
+        "pl": "Wi-Fi QR code",
+        "uk": "Wi-Fi QR code",
+        "zh-cn": "Wi-Fi QR code"
+    },
+    "description": {
+        "en": "QR code of the guest Wi-Fi or of the own Wi-Fi (2.4 / 5 / 6 GHz) to join it with the phone camera: on the tile, in a dialog after a click or after a PIN",
+        "de": "QR-Code des Gast-WLANs oder des eigenen WLANs (2,4 / 5 / 6 GHz) zum Verbinden mit der Handykamera: auf der Kachel, im Dialog nach einem Klick oder nach einer PIN",
+        "ru": "QR-код гостевого или собственного Wi-Fi (2,4 / 5 / 6 ГГц) для подключения камерой телефона: на плитке, в диалоге по нажатию или после PIN",
+        "pt": "Código QR do Wi-Fi de convidados ou do próprio Wi-Fi (2,4 / 5 / 6 GHz) para entrar com a câmera do telemóvel: no mosaico, num diálogo após um clique ou após um PIN",
+        "nl": "QR-code van de gastwifi of de eigen wifi (2,4 / 5 / 6 GHz) om met de telefooncamera te verbinden: op de tegel, in een dialoog na een klik of na een PIN",
+        "fr": "Code QR du Wi-Fi invités ou du Wi-Fi principal (2,4 / 5 / 6 GHz) pour s'y connecter avec l'appareil photo du téléphone : sur la tuile, dans une boîte de dialogue après un clic ou après un PIN",
+        "it": "Codice QR del Wi-Fi ospiti o del proprio Wi-Fi (2,4 / 5 / 6 GHz) per collegarsi con la fotocamera del telefono: sul riquadro, in una finestra dopo un clic o dopo un PIN",
+        "es": "Código QR del Wi-Fi de invitados o del propio Wi-Fi (2,4 / 5 / 6 GHz) para conectarse con la cámara del móvil: en el mosaico, en un diálogo tras un clic o tras un PIN",
+        "pl": "Kod QR Wi-Fi dla gości lub własnej sieci Wi-Fi (2,4 / 5 / 6 GHz) do połączenia aparatem telefonu: na kafelku, w oknie po kliknięciu lub po PIN",
+        "uk": "QR-код гостьового або власного Wi-Fi (2,4 / 5 / 6 ГГц) для підключення камерою телефона: на плитці, у діалозі після натискання або після PIN",
+        "zh-cn": "访客 Wi-Fi 或自家 Wi-Fi（2.4 / 5 / 6 GHz）的二维码，用手机相机扫描即可连接：显示在磁贴上、点击后在对话框中或输入 PIN 后显示"
+    },
+    "icon": "../dm-widgets/guest-wlan.svg",
+    "size": {
+        "width": 220,
+        "height": 280
+    },
+    "settings": {
+        "type": "panel",
+        "items": {
+            "instance": {
+                "type": "instance",
+                "adapter": "tr-064",
+                "default": "tr-064.0",
+                "label": {
+                    "en": "Instance",
+                    "de": "Instanz",
+                    "ru": "Экземпляр",
+                    "pt": "Instância",
+                    "nl": "Instantie",
+                    "fr": "Instance",
+                    "it": "Istanza",
+                    "es": "Instancia",
+                    "pl": "Instancja",
+                    "uk": "Екземпляр",
+                    "zh-cn": "实例"
+                }
+            },
+            "wlan": {
+                "type": "select",
+                "default": "guest",
+                "label": {
+                    "en": "Wi-Fi",
+                    "de": "WLAN",
+                    "ru": "Wi-Fi",
+                    "pt": "Wi-Fi",
+                    "nl": "Wifi",
+                    "fr": "Wi-Fi",
+                    "it": "Wi-Fi",
+                    "es": "Wi-Fi",
+                    "pl": "Wi-Fi",
+                    "uk": "Wi-Fi",
+                    "zh-cn": "Wi-Fi"
+                },
+                "help": {
+                    "en": "The own Wi-Fi gives access to the home network - best with a PIN",
+                    "de": "Das eigene WLAN gibt Zugang zum Heimnetz - am besten mit PIN",
+                    "ru": "Собственный Wi-Fi даёт доступ к домашней сети - лучше с PIN",
+                    "pt": "O próprio Wi-Fi dá acesso à rede doméstica - de preferência com PIN",
+                    "nl": "De eigen wifi geeft toegang tot het thuisnetwerk - liefst met PIN",
+                    "fr": "Le Wi-Fi principal donne accès au réseau domestique - de préférence avec un PIN",
+                    "it": "Il proprio Wi-Fi dà accesso alla rete di casa - meglio con un PIN",
+                    "es": "El propio Wi-Fi da acceso a la red de casa - mejor con un PIN",
+                    "pl": "Własna sieć Wi-Fi daje dostęp do sieci domowej - najlepiej z PIN",
+                    "uk": "Власний Wi-Fi дає доступ до домашньої мережі - краще з PIN",
+                    "zh-cn": "自家 Wi-Fi 可访问家庭网络 - 建议设置 PIN"
+                },
+                "options": [
+                    {
+                        "value": "guest",
+                        "label": {
+                            "en": "Guest Wi-Fi",
+                            "de": "Gast-WLAN",
+                            "ru": "Гостевой Wi-Fi",
+                            "pt": "Wi-Fi de convidados",
+                            "nl": "Gastwifi",
+                            "fr": "Wi-Fi invités",
+                            "it": "Wi-Fi ospiti",
+                            "es": "Wi-Fi de invitados",
+                            "pl": "Wi-Fi dla gości",
+                            "uk": "Гостьовий Wi-Fi",
+                            "zh-cn": "访客 Wi-Fi"
+                        }
+                    },
+                    {
+                        "value": "wlan24",
+                        "label": {
+                            "en": "Wi-Fi 2.4 GHz",
+                            "de": "WLAN 2,4 GHz",
+                            "ru": "Wi-Fi 2,4 ГГц",
+                            "pt": "Wi-Fi 2,4 GHz",
+                            "nl": "Wifi 2,4 GHz",
+                            "fr": "Wi-Fi 2,4 GHz",
+                            "it": "Wi-Fi 2,4 GHz",
+                            "es": "Wi-Fi 2,4 GHz",
+                            "pl": "Wi-Fi 2,4 GHz",
+                            "uk": "Wi-Fi 2,4 ГГц",
+                            "zh-cn": "Wi-Fi 2.4 GHz"
+                        }
+                    },
+                    {
+                        "value": "wlan50",
+                        "label": {
+                            "en": "Wi-Fi 5 GHz",
+                            "de": "WLAN 5 GHz",
+                            "ru": "Wi-Fi 5 ГГц",
+                            "pt": "Wi-Fi 5 GHz",
+                            "nl": "Wifi 5 GHz",
+                            "fr": "Wi-Fi 5 GHz",
+                            "it": "Wi-Fi 5 GHz",
+                            "es": "Wi-Fi 5 GHz",
+                            "pl": "Wi-Fi 5 GHz",
+                            "uk": "Wi-Fi 5 ГГц",
+                            "zh-cn": "Wi-Fi 5 GHz"
+                        }
+                    },
+                    {
+                        "value": "wlan52",
+                        "label": {
+                            "en": "Wi-Fi 5 GHz (second)",
+                            "de": "WLAN 5 GHz (zweites)",
+                            "ru": "Wi-Fi 5 ГГц (второй)",
+                            "pt": "Wi-Fi 5 GHz (segundo)",
+                            "nl": "Wifi 5 GHz (tweede)",
+                            "fr": "Wi-Fi 5 GHz (deuxième)",
+                            "it": "Wi-Fi 5 GHz (secondo)",
+                            "es": "Wi-Fi 5 GHz (segundo)",
+                            "pl": "Wi-Fi 5 GHz (drugie)",
+                            "uk": "Wi-Fi 5 ГГц (другий)",
+                            "zh-cn": "Wi-Fi 5 GHz（第二个）"
+                        }
+                    },
+                    {
+                        "value": "wlan60",
+                        "label": {
+                            "en": "Wi-Fi 6 GHz",
+                            "de": "WLAN 6 GHz",
+                            "ru": "Wi-Fi 6 ГГц",
+                            "pt": "Wi-Fi 6 GHz",
+                            "nl": "Wifi 6 GHz",
+                            "fr": "Wi-Fi 6 GHz",
+                            "it": "Wi-Fi 6 GHz",
+                            "es": "Wi-Fi 6 GHz",
+                            "pl": "Wi-Fi 6 GHz",
+                            "uk": "Wi-Fi 6 ГГц",
+                            "zh-cn": "Wi-Fi 6 GHz"
+                        }
+                    }
+                ]
+            },
+            "mode": {
+                "type": "select",
+                "default": "dialog",
+                "label": {
+                    "en": "Show the code",
+                    "de": "Code zeigen",
+                    "ru": "Показывать код",
+                    "pt": "Mostrar o código",
+                    "nl": "Code tonen",
+                    "fr": "Afficher le code",
+                    "it": "Mostra il codice",
+                    "es": "Mostrar el código",
+                    "pl": "Pokaż kod",
+                    "uk": "Показувати код",
+                    "zh-cn": "显示二维码"
+                },
+                "options": [
+                    {
+                        "value": "tile",
+                        "label": {
+                            "en": "On the widget",
+                            "de": "Auf dem Widget",
+                            "ru": "На виджете",
+                            "pt": "No widget",
+                            "nl": "Op de widget",
+                            "fr": "Sur le widget",
+                            "it": "Sul widget",
+                            "es": "En el widget",
+                            "pl": "Na widżecie",
+                            "uk": "На віджеті",
+                            "zh-cn": "在小部件上"
+                        }
+                    },
+                    {
+                        "value": "dialog",
+                        "label": {
+                            "en": "In a dialog after a click",
+                            "de": "Im Dialog nach einem Klick",
+                            "ru": "В диалоге по нажатию",
+                            "pt": "Num diálogo após um clique",
+                            "nl": "In een dialoog na een klik",
+                            "fr": "Dans une boîte de dialogue après un clic",
+                            "it": "In una finestra dopo un clic",
+                            "es": "En un diálogo tras un clic",
+                            "pl": "W oknie po kliknięciu",
+                            "uk": "У діалозі після натискання",
+                            "zh-cn": "点击后在对话框中"
+                        }
+                    },
+                    {
+                        "value": "pin",
+                        "label": {
+                            "en": "In a dialog after the PIN",
+                            "de": "Im Dialog nach der PIN",
+                            "ru": "В диалоге после PIN",
+                            "pt": "Num diálogo após o PIN",
+                            "nl": "In een dialoog na de PIN",
+                            "fr": "Dans une boîte de dialogue après le PIN",
+                            "it": "In una finestra dopo il PIN",
+                            "es": "En un diálogo tras el PIN",
+                            "pl": "W oknie po PIN",
+                            "uk": "У діалозі після PIN",
+                            "zh-cn": "输入 PIN 后在对话框中"
+                        }
+                    }
+                ]
+            },
+            "pin": {
+                "type": "password",
+                "label": {
+                    "en": "PIN",
+                    "de": "PIN",
+                    "ru": "PIN",
+                    "pt": "PIN",
+                    "nl": "PIN",
+                    "fr": "PIN",
+                    "it": "PIN",
+                    "es": "PIN",
+                    "pl": "PIN",
+                    "uk": "PIN",
+                    "zh-cn": "PIN"
+                },
+                "help": {
+                    "en": "Asked before the code is shown. It keeps guests away from the code - it is stored in the settings of the tile",
+                    "de": "Wird abgefragt, bevor der Code erscheint. Sie hält Gäste vom Code fern - sie steht in den Einstellungen der Kachel",
+                    "ru": "Запрашивается перед показом кода. Защищает код от гостей - хранится в настройках плитки",
+                    "pt": "Pedido antes de o código aparecer. Afasta os convidados do código - fica guardado nas definições do mosaico",
+                    "nl": "Wordt gevraagd voordat de code verschijnt. Hij houdt gasten bij de code weg - hij staat in de instellingen van de tegel",
+                    "fr": "Demandé avant l'affichage du code. Il éloigne les invités du code - il est enregistré dans les réglages de la tuile",
+                    "it": "Richiesto prima che appaia il codice. Tiene gli ospiti lontani dal codice - è salvato nelle impostazioni del riquadro",
+                    "es": "Se pide antes de mostrar el código. Mantiene a los invitados lejos del código - se guarda en los ajustes del mosaico",
+                    "pl": "Pytany przed pokazaniem kodu. Trzyma gości z dala od kodu - jest zapisany w ustawieniach kafelka",
+                    "uk": "Запитується перед показом коду. Захищає код від гостей - зберігається в налаштуваннях плитки",
+                    "zh-cn": "显示二维码前询问。可防止访客看到二维码 - 保存在磁贴设置中"
+                },
+                "hidden": "data.mode !== 'pin'"
+            },
+            "autoClose": {
+                "type": "number",
+                "default": 60,
+                "min": 0,
+                "max": 3600,
+                "label": {
+                    "en": "Close the dialog after (s)",
+                    "de": "Dialog schließen nach (s)",
+                    "ru": "Закрыть диалог через (с)",
+                    "pt": "Fechar o diálogo após (s)",
+                    "nl": "Dialoog sluiten na (s)",
+                    "fr": "Fermer la boîte de dialogue après (s)",
+                    "it": "Chiudi la finestra dopo (s)",
+                    "es": "Cerrar el diálogo tras (s)",
+                    "pl": "Zamknij okno po (s)",
+                    "uk": "Закрити діалог через (с)",
+                    "zh-cn": "对话框自动关闭（秒）"
+                },
+                "help": {
+                    "en": "The code does not stay on the screen. 0 = never",
+                    "de": "Der Code bleibt nicht auf dem Bildschirm stehen. 0 = nie",
+                    "ru": "Код не остаётся на экране. 0 = никогда",
+                    "pt": "O código não fica no ecrã. 0 = nunca",
+                    "nl": "De code blijft niet op het scherm staan. 0 = nooit",
+                    "fr": "Le code ne reste pas à l'écran. 0 = jamais",
+                    "it": "Il codice non resta sullo schermo. 0 = mai",
+                    "es": "El código no se queda en la pantalla. 0 = nunca",
+                    "pl": "Kod nie zostaje na ekranie. 0 = nigdy",
+                    "uk": "Код не залишається на екрані. 0 = ніколи",
+                    "zh-cn": "二维码不会一直留在屏幕上。0 = 从不"
+                },
+                "hidden": "data.mode === 'tile'"
+            },
+            "title": {
+                "type": "text",
+                "label": {
+                    "en": "Title",
+                    "de": "Titel",
+                    "ru": "Заголовок",
+                    "pt": "Título",
+                    "nl": "Titel",
+                    "fr": "Titre",
+                    "it": "Titolo",
+                    "es": "Título",
+                    "pl": "Tytuł",
+                    "uk": "Заголовок",
+                    "zh-cn": "标题"
+                },
+                "help": {
+                    "en": "Empty = name of the Wi-Fi",
+                    "de": "Leer = Name des WLANs",
+                    "ru": "Пусто = имя сети Wi-Fi",
+                    "pt": "Vazio = nome do Wi-Fi",
+                    "nl": "Leeg = naam van de wifi",
+                    "fr": "Vide = nom du Wi-Fi",
+                    "it": "Vuoto = nome del Wi-Fi",
+                    "es": "Vacío = nombre del Wi-Fi",
+                    "pl": "Puste = nazwa sieci Wi-Fi",
+                    "uk": "Порожньо = назва мережі Wi-Fi",
+                    "zh-cn": "留空 = Wi-Fi 名称"
+                }
+            },
+            "showSsid": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show network name",
+                    "de": "Netzwerknamen zeigen",
+                    "ru": "Показывать имя сети",
+                    "pt": "Mostrar nome da rede",
+                    "nl": "Netwerknaam tonen",
+                    "fr": "Afficher le nom du réseau",
+                    "it": "Mostra nome della rete",
+                    "es": "Mostrar nombre de la red",
+                    "pl": "Pokaż nazwę sieci",
+                    "uk": "Показувати назву мережі",
+                    "zh-cn": "显示网络名称"
+                }
+            },
+            "showPassword": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show password",
+                    "de": "Passwort zeigen",
+                    "ru": "Показывать пароль",
+                    "pt": "Mostrar senha",
+                    "nl": "Wachtwoord tonen",
+                    "fr": "Afficher le mot de passe",
+                    "it": "Mostra password",
+                    "es": "Mostrar contraseña",
+                    "pl": "Pokaż hasło",
+                    "uk": "Показувати пароль",
+                    "zh-cn": "显示密码"
+                }
+            }
+        }
+    }
+}

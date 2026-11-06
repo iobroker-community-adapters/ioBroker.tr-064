@@ -1,0 +1,253 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ioBroker/web-components/main/schemas/manifest.json",
+    "manifestVersion": 1,
+    "tag": "iob-tr064-presence",
+    "module": "tr064-presence.js",
+    "name": {
+        "en": "Presence",
+        "de": "Anwesenheit",
+        "ru": "Присутствие",
+        "pt": "Presença",
+        "nl": "Aanwezigheid",
+        "fr": "Présence",
+        "it": "Presenza",
+        "es": "Presencia",
+        "pl": "Obecność",
+        "uk": "Присутність",
+        "zh-cn": "在家状态"
+    },
+    "description": {
+        "en": "The devices of the tab \"Devices\" or the persons of the tab \"Persons\" of the instance: present or away",
+        "de": "Die Geräte des Reiters \"Geräte\" oder die Personen des Reiters \"Personen\" der Instanz: anwesend oder abwesend",
+        "ru": "Устройства вкладки «Устройства» или люди вкладки «Персоны» экземпляра: дома или нет",
+        "pt": "Os dispositivos da aba \"Dispositivos\" ou as pessoas da aba \"Pessoas\" da instância: presentes ou ausentes",
+        "nl": "De apparaten van het tabblad \"Apparaten\" of de personen van het tabblad \"Personen\" van de instantie: aanwezig of afwezig",
+        "fr": "Les appareils de l'onglet « Appareils » ou les personnes de l'onglet « Personnes » de l'instance : présents ou absents",
+        "it": "I dispositivi della scheda \"Dispositivi\" o le persone della scheda \"Persone\" dell'istanza: presenti o assenti",
+        "es": "Los dispositivos de la pestaña \"Dispositivos\" o las personas de la pestaña \"Personas\" de la instancia: presentes o ausentes",
+        "pl": "Urządzenia z zakładki „Urządzenia” lub osoby z zakładki „Osoby” instancji: obecne lub nieobecne",
+        "uk": "Пристрої вкладки «Пристрої» або особи вкладки «Особи» екземпляра: вдома чи ні",
+        "zh-cn": "实例“设备”选项卡中的设备或“人员”选项卡中的人员：在场或离开"
+    },
+    "icon": "../tr-064.png",
+    "size": {
+        "width": 320,
+        "height": 360
+    },
+    "settings": {
+        "type": "panel",
+        "items": {
+            "instance": {
+                "type": "instance",
+                "adapter": "tr-064",
+                "default": "tr-064.0",
+                "label": {
+                    "en": "Instance",
+                    "de": "Instanz",
+                    "ru": "Экземпляр",
+                    "pt": "Instância",
+                    "nl": "Instantie",
+                    "fr": "Instance",
+                    "it": "Istanza",
+                    "es": "Instancia",
+                    "pl": "Instancja",
+                    "uk": "Екземпляр",
+                    "zh-cn": "实例"
+                }
+            },
+            "mode": {
+                "type": "select",
+                "default": "devices",
+                "label": {
+                    "en": "Show",
+                    "de": "Anzeigen",
+                    "ru": "Показывать",
+                    "pt": "Mostrar",
+                    "nl": "Tonen",
+                    "fr": "Afficher",
+                    "it": "Mostra",
+                    "es": "Mostrar",
+                    "pl": "Pokaż",
+                    "uk": "Показувати",
+                    "zh-cn": "显示"
+                },
+                "help": {
+                    "en": "The devices of the tab \"Devices\" or the persons of the tab \"Persons\"",
+                    "de": "Die Geräte des Reiters \"Geräte\" oder die Personen des Reiters \"Personen\"",
+                    "ru": "Устройства вкладки «Устройства» или персоны вкладки «Персоны»",
+                    "pt": "Os dispositivos da aba \"Dispositivos\" ou as pessoas da aba \"Pessoas\"",
+                    "nl": "De apparaten van het tabblad \"Apparaten\" of de personen van het tabblad \"Personen\"",
+                    "fr": "Les appareils de l'onglet « Appareils » ou les personnes de l'onglet « Personnes »",
+                    "it": "I dispositivi della scheda \"Dispositivi\" o le persone della scheda \"Persone\"",
+                    "es": "Los dispositivos de la pestaña \"Dispositivos\" o las personas de la pestaña \"Personas\"",
+                    "pl": "Urządzenia z zakładki „Urządzenia” lub osoby z zakładki „Osoby”",
+                    "uk": "Пристрої вкладки «Пристрої» або особи вкладки «Особи»",
+                    "zh-cn": "“设备”选项卡中的设备或“人员”选项卡中的人员"
+                },
+                "options": [
+                    {
+                        "value": "devices",
+                        "label": {
+                            "en": "Devices",
+                            "de": "Geräte",
+                            "ru": "Устройства",
+                            "pt": "Dispositivos",
+                            "nl": "Apparaten",
+                            "fr": "Appareils",
+                            "it": "Dispositivi",
+                            "es": "Dispositivos",
+                            "pl": "Urządzenia",
+                            "uk": "Пристрої",
+                            "zh-cn": "设备"
+                        }
+                    },
+                    {
+                        "value": "persons",
+                        "label": {
+                            "en": "Persons",
+                            "de": "Personen",
+                            "ru": "Персоны",
+                            "pt": "Pessoas",
+                            "nl": "Personen",
+                            "fr": "Personnes",
+                            "it": "Persone",
+                            "es": "Personas",
+                            "pl": "Osoby",
+                            "uk": "Особи",
+                            "zh-cn": "人员"
+                        }
+                    }
+                ]
+            },
+            "group": {
+                "type": "text",
+                "label": {
+                    "en": "Group",
+                    "de": "Gruppe",
+                    "ru": "Группа",
+                    "pt": "Grupo",
+                    "nl": "Groep",
+                    "fr": "Groupe",
+                    "it": "Gruppo",
+                    "es": "Grupo",
+                    "pl": "Grupa",
+                    "uk": "Група",
+                    "zh-cn": "组"
+                },
+                "help": {
+                    "en": "Empty = all persons",
+                    "de": "Leer = alle Personen",
+                    "ru": "Пусто = все персоны",
+                    "pt": "Vazio = todas as pessoas",
+                    "nl": "Leeg = alle personen",
+                    "fr": "Vide = toutes les personnes",
+                    "it": "Vuoto = tutte le persone",
+                    "es": "Vacío = todas las personas",
+                    "pl": "Puste = wszystkie osoby",
+                    "uk": "Порожньо = усі особи",
+                    "zh-cn": "空 = 所有人员"
+                },
+                "hidden": "data.mode !== 'persons'"
+            },
+            "title": {
+                "type": "text",
+                "label": {
+                    "en": "Title",
+                    "de": "Titel",
+                    "ru": "Заголовок",
+                    "pt": "Título",
+                    "nl": "Titel",
+                    "fr": "Titre",
+                    "it": "Titolo",
+                    "es": "Título",
+                    "pl": "Tytuł",
+                    "uk": "Заголовок",
+                    "zh-cn": "标题"
+                }
+            },
+            "onlyActive": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "Only present",
+                    "de": "Nur anwesende",
+                    "ru": "Только присутствующие",
+                    "pt": "Apenas presentes",
+                    "nl": "Alleen aanwezigen",
+                    "fr": "Seulement les présents",
+                    "it": "Solo presenti",
+                    "es": "Solo presentes",
+                    "pl": "Tylko obecni",
+                    "uk": "Лише присутні",
+                    "zh-cn": "仅显示在场"
+                }
+            },
+            "activeFirst": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Present first",
+                    "de": "Anwesende zuerst",
+                    "ru": "Сначала присутствующие",
+                    "pt": "Presentes primeiro",
+                    "nl": "Aanwezigen eerst",
+                    "fr": "Présents d'abord",
+                    "it": "Prima i presenti",
+                    "es": "Presentes primero",
+                    "pl": "Najpierw obecni",
+                    "uk": "Спочатку присутні",
+                    "zh-cn": "在场的排在前面"
+                }
+            },
+            "showAccessPoint": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show access point",
+                    "de": "Zugangspunkt anzeigen",
+                    "ru": "Показывать точку доступа",
+                    "pt": "Mostrar ponto de acesso",
+                    "nl": "Toegangspunt tonen",
+                    "fr": "Afficher le point d'accès",
+                    "it": "Mostra punto di accesso",
+                    "es": "Mostrar punto de acceso",
+                    "pl": "Pokaż punkt dostępu",
+                    "uk": "Показувати точку доступу",
+                    "zh-cn": "显示接入点"
+                },
+                "hidden": "data.mode === 'persons'"
+            },
+            "showGuests": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show guests",
+                    "de": "Gäste anzeigen",
+                    "ru": "Показывать гостей",
+                    "pt": "Mostrar convidados",
+                    "nl": "Gasten tonen",
+                    "fr": "Afficher les invités",
+                    "it": "Mostra ospiti",
+                    "es": "Mostrar invitados",
+                    "pl": "Pokaż gości",
+                    "uk": "Показувати гостей",
+                    "zh-cn": "显示访客"
+                },
+                "help": {
+                    "en": "The number of active devices in the guest network, if the instance counts them",
+                    "de": "Die Anzahl der aktiven Geräte im Gastnetz, wenn die Instanz sie zählt",
+                    "ru": "Количество активных устройств в гостевой сети, если экземпляр их считает",
+                    "pt": "O número de dispositivos ativos na rede de convidados, se a instância os contar",
+                    "nl": "Het aantal actieve apparaten in het gastnetwerk, als de instantie ze telt",
+                    "fr": "Le nombre d'appareils actifs dans le réseau invité, si l'instance les compte",
+                    "it": "Il numero di dispositivi attivi nella rete ospiti, se l'istanza li conta",
+                    "es": "El número de dispositivos activos en la red de invitados, si la instancia los cuenta",
+                    "pl": "Liczba aktywnych urządzeń w sieci gościnnej, jeśli instancja je liczy",
+                    "uk": "Кількість активних пристроїв у гостьовій мережі, якщо екземпляр їх рахує",
+                    "zh-cn": "访客网络中活动设备的数量（如果实例统计它们）"
+                },
+                "hidden": "data.mode !== 'persons'"
+            }
+        }
+    }
+}

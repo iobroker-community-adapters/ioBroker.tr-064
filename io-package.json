@@ -248,6 +248,13 @@
         }
       ]
     },
+    "webComponents": [
+      "webcomponents/tr064-fritzbox.json",
+      "webcomponents/tr064-mesh.json",
+      "webcomponents/tr064-presence.json",
+      "webcomponents/tr064-person.json",
+      "webcomponents/tr064-guest-wlan.json"
+    ],
     "restartAdapters": [
       "vis-2"
     ]

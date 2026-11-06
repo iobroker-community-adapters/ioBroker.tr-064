@@ -18,6 +18,10 @@ The copies are gitignored - **edit only `src-shared/`**, a change of a copy is o
 - The project's eslint may reformat the copy with `--fix` - copy such fixes back to `src-shared`.
 - Import JSON is used (`i18n/index.ts`): `resolveJsonModule` must be on in the `tsconfig.json`.
 
+`src-webcomponents` gets no copy: it imports the pure modules (`types.ts`, `meshApi.ts`, `meshLayout.ts`,
+`guestWlanApi.ts`, `presenceApi.ts`) by their relative path and draws without MUI. Keep these files free of
+MUI, and keep their imports to `react` and `qrcode-generator` - the only packages it resolves for them.
+
 ## Files
 
 | File | Content |

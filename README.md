@@ -168,6 +168,12 @@ The QR code needs a FritzBox user with the right "FRITZ!Box settings" (`GetSecur
 
 The widgets need the states of the adapter version with these widgets (`states.boxModel`, `states.wan*`, ...) and the running instance for the mesh topology.
 
+### Web components
+
+The same five tiles are also web components (`common.webComponents`, [`@iobroker/web-components`](https://github.com/ioBroker/web-components)) for hosts like Aura or admin: `iob-tr064-fritzbox`, `iob-tr064-mesh`, `iob-tr064-presence`, `iob-tr064-person` and `iob-tr064-guest-wlan`. Each one is a single ES module in `admin/webcomponents/` with its manifest next to it; React comes from the host. They adapt to their size with container queries, take the colors of the theme of the host and do nothing in the editor of the host. vis-2 and ioBroker.devices keep showing their own widgets.
+
+The settings are those of the widgets, without the pure vis-2 styling (no card, own icons per state). The component **Person** selects the person by its channel (`tr-064.0.presence.persons.<name>`) instead of its name, and the component **Mesh topology** starts with the view of its settings - what the toolbar switches is not stored.
+
 ### The states command and commandResult
 
 With the state `command` you can call every tr-064 command from this [documentation](https://avm.de/service/schnittstellen/). Example:
@@ -224,6 +230,9 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (GermanBluefox) Added web components for Aura and other hosts (`common.webComponents`): FRITZ!Box, mesh topology, presence, person and Wi-Fi QR code
+
 ### 5.3.2 (2026-11-04)
 * (GermanBluefox) Widget "FRITZ!Box Presence" in the mode "Devices" shows the devices again instead of "0 of 0": the object of a device below `devices` is a state, not a channel (#777)
 

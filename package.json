@@ -61,6 +61,7 @@
     "build:admin": "tsx tasks.ts --admin",
     "build:widgets": "tsx tasks.ts --widgets",
     "build:devices": "tsx tasks.ts --devices",
+    "build:wc": "tsx tasks.ts --wc",
     "watch": "tsc -p tsconfig.build.json --watch",
     "check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tasks.json",
     "lint": "eslint -c eslint.config.mjs",

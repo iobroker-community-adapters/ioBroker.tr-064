@@ -1,0 +1,263 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ioBroker/web-components/main/schemas/manifest.json",
+    "manifestVersion": 1,
+    "tag": "iob-tr064-fritzbox",
+    "module": "tr064-fritzbox.js",
+    "name": {
+        "en": "FRITZ!Box",
+        "de": "FRITZ!Box",
+        "ru": "FRITZ!Box",
+        "pt": "FRITZ!Box",
+        "nl": "FRITZ!Box",
+        "fr": "FRITZ!Box",
+        "it": "FRITZ!Box",
+        "es": "FRITZ!Box",
+        "pl": "FRITZ!Box",
+        "uk": "FRITZ!Box",
+        "zh-cn": "FRITZ!Box"
+    },
+    "description": {
+        "en": "State of the FRITZ!Box, a click shows the mesh topology",
+        "de": "Zustand der FRITZ!Box, ein Klick zeigt die Mesh-Topologie",
+        "ru": "Состояние FRITZ!Box, по нажатию показывается mesh-топология",
+        "pt": "Estado da FRITZ!Box, um clique mostra a topologia mesh",
+        "nl": "Status van de FRITZ!Box, een klik toont de mesh-topologie",
+        "fr": "État de la FRITZ!Box, un clic affiche la topologie mesh",
+        "it": "Stato della FRITZ!Box, un clic mostra la topologia mesh",
+        "es": "Estado de la FRITZ!Box, un clic muestra la topología mesh",
+        "pl": "Stan FRITZ!Box, kliknięcie pokazuje topologię mesh",
+        "uk": "Стан FRITZ!Box, натискання показує mesh-топологію",
+        "zh-cn": "FRITZ!Box 的状态，点击显示 Mesh 拓扑"
+    },
+    "icon": "../dm-widgets/fritzbox.png",
+    "size": {
+        "width": 360,
+        "height": 280
+    },
+    "settings": {
+        "type": "panel",
+        "items": {
+            "instance": {
+                "type": "instance",
+                "adapter": "tr-064",
+                "default": "tr-064.0",
+                "label": {
+                    "en": "Instance",
+                    "de": "Instanz",
+                    "ru": "Экземпляр",
+                    "pt": "Instância",
+                    "nl": "Instantie",
+                    "fr": "Instance",
+                    "it": "Istanza",
+                    "es": "Instancia",
+                    "pl": "Instancja",
+                    "uk": "Екземпляр",
+                    "zh-cn": "实例"
+                }
+            },
+            "boxName": {
+                "type": "text",
+                "label": {
+                    "en": "Name",
+                    "de": "Name",
+                    "ru": "Имя",
+                    "pt": "Nome",
+                    "nl": "Naam",
+                    "fr": "Nom",
+                    "it": "Nome",
+                    "es": "Nombre",
+                    "pl": "Nazwa",
+                    "uk": "Ім'я",
+                    "zh-cn": "名称"
+                },
+                "help": {
+                    "en": "Empty = model of the FRITZ!Box",
+                    "de": "Leer = Modell der FRITZ!Box",
+                    "ru": "Пусто = модель FRITZ!Box",
+                    "pt": "Vazio = modelo do FRITZ!Box",
+                    "nl": "Leeg = model van de FRITZ!Box",
+                    "fr": "Vide = modèle de la FRITZ!Box",
+                    "it": "Vuoto = modello del FRITZ!Box",
+                    "es": "Vacío = modelo del FRITZ!Box",
+                    "pl": "Puste = model FRITZ!Box",
+                    "uk": "Порожньо = модель FRITZ!Box",
+                    "zh-cn": "留空 = FRITZ!Box 型号"
+                }
+            },
+            "partsHeader": {
+                "type": "header",
+                "text": {
+                    "en": "Parts",
+                    "de": "Bestandteile",
+                    "ru": "Элементы",
+                    "pt": "Partes",
+                    "nl": "Onderdelen",
+                    "fr": "Éléments",
+                    "it": "Elementi",
+                    "es": "Partes",
+                    "pl": "Elementy",
+                    "uk": "Елементи",
+                    "zh-cn": "组成部分"
+                }
+            },
+            "hideDetails": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "Compact",
+                    "de": "Kompakt",
+                    "ru": "Компактно",
+                    "pt": "Compacto",
+                    "nl": "Compact",
+                    "fr": "Compact",
+                    "it": "Compatto",
+                    "es": "Compacto",
+                    "pl": "Kompaktowy",
+                    "uk": "Компактно",
+                    "zh-cn": "紧凑"
+                },
+                "help": {
+                    "en": "Only name, online state and data rate, whatever the size",
+                    "de": "Nur Name, Online-Zustand und Datenrate, unabhängig von der Größe",
+                    "ru": "Только имя, состояние и скорость, независимо от размера",
+                    "pt": "Apenas nome, estado online e taxa de dados, independentemente do tamanho",
+                    "nl": "Alleen naam, online-status en datasnelheid, ongeacht de grootte",
+                    "fr": "Seulement le nom, l'état en ligne et le débit, quelle que soit la taille",
+                    "it": "Solo nome, stato online e velocità dati, indipendentemente dalle dimensioni",
+                    "es": "Solo nombre, estado en línea y velocidad, sea cual sea el tamaño",
+                    "pl": "Tylko nazwa, stan online i przepustowość, niezależnie od rozmiaru",
+                    "uk": "Лише ім'я, стан і швидкість, незалежно від розміру",
+                    "zh-cn": "无论大小，仅显示名称、在线状态和数据速率"
+                }
+            },
+            "showIp": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show external IP",
+                    "de": "Externe IP anzeigen",
+                    "ru": "Показывать внешний IP",
+                    "pt": "Mostrar IP externo",
+                    "nl": "Extern IP tonen",
+                    "fr": "Afficher l'IP externe",
+                    "it": "Mostra IP esterno",
+                    "es": "Mostrar IP externa",
+                    "pl": "Pokaż zewnętrzny IP",
+                    "uk": "Показувати зовнішній IP",
+                    "zh-cn": "显示外部 IP"
+                },
+                "hidden": "!!data.hideDetails"
+            },
+            "showWlan": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show Wi-Fi",
+                    "de": "WLAN anzeigen",
+                    "ru": "Показывать Wi-Fi",
+                    "pt": "Mostrar Wi-Fi",
+                    "nl": "Wifi tonen",
+                    "fr": "Afficher le Wi-Fi",
+                    "it": "Mostra Wi-Fi",
+                    "es": "Mostrar Wi-Fi",
+                    "pl": "Pokaż Wi-Fi",
+                    "uk": "Показувати Wi-Fi",
+                    "zh-cn": "显示 Wi-Fi"
+                },
+                "hidden": "!!data.hideDetails"
+            },
+            "switchWlan": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "Switch Wi-Fi by click",
+                    "de": "WLAN per Klick schalten",
+                    "ru": "Переключать Wi-Fi щелчком",
+                    "pt": "Ligar/desligar Wi-Fi com um clique",
+                    "nl": "Wifi met een klik schakelen",
+                    "fr": "Activer le Wi-Fi par un clic",
+                    "it": "Attiva/disattiva Wi-Fi con un clic",
+                    "es": "Conmutar Wi-Fi con un clic",
+                    "pl": "Przełączaj Wi-Fi kliknięciem",
+                    "uk": "Перемикати Wi-Fi клацанням",
+                    "zh-cn": "单击切换 Wi-Fi"
+                },
+                "help": {
+                    "en": "A click on Wi-Fi or Guest switches it on or off",
+                    "de": "Ein Klick auf WLAN oder Gast schaltet es ein oder aus",
+                    "ru": "Щелчок по Wi-Fi или «Гость» включает или выключает сеть",
+                    "pt": "Um clique em Wi-Fi ou Convidados liga-o ou desliga-o",
+                    "nl": "Een klik op Wifi of Gast schakelt het in of uit",
+                    "fr": "Un clic sur Wi-Fi ou Invités l'active ou le désactive",
+                    "it": "Un clic su Wi-Fi od Ospiti lo attiva o lo disattiva",
+                    "es": "Un clic en Wi-Fi o Invitados lo activa o lo desactiva",
+                    "pl": "Kliknięcie Wi-Fi lub Goście włącza je lub wyłącza",
+                    "uk": "Клацання по Wi-Fi або «Гість» вмикає або вимикає мережу",
+                    "zh-cn": "单击 Wi-Fi 或访客可将其打开或关闭"
+                },
+                "hidden": "!!data.hideDetails || data.showWlan === false"
+            },
+            "showMessages": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show messages and calls",
+                    "de": "Nachrichten und Anrufe anzeigen",
+                    "ru": "Показывать сообщения и звонки",
+                    "pt": "Mostrar mensagens e chamadas",
+                    "nl": "Berichten en oproepen tonen",
+                    "fr": "Afficher les messages et les appels",
+                    "it": "Mostra messaggi e chiamate",
+                    "es": "Mostrar mensajes y llamadas",
+                    "pl": "Pokaż wiadomości i połączenia",
+                    "uk": "Показувати повідомлення та дзвінки",
+                    "zh-cn": "显示留言和来电"
+                },
+                "help": {
+                    "en": "New messages on the answering machine, missed calls and an incoming call - only if the states exist",
+                    "de": "Neue Nachrichten auf dem Anrufbeantworter, verpasste Anrufe und ein eingehender Anruf - nur wenn die Datenpunkte existieren",
+                    "ru": "Новые сообщения автоответчика, пропущенные звонки и входящий звонок - только если такие состояния существуют",
+                    "pt": "Novas mensagens no atendedor, chamadas perdidas e uma chamada a entrar - apenas se os estados existirem",
+                    "nl": "Nieuwe berichten op het antwoordapparaat, gemiste oproepen en een inkomende oproep - alleen als de states bestaan",
+                    "fr": "Nouveaux messages sur le répondeur, appels manqués et appel entrant - seulement si les états existent",
+                    "it": "Nuovi messaggi sulla segreteria, chiamate perse e una chiamata in arrivo - solo se gli stati esistono",
+                    "es": "Mensajes nuevos en el contestador, llamadas perdidas y una llamada entrante - solo si los estados existen",
+                    "pl": "Nowe wiadomości na automatycznej sekretarce, nieodebrane połączenia i połączenie przychodzące - tylko jeśli stany istnieją",
+                    "uk": "Нові повідомлення автовідповідача, пропущені дзвінки та вхідний дзвінок - лише якщо такі стани існують",
+                    "zh-cn": "答录机上的新留言、未接来电和来电 - 仅当这些状态存在时"
+                },
+                "hidden": "!!data.hideDetails"
+            },
+            "noMesh": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "No mesh topology on click",
+                    "de": "Keine Mesh-Topologie per Klick",
+                    "ru": "Не открывать топологию Mesh по щелчку",
+                    "pt": "Sem topologia mesh ao clicar",
+                    "nl": "Geen mesh-topologie bij klikken",
+                    "fr": "Pas de topologie mesh au clic",
+                    "it": "Nessuna topologia mesh al clic",
+                    "es": "Sin topología mesh al hacer clic",
+                    "pl": "Bez topologii mesh po kliknięciu",
+                    "uk": "Не відкривати топологію Mesh клацанням",
+                    "zh-cn": "单击时不打开 Mesh 拓扑"
+                },
+                "help": {
+                    "en": "A click on the tile does not open the mesh topology",
+                    "de": "Ein Klick auf die Kachel öffnet die Mesh-Topologie nicht",
+                    "ru": "Щелчок по плитке не открывает топологию Mesh",
+                    "pt": "Um clique no mosaico não abre a topologia mesh",
+                    "nl": "Een klik op de tegel opent de mesh-topologie niet",
+                    "fr": "Un clic sur la tuile n'ouvre pas la topologie mesh",
+                    "it": "Un clic sul riquadro non apre la topologia mesh",
+                    "es": "Un clic en el mosaico no abre la topología mesh",
+                    "pl": "Kliknięcie kafelka nie otwiera topologii mesh",
+                    "uk": "Клацання по плитці не відкриває топологію Mesh",
+                    "zh-cn": "单击磁贴不会打开 Mesh 拓扑"
+                }
+            }
+        }
+    }
+}

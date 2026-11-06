@@ -1,0 +1,226 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ioBroker/web-components/main/schemas/manifest.json",
+    "manifestVersion": 1,
+    "tag": "iob-tr064-mesh",
+    "module": "tr064-mesh.js",
+    "name": {
+        "en": "Mesh topology",
+        "de": "Mesh-Topologie",
+        "ru": "Топология Mesh",
+        "pt": "Topologia mesh",
+        "nl": "Mesh-topologie",
+        "fr": "Topologie mesh",
+        "it": "Topologia mesh",
+        "es": "Topología mesh",
+        "pl": "Topologia mesh",
+        "uk": "Топологія Mesh",
+        "zh-cn": "Mesh 拓扑"
+    },
+    "description": {
+        "en": "Mesh topology of the FRITZ!Box: mesh master, repeaters and the connected devices",
+        "de": "Mesh-Topologie der FRITZ!Box: Mesh Master, Repeater und die verbundenen Geräte",
+        "ru": "Топология Mesh сети FRITZ!Box: Mesh-мастер, репитеры и подключённые устройства",
+        "pt": "Topologia mesh do FRITZ!Box: mesh master, repetidores e os dispositivos ligados",
+        "nl": "Mesh-topologie van de FRITZ!Box: mesh-master, repeaters en de verbonden apparaten",
+        "fr": "Topologie mesh de la FRITZ!Box : maître mesh, répéteurs et appareils connectés",
+        "it": "Topologia mesh del FRITZ!Box: mesh master, ripetitori e i dispositivi connessi",
+        "es": "Topología mesh del FRITZ!Box: mesh master, repetidores y los dispositivos conectados",
+        "pl": "Topologia mesh FRITZ!Box: mesh master, wzmacniacze i podłączone urządzenia",
+        "uk": "Топологія Mesh мережі FRITZ!Box: Mesh-майстер, репітери та підключені пристрої",
+        "zh-cn": "FRITZ!Box 的 Mesh 拓扑：Mesh 主站、中继器和已连接的设备"
+    },
+    "icon": "../tr-064.png",
+    "size": {
+        "width": 720,
+        "height": 480
+    },
+    "settings": {
+        "type": "panel",
+        "items": {
+            "instance": {
+                "type": "instance",
+                "adapter": "tr-064",
+                "default": "tr-064.0",
+                "label": {
+                    "en": "Instance",
+                    "de": "Instanz",
+                    "ru": "Экземпляр",
+                    "pt": "Instância",
+                    "nl": "Instantie",
+                    "fr": "Instance",
+                    "it": "Istanza",
+                    "es": "Instancia",
+                    "pl": "Instancja",
+                    "uk": "Екземпляр",
+                    "zh-cn": "实例"
+                }
+            },
+            "title": {
+                "type": "text",
+                "label": {
+                    "en": "Title",
+                    "de": "Titel",
+                    "ru": "Заголовок",
+                    "pt": "Título",
+                    "nl": "Titel",
+                    "fr": "Titre",
+                    "it": "Titolo",
+                    "es": "Título",
+                    "pl": "Tytuł",
+                    "uk": "Заголовок",
+                    "zh-cn": "标题"
+                }
+            },
+            "interval": {
+                "type": "number",
+                "min": 10,
+                "max": 3600,
+                "default": 30,
+                "label": {
+                    "en": "Refresh interval (s)",
+                    "de": "Aktualisierungsintervall (s)",
+                    "ru": "Интервал обновления (с)",
+                    "pt": "Intervalo de atualização (s)",
+                    "nl": "Vernieuwingsinterval (s)",
+                    "fr": "Intervalle d'actualisation (s)",
+                    "it": "Intervallo di aggiornamento (s)",
+                    "es": "Intervalo de actualización (s)",
+                    "pl": "Interwał odświeżania (s)",
+                    "uk": "Інтервал оновлення (с)",
+                    "zh-cn": "刷新间隔（秒）"
+                },
+                "help": {
+                    "en": "The topology is read only while the widget is visible. At least 10 seconds",
+                    "de": "Die Topologie wird nur gelesen, solange das Widget sichtbar ist. Mindestens 10 Sekunden",
+                    "ru": "Топология читается, только пока виджет виден. Не менее 10 секунд",
+                    "pt": "A topologia só é lida enquanto o widget estiver visível. No mínimo 10 segundos",
+                    "nl": "De topologie wordt alleen gelezen zolang de widget zichtbaar is. Minstens 10 seconden",
+                    "fr": "La topologie n'est lue que tant que le widget est visible. Au moins 10 secondes",
+                    "it": "La topologia viene letta solo mentre il widget è visibile. Almeno 10 secondi",
+                    "es": "La topología solo se lee mientras el widget es visible. Al menos 10 segundos",
+                    "pl": "Topologia jest odczytywana tylko wtedy, gdy widżet jest widoczny. Co najmniej 10 sekund",
+                    "uk": "Топологія читається, лише поки віджет видно. Не менше 10 секунд",
+                    "zh-cn": "仅在小部件可见时读取拓扑。至少 10 秒"
+                }
+            },
+            "viewHeader": {
+                "type": "header",
+                "text": {
+                    "en": "Default view",
+                    "de": "Standardansicht",
+                    "ru": "Вид по умолчанию",
+                    "pt": "Vista predefinida",
+                    "nl": "Standaardweergave",
+                    "fr": "Vue par défaut",
+                    "it": "Vista predefinita",
+                    "es": "Vista predeterminada",
+                    "pl": "Widok domyślny",
+                    "uk": "Вигляд за замовчуванням",
+                    "zh-cn": "默认视图"
+                }
+            },
+            "view": {
+                "type": "select",
+                "default": "graph",
+                "label": {
+                    "en": "View",
+                    "de": "Ansicht",
+                    "ru": "Вид",
+                    "pt": "Vista",
+                    "nl": "Weergave",
+                    "fr": "Vue",
+                    "it": "Vista",
+                    "es": "Vista",
+                    "pl": "Widok",
+                    "uk": "Вигляд",
+                    "zh-cn": "视图"
+                },
+                "options": [
+                    {
+                        "value": "graph",
+                        "label": {
+                            "en": "Graph",
+                            "de": "Grafik",
+                            "ru": "Граф",
+                            "pt": "Gráfico",
+                            "nl": "Grafiek",
+                            "fr": "Graphique",
+                            "it": "Grafico",
+                            "es": "Gráfico",
+                            "pl": "Wykres",
+                            "uk": "Граф",
+                            "zh-cn": "图形"
+                        }
+                    },
+                    {
+                        "value": "table",
+                        "label": {
+                            "en": "Table",
+                            "de": "Tabelle",
+                            "ru": "Таблица",
+                            "pt": "Tabela",
+                            "nl": "Tabel",
+                            "fr": "Tableau",
+                            "it": "Tabella",
+                            "es": "Tabla",
+                            "pl": "Tabela",
+                            "uk": "Таблиця",
+                            "zh-cn": "表格"
+                        }
+                    }
+                ]
+            },
+            "onlyConfigured": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "Only configured devices",
+                    "de": "Nur konfigurierte Geräte",
+                    "ru": "Только настроенные устройства",
+                    "pt": "Apenas dispositivos configurados",
+                    "nl": "Alleen geconfigureerde apparaten",
+                    "fr": "Seulement les appareils configurés",
+                    "it": "Solo dispositivi configurati",
+                    "es": "Solo dispositivos configurados",
+                    "pl": "Tylko skonfigurowane urządzenia",
+                    "uk": "Лише налаштовані пристрої",
+                    "zh-cn": "仅已配置的设备"
+                }
+            },
+            "showDisconnected": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "Show disconnected devices",
+                    "de": "Getrennte Geräte anzeigen",
+                    "ru": "Показывать отключённые устройства",
+                    "pt": "Mostrar dispositivos desligados",
+                    "nl": "Losgekoppelde apparaten tonen",
+                    "fr": "Afficher les appareils déconnectés",
+                    "it": "Mostra dispositivi disconnessi",
+                    "es": "Mostrar dispositivos desconectados",
+                    "pl": "Pokaż odłączone urządzenia",
+                    "uk": "Показувати відключені пристрої",
+                    "zh-cn": "显示已断开的设备"
+                }
+            },
+            "showVendor": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show manufacturer",
+                    "de": "Hersteller anzeigen",
+                    "ru": "Показывать производителя",
+                    "pt": "Mostrar o fabricante",
+                    "nl": "Fabrikant tonen",
+                    "fr": "Afficher le fabricant",
+                    "it": "Mostra il produttore",
+                    "es": "Mostrar el fabricante",
+                    "pl": "Pokaż producenta",
+                    "uk": "Показувати виробника",
+                    "zh-cn": "显示制造商"
+                }
+            }
+        }
+    }
+}
