@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tr-064",
-    "version": "5.3.2",
+    "version": "5.4.0",
     "news": {
+      "5.4.0": {
+        "en": "Added web components for Aura and other hosts (`common.webComponents`): FRITZ!Box, mesh topology, presence, person and Wi-Fi QR code",
+        "de": "Webkomponenten für Aura und andere Hosts hinzugefügt (`common.WebComponents`): FRITZ! Box, Mesh-Topologie, Präsenz, Person und WLAN QR Code",
+        "ru": "Добавлены веб-компоненты для Aura и других хостов (`Common.webcomponents`): FRITZ! Ящик, сетчатая топология, присутствие, пользователь и QR-код Wi-Fi",
+        "pt": "Adição de componentes web para Aura e outros hosts: FRITZ! Caixa, malha, presença, pessoa e QR code Wi-Fi",
+        "nl": "Webcomponenten toegevoegd voor Aura en andere hosts (`Common.WebComponents`): FRITZ! Doos, mesh-topologie, aanwezigheid, persoon en QR-code via wifi",
+        "fr": "Ajout de composants Web pour Aura et d'autres hébergeurs (« common.WebComponents ») : FRITZ ! Box, topologie maillée, présence, personne et code QR Wi-Fi",
+        "it": "Aggiunti componenti web per Aura e altri host (`common.WebComponents`): FRITZ! Box, topologia mesh, presenza, persona e QR Code Wi-Fi",
+        "es": "Se han añadido componentes web para Aura y otros hosts (`Common.WebComponents`): FRITZ! Caja, topología de malla, presencia, persona y código QR WiFi",
+        "pl": "Dodano komponenty internetowe dla Aura i innych hostów (`common.webcomponents`): FRITZ! Pudełko, topologia siatki, obecność, osoba i kod QR Wi-Fi",
+        "uk": "Додані веб-компоненти для Aura та інших хостів (`Common.WebComponents`): FRITZ! Коробка, сітчаста топологія, присутність, особа та QR-код Wi-Fi",
+        "zh-cn": "为 Aura 和其他主机添加了 Web 组件（`common.webComponents`）：FRITZ！盒子、网状拓扑、在线状态、人员和 Wi-Fi 二维码"
+      },
       "5.3.2": {
         "en": "Widget \"FRITZ!Box Presence\" in the mode \"Devices\" shows the devices again instead of \"0 of 0\": the object of a device below `devices` is a state, not a channel (#777)",
         "de": "Widget „FRITZ! Box Presence“ im Modus „Geräte“ zeigt die Geräte wieder an statt „0 von 0\": Das Objekt unter „Geräte“ ist ein Status, kein Kanal (#777)",
@@ -80,19 +93,6 @@
         "pl": "Adapter łączy się ponownie z użytkownikiem FritzBox bez odpowiedniego „FRITZ! Ustawienia skrzynki” (np. tylko lista połączeń i wiadomości głosowe); taki użytkownik otrzymuje ostrzeżenie zamiast „FritzBox odmówił logowania”: https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754",
         "uk": "Адаптер знову підключається до користувача FritzBox без права «FRITZ! Налаштування коробки» (наприклад, лише список дзвінків та голосові повідомлення); такий користувач отримує попередження замість «FritzBox відмовився від входу»: https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754",
         "zh-cn": "适配器再次与没有正确的 “FRITZ！” 的 FritzBox 用户连接Box 设置”（例如，仅限通话清单和语音留言）；此类用户收到的不是警告 “FritzBox 拒绝登录”：https://github.com/iobroker-community-adapters/ioBroker.tr-064/issues/754"
-      },
-      "5.2.3": {
-        "en": "Tab \"Persons\": a device of a person can also be given by its host name in the Fritz!Box instead of a MAC or IP address",
-        "de": "Tab „Personen“: Das Gerät einer Person kann im Fritz! Box statt MAC oder IP",
-        "ru": "Вкладка «Лица»: устройство человека также можно указать по имени хоста во Fritz! Ящик вместо MAC-адреса или IP-адреса",
-        "pt": "Aba “Pessoas”: o nome de host de uma pessoa também pode ser usado no Fritz! Caixa em vez de MAC ou IP",
-        "nl": "Tab „Personen”: een apparaat van een persoon kan ook aan de hand van de hostnaam worden opgegeven in de Fritz! Box in plaats van een MAC- of IP-adres",
-        "fr": "Onglet « Personnes » : l'appareil d'une personne peut aussi être appelé Fritz ! Box au lieu d'une adresse MAC ou IP",
-        "it": "Scheda «Persone»: il nome host di una persona può anche essere dato nel Fritz! Box anziché un indirizzo MAC o IP",
-        "es": "Pestaña «Personas»: ¡el dispositivo de una persona también puede ir por su nombre de host en Fritz! Box en lugar de una dirección MAC o IP",
-        "pl": "Zakładka „Osoby”: urządzenie osoby może być również nadane nazwą hosta w Fritz! Pole zamiast adresu MAC lub IP",
-        "uk": "Вкладка «Персони»: пристрій людини також можна дати своїм ім'ям господаря в Fritz! Коробка замість MAC або IP-адреси",
-        "zh-cn": "选项卡 “Persons”：在 Fritz 中也可以通过其主机名给出一个人的设备！盒子而不是 MAC 或 IP 地址"
       }
     },
     "titleLang": {

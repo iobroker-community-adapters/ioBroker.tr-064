@@ -230,7 +230,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 5.4.0 (2026-11-08)
 * (GermanBluefox) Added web components for Aura and other hosts (`common.webComponents`): FRITZ!Box, mesh topology, presence, person and Wi-Fi QR code
 
 ### 5.3.2 (2026-11-04)
@@ -244,10 +244,6 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 
 ### 5.2.6 (2026-10-22)
 * (GermanBluefox) Widget "FRITZ!Box Person": the comings and goings can be exported as a CSV file for Excel (#763)
-
-### 5.2.5 (2026-10-21)
-- (@GermanBluefox) Rejected calls (type 10) are now added to the call lists "all" and "missed" (#757)
-- (@GermanBluefox) Fixed: IP addresses were missing in the mesh table view (#755)
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
