@@ -69,7 +69,7 @@
     "test:unit": "mocha test/mesh --exit",
     "test": "npm run test:package && npm run test:unit",
     "translate": "translate-adapter -b admin/i18n/en.json",
-    "release": "release-script --noPush -y",
+    "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
