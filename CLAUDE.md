@@ -12,9 +12,10 @@ TypeScript (CommonJS output). Sources live in `src/`, the published and runnable
 
 ```bash
 npm run build                             # tsc -p tsconfig.build.json  -> build/
-npm run build:gui                         # tsx tasks.ts: sync src-shared, build src-admin, src-widgets, src-devices
+npm run build:gui                         # tsx tasks.ts: sync src-shared, build src-admin, src-widgets, src-devices, src-webcomponents
 npm run build:admin                       # only src-admin   -> admin/custom/      (also build:widgets -> widgets/tr-064/,
-                                          #                                       build:devices -> admin/dm-widgets/)
+                                          #                                       build:devices -> admin/dm-widgets/,
+                                          #                                       build:wc -> admin/webcomponents/)
 npm run watch                             # same in watch mode
 npm run check                             # type check only (tsconfig.json and tsconfig.tasks.json, noEmit)
 npm run lint                              # eslint (@iobroker/eslint-config, flat config)
@@ -60,10 +61,13 @@ There is deliberately **no `prepare` script** — `npm ci`/`npm install` does no
 | `src-shared/` | mesh topology UI used by all GUI projects (`MeshView`, `meshApi`, layout, i18n) - see its README |
 | `src-widgets/` | vis-2 widget set `vis2Tr064Widgets` (`Tr064FritzBox`, `Tr064Mesh`, `Tr064Presence`, `Tr064Person`, `Tr064GuestWlan`) -> `widgets/tr-064/` (**committed**), registered in `common.visWidgets` |
 | `src-devices/` | ioBroker.devices plugin (`FritzBoxComponent`, `PersonComponent`, `GuestWlanComponent`) -> `admin/dm-widgets/` (**committed**), registered in `common.deviceWidgets` |
+| `src-webcomponents/` | web components (`@iobroker/web-components`) `iob-tr064-fritzbox`, `-mesh`, `-presence`, `-person`, `-guest-wlan` -> `admin/webcomponents/` (**committed**), registered in `common.webComponents` |
 
 `src-shared/` has no `node_modules`: bare imports from outside a project root would not resolve against the project's React/MUI. `tsx tasks.ts --sync` (also `prestart`/`prebuild` of every GUI project) copies it into `<project>/src/shared/`, which is gitignored - always edit `src-shared/`, never the copies (an `eslint --fix` in a project only fixes the copy).
 
 The GUI projects use different hosts: admin and vis-2 share React/MUI through module federation, ioBroker.devices does **not** - it puts them on `window.__iobrokerShared__`. `src-devices/vite.config.ts` therefore redirects `react`, `@mui/material`, `@mui/material/styles` and `@mui/icons-material` to `src-devices/src/bridge/*`, which export the host's instances. A new name which `src-shared` imports from these packages has to be added to the bridge (the build fails otherwise); never import sub-paths like `@mui/material/Box` in `src-shared`. `tasks.ts` builds every project with its own `npm run build` - `buildReact()` of build-tools forks vite with the execArgv of tsx and breaks the CommonJS vite config of `src-devices`.
+
+`src-webcomponents/` is different: no module federation, no MUI, React is the one of the host (the four React imports point at `lib/esm/react-19.js`, relative to the module). Every component is a build of its own (`vite build --mode <component>`) into **one** module plus its manifest `<name>.json`, which the build checks with `checkManifest()`. It imports the pure modules of `src-shared` (`meshApi`, `meshLayout`, `guestWlanApi`, `presenceApi`) and `src-widgets/src/format.ts` by their relative path - never a `.tsx` with MUI - and gets no copy in `src/shared/`. The words come from the dictionaries of the adapter (`tr064_*`, `fritzdm_*`, the vis-2 keys with the prefix `vis_`, own `wc_*` in `src/i18n.ts`): the build puts only the keys which the sources name literally (or as `` `prefix_${x}` ``) into a module and fails on a key without English text. The name of a component is the label of the native widget (devices label if there is one), so vis-2 and devices hide the component in favor of their own widget. The elements measure nothing: they lay out with container queries.
 
 `src/lib/adapter-config.d.ts` is hand-maintained and must be kept in sync with `native` in `io-package.json` **and** with `admin/jsonConfig.json` — nothing generates it.
 

@@ -1,0 +1,519 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ioBroker/web-components/main/schemas/manifest.json",
+    "manifestVersion": 1,
+    "tag": "iob-tr064-person",
+    "module": "tr064-person.js",
+    "name": {
+        "en": "Person",
+        "de": "Person",
+        "ru": "Person",
+        "pt": "Person",
+        "nl": "Person",
+        "fr": "Person",
+        "it": "Person",
+        "es": "Person",
+        "pl": "Person",
+        "uk": "Person",
+        "zh-cn": "Person"
+    },
+    "description": {
+        "en": "Presence of a person: at home or away, since when, last came and left, a click shows the comings and goings",
+        "de": "Anwesenheit einer Person: zu Hause oder unterwegs, seit wann, zuletzt gekommen und gegangen, ein Klick zeigt das Kommen und Gehen",
+        "ru": "Присутствие человека: дома или нет, с какого времени, последний приход и уход, по нажатию показываются приходы и уходы",
+        "pt": "Presença de uma pessoa: em casa ou fora, desde quando, última chegada e saída, um clique mostra as chegadas e saídas",
+        "nl": "Aanwezigheid van een persoon: thuis of weg, sinds wanneer, laatst gekomen en gegaan, een klik toont het komen en gaan",
+        "fr": "Présence d'une personne : à la maison ou absente, depuis quand, dernière arrivée et dernier départ, un clic affiche les arrivées et départs",
+        "it": "Presenza di una persona: a casa o fuori, da quando, ultimo arrivo e ultima uscita, un clic mostra arrivi e uscite",
+        "es": "Presencia de una persona: en casa o fuera, desde cuándo, última llegada y salida, un clic muestra las llegadas y salidas",
+        "pl": "Obecność osoby: w domu lub poza nim, od kiedy, ostatnie przyjście i wyjście, kliknięcie pokazuje przyjścia i wyjścia",
+        "uk": "Присутність особи: вдома чи ні, з якого часу, останній прихід і відхід, натискання показує приходи та відходи",
+        "zh-cn": "人员在家状态：在家或离开、持续时间、最近到达和离开，点击显示到达与离开记录"
+    },
+    "icon": "../dm-widgets/person.svg",
+    "size": {
+        "width": 300,
+        "height": 340
+    },
+    "settings": {
+        "type": "panel",
+        "items": {
+            "person": {
+                "type": "objectId",
+                "types": "channel",
+                "root": "tr-064",
+                "label": {
+                    "en": "Person",
+                    "de": "Person",
+                    "ru": "Персона",
+                    "pt": "Pessoa",
+                    "nl": "Persoon",
+                    "fr": "Personne",
+                    "it": "Persona",
+                    "es": "Persona",
+                    "pl": "Osoba",
+                    "uk": "Особа",
+                    "zh-cn": "人员"
+                },
+                "help": {
+                    "en": "The channel of the person: tr-064.0.presence.persons.<name>",
+                    "de": "Der Kanal der Person: tr-064.0.presence.persons.<Name>",
+                    "ru": "Канал человека: tr-064.0.presence.persons.<имя>",
+                    "pt": "O canal da pessoa: tr-064.0.presence.persons.<nome>",
+                    "nl": "Het kanaal van de persoon: tr-064.0.presence.persons.<naam>",
+                    "fr": "Le canal de la personne : tr-064.0.presence.persons.<nom>",
+                    "it": "Il canale della persona: tr-064.0.presence.persons.<nome>",
+                    "es": "El canal de la persona: tr-064.0.presence.persons.<nombre>",
+                    "pl": "Kanał osoby: tr-064.0.presence.persons.<nazwa>",
+                    "uk": "Канал особи: tr-064.0.presence.persons.<ім’я>",
+                    "zh-cn": "人员的通道：tr-064.0.presence.persons.<名称>"
+                }
+            },
+            "showName": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show name",
+                    "de": "Name anzeigen",
+                    "ru": "Показывать имя",
+                    "pt": "Mostrar nome",
+                    "nl": "Naam tonen",
+                    "fr": "Afficher le nom",
+                    "it": "Mostra nome",
+                    "es": "Mostrar nombre",
+                    "pl": "Pokaż nazwę",
+                    "uk": "Показувати імʼя",
+                    "zh-cn": "显示名称"
+                }
+            },
+            "nameText": {
+                "type": "text",
+                "label": {
+                    "en": "Name",
+                    "de": "Name",
+                    "ru": "Имя",
+                    "pt": "Nome",
+                    "nl": "Naam",
+                    "fr": "Nom",
+                    "it": "Nome",
+                    "es": "Nombre",
+                    "pl": "Nazwa",
+                    "uk": "Ім'я",
+                    "zh-cn": "名称"
+                },
+                "help": {
+                    "en": "Empty = name of the person",
+                    "de": "Leer = Name der Person",
+                    "ru": "Пусто = имя персоны",
+                    "pt": "Vazio = nome da pessoa",
+                    "nl": "Leeg = naam van de persoon",
+                    "fr": "Vide = nom de la personne",
+                    "it": "Vuoto = nome della persona",
+                    "es": "Vacío = nombre de la persona",
+                    "pl": "Puste = nazwa osoby",
+                    "uk": "Порожньо = імʼя особи",
+                    "zh-cn": "空 = 人员名称"
+                },
+                "hidden": "data.showName === false"
+            },
+            "image": {
+                "type": "text",
+                "label": {
+                    "en": "Image",
+                    "de": "Bild",
+                    "ru": "Изображение",
+                    "pt": "Imagem",
+                    "nl": "Afbeelding",
+                    "fr": "Image",
+                    "it": "Immagine",
+                    "es": "Imagen",
+                    "pl": "Obraz",
+                    "uk": "Зображення",
+                    "zh-cn": "图片"
+                },
+                "help": {
+                    "en": "Address of a photo of the person. Empty: an icon",
+                    "de": "Adresse eines Fotos der Person. Leer: ein Symbol",
+                    "ru": "Адрес фотографии человека. Пусто: значок",
+                    "pt": "Endereço de uma foto da pessoa. Vazio: um ícone",
+                    "nl": "Adres van een foto van de persoon. Leeg: een pictogram",
+                    "fr": "Adresse d'une photo de la personne. Vide : une icône",
+                    "it": "Indirizzo di una foto della persona. Vuoto: un’icona",
+                    "es": "Dirección de una foto de la persona. Vacío: un icono",
+                    "pl": "Adres zdjęcia osoby. Puste: ikona",
+                    "uk": "Адреса фотографії особи. Порожньо: значок",
+                    "zh-cn": "人员照片的地址。为空：显示图标"
+                }
+            },
+            "grayAbsent": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Image gray when absent",
+                    "de": "Bild grau bei Abwesenheit",
+                    "ru": "Серое изображение при отсутствии",
+                    "pt": "Imagem cinza quando ausente",
+                    "nl": "Afbeelding grijs bij afwezigheid",
+                    "fr": "Image grise en cas d'absence",
+                    "it": "Immagine grigia se assente",
+                    "es": "Imagen gris cuando está ausente",
+                    "pl": "Szary obraz przy nieobecności",
+                    "uk": "Сіре зображення за відсутності",
+                    "zh-cn": "离开时图片显示为灰色"
+                }
+            },
+            "presentHeader": {
+                "type": "header",
+                "text": {
+                    "en": "Present",
+                    "de": "Anwesend",
+                    "ru": "Дома",
+                    "pt": "Presente",
+                    "nl": "Aanwezig",
+                    "fr": "Présent",
+                    "it": "Presente",
+                    "es": "Presente",
+                    "pl": "Obecny",
+                    "uk": "Вдома",
+                    "zh-cn": "在场"
+                }
+            },
+            "presentText": {
+                "type": "text",
+                "label": {
+                    "en": "Text",
+                    "de": "Text",
+                    "ru": "Текст",
+                    "pt": "Texto",
+                    "nl": "Tekst",
+                    "fr": "Texte",
+                    "it": "Testo",
+                    "es": "Texto",
+                    "pl": "Tekst",
+                    "uk": "Текст",
+                    "zh-cn": "文本"
+                },
+                "help": {
+                    "en": "Empty = \"present\"",
+                    "de": "Leer = \"anwesend\"",
+                    "ru": "Пусто = «дома»",
+                    "pt": "Vazio = \"presente\"",
+                    "nl": "Leeg = \"aanwezig\"",
+                    "fr": "Vide = « présent »",
+                    "it": "Vuoto = \"presente\"",
+                    "es": "Vacío = \"presente\"",
+                    "pl": "Puste = „obecny”",
+                    "uk": "Порожньо = «вдома»",
+                    "zh-cn": "空 = “在场”"
+                }
+            },
+            "presentColor": {
+                "type": "color",
+                "label": {
+                    "en": "Color",
+                    "de": "Farbe",
+                    "ru": "Цвет",
+                    "pt": "Cor",
+                    "nl": "Kleur",
+                    "fr": "Couleur",
+                    "it": "Colore",
+                    "es": "Color",
+                    "pl": "Kolor",
+                    "uk": "Колір",
+                    "zh-cn": "颜色"
+                }
+            },
+            "absentHeader": {
+                "type": "header",
+                "text": {
+                    "en": "Absent",
+                    "de": "Abwesend",
+                    "ru": "Нет дома",
+                    "pt": "Ausente",
+                    "nl": "Afwezig",
+                    "fr": "Absent",
+                    "it": "Assente",
+                    "es": "Ausente",
+                    "pl": "Nieobecny",
+                    "uk": "Немає вдома",
+                    "zh-cn": "离开"
+                }
+            },
+            "absentText": {
+                "type": "text",
+                "label": {
+                    "en": "Text",
+                    "de": "Text",
+                    "ru": "Текст",
+                    "pt": "Texto",
+                    "nl": "Tekst",
+                    "fr": "Texte",
+                    "it": "Testo",
+                    "es": "Texto",
+                    "pl": "Tekst",
+                    "uk": "Текст",
+                    "zh-cn": "文本"
+                },
+                "help": {
+                    "en": "Empty = \"away\"",
+                    "de": "Leer = \"abwesend\"",
+                    "ru": "Пусто = «нет дома»",
+                    "pt": "Vazio = \"ausente\"",
+                    "nl": "Leeg = \"afwezig\"",
+                    "fr": "Vide = « absent »",
+                    "it": "Vuoto = \"assente\"",
+                    "es": "Vacío = \"ausente\"",
+                    "pl": "Puste = „nieobecny”",
+                    "uk": "Порожньо = «немає вдома»",
+                    "zh-cn": "空 = “离开”"
+                }
+            },
+            "absentColor": {
+                "type": "color",
+                "label": {
+                    "en": "Color",
+                    "de": "Farbe",
+                    "ru": "Цвет",
+                    "pt": "Cor",
+                    "nl": "Kleur",
+                    "fr": "Couleur",
+                    "it": "Colore",
+                    "es": "Color",
+                    "pl": "Kolor",
+                    "uk": "Колір",
+                    "zh-cn": "颜色"
+                }
+            },
+            "timesHeader": {
+                "type": "header",
+                "text": {
+                    "en": "Times",
+                    "de": "Zeiten",
+                    "ru": "Время",
+                    "pt": "Horários",
+                    "nl": "Tijden",
+                    "fr": "Heures",
+                    "it": "Orari",
+                    "es": "Horas",
+                    "pl": "Czasy",
+                    "uk": "Час",
+                    "zh-cn": "时间"
+                }
+            },
+            "showDuration": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show duration",
+                    "de": "Dauer anzeigen",
+                    "ru": "Показывать длительность",
+                    "pt": "Mostrar duração",
+                    "nl": "Duur tonen",
+                    "fr": "Afficher la durée",
+                    "it": "Mostra durata",
+                    "es": "Mostrar duración",
+                    "pl": "Pokaż czas trwania",
+                    "uk": "Показувати тривалість",
+                    "zh-cn": "显示持续时间"
+                }
+            },
+            "showArrival": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show last arrival",
+                    "de": "Letzte Ankunft anzeigen",
+                    "ru": "Показывать последний приход",
+                    "pt": "Mostrar última chegada",
+                    "nl": "Laatste aankomst tonen",
+                    "fr": "Afficher la dernière arrivée",
+                    "it": "Mostra l'ultimo arrivo",
+                    "es": "Mostrar última llegada",
+                    "pl": "Pokaż ostatnie przyjście",
+                    "uk": "Показувати останній прихід",
+                    "zh-cn": "显示最近到达"
+                }
+            },
+            "showDeparture": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show last departure",
+                    "de": "Letztes Gehen anzeigen",
+                    "ru": "Показывать последний уход",
+                    "pt": "Mostrar última saída",
+                    "nl": "Laatste vertrek tonen",
+                    "fr": "Afficher le dernier départ",
+                    "it": "Mostra l'ultima partenza",
+                    "es": "Mostrar última salida",
+                    "pl": "Pokaż ostatnie wyjście",
+                    "uk": "Показувати останній відхід",
+                    "zh-cn": "显示最近离开"
+                }
+            },
+            "showToday": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "Show today's sums",
+                    "de": "Summen von heute anzeigen",
+                    "ru": "Показывать суммы за сегодня",
+                    "pt": "Mostrar totais de hoje",
+                    "nl": "Totalen van vandaag tonen",
+                    "fr": "Afficher les totaux d'aujourd'hui",
+                    "it": "Mostra i totali di oggi",
+                    "es": "Mostrar totales de hoy",
+                    "pl": "Pokaż sumy z dzisiaj",
+                    "uk": "Показувати суми за сьогодні",
+                    "zh-cn": "显示今日合计"
+                }
+            },
+            "showDevices": {
+                "type": "checkbox",
+                "default": false,
+                "label": {
+                    "en": "Show active devices",
+                    "de": "Aktive Geräte anzeigen",
+                    "ru": "Показывать активные устройства",
+                    "pt": "Mostrar dispositivos ativos",
+                    "nl": "Actieve apparaten tonen",
+                    "fr": "Afficher les appareils actifs",
+                    "it": "Mostra dispositivi attivi",
+                    "es": "Mostrar dispositivos activos",
+                    "pl": "Pokaż aktywne urządzenia",
+                    "uk": "Показувати активні пристрої",
+                    "zh-cn": "显示活动设备"
+                }
+            },
+            "historyHeader": {
+                "type": "header",
+                "text": {
+                    "en": "History",
+                    "de": "Verlauf",
+                    "ru": "История",
+                    "pt": "Histórico",
+                    "nl": "Geschiedenis",
+                    "fr": "Historique",
+                    "it": "Cronologia",
+                    "es": "Historial",
+                    "pl": "Historia",
+                    "uk": "Історія",
+                    "zh-cn": "历史"
+                }
+            },
+            "showHistory": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show history",
+                    "de": "Verlauf anzeigen",
+                    "ru": "Показывать историю",
+                    "pt": "Mostrar histórico",
+                    "nl": "Geschiedenis tonen",
+                    "fr": "Afficher l'historique",
+                    "it": "Mostra cronologia",
+                    "es": "Mostrar historial",
+                    "pl": "Pokaż historię",
+                    "uk": "Показувати історію",
+                    "zh-cn": "显示历史"
+                },
+                "help": {
+                    "en": "Only if the widget is high enough. From a history instance if it logs the state \"present\" of the person, otherwise the list of the adapter",
+                    "de": "Nur wenn das Widget hoch genug ist. Aus einer History-Instanz, wenn sie den Zustand \"present\" der Person aufzeichnet, sonst die Liste des Adapters",
+                    "ru": "Только если виджет достаточно высокий. Из экземпляра истории, если он записывает состояние «present» персоны, иначе список адаптера",
+                    "pt": "Apenas se o widget for alto o suficiente. De uma instância de histórico se ela registar o estado \"present\" da pessoa, caso contrário a lista do adaptador",
+                    "nl": "Alleen als de widget hoog genoeg is. Uit een geschiedenis-instantie als die de toestand \"present\" van de persoon logt, anders de lijst van de adapter",
+                    "fr": "Seulement si le widget est assez haut. Depuis une instance d'historique si elle enregistre l'état « present » de la personne, sinon la liste de l'adaptateur",
+                    "it": "Solo se il widget è abbastanza alto. Da un'istanza di cronologia se registra lo stato \"present\" della persona, altrimenti l'elenco dell'adattatore",
+                    "es": "Solo si el widget es lo bastante alto. De una instancia de historial si registra el estado \"present\" de la persona; si no, la lista del adaptador",
+                    "pl": "Tylko jeśli widżet jest wystarczająco wysoki. Z instancji historii, jeśli rejestruje stan „present” osoby, w przeciwnym razie lista adaptera",
+                    "uk": "Лише якщо віджет достатньо високий. З екземпляра історії, якщо він записує стан «present» особи, інакше список адаптера",
+                    "zh-cn": "仅当小部件足够高时显示。如果历史实例记录了此人的“present”状态则从中读取，否则使用适配器的列表"
+                }
+            },
+            "historyCount": {
+                "type": "number",
+                "default": 10,
+                "min": 1,
+                "max": 100,
+                "label": {
+                    "en": "Number of entries",
+                    "de": "Anzahl der Einträge",
+                    "ru": "Количество записей",
+                    "pt": "Número de entradas",
+                    "nl": "Aantal items",
+                    "fr": "Nombre d'entrées",
+                    "it": "Numero di voci",
+                    "es": "Número de entradas",
+                    "pl": "Liczba wpisów",
+                    "uk": "Кількість записів",
+                    "zh-cn": "条目数"
+                },
+                "hidden": "data.showHistory === false"
+            },
+            "historyDays": {
+                "type": "number",
+                "default": 7,
+                "min": 1,
+                "max": 365,
+                "label": {
+                    "en": "Days",
+                    "de": "Tage",
+                    "ru": "Дни",
+                    "pt": "Dias",
+                    "nl": "Dagen",
+                    "fr": "Jours",
+                    "it": "Giorni",
+                    "es": "Días",
+                    "pl": "Dni",
+                    "uk": "Дні",
+                    "zh-cn": "天数"
+                },
+                "help": {
+                    "en": "How many days are read from a history instance",
+                    "de": "Wie viele Tage aus einer History-Instanz gelesen werden",
+                    "ru": "Сколько дней читается из экземпляра истории",
+                    "pt": "Quantos dias são lidos de uma instância de histórico",
+                    "nl": "Hoeveel dagen uit een geschiedenis-instantie worden gelezen",
+                    "fr": "Combien de jours sont lus depuis une instance d'historique",
+                    "it": "Quanti giorni vengono letti da un'istanza di cronologia",
+                    "es": "Cuántos días se leen de una instancia de historial",
+                    "pl": "Ile dni jest odczytywanych z instancji historii",
+                    "uk": "Скільки днів читається з екземпляра історії",
+                    "zh-cn": "从历史实例读取的天数"
+                },
+                "hidden": "data.showHistory === false"
+            },
+            "showExport": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show Excel export",
+                    "de": "Excel-Export anzeigen",
+                    "ru": "Показывать экспорт в Excel",
+                    "pt": "Mostrar exportação para Excel",
+                    "nl": "Excel-export tonen",
+                    "fr": "Afficher l'export Excel",
+                    "it": "Mostra esportazione Excel",
+                    "es": "Mostrar exportación a Excel",
+                    "pl": "Pokaż eksport do Excela",
+                    "uk": "Показувати експорт в Excel",
+                    "zh-cn": "显示 Excel 导出"
+                },
+                "help": {
+                    "en": "Button in the history which downloads the comings and goings of the set days as a CSV file for Excel",
+                    "de": "Schaltfläche im Verlauf, die das Kommen und Gehen der eingestellten Tage als CSV-Datei für Excel herunterlädt",
+                    "ru": "Кнопка в истории, которая загружает приходы и уходы за заданные дни в виде CSV-файла для Excel",
+                    "pt": "Botão no histórico que descarrega as chegadas e saídas dos dias definidos como ficheiro CSV para o Excel",
+                    "nl": "Knop in de geschiedenis die het komen en gaan van de ingestelde dagen downloadt als CSV-bestand voor Excel",
+                    "fr": "Bouton dans l'historique qui télécharge les arrivées et départs des jours configurés sous forme de fichier CSV pour Excel",
+                    "it": "Pulsante nella cronologia che scarica gli arrivi e le partenze dei giorni impostati come file CSV per Excel",
+                    "es": "Botón en el historial que descarga las llegadas y salidas de los días configurados como archivo CSV para Excel",
+                    "pl": "Przycisk w historii, który pobiera przyjścia i wyjścia z ustawionych dni jako plik CSV dla Excela",
+                    "uk": "Кнопка в історії, яка завантажує приходи та відходи за задані дні у вигляді CSV-файлу для Excel",
+                    "zh-cn": "历史中的按钮，将所设天数内的到达和离开下载为适用于 Excel 的 CSV 文件"
+                },
+                "hidden": "data.showHistory === false"
+            }
+        }
+    }
+}

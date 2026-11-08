@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "useDefineForClassFields": true,
+        "lib": ["DOM", "DOM.Iterable", "ES2022"],
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "jsx": "react-jsx",
+        "types": ["@iobroker/types", "node"],
+        // `../src-shared` lies outside of this package: its imports have to find our copies, not the ones of
+        // folders above the adapter
+        "paths": {
+            "react": ["./node_modules/@types/react"],
+            "qrcode-generator": ["./node_modules/qrcode-generator"]
+        }
+    },
+    "include": ["src", "vite.config.ts"]
+}

@@ -1,15 +1,17 @@
 /**
  * Builds the GUI parts of the adapter. Run with `tsx tasks.ts` (see the `build:*` scripts).
  *
- *   src-admin/    -> admin/custom/       JsonConfig custom component of the tab "Mesh"
- *   src-widgets/  -> widgets/tr-064/     vis-2 widget set
- *   src-devices/  -> admin/dm-widgets/   widgets for ioBroker.devices
+ *   src-admin/          -> admin/custom/          JsonConfig custom component of the tab "Mesh"
+ *   src-widgets/        -> widgets/tr-064/        vis-2 widget set
+ *   src-devices/        -> admin/dm-widgets/      widgets for ioBroker.devices
+ *   src-webcomponents/  -> admin/webcomponents/   web components for every host (`common.webComponents`)
  *
- * All three are built with vite and module federation, which pre-builds the whole shared GUI
- * stack - so their output is committed instead of being built by `npm run build` on install.
+ * The first three are built with vite and module federation, which pre-builds the whole shared GUI
+ * stack - so their output is committed instead of being built by `npm run build` on install. The
+ * web components are plain ES modules, one per component, and committed for the same reason.
  *
  * `tsx tasks.ts`                   - sync, (install,) build and copy every existing project
- * `tsx tasks.ts --admin --devices` - only these projects (also `--widgets`)
+ * `tsx tasks.ts --admin --devices` - only these projects (also `--widgets`, `--wc`)
  * `tsx tasks.ts --install`         - run `npm install` even if `node_modules` exists
  * `tsx tasks.ts --copy`            - only copy the existing builds
  * `tsx tasks.ts --sync`            - only copy `src-shared/**` into `src/shared/` of every project
@@ -40,6 +42,10 @@ interface Project {
     versionFromRoot?: boolean;
     /** Copies additional files after the build */
     extra?: () => void;
+    /** Copies the build itself, instead of the remote entry of module federation and its chunks */
+    copy?: () => void;
+    /** The project imports `src-shared` from where it is, it gets no copy in `src/shared/` */
+    noSharedCopy?: boolean;
 }
 
 /** Copies all JSON files of a folder into another one */
@@ -48,6 +54,25 @@ function copyJsonFiles(from: string, to: string): void {
     for (const file of readdirSync(from).filter(name => name.endsWith('.json'))) {
         cpSync(join(from, file), join(to, file));
     }
+}
+
+/**
+ * Copies the web components: one ES module and its manifest (`<name>.json`, listed in
+ * `common.webComponents`) per component, nothing else
+ */
+function copyWebComponents(): void {
+    const build = join(ROOT, 'src-webcomponents/build');
+    const dest = join(ROOT, 'admin/webcomponents');
+    const files = existsSync(build) ? readdirSync(build).filter(name => /.(js|json)$/.test(name)) : [];
+    if (!files.some(name => name.endsWith('.json'))) {
+        throw new Error('src-webcomponents/build has no manifest - build first');
+    }
+    rmSync(dest, { recursive: true, force: true });
+    mkdirSync(dest, { recursive: true });
+    for (const file of files) {
+        cpSync(join(build, file), join(dest, file));
+    }
+    console.log('Copied src-webcomponents/build to admin/webcomponents');
 }
 
 const PROJECTS: Project[] = [
@@ -82,13 +107,22 @@ const PROJECTS: Project[] = [
             }
         },
     },
+    {
+        option: '--wc',
+        dir: 'src-webcomponents',
+        entry: 'tr064-fritzbox.js',
+        dest: 'admin/webcomponents',
+        copy: copyWebComponents,
+        // pure modules of src-shared are imported by their path; React comes from the host
+        noSharedCopy: true,
+    },
 ];
 
 /** Copies `src-shared/**` into `src/shared/` of every existing project */
 function sync(): void {
     for (const project of PROJECTS) {
         const dir = join(ROOT, project.dir);
-        if (!existsSync(join(dir, 'package.json'))) {
+        if (project.noSharedCopy || !existsSync(join(dir, 'package.json'))) {
             continue;
         }
         const target = join(dir, 'src', 'shared');
@@ -104,6 +138,10 @@ function sync(): void {
  * of `npm start` with mock data - a chunk of it is copied only if a needed file refers to it.
  */
 function copy(project: Project): void {
+    if (project.copy) {
+        project.copy();
+        return;
+    }
     const build = join(ROOT, project.dir, 'build');
     const dest = join(ROOT, project.dest);
     if (!existsSync(join(build, project.entry))) {
