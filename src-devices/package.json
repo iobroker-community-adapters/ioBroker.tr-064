@@ -33,7 +33,7 @@
         "qrcode-generator": "^2.0.4",
         "react": "^19.3.0",
         "react-dom": "^19.3.0",
-        "vite": "^8.3.4",
+        "vite": "^8.3.5",
         "vite-plugin-commonjs": "^0.10.4"
     },
     "browserslist": {
