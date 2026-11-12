@@ -19,7 +19,7 @@
         "@iobroker/dm-widgets": "^2.0.1",
         "@iobroker/eslint-config": "^2.3.4",
         "@iobroker/gui-components": "^10.3.10",
-        "@iobroker/json-config": "^10.1.2",
+        "@iobroker/json-config": "^10.1.12",
         "@iobroker/types": "^7.2.5",
         "@module-federation/runtime": "^2.9.2",
         "@module-federation/vite": "^1.23.9",
