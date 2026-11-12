@@ -21,7 +21,7 @@
         "@iobroker/gui-components": "^10.3.10",
         "@iobroker/json-config": "^10.1.2",
         "@iobroker/types": "^7.2.5",
-        "@module-federation/runtime": "^2.9.2",
+        "@module-federation/runtime": "^2.9.3",
         "@module-federation/vite": "^1.23.5",
         "@mui/icons-material": "^9.5.0",
         "@mui/material": "^9.5.0",
