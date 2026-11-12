@@ -249,11 +249,116 @@
       ]
     },
     "webComponents": [
-      "webcomponents/tr064-fritzbox.json",
-      "webcomponents/tr064-mesh.json",
-      "webcomponents/tr064-presence.json",
-      "webcomponents/tr064-person.json",
-      "webcomponents/tr064-guest-wlan.json"
+      {
+        "manifest": "webcomponents/tr064-fritzbox.json",
+        "tag": "iob-tr064-fritzbox",
+        "name": {
+          "en": "FRITZ!Box",
+          "de": "FRITZ!Box",
+          "ru": "FRITZ!Box",
+          "pt": "FRITZ!Box",
+          "nl": "FRITZ!Box",
+          "fr": "FRITZ!Box",
+          "it": "FRITZ!Box",
+          "es": "FRITZ!Box",
+          "pl": "FRITZ!Box",
+          "uk": "FRITZ!Box",
+          "zh-cn": "FRITZ!Box"
+        },
+        "icon": "../dm-widgets/fritzbox.png",
+        "size": {
+          "width": 360,
+          "height": 280
+        }
+      },
+      {
+        "manifest": "webcomponents/tr064-mesh.json",
+        "tag": "iob-tr064-mesh",
+        "name": {
+          "en": "Mesh topology",
+          "de": "Mesh-Topologie",
+          "ru": "Топология Mesh",
+          "pt": "Topologia mesh",
+          "nl": "Mesh-topologie",
+          "fr": "Topologie mesh",
+          "it": "Topologia mesh",
+          "es": "Topología mesh",
+          "pl": "Topologia mesh",
+          "uk": "Топологія Mesh",
+          "zh-cn": "Mesh 拓扑"
+        },
+        "icon": "../tr-064.png",
+        "size": {
+          "width": 720,
+          "height": 480
+        }
+      },
+      {
+        "manifest": "webcomponents/tr064-presence.json",
+        "tag": "iob-tr064-presence",
+        "name": {
+          "en": "Presence",
+          "de": "Anwesenheit",
+          "ru": "Присутствие",
+          "pt": "Presença",
+          "nl": "Aanwezigheid",
+          "fr": "Présence",
+          "it": "Presenza",
+          "es": "Presencia",
+          "pl": "Obecność",
+          "uk": "Присутність",
+          "zh-cn": "在家状态"
+        },
+        "icon": "../tr-064.png",
+        "size": {
+          "width": 320,
+          "height": 360
+        }
+      },
+      {
+        "manifest": "webcomponents/tr064-person.json",
+        "tag": "iob-tr064-person",
+        "name": {
+          "en": "Person",
+          "de": "Person",
+          "ru": "Person",
+          "pt": "Person",
+          "nl": "Person",
+          "fr": "Person",
+          "it": "Person",
+          "es": "Person",
+          "pl": "Person",
+          "uk": "Person",
+          "zh-cn": "Person"
+        },
+        "icon": "../dm-widgets/person.svg",
+        "size": {
+          "width": 300,
+          "height": 340
+        }
+      },
+      {
+        "manifest": "webcomponents/tr064-guest-wlan.json",
+        "tag": "iob-tr064-guest-wlan",
+        "name": {
+          "en": "Wi-Fi QR code",
+          "de": "Wi-Fi QR code",
+          "ru": "Wi-Fi QR code",
+          "pt": "Wi-Fi QR code",
+          "nl": "Wi-Fi QR code",
+          "fr": "Wi-Fi QR code",
+          "it": "Wi-Fi QR code",
+          "es": "Wi-Fi QR code",
+          "pl": "Wi-Fi QR code",
+          "uk": "Wi-Fi QR code",
+          "zh-cn": "Wi-Fi QR code"
+        },
+        "icon": "../dm-widgets/guest-wlan.svg",
+        "size": {
+          "width": 220,
+          "height": 280
+        }
+      }
     ],
     "restartAdapters": [
       "vis-2"
