@@ -287,6 +287,15 @@ export function valType(val: unknown): ioBroker.StateValue {
     return val as ioBroker.StateValue;
 }
 
+/** Whether a written value means "on": the texts "0", "false", "off" and "" are off like false and 0 */
+export function isOn(val: ioBroker.StateValue): boolean {
+    if (typeof val === 'string') {
+        const text = val.trim().toLowerCase();
+        return text !== '' && text !== 'false' && text !== 'off' && Number(text) !== 0;
+    }
+    return !!val;
+}
+
 /** Copies all attributes of `from` into `dest`, sub-objects are copied recursively */
 export function fullExtend<T extends Record<string, any>>(dest: T, from: Record<string, any>): T {
     Object.getOwnPropertyNames(from).forEach(name => {

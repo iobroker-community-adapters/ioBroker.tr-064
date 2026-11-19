@@ -100,7 +100,7 @@ For a longer history, switch on a history instance (history, sql or influxdb) fo
 
 ### Answering machine (in German: `Anrufbeantworter`)
 
-You can switch the answering machine on and off. With the state `cbIndex` you select the number of the answering machine.
+You can switch the answering machine on and off with the state `states.ab`. With the state `states.abIndex` you select the number of the answering machine (0 = the first). Alternatively write `<index>,<on>` into `states.ab`, e.g. `1,0` switches the second answering machine off (`0`, `false` and `off` mean off).
 
 ### Call monitor
 
@@ -234,6 +234,10 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Fixed: writing `<index>,0` (or `false`, `off`) into `states.ab` switches the answering machine off instead of on
+* (@GermanBluefox) Fixed: after a restart the answering machine selected in `states.abIndex` is used again instead of the first one
+
 ### 5.5.0 (2026-11-19)
 * (@GermanBluefox) Added the short form of the web component manifests (tag, name, icon, size) to `common.webComponents`, so that hosts like Aura can list the components before the adapter is installed; the build writes it with `iob-web-components sync-io-package`
 * (@GermanBluefox) Added the message "help": a description of all messages for AI agents (e.g. pi-agent), and common.supportedMessages.help

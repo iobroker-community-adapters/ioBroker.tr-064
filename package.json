@@ -68,7 +68,7 @@
     "lint": "eslint -c eslint.config.mjs",
     "test:package": "mocha test/packageFiles --exit",
     "test:integration": "mocha test/integrationAdapter --exit",
-    "test:unit": "mocha test/mesh test/help --exit",
+    "test:unit": "mocha test/mesh test/help test/ab --exit",
     "test": "npm run test:package && npm run test:unit",
     "translate": "translate-adapter -b admin/i18n/en.json",
     "release": "release-script",

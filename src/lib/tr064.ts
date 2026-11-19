@@ -12,7 +12,7 @@ import type { Action, ActionArguments, ActionResult, Device, Service, TR064Error
 import { Device as TR064DeviceClass } from 'tr-O64/lib/Device';
 
 import { refresh, ROOT as CALLLIST_ROOT } from './calllist';
-import { getJson, getProp, getXml, normalizeMac, parseXml, safeFunction, splitMacs } from './utils';
+import { getJson, getProp, getXml, isOn, normalizeMac, parseXml, safeFunction, splitMacs } from './utils';
 import type { MeshList } from './mesh';
 import { CHANNEL_STATES, STATES } from './states';
 import type {
@@ -545,7 +545,7 @@ export class TR064Client extends TR064 {
             val = this.abIndex ?? null;
         }
         if (val === null || val === undefined) {
-            val = this.adapter.devices.getval('states.abIdex', 0) ?? 0;
+            val = this.adapter.devices.getval('states.abIndex', 0) ?? 0;
         }
         this.abIndex = ~~Number(val);
 
@@ -569,7 +569,8 @@ export class TR064Client extends TR064 {
             }
         }
 
-        this.setEnableAB({ NewIndex: idx ?? 0, NewEnable: val ? 1 : 0 }, () => {});
+        // the part after the comma is a string: "0", "false" and "off" must switch off
+        this.setEnableAB({ NewIndex: idx ?? 0, NewEnable: isOn(val) ? 1 : 0 }, () => {});
     }
 
     /**

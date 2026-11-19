@@ -52,7 +52,8 @@ States (tr-064.0.*), written with ack false; ignored while the box is not connec
 - states.wps: true starts WPS (push button), false stops it.
 - states.ring: "<number>[,<seconds>]": an internal number (e.g. **610) lets that phone ring, an external number is
   dialed by the box and connected to its default phone (Waehlhilfe); <seconds> hangs up after that time.
-- states.abIndex: the answering machine (0 = the first) for states.ab; states.ab: true / false switches it on / off.
+- states.abIndex: the answering machine (0 = the first) for states.ab; states.ab: true / false switches it on / off,
+  or "<index>,<on>" switches the answering machine <index> (e.g. "1,0": the second one off; 0, false, off = off).
 - states.command: JSON {"service", "action", "params"} calls any TR-064 action of the box, e.g. {"service":
   "urn:dslforum-org:service:X_AVM-DE_TAM:1", "action": "SetEnable", "params": {"NewIndex": "0", "NewEnable": "1"}};
   the answer (JSON) is written into states.commandResult.
