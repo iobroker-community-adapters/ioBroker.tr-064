@@ -17,6 +17,7 @@ import { CDevice, Devices } from './lib/devices';
 import { CallMonitor } from './lib/callmonitor';
 import { normalizeConfig, ROOT as CALLLIST_ROOT, S_HTML_TEMPLATE } from './lib/calllist';
 import { CHANNEL_DEFLECTIONS, Deflections } from './lib/deflections';
+import { COMMANDS, HELP } from './lib/help';
 import { Phonebook } from './lib/phonebook';
 import { Presence } from './lib/presence';
 import { SystemData } from './lib/systemdata';
@@ -307,6 +308,14 @@ export class Tr064Adapter extends utils.Adapter {
         this.log.silly(`onMessage: ${JSON.stringify(obj)}`);
 
         switch (obj.command) {
+            case 'help': {
+                // the description of all commands for AI agents and scripts, also without a connection
+                if (obj.callback) {
+                    this.sendTo(obj.from, obj.command, { help: HELP, commands: COMMANDS }, obj.callback);
+                }
+                return;
+            }
+
             case 'mesh': {
                 // the mesh topology for the admin component (issue #383)
                 if (!obj.callback) {

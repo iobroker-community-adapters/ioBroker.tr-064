@@ -203,6 +203,10 @@ Switch the answering machine off:
 
 You find a detailed description of the actions and of the parameters for TAM here: [x_tam.pdf](https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_tam.pdf). This link is also contained in the AVM documentation above.
 
+### Messages for scripts and AI agents
+
+`sendTo('tr-064.0', 'help', {})` answers `{ help, commands }`: a description of all messages (`presence`, `discovery`, `mesh`, `guestWlan`, `setHostName`, ...) and of the states to switch, written for AI agents (e.g. ioBroker.pi-agent) and script authors; `commands` lists every message with `write: true` if it changes something.
+
 ### Switch on the call monitor
 
 Before you can use the call monitor, you must switch it on in the AVM Fritz!Box. To switch the call monitor on, dial `#96*5*` on a connected telephone. The Fritz!Box then opens the TCP/IP port 1012. To close the port, dial `#96*4*`.
@@ -233,6 +237,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) Added the short form of the web component manifests (tag, name, icon, size) to `common.webComponents`, so that hosts like Aura can list the components before the adapter is installed; the build writes it with `iob-web-components sync-io-package`
+* (@GermanBluefox) Added the message "help": a description of all messages for AI agents (e.g. pi-agent), and common.supportedMessages.help
 
 ### 5.4.0 (2026-11-08)
 * (GermanBluefox) Added web components for Aura and other hosts (`common.webComponents`): FRITZ!Box, mesh topology, presence, person and Wi-Fi QR code

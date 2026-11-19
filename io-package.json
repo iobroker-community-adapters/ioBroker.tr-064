@@ -151,6 +151,10 @@
     "type": "infrastructure",
     "enabled": true,
     "messagebox": true,
+    "supportedMessages": {
+      "help": true,
+      "custom": true
+    },
     "compact": true,
     "authors": [
       "soef <soef@gmx.net>",
