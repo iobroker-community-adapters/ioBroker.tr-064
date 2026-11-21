@@ -24,10 +24,26 @@ describe('help', () => {
         assert.deepStrictEqual([...names].sort(), commandsOfMain().sort());
     });
 
-    it('marks only setHostName as writing', () => {
+    it('marks only the commands with an effect as writing', () => {
+        const writing = ['setHostName', 'guestWifi', 'call', 'hangup'];
         for (const { command, write } of COMMANDS) {
             assert.strictEqual(typeof write, 'boolean', command);
-            assert.strictEqual(write, command === 'setHostName', command);
+            assert.strictEqual(write, writing.includes(command), command);
+        }
+    });
+
+    it('marks the commands of the shared catalog with their standard', () => {
+        const marked = Object.fromEntries(COMMANDS.filter(c => c.standard).map(c => [c.command, c.standard]));
+        assert.deepStrictEqual(marked, {
+            getPersons: 'presence.getPersons',
+            getClients: 'network.getClients',
+            guestWifi: 'network.guestWifi',
+            call: 'phone.call',
+            hangup: 'phone.hangup',
+        });
+        for (const [command, standard] of Object.entries(marked)) {
+            assert.match(standard, /^[a-z]+\.[a-z][A-Za-z]+$/, command);
+            assert.ok(HELP.includes(`- ${command}`) && HELP.includes(`(${standard})`), command);
         }
     });
 

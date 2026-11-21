@@ -26,6 +26,8 @@ import type { LoginError, WlanKind } from './lib/tr064';
 import { CallbackTimers, macsOverlap, normalizedName } from './lib/utils';
 import { buildMeshTopology, findAccessPoint } from './lib/mesh';
 import type { MeshList } from './lib/mesh';
+import { callRequest, clientsOfHosts, guestWifiRequest, onlineFilter, standardError } from './lib/standard';
+import type { NetworkClient, StandardError } from './lib/standard';
 import {
     CHANNEL_CALLLISTS,
     CHANNEL_CALLMONITOR,
@@ -526,6 +528,144 @@ export class Tr064Adapter extends utils.Adapter {
                     this.log.silly(`Discovery result: ${JSON.stringify(found)}`);
                     this.sendDiscoveryResult(obj, found, asNative, configured);
                 });
+                return;
+            }
+
+            case 'getPersons': {
+                // presence.getPersons of the shared catalog: the same answer as `presence`
+                if (obj.callback) {
+                    const response: PresenceResponse = this.presence?.info() ?? { persons: [], groups: [] };
+                    this.sendTo(obj.from, obj.command, response, obj.callback);
+                }
+                return;
+            }
+
+            case 'getClients': {
+                // network.getClients of the shared catalog: the host list of the box, read now
+                if (!obj.callback) {
+                    return;
+                }
+                const answer = (response: { clients: NetworkClient[] } | StandardError): void => {
+                    this.sendTo(obj.from, obj.command, response, obj.callback);
+                };
+                const online = onlineFilter(obj.message);
+                if (typeof online === 'object') {
+                    answer(online);
+                    return;
+                }
+                if (!this.boxConnected || !this.tr064Client) {
+                    answer(standardError('not connected'));
+                    return;
+                }
+                this.tr064Client.getHostList(
+                    this.callbackTimers.wrap<HostEntry[]>(30_000, (err, hosts) => {
+                        if (err) {
+                            answer(standardError(err));
+                            return;
+                        }
+                        answer({ clients: clientsOfHosts(hosts || [], online, this.meshTopology) });
+                    }),
+                );
+                return;
+            }
+
+            case 'guestWifi': {
+                // network.guestWifi of the shared catalog: `enabled` switches the guest WLAN (like the state
+                // states.wlanGuest), then its access data are read like `guestWlan` - never into a state or a log
+                const answer = (response: GuestWlanResponse | StandardError): void => {
+                    if (obj.callback) {
+                        this.sendTo(obj.from, obj.command, response, obj.callback);
+                    }
+                };
+                const request = guestWifiRequest(obj.message);
+                if ('error' in request) {
+                    answer(request);
+                    return;
+                }
+                if (!this.boxConnected || !this.tr064Client) {
+                    answer(standardError('not connected'));
+                    return;
+                }
+                const client = this.tr064Client;
+                const read = (): void => {
+                    client.getWlanInfo(
+                        'wlanGuest',
+                        this.callbackTimers.wrap<GuestWlanInfo | undefined>(15_000, (err, info) => {
+                            answer(err || !info ? standardError(err || 'no answer') : info);
+                        }),
+                    );
+                };
+                if (request.enabled === undefined) {
+                    if (obj.callback) {
+                        read();
+                    }
+                    return;
+                }
+                const enabled = request.enabled;
+                if (!client.wlanGuest.setEnable) {
+                    answer(standardError('not supported'));
+                    return;
+                }
+                client.setWLANGuest(
+                    enabled,
+                    this.callbackTimers.wrap<ActionResult>(15_000, err => {
+                        if (err) {
+                            this.log.warn(`Cannot switch the guest WLAN: ${errorText(err)}`);
+                            answer(standardError(err));
+                            return;
+                        }
+                        this.devStates.setAndUpdate(STATES.wlanGuest.name, enabled);
+                        if (obj.callback) {
+                            read();
+                        }
+                    }),
+                );
+                return;
+            }
+
+            case 'call': {
+                // phone.call of the shared catalog: the same as the state states.ring (dialing help of the box)
+                const answer = (response: { ok: true; to: string; text: string } | StandardError): void => {
+                    if (obj.callback) {
+                        this.sendTo(obj.from, obj.command, response, obj.callback);
+                    }
+                };
+                // `to` may be the name of a contact of the phone book (empty while it is switched off)
+                const request = callRequest(obj.message, this.phonebook?.contacts() ?? []);
+                if ('error' in request) {
+                    answer(request);
+                    return;
+                }
+                if (!this.boxConnected || !this.tr064Client) {
+                    answer(standardError('not connected'));
+                    return;
+                }
+                if (!this.tr064Client.canDial()) {
+                    answer(standardError('not supported'));
+                    return;
+                }
+                const done = this.callbackTimers.wrap<null>(15_000, err => {
+                    answer(err ? standardError(err) : { ok: true, to: request.to, text: request.text });
+                });
+                this.tr064Client.ring(request.ring, err => done(err, null));
+                return;
+            }
+
+            case 'hangup': {
+                // phone.hangup of the shared catalog: ends the call of the dialing help
+                const answer = (response: { ok: true } | StandardError): void => {
+                    if (obj.callback) {
+                        this.sendTo(obj.from, obj.command, response, obj.callback);
+                    }
+                };
+                if (!this.boxConnected || !this.tr064Client) {
+                    answer(standardError('not connected'));
+                    return;
+                }
+                const done = this.callbackTimers.wrap<null>(15_000, err => {
+                    answer(err ? standardError(err) : { ok: true });
+                });
+                this.tr064Client.hangup(err => done(err, null));
                 return;
             }
 

@@ -297,6 +297,11 @@ export class Phonebook {
         return ids;
     }
 
+    /** All numbers of the phone book, one entry per number (`phone.call` with a name) */
+    public contacts(): readonly PhonebookEntry[] {
+        return this.entries;
+    }
+
     /** Searches by name. First the complete name is compared, then a part of it */
     public byName(name: string): PhonebookEntry | undefined {
         const normalized = normalizeName(name);

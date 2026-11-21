@@ -576,14 +576,19 @@ export class TR064Client extends TR064 {
     /**
      * Lets a phone ring. `val` is `<number>[,<seconds>]` - with an internal number like `**610`
      * that phone rings, with an external one the box calls it.
+     *
+     * @param val the value of the state `ring`
+     * @param callback called once the box accepted or refused the call (`phone.call`)
      */
-    public ring(val: ioBroker.StateValue): void {
+    public ring(val: ioBroker.StateValue, callback?: (err: Error | null) => void): void {
         if (!val) {
+            callback?.(new Error('no number'));
             return;
         }
 
         const ar = val.toString().split(',');
         if (!ar.length || !this.voip) {
+            callback?.(new Error('not supported'));
             return;
         }
 
@@ -596,6 +601,7 @@ export class TR064Client extends TR064 {
         )({ 'NewX_AVM-DE_PhoneNumber': ar[0] }, err => {
             if (err) {
                 this.adapter.log.warn(`Ring Error: ${err.message}`);
+                callback?.(err);
                 return;
             }
 
@@ -608,7 +614,24 @@ export class TR064Client extends TR064 {
                         this.safe(this.voip, 'X_AVM-DE_DialHangup', true)({}, () => {});
                     }, duration * 1000) ?? null;
             }
+            callback?.(null);
         });
+    }
+
+    /** Whether the box offers the dialing help (`X_VoIP:1 X_AVM-DE_DialNumber`) - without it `ring` does nothing */
+    public canDial(): boolean {
+        return typeof this.voip?.['X_AVM-DE_DialNumber'] === 'function';
+    }
+
+    /** Ends the call of the dialing help (`X_AVM-DE_DialHangup`, `phone.hangup`) and the timer of `ring` */
+    public hangup(callback: (err: Error | null) => void): void {
+        const dialHangup = this.voip?.['X_AVM-DE_DialHangup'];
+        if (typeof dialHangup !== 'function') {
+            callback(new Error('not supported'));
+            return;
+        }
+        this.clearRingTimeout();
+        dialHangup({}, err => callback(err ?? null));
     }
 
     /** Stops a running ring timer - used on unload */

@@ -3,10 +3,14 @@
  * the MCP server with `send_to`) and for script authors. Keep it in sync with `onMessage` in main.ts and the README.
  */
 
-/** One command which `onMessage` answers; `write` = it changes something */
+/**
+ * One command which `onMessage` answers; `write` = it changes something, `standard` = it follows the shared catalog of
+ * commands for adapter families (ioBroker.assistant, HELP.md)
+ */
 export interface HelpCommand {
     command: string;
     write: boolean;
+    standard?: string;
 }
 
 /** The commands `onMessage` answers */
@@ -18,6 +22,11 @@ export const COMMANDS: HelpCommand[] = [
     { command: 'guestWlan', write: false },
     { command: 'setHostName', write: true },
     { command: 'personList', write: false },
+    { command: 'getPersons', write: false, standard: 'presence.getPersons' },
+    { command: 'getClients', write: false, standard: 'network.getClients' },
+    { command: 'guestWifi', write: true, standard: 'network.guestWifi' },
+    { command: 'call', write: true, standard: 'phone.call' },
+    { command: 'hangup', write: true, standard: 'phone.hangup' },
 ];
 
 export const HELP = `ioBroker.tr-064: connects to an AVM FRITZ!Box over TR-064. It switches the WLANs, restarts the box, lets a phone
@@ -42,6 +51,22 @@ Commands (sendTo tr-064.0):
   gives "not supported", an unknown name "unknown wlan". Needs the right "FRITZ!Box settings" of the box user.
 - setHostName {mac, name}: renames a device in the box (name at most 63 characters): {} or {error}. The channel of
   the device below devices follows the name in the box unless "Name the objects after this table" is on.
+
+Shared commands (they follow the catalog of shared commands for adapter families, see "standard" in the list of
+commands; errors {error, reason}: NOT_CONNECTED, NOT_FOUND, AMBIGUOUS, NOT_SUPPORTED, BAD_REQUEST, TIMEOUT):
+- getPersons (presence.getPersons): the same answer as presence.
+- getClients {online?} (network.getClients): the host list of the box, read now: {clients: [{mac, name, ip?, online,
+  wired? (true LAN, false WLAN), guest? (true: in the guest network), accessPoint? (the box or repeater, from the
+  last reading of the mesh)}]}. online true = only the online devices, false = only the offline ones, none = all.
+- guestWifi {enabled?} (network.guestWifi): the guest WLAN like guestWlan: {enabled, ssid, password, security,
+  hidden}. enabled true / false switches it first (like states.wlanGuest); minutes is refused (NOT_SUPPORTED).
+- call {to, seconds?} (phone.call): like states.ring: an internal number (e.g. **610) lets that phone ring, an
+  external one is dialed by the box and connected to the phone of its dialing help (on in the box); seconds hangs
+  up after that time. to may also be the name of a contact of the phone book (phone book on; without case, the
+  exact name before a part): several contacts or numbers fit = AMBIGUOUS, none = NOT_FOUND, both with candidates.
+  {ok: true, to (the number), text} when the box accepted it, not when somebody answered. from and text are
+  refused (NOT_SUPPORTED): the box can neither choose the calling phone nor speak a text.
+- hangup (phone.hangup): ends the call of the dialing help: {ok: true}.
 - personList: for the settings, not for agents.
 
 States (tr-064.0.*), written with ack false; ignored while the box is not connected:
@@ -70,6 +95,7 @@ How to talk to the user:
 - Ask which WLAN is meant (guest WLAN or the own one) before switching it or reading its password.
 - Only on the user's explicit request and after confirmation: states.reboot and states.reconnectInternet (the
   internet and the WLAN drop for minutes), switching off the own WLAN (devices in the house lose the network),
-  changing a WLAN password, setHostName, states.command with an action that changes something, states.ring.
-- The password of guestWlan opens the network: give it only to the user who asked for it, never into a log or a
-  message to other people.`;
+  changing a WLAN password, setHostName, states.command with an action that changes something, call and
+  states.ring (they ring real phones and reach people; ask whom to call if it is not clear).
+- The password of guestWlan and guestWifi opens the network: give it only to the user who asked for it, never into a
+  log or a message to other people.`;

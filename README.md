@@ -207,6 +207,8 @@ You find a detailed description of the actions and of the parameters for TAM her
 
 `sendTo('tr-064.0', 'help', {})` answers `{ help, commands }`: a description of all messages (`presence`, `discovery`, `mesh`, `guestWlan`, `setHostName`, ...) and of the states to switch, written for AI agents (e.g. ioBroker.pi-agent) and script authors; `commands` lists every message with `write: true` if it changes something.
 
+The messages `getPersons`, `getClients`, `guestWifi`, `call` and `hangup` follow the catalog of shared commands for adapter families (`presence.getPersons`, `network.getClients`, `network.guestWifi`, `phone.call`, `phone.hangup`); `commands` marks them with `standard`. `call {to, seconds?}` dials a number or a contact of the phone book with the dialing help of the box, like the state `states.ring`.
+
 ### Switch on the call monitor
 
 Before you can use the call monitor, you must switch it on in the AVM Fritz!Box. To switch the call monitor on, dial `#96*5*` on a connected telephone. The Fritz!Box then opens the TCP/IP port 1012. To close the port, dial `#96*4*`.
@@ -237,6 +239,7 @@ If you switch from the adapter tr-064-community, you can copy the complete devic
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) Fixed: writing `<index>,0` (or `false`, `off`) into `states.ab` switches the answering machine off instead of on
 * (@GermanBluefox) Fixed: after a restart the answering machine selected in `states.abIndex` is used again instead of the first one
+* (@GermanBluefox) Added the standard commands of the shared catalog: presence.getPersons (`getPersons`), network.getClients (`getClients`), network.guestWifi (`guestWifi`), phone.call (`call`, a number or a name of the phone book) and phone.hangup (`hangup`)
 
 ### 5.5.0 (2026-11-19)
 * (@GermanBluefox) Added the short form of the web component manifests (tag, name, icon, size) to `common.webComponents`, so that hosts like Aura can list the components before the adapter is installed; the build writes it with `iob-web-components sync-io-package`
